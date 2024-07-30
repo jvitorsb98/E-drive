@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
 
-// Importing Bootstrap
-@import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+// Importando Bootstrap
+@import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+
+// Importação do arquivo de variáveis _global.overrides.scss do pacote styles
+@import './styles/_global.overrides.scss';
