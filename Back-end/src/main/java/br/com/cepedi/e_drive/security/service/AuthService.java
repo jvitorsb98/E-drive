@@ -1,0 +1,53 @@
+package br.com.cepedi.e_drive.security.service;
+
+
+
+import br.com.cepedi.e_drive.security.model.entitys.User;
+import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
+import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
+import br.com.cepedi.e_drive.security.repository.UserRepository;
+import com.auth0.jwt.JWT;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService implements UserDetailsService {
+
+    @Autowired
+    UserRepository repository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        UserDetails user = repository.findByEmail(email); // Atualizado para buscar pelo email
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+        return user;
+    }
+
+
+    public DataDetailsRegisterUser register(DataRegisterUser dataRegisterUser){
+        User user = new User(dataRegisterUser, passwordEncoder);
+        repository.save(user);
+        return new DataDetailsRegisterUser(user);
+    }
+
+    public void activateUser(String token) {
+        String email = JWT.decode(token).getClaim("email").asString();
+        User user = repository.findUserByEmail(email); // Certifique-se de que este método está correto
+
+        if (user != null) {
+            user.activate();
+            repository.save(user);
+        } else {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+    }
+}
