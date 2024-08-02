@@ -26,40 +26,40 @@ public class SettingsSecurity {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
-                    req.requestMatchers("/auth/login").permitAll();
-                    req.requestMatchers("/auth/register").permitAll();
-                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
-                    req.requestMatchers("/auth/reset-password/**").permitAll();
-                    req.requestMatchers("/auth/activate-account").permitAll();
+//                    req.requestMatchers("/auth/login").permitAll();
+//                    req.requestMatchers("/auth/register").permitAll();
+//                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+//                    req.requestMatchers("/auth/reset-password/**").permitAll();
+//                    req.requestMatchers("/auth/activate-account").permitAll();
+//
+//                    req.requestMatchers(HttpMethod.POST, "/api/v2/brands/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/brands/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/brands/**").hasRole("ADMIN");
+//
+//                    req.requestMatchers(HttpMethod.POST, "/api/v2/categories/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/categories/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/categories/**").hasRole("ADMIN");
+//
+//                    req.requestMatchers(HttpMethod.POST, "/api/v2/payments/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/payments/**").hasRole("ADMIN");
+//
+//                    req.requestMatchers(HttpMethod.POST, "/api/v2/possible-facets/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/possible-facets/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/possible-facets/**").hasRole("ADMIN");
+//
+//                    req.requestMatchers(HttpMethod.POST, "/api/v2/products/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/products/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/products/**").hasRole("ADMIN");
+//
+//                    req.requestMatchers(HttpMethod.POST, "/api/v2/productsAttributte/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/productsAttributte/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/productsAttributte/**").hasRole("ADMIN");
+//
+//
+//                    req.requestMatchers(HttpMethod.GET, "/api/v2/payments/users/{userId}").authenticated();
+//                    req.requestMatchers(HttpMethod.GET, "/api/v2/payments").hasRole("ADMIN");
 
-                    req.requestMatchers(HttpMethod.POST, "/api/v2/brands/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v2/brands/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/brands/**").hasRole("ADMIN");
-
-                    req.requestMatchers(HttpMethod.POST, "/api/v2/categories/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v2/categories/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/categories/**").hasRole("ADMIN");
-
-                    req.requestMatchers(HttpMethod.POST, "/api/v2/payments/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/payments/**").hasRole("ADMIN");
-
-                    req.requestMatchers(HttpMethod.POST, "/api/v2/possible-facets/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v2/possible-facets/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/possible-facets/**").hasRole("ADMIN");
-
-                    req.requestMatchers(HttpMethod.POST, "/api/v2/products/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v2/products/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/products/**").hasRole("ADMIN");
-
-                    req.requestMatchers(HttpMethod.POST, "/api/v2/productsAttributte/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v2/productsAttributte/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/productsAttributte/**").hasRole("ADMIN");
-
-
-                    req.requestMatchers(HttpMethod.GET, "/api/v2/payments/users/{userId}").authenticated();
-                    req.requestMatchers(HttpMethod.GET, "/api/v2/payments").hasRole("ADMIN");
-
-                    req.anyRequest().authenticated();
+                    req.anyRequest().permitAll();
 
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

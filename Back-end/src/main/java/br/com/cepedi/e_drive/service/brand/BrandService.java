@@ -54,6 +54,8 @@ public class BrandService {
         brand.activated();
     }
 
+
+
     public Page<DataBrandDetails> lisAllBrandsActivatedTrue(Pageable pageable) {
         return brandRepository.findAllByActivatedTrue(pageable).map(DataBrandDetails::new);
     }

@@ -32,8 +32,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v2/brands")
-@SecurityRequirement(name = "bearer-key")
+@RequestMapping("/api/brands")
+//@SecurityRequirement(name = "bearer-key")
 @Tag(name = "Brand", description = "Brand messages")
 public class BrandController {
 
