@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidationBrandIsDisabledForUpdate implements ValidationBrandUpdate {
+public class ValidationBrandIsActivatedForUpdate implements ValidationBrandUpdate {
     @Autowired
     private BrandRepository brandRepository;
 
