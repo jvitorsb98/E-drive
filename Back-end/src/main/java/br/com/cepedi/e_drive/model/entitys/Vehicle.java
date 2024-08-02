@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "Vehicle")
+@Table(name = "vehicle")
 public class Vehicle {
 
 
@@ -43,7 +43,7 @@ public class Vehicle {
 	private VehicleType type;
 
 	@ManyToOne
-	@JoinColumn(name = "brand")
+	@JoinColumn(name = "brand_id")
 	private Brand brand;
 
 	@ManyToOne

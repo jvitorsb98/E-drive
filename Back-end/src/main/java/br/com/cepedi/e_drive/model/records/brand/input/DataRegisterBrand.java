@@ -10,10 +10,6 @@ public record DataRegisterBrand(
         @NotBlank(message = "Name cannot be blank")
         String name,
 
-        Boolean activated,
-
-        @NotNull(message = "{notnull.brand.vehicles}")
-        @Size(min = 1, message = "{size.brand.vehicles}")
-        List<Vehicle> vehicles
+        Boolean activated
 ) {
 }
