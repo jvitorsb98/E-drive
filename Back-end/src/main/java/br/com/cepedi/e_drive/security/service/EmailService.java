@@ -57,7 +57,7 @@ public class EmailService {
 
     public String sendActivationEmail(String name, String email) throws MessagingException {
 
-        User user = repository.findUserByEmail(email);
+        User user = repository.findByEmail(email);
 
         String token = tokenService.generateTokenForActivatedEmail(user);
 

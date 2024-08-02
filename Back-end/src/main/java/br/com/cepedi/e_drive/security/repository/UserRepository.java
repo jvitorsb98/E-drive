@@ -1,7 +1,5 @@
 package br.com.cepedi.e_drive.security.repository;
 
-
-
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,8 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE u.email = :email")
-    UserDetails findByEmail(@Param("email") String email); // Atualizado para buscar pelo email
-
-    @Query("SELECT u FROM User u WHERE u.email = :email")
-    User findUserByEmail(@Param("email") String email);
+    User findByEmail(@Param("email") String email);
 }

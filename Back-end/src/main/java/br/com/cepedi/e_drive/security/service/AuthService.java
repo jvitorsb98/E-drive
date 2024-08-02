@@ -41,7 +41,7 @@ public class AuthService implements UserDetailsService {
 
     public void activateUser(String token) {
         String email = JWT.decode(token).getClaim("email").asString();
-        User user = repository.findUserByEmail(email); // Certifique-se de que este método está correto
+        User user = repository.findByEmail(email); // Certifique-se de que este método está correto
 
         if (user != null) {
             user.activate();

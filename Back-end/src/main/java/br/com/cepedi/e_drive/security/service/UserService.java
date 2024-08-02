@@ -20,11 +20,11 @@ public class UserService {
 
 
     public User getUserActivatedByEmail(String email){
-        return userRepository.findUserByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public void updatePassword(String email, String newPassword) {
-        User user = userRepository.findUserByEmail(email);
+        User user = userRepository.findByEmail(email);
         if (user != null) {
 ;            user.setPassword(passwordEncoder.encode(newPassword));
             userRepository.saveAndFlush(user);

@@ -1,12 +1,10 @@
 package br.com.cepedi.e_drive.model.entitys;
-import javax.persistence.*;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-
 
 @Entity
 @Getter
@@ -16,13 +14,9 @@ import lombok.Setter;
 @Table(name = "vehicle")
 public class Vehicle {
 
-
-
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 
 	@Column(name = "motor")
 	private String motor;
@@ -33,26 +27,24 @@ public class Vehicle {
 	@Column(name = "activated")
 	private Boolean activated;
 
-
 	@ManyToOne
-	@JoinColumn(name = "category_id")
+	@JoinColumn(name = "category_id") // Chave estrangeira para Category
 	private Category category;
 
 	@ManyToOne
-	@JoinColumn(name = "type")
+	@JoinColumn(name = "type_id") // Chave estrangeira para VehicleType
 	private VehicleType type;
 
 	@ManyToOne
-	@JoinColumn(name = "brand_id")
+	@JoinColumn(name = "brand_id") // Chave estrangeira para Brand
 	private Brand brand;
 
 	@ManyToOne
-	@JoinColumn(name = "propulsion")
+	@JoinColumn(name = "propulsion_id") // Chave estrangeira para Propulsion
 	private Propulsion propulsion;
 
 	@ManyToOne
-	@JoinColumn(name = "autonomy_id")
+	@JoinColumn(name = "autonomy_id") // Chave estrangeira para Autonomy
 	private Autonomy autonomy;
 
 }
-

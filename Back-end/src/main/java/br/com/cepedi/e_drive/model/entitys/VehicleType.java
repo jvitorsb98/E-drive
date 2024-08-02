@@ -1,6 +1,6 @@
 package br.com.cepedi.e_drive.model.entitys;
 import java.util.List;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +24,6 @@ public class VehicleType {
     @Column(name = "activated")
     private Boolean activated;
 
-    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Vehicle> vehicles;
+
 
 }

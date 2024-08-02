@@ -1,7 +1,7 @@
 package br.com.cepedi.e_drive.model.entitys;
 import java.util.List;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +26,5 @@ public class Category {
     @Column(name = "activated")
     private Boolean activated;
 
-    @OneToMany(mappedBy = "category")
-    private List<Vehicle> vehicles;
 
 }

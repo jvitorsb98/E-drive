@@ -1,11 +1,10 @@
 package br.com.cepedi.e_drive.model.entitys;
-import java.util.List;
-import javax.persistence.*;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 
 @Entity
 @Getter
@@ -23,8 +22,5 @@ public class Propulsion {
 
     @Column(name = "activated")
     private Boolean activated;
-
-    @OneToMany(mappedBy = "propulsion")
-    private List<Vehicle> vehicles;
 
 }
