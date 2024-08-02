@@ -24,7 +24,7 @@ public class VehicleType {
     @Column(name = "activated")
     private Boolean activated;
 
-    @OneToMany(mappedBy = "type")
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Vehicle> vehicles;
 
 }
