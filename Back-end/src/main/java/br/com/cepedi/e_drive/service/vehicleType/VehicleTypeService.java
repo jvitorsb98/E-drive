@@ -6,6 +6,7 @@ import br.com.cepedi.e_drive.model.records.vehicleType.input.DataRegisterVehicle
 import br.com.cepedi.e_drive.model.records.vehicleType.input.DataUpdateVehicleType;
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import br.com.cepedi.e_drive.service.vehicleType.validations.activated.ValidationVehicleTypeActivated;
+import br.com.cepedi.e_drive.service.vehicleType.validations.disabled.VehicleTypeValidatorDisabled;
 import br.com.cepedi.e_drive.service.vehicleType.validations.update.ValidationVehicleTypeUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,9 @@ public class VehicleTypeService {
 
     @Autowired
     private List<ValidationVehicleTypeActivated> vehicleTypeValidatorActivatedList;
+
+    @Autowired
+    private List<VehicleTypeValidatorDisabled> vehicleTypeValidatorDisabledList;
 
     public DataVehicleTypeDetails register(DataRegisterVehicleType data) {
         VehicleType vehicleType = new VehicleType(data);
@@ -56,5 +60,14 @@ public class VehicleTypeService {
 
     public Page<DataVehicleTypeDetails> listAllVehicleTypesActivatedTrue(Pageable pageable) {
         return vehicleTypeRepository.findAllByActivatedTrue(pageable).map(DataVehicleTypeDetails::new);
+    }
+
+    public void disabled(Long id) {
+        vehicleTypeValidatorDisabledList.forEach(v -> v.validation(id));
+        VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
+        vehicleType.disable();
+    }
+    public Page<DataVehicleTypeDetails> listAllBrandsAndDisabledTrue(Pageable pageable) {
+        return vehicleTypeRepository.findAllByDisabledTrue(pageable).map(DataVehicleTypeDetails::new);
     }
 }

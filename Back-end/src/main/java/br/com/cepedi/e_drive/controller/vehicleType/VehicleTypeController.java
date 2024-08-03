@@ -163,5 +163,27 @@ public class VehicleTypeController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("/{id}")
+    @Transactional
+    @Operation(summary = "Disable vehicle type by ID", method = "DELETE", description = "Disables a vehicle type by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Vehicle Type disabled successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Vehicle Type not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Void> disable(
+            @Parameter(description = "ID of the vehicle type to be disabled", required = true)
+            @PathVariable Long id
+    ) {
+        LOGGER.info("Disabling vehicle type with id: {}", id);
+        vehicleTypeService.disabled(id);
+        LOGGER.info("Vehicle Type disabled successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 
 }

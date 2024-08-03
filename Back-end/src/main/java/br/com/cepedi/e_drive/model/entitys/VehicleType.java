@@ -27,6 +27,9 @@ public class VehicleType {
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
+    @Column(name = "disabled", nullable = false)
+    private Boolean disabled;
+
     public VehicleType(DataRegisterVehicleType dataRegisterVehicleType) {
         this.name = dataRegisterVehicleType.name();
         this.activated = dataRegisterVehicleType.activated() != null ? dataRegisterVehicleType.activated() : false;
@@ -44,5 +47,13 @@ public class VehicleType {
 
     public void deactivated() {
         this.activated = false;
+    }
+
+    public void disable() {
+        this.disabled = true;
+    }
+
+    public void enable() {
+        this.disabled = false;
     }
 }
