@@ -143,9 +143,9 @@ public class BrandController {
         return new ResponseEntity<>(updatedBrand, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/{id}/activate")
     @Transactional
-    @Operation(summary = "Activate brand by ID", method = "DELETE", description = "Activates a brand by its ID.")
+    @Operation(summary = "Activate brand by ID", method = "PUT", description = "Activates a brand by its ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Brand activated successfully"),
             @ApiResponse(responseCode = "403", description = "Forbidden",
@@ -164,5 +164,6 @@ public class BrandController {
         LOGGER.info("Brand activated successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 
 }
