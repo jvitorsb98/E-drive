@@ -33,3 +33,4 @@ INSERT INTO brand (name, activated) VALUES ('SUZUKI', true);
 INSERT INTO brand (name, activated) VALUES ('TOYOTA', true);
 INSERT INTO brand (name, activated) VALUES ('VOLVO', true);
 INSERT INTO brand (name, activated) VALUES ('VW', true);
+INSERT INTO brand (name, activated) VALUES ('GREAT WALL', true);
