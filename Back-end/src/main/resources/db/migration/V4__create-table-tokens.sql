@@ -3,6 +3,6 @@ CREATE TABLE tokens (
     token VARCHAR(255) NOT NULL,
     user_id BIGINT,
     expire_date TIMESTAMP WITH TIME ZONE,
-    activated BOOLEAN,
+   	disabled BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

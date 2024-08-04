@@ -55,27 +55,26 @@ public class EmailService {
         mailService.register(dataRegisterMail);
     }
 
-    public String sendActivationEmail(String name, String email) throws MessagingException {
-
-        User user = repository.findByEmail(email);
-
-        String token = tokenService.generateTokenForActivatedEmail(user);
-
+    public String sendActivationEmail(String name, String email, String tokenForActivate) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
         helper.setTo(email);
         helper.setSubject("Activation Email");
 
-        // Processando o modelo HTML
-        Map<String, Object> model = Map.of("token", token, "name", name);
+        // Processa o modelo HTML
+        Map<String, Object> model = Map.of("token", tokenForActivate, "name", name);
         String htmlBody = processHtmlTemplate("activate_user_by_email_template.html", model);
 
         helper.setText(htmlBody, true);
         emailSender.send(message);
-        DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com",email,htmlBody,"Activation Email");
+
+        // Registra o e-mail enviado
+        DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Activation Email");
         mailService.register(dataRegisterMail);
-        return token;
+
+        return tokenForActivate; 
     }
+
 
 
     private String processHtmlTemplate(String templateName, Map<String, Object> model) throws MessagingException {

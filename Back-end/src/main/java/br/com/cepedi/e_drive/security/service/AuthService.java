@@ -1,12 +1,11 @@
 package br.com.cepedi.e_drive.security.service;
 
-
-
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +22,9 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TokenService tokenService;
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserDetails user = repository.findByEmail(email); // Atualizado para buscar pelo email
@@ -32,11 +34,11 @@ public class AuthService implements UserDetailsService {
         return user;
     }
 
-
-    public DataDetailsRegisterUser register(DataRegisterUser dataRegisterUser){
+    public DataDetailsRegisterUser register(DataRegisterUser dataRegisterUser) {
         User user = new User(dataRegisterUser, passwordEncoder);
         repository.save(user);
-        return new DataDetailsRegisterUser(user);
+        String confirmationToken = tokenService.generateTokenForActivatedEmail(user);
+        return new DataDetailsRegisterUser(user, confirmationToken);
     }
 
     public void activateUser(String token) {
