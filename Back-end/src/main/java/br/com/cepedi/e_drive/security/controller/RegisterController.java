@@ -1,7 +1,9 @@
 package br.com.cepedi.e_drive.security.controller;
 
 
+import br.com.cepedi.e_drive.security.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,6 +35,10 @@ public class RegisterController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private TokenService tokenService;
+
+
     @PostMapping("/register")
     @Transactional
     @Operation(summary = "Register a new user", method = "POST", description = "Registers a new user and sends an activation email.")
@@ -50,8 +56,8 @@ public class RegisterController {
         emailService.sendActivationEmail(data.name(), data.email(), tokenForActivate);
         return ResponseEntity.ok("User registered successfully. Activation email sent.");
     }
-    
-    @PostMapping("/activate")
+
+    @GetMapping("/activate")
     @Transactional
     @Operation(summary = "Activate a user", method = "POST", description = "Activates a user account using a provided token.")
     @ApiResponse(responseCode = "200", description = "User activated successfully.",
@@ -60,24 +66,20 @@ public class RegisterController {
             content = @Content)
     @ApiResponse(responseCode = "500", description = "Internal server error.",
             content = @Content)
-    public ResponseEntity<String> activateUser(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Token used to activate the user", required = true)
-            @RequestBody Map<String, String> body) {
-        String token = body.get("token");
-
-        if (token == null || token.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Token is required.");
-        }
-
+    public ResponseEntity<String> activateAccount(
+            @Parameter(description = "Activation token received by email", required = true)
+            @RequestParam("token") String token
+    ) {
         try {
-            // Trim to remove any extra whitespace or new lines
-            token = token.trim();
+            if (!tokenService.isValidToken(token)) {
+                return ResponseEntity.badRequest().body("Token invalid");
+            }
             authService.activateUser(token);
-            return ResponseEntity.ok("User activated successfully.");
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.badRequest().body("Invalid token or user not found.");
+            tokenService.revokeToken(token);
+            return ResponseEntity.ok("User account activated successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Internal server error.");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate user account.");
         }
     }
 }
