@@ -29,3 +29,4 @@ public record DataRegisterUser(
         String cellphone // Adicione o celular
 
 ) {}
+

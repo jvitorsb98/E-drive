@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.boot.Banner;
 
 @Entity
 @Getter
@@ -24,8 +25,9 @@ public class Vehicle {
 	@Column(name = "version")
 	private String version;
 
-	@Column(name = "activated")
-	private Boolean activated;
+	@ManyToOne
+	@JoinColumn(name = "model_id") // Chave estrangeira para Category
+	private Model model;
 
 	@ManyToOne
 	@JoinColumn(name = "category_id") // Chave estrangeira para Category
@@ -36,15 +38,22 @@ public class Vehicle {
 	private VehicleType type;
 
 	@ManyToOne
-	@JoinColumn(name = "brand_id") // Chave estrangeira para Brand
-	private Brand brand;
-
-	@ManyToOne
 	@JoinColumn(name = "propulsion_id") // Chave estrangeira para Propulsion
 	private Propulsion propulsion;
 
 	@ManyToOne
 	@JoinColumn(name = "autonomy_id") // Chave estrangeira para Autonomy
 	private Autonomy autonomy;
+
+	public Vehicle(String motor, String version, Model model , Category category, VehicleType type, Propulsion propulsion, Autonomy autonomy){
+		this.motor = motor;
+		this.version = version;
+		this.model = model;
+		this.category = category;
+		this.type = type;
+		this.propulsion = propulsion;
+		this.autonomy = autonomy;
+	}
+
 
 }

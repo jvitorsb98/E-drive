@@ -1,6 +1,8 @@
 package br.com.cepedi.e_drive.model.entitys;
 
 import java.math.BigDecimal;
+
+import br.com.cepedi.e_drive.model.records.autonomy.register.DataRegisterAutonomy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,4 +38,13 @@ public class Autonomy {
 
     @Column(name = "autonomy_electric_mode")
     private BigDecimal autonomyElectricMode;
+
+    public Autonomy(DataRegisterAutonomy dataRegisterAutonomy){
+        this.mileagePerLiterRoad = dataRegisterAutonomy.mileagePerLiterRoad();
+        this.mileagePerLiterCity = dataRegisterAutonomy.mileagePerLiterCity();
+        this.consumptionEnergetic = dataRegisterAutonomy.consumptionEnergetic();
+        this.autonomyElectricMode = dataRegisterAutonomy.autonomyElectricMode();
+    }
+
+
 }
