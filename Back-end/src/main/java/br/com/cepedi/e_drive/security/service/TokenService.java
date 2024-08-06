@@ -125,19 +125,19 @@ public class TokenService {
         }
     }
 
-    public String generateTokenForActivatedEmail(User user) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
-                    .withIssuer(ISSUER)
-                    .withSubject(user.getEmail()) // Use o email como subject
-                    .withClaim("id", user.getId())
-                    .withClaim("email", user.getEmail())
-                    .sign(algorithm);
-            registerToken(token, user);  // Register the token in the database
-            return token;
-        } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro ao gerar o token JWT", exception);
-        }
-    }
-}
+	    public String generateTokenForActivatedEmail(User user) {
+	        try {
+	            Algorithm algorithm = Algorithm.HMAC256(secret);
+	            String token = JWT.create()
+	                    .withIssuer(ISSUER)
+	                    .withSubject(user.getEmail()) // Use o email como subject
+	                    .withClaim("id", user.getId())
+	                    .withClaim("email", user.getEmail())
+	                    .sign(algorithm);
+	            registerToken(token, user);  // Register the token in the database
+	            return token;
+	        } catch (JWTCreationException exception) {
+	            throw new RuntimeException("Erro ao gerar o token JWT", exception);
+	        }
+	    }
+	}
