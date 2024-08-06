@@ -26,7 +26,6 @@ public record DataRegisterUser(
         LocalDate birth, // Valida que é uma data passada
 
         @NotBlank(message = "{notblank.user.cellphone}")
-        String cellphone, // Adicione o celular
+        String cellphone // Adicione o celular
 
-        Boolean activated // Campo ativado
 ) {}
