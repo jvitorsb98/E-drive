@@ -19,7 +19,7 @@ public class VehicleTypeTest {
     @BeforeEach
     void setUp() {
         faker = new Faker();
-        
+
         // Criação da instância de VehicleType
         vehicleType = new VehicleType(
                 null, // ID gerado automaticamente
@@ -33,7 +33,7 @@ public class VehicleTypeTest {
     void testVehicleTypeCreation() {
         assertNotNull(vehicleType);
         assertNotNull(vehicleType.getName());
-        assertNotNull(vehicleType.getActivated());
+        assertNotNull(vehicleType.isActivated());
     }
 
     @Test
@@ -41,26 +41,20 @@ public class VehicleTypeTest {
     void testVehicleTypeUpdate() {
         vehicleType.setName(faker.company().name());
         vehicleType.setActivated(faker.bool().bool());
-        
+
         assertNotNull(vehicleType.getName());
-        assertNotNull(vehicleType.getActivated());
+        assertNotNull(vehicleType.isActivated());
     }
 
     @Test
     @DisplayName("Test activating and deactivating VehicleType entity")
     void testVehicleTypeActivation() {
         vehicleType.setActivated(false);
-        assertFalse(vehicleType.getActivated());
+        assertFalse(vehicleType.isActivated());
 
         vehicleType.setActivated(true);
-        assertTrue(vehicleType.getActivated());
+        assertTrue(vehicleType.isActivated());
     }
 
-    @Test
-    @DisplayName("Test handling of null values in VehicleType entity")
-    void testVehicleTypeNullValues() {
-        VehicleType vehicleTypeWithNulls = new VehicleType(null, null, null);
-        assertNull(vehicleTypeWithNulls.getName());
-        assertNull(vehicleTypeWithNulls.getActivated());
-    }
+
 }

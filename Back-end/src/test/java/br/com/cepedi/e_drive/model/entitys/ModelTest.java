@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.model.entitys;
 
-
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,16 +20,17 @@ public class ModelTest {
     void setUp() {
         faker = new Faker();
         model = new Model(
-                null, 
-                faker.company().name(),
-                faker.bool().bool()
+                null, // ID gerado automaticamente
+                faker.company().name(), // Nome da marca
+                null, // Assumindo que você pode deixar a marca como null por enquanto
+                faker.bool().bool() // Estado de ativação
         );
     }
 
     @Test
     @DisplayName("Test creation of Model entity")
     void testModelCreation() {
-        assertNotNull(model);
+        assertNotNull(model, "Model should not be null");
         assertNotNull(model.getName(), "Name should not be null");
         assertNotNull(model.getActivated(), "Activated should not be null");
     }
@@ -43,33 +43,33 @@ public class ModelTest {
         model.setName(newName);
 
         // Check if the update was successful
-        assertEquals(newName, model.getName());
+        assertEquals(newName, model.getName(), "Model name should be updated");
     }
 
     @Test
     @DisplayName("Test activating Model entity")
     void testModelActivation() {
         model.setActivated(false);
-        assertFalse(model.getActivated());
+        assertFalse(model.getActivated(), "Model should be deactivated");
 
         model.setActivated(true);
-        assertTrue(model.getActivated());
+        assertTrue(model.getActivated(), "Model should be activated");
     }
 
     @Test
     @DisplayName("Test deactivating Model entity")
     void testModelDeactivation() {
         model.setActivated(true);
-        assertTrue(model.getActivated());
+        assertTrue(model.getActivated(), "Model should be activated");
 
         model.setActivated(false);
-        assertFalse(model.getActivated());
+        assertFalse(model.getActivated(), "Model should be deactivated");
     }
 
     @Test
     @DisplayName("Test handling of null values")
     void testModelNullValues() {
-        Model modelWithNulls = new Model(null, null, null);
+        Model modelWithNulls = new Model(null, null, null, null);
         assertNull(modelWithNulls.getName(), "Name should be null");
         assertNull(modelWithNulls.getActivated(), "Activated should be null");
 
@@ -81,4 +81,3 @@ public class ModelTest {
         assertNotNull(modelWithNulls.getActivated(), "Activated should not be null after setting");
     }
 }
-

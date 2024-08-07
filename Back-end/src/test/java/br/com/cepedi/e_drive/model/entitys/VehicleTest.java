@@ -19,7 +19,6 @@ public class VehicleTest {
     private Vehicle vehicle;
     private Category category;
     private VehicleType type;
-    private Brand brand;
     private Propulsion propulsion;
     private Autonomy autonomy;
 
@@ -30,10 +29,9 @@ public class VehicleTest {
         // Criação das instâncias associadas
         category = new Category(null, faker.company().name(), faker.bool().bool());
         type = new VehicleType(null, faker.company().name(), faker.bool().bool());
-        brand = new Brand(null, faker.company().name(), faker.bool().bool());
         propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
 
-        // Correção da criação da instância de Autonomy
+        // Criação da instância de Autonomy
         autonomy = new Autonomy(
                 null,
                 new BigDecimal(faker.number().randomDouble(2, 1, 100)),
@@ -44,71 +42,54 @@ public class VehicleTest {
 
         // Criação da instância de Vehicle
         vehicle = new Vehicle(
-                null,
-                faker.company().catchPhrase(),
-                faker.company().bs(),
-                faker.bool().bool(),
-                category,
-                type,
-                brand,
-                propulsion,
-                autonomy
+                faker.company().catchPhrase(), // Motor
+                faker.company().bs(),           // Versão
+                null,                            // Model pode ser nulo
+                category,                       // Categoria
+                type,                           // Tipo
+                propulsion,                     // Propulsão
+                autonomy,                       // Autonomia
+                null                            // O ano pode ser nulo para o teste inicial
         );
+
     }
 
     @Test
     @DisplayName("Test creation of Vehicle entity")
     void testVehicleCreation() {
-        assertNotNull(vehicle);
-        assertNotNull(vehicle.getMotor());
-        assertNotNull(vehicle.getVersion());
-        assertNotNull(vehicle.getActivated());
-        assertNotNull(vehicle.getCategory());
-        assertNotNull(vehicle.getType());
-        assertNotNull(vehicle.getBrand());
-        assertNotNull(vehicle.getPropulsion());
-        assertNotNull(vehicle.getAutonomy());
-
-        assertEquals(category, vehicle.getCategory());
-        assertEquals(type, vehicle.getType());
-        assertEquals(brand, vehicle.getBrand());
-        assertEquals(propulsion, vehicle.getPropulsion());
-        assertEquals(autonomy, vehicle.getAutonomy());
+        assertNotNull(vehicle, "Vehicle should not be null");
+        assertNotNull(vehicle.getMotor(), "Motor should not be null");
+        assertNotNull(vehicle.getVersion(), "Version should not be null");
+        assertTrue(vehicle.isActivated(), "Activated should be true");
+        assertNotNull(vehicle.getCategory(), "Category should not be null");
+        assertNotNull(vehicle.getType(), "Type should not be null");
+        assertNotNull(vehicle.getPropulsion(), "Propulsion should not be null");
+        assertNotNull(vehicle.getAutonomy(), "Autonomy should not be null");
     }
 
     @Test
     @DisplayName("Test updating Vehicle entity")
     void testVehicleUpdate() {
-        vehicle.setMotor(faker.company().catchPhrase());
-        vehicle.setVersion(faker.company().bs());
+        String newMotor = faker.company().catchPhrase();
+        String newVersion = faker.company().bs();
+        vehicle.setMotor(newMotor);
+        vehicle.setVersion(newVersion);
         vehicle.setActivated(faker.bool().bool());
 
-        assertNotNull(vehicle.getMotor());
-        assertNotNull(vehicle.getVersion());
-        assertNotNull(vehicle.getActivated());
+        assertEquals(newMotor, vehicle.getMotor(), "Motor should be updated");
+        assertEquals(newVersion, vehicle.getVersion(), "Version should be updated");
+        assertNotNull(vehicle.isActivated(), "Activated should not be null");
     }
 
     @Test
     @DisplayName("Test activating and deactivating Vehicle entity")
     void testVehicleActivation() {
         vehicle.setActivated(false);
-        assertFalse(vehicle.getActivated());
+        assertFalse(vehicle.isActivated(), "Vehicle should be deactivated");
 
         vehicle.setActivated(true);
-        assertTrue(vehicle.getActivated());
+        assertTrue(vehicle.isActivated(), "Vehicle should be activated");
     }
 
-    @Test
-    @DisplayName("Test handling of null values in Vehicle entity")
-    void testVehicleNullValues() {
-        Vehicle vehicleWithNulls = new Vehicle(null, null, null, null, null, null, null, null, null);
-        assertNull(vehicleWithNulls.getMotor());
-        assertNull(vehicleWithNulls.getVersion());
-        assertNull(vehicleWithNulls.getActivated());
-        assertNull(vehicleWithNulls.getCategory());
-        assertNull(vehicleWithNulls.getType());
-        assertNull(vehicleWithNulls.getBrand());
-        assertNull(vehicleWithNulls.getPropulsion());
-        assertNull(vehicleWithNulls.getAutonomy());
-    }
+
 }

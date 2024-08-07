@@ -36,7 +36,6 @@ public class UserTest {
                 faker.internet().password(), // Password
                 LocalDate.now().minusYears(20), // Birth
                 faker.phoneNumber().phoneNumber() // Cellphone
-, null
         );
         user = new User(dataRegisterUser, passwordEncoder);
         role = new Role("Admin");
@@ -106,8 +105,7 @@ public class UserTest {
         assertFalse(user.getRoles().contains(role));
         assertFalse(role.getUsers().contains(user));
     }
-    
-    
+
     @Test
     @DisplayName("Test setting and getting roles")
     void testSetAndGetRoles() {
@@ -143,13 +141,4 @@ public class UserTest {
 
         assertTrue(authorityNames.contains("ROLE_ADMIN"));
     }
-
-
-
-
-
-
-
-
-
 }

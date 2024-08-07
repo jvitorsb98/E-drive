@@ -12,7 +12,6 @@ import org.springframework.boot.Banner;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "vehicle")
 public class Vehicle {
 
@@ -61,6 +60,7 @@ public class Vehicle {
 		this.propulsion = propulsion;
 		this.autonomy = autonomy;
 		this.year = year;
+		this.activated = true;
 	}
 
 	public void disable() {
