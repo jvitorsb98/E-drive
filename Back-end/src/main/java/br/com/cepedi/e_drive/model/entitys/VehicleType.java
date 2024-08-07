@@ -25,10 +25,8 @@ public class VehicleType {
     private String name;
 
     @Column(name = "activated", nullable = false)
-    private Boolean activated;
+    private boolean activated;
 
-    @Column(name = "disabled", nullable = false)
-    private Boolean disabled;
 
     public VehicleType(DataRegisterVehicleType dataRegisterVehicleType) {
         this.name = dataRegisterVehicleType.name();
@@ -45,15 +43,9 @@ public class VehicleType {
         this.activated = true;
     }
 
-    public void deactivated() {
+    public void disabled() {
         this.activated = false;
     }
 
-    public void disable() {
-        this.disabled = true;
-    }
 
-    public void enable() {
-        this.disabled = false;
-    }
 }

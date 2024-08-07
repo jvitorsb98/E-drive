@@ -3,8 +3,11 @@ package br.com.cepedi.e_drive.service.vehicle;
 import br.com.cepedi.e_drive.model.entitys.*;
 import br.com.cepedi.e_drive.model.records.vehicle.details.DataVehicleDetails;
 import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
+import br.com.cepedi.e_drive.model.records.vehicle.update.DataUpdateVehicle;
 import br.com.cepedi.e_drive.repository.*;
+import br.com.cepedi.e_drive.service.vehicle.validations.disabled.ValidationDisabledVehicle;
 import br.com.cepedi.e_drive.service.vehicle.validations.register.ValidationRegisterVehicle;
+import br.com.cepedi.e_drive.service.vehicle.validations.update.ValidationUpdateVehicle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +39,12 @@ public class VehicleService {
     @Autowired
     private List<ValidationRegisterVehicle> validationRegisterVehicleList;
 
+    @Autowired
+    private List<ValidationUpdateVehicle> validationUpdateVehicleList;
+
+    @Autowired
+    private List<ValidationDisabledVehicle> validationDisabledVehicleList;
+
     public DataVehicleDetails register(DataRegisterVehicle data) {
         validationRegisterVehicleList.forEach(v -> v.validate(data));
         Model model = modelRepository.getReferenceById(data.modelId());
@@ -44,7 +53,7 @@ public class VehicleService {
         VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.typeId());
         Autonomy autonomy = new Autonomy(data.dataRegisterAutonomy());
         autonomy = autonomyRepository.save(autonomy);
-        Vehicle vehicle = new Vehicle(data.motor(), data.version(), model, category, vehicleType, propulsion, autonomy);
+        Vehicle vehicle = new Vehicle(data.motor(), data.version(), model, category, vehicleType, propulsion, autonomy, data.year());
         vehicle = vehicleRepository.save(vehicle);
         return new DataVehicleDetails(vehicle);
     }
@@ -75,6 +84,31 @@ public class VehicleService {
 
     public Page<DataVehicleDetails> getVehiclesByAutonomy(Long autonomyId, Pageable pageable) {
         return vehicleRepository.findByAutonomyId(autonomyId, pageable).map(DataVehicleDetails::new);
+    }
+
+    public DataVehicleDetails updateVehicle(DataUpdateVehicle data, Long id) {
+        validationUpdateVehicleList.forEach(v -> v.validate(data));
+        Vehicle vehicle = vehicleRepository.getReferenceById(id);
+        Category category = data.categoryId() != null ? categoryRepository.getReferenceById(data.categoryId()) : null;
+        Propulsion propulsion = data.propulsionId() != null ? propulsionRepository.getReferenceById(data.propulsionId()) : null;
+        VehicleType vehicleType = data.typeId() != null ? vehicleTypeRepository.getReferenceById(data.typeId()) : null;
+        Model model = data.modelId() != null ? modelRepository.getReferenceById(data.modelId()) : null;
+        vehicle.updateDataVehicle(data, model, category, vehicleType, propulsion);
+        vehicleRepository.save(vehicle);
+        return new DataVehicleDetails(vehicle);
+    }
+
+    public void disableVehicle(Long id) {
+        validationDisabledVehicleList.forEach(v -> v.validate(id));
+        Vehicle vehicle = vehicleRepository.getReferenceById(id);
+        vehicle.disable();
+        vehicleRepository.save(vehicle);
+    }
+
+    public void enableVehicle(Long id) {
+        Vehicle vehicle = vehicleRepository.getReferenceById(id);
+        vehicle.enable();
+        vehicleRepository.save(vehicle);
     }
 
 

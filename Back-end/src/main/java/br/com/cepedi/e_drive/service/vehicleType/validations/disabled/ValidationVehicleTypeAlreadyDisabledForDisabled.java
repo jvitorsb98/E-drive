@@ -17,7 +17,7 @@ public class ValidationVehicleTypeAlreadyDisabledForDisabled implements VehicleT
     public void validation(Long id) {
         if(vehicleTypeRepository.existsById(id)){
             VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
-            if(vehicleType.getDisabled()){
+            if(!vehicleType.isActivated()){
                 throw new ValidationException("The vehicle type is already disabled");
             }
         }

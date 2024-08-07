@@ -65,9 +65,7 @@ public class VehicleTypeService {
     public void disabled(Long id) {
         vehicleTypeValidatorDisabledList.forEach(v -> v.validation(id));
         VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
-        vehicleType.disable();
+        vehicleType.disabled();
     }
-    public Page<DataVehicleTypeDetails> listAllBrandsAndDisabledTrue(Pageable pageable) {
-        return vehicleTypeRepository.findAllByDisabledTrue(pageable).map(DataVehicleTypeDetails::new);
-    }
+
 }

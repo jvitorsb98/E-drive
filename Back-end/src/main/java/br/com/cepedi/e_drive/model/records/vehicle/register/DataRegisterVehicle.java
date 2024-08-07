@@ -23,11 +23,12 @@ public record DataRegisterVehicle(
         @NotNull(message = "Type cannot be null.")
         Long typeId,
 
-        @NotNull(message = "Brand cannot be null.")
-        Long brandId,
 
         @NotNull(message = "Propulsion cannot be null.")
         Long propulsionId,
+
+        @NotNull(message = "Year cannot be null.")
+        Long year,
 
         @NotNull(message = "autonomy cannot be null.")
         DataRegisterAutonomy dataRegisterAutonomy

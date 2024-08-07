@@ -16,7 +16,7 @@ public class ValidationVehicleTypeAlreadyDisabledForActivated implements Validat
     public void validation(Long id) {
         if(vehicleTypeRepository.existsById(id)){
             VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
-            if(vehicleType.getActivated()){
+            if(!vehicleType.isActivated()){
                 throw new ValidationException("The vehicle type is already disabled");
             }
         }

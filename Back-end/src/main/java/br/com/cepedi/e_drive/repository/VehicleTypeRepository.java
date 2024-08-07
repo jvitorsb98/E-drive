@@ -11,6 +11,4 @@ public interface VehicleTypeRepository extends JpaRepository<VehicleType, Long> 
     @Cacheable(value = "vehicleTypes", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     Page<VehicleType> findAllByActivatedTrue(Pageable pageable);
 
-    @Cacheable(value = "vehicleTypes", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
-    Page<VehicleType> findAllByDisabledTrue(Pageable pageable);
 }

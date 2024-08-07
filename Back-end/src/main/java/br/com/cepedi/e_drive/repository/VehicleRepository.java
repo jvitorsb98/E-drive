@@ -23,7 +23,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     @Query("SELECT v FROM Vehicle v WHERE v.type.id = :typeId")
     Page<Vehicle> findByTypeId(@Param("typeId") Long typeId, Pageable pageable);
 
-    @Query("SELECT v FROM Vehicle v WHERE v.brand.id = :brandId")
+    @Query("SELECT v FROM Vehicle v JOIN v.model m JOIN m.brand b WHERE b.id = :brandId")
     Page<Vehicle> findByBrandId(@Param("brandId") Long brandId, Pageable pageable);
 
     @Query("SELECT v FROM Vehicle v WHERE v.propulsion.id = :propulsionId")

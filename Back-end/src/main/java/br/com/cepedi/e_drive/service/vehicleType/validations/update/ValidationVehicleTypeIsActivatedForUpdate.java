@@ -17,7 +17,7 @@ public class ValidationVehicleTypeIsActivatedForUpdate implements ValidationVehi
     public void validation(DataUpdateVehicleType data) {
         if (vehicleTypeRepository.existsById(data.id())) {
             VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.id());
-            if (vehicleType.getActivated()) {
+            if (!vehicleType.isActivated()) {
                 throw new ValidationException("The required vehicle type is disabled");
             }
         }

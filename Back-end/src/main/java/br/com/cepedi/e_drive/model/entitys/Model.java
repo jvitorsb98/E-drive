@@ -21,6 +21,10 @@ public class Model {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "brand_id")
+    private Brand brand;
+
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
