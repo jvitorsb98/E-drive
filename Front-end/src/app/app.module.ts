@@ -6,10 +6,14 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule } from '@angular/common/http';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
+import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
+import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    UserRegistrationFormComponent,
+    UserPasswordModalComponent
   ],
   imports: [
     BrowserModule,
