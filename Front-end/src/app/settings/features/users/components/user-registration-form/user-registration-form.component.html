@@ -1,0 +1,119 @@
+<div class="container col-11 col-md-9" id="form-container">
+  <div class="row gx-5 justify-content-center">
+    <div class="col-md-6">
+      <button routerLink="#" 
+              class="btn"><img 
+              class="seta-voltar" 
+              src="../../../../../../assets/images/voltar.svg"
+              alt="Seta de Volta"></button>
+      <h1>Seus dados pessoais</h1>
+      <form [formGroup]="formUser">
+        <div class="col-md-6" class="form-floating mb-3">
+          <mat-card>
+            <mat-form-field>
+              <mat-label>Nome completo:</mat-label>
+              <input 
+                  type="text" 
+                  name="name" 
+                  matInput 
+                  formControlName="name" 
+                  required 
+                  aria-describedby="Help"
+              />
+              <mat-hint id="Help" class="form-text">O <strong>Usuário</strong> será utilizado para login.</mat-hint>
+              <mat-error *ngIf="formUser.get('name')?.hasError('required') && formUser.get('name')?.touched">O <strong>Usuário</strong> é obrigatório.</mat-error>
+              <mat-error *ngIf="formUser.get('name')?.hasError('minlength') && formUser.get('name')?.touched"> O <strong>nome</strong> deve ter pelo menos 3 caracteres. </mat-error>
+            </mat-form-field>
+          </mat-card>
+        </div>
+        <div class="col-md-6" class="form-floating mb-3">
+          <mat-card>
+            <mat-form-field>
+              <mat-label>Email:</mat-label>
+              <input 
+                  type="text" 
+                  name="email" 
+                  matInput 
+                  formControlName="email"
+                  appEmailPatternValidator
+                  required
+                  aria-describedby="Help"
+              />
+              <mat-hint id="Help" class="form-text">Use seu melhor <strong>e-mail</strong>  para acessar a sua conta</mat-hint>
+              <mat-error *ngIf="formUser.get('email')?.hasError('required') && formUser.get('email')?.touched || formUser.get('email')?.untouched">
+                O <strong>Email</strong> é obrigatório.</mat-error>
+                <mat-error *ngIf="formUser.get('email')?.hasError('invalidEmailPattern') && formUser.get('email')?.touched && !formUser.get('email')?.hasError('required')">
+                  O <strong>Email</strong> é inválido.
+                </mat-error>
+            </mat-form-field>
+          </mat-card>
+        </div>
+        <div class="col-md-6" class="form-floating mb-3">
+          <mat-card>
+            <mat-form-field>
+              <mat-label>Data de nascimento:</mat-label>
+              <input 
+                  matInput 
+                  [matDatepicker]="picker" 
+                  [min]="minDate"
+                  [max]="maxDate"
+                  name="birth"
+                  formControlName="birth" 
+                  readonly 
+                  required
+                  aria-describedby="Help"
+              />
+              <mat-hint id="Help" class="form-text">É para sua segurança. Por isso pedimos sua <strong>data</strong></mat-hint>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker>
+              <mat-datepicker-actions>
+                <button mat-button matDateRangePickerCancel>Cancelar</button>
+                <button mat-raised-button color="primary" matDateRangePickerApply>Confirmar</button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
+              <mat-error>A <strong>Data de Nascimento</strong> é obrigatoria.</mat-error>
+            </mat-form-field>
+          </mat-card>
+        </div>
+        <div class="col-md-12 form-floating mb-3">
+          <mat-card>
+            <div class="form-container">
+              <mat-form-field class="custom-select">
+                <mat-label>Código do país:</mat-label>
+                <input matInput formControlName="countryCode" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCountryChange($event.option.value)">
+                  <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code">
+                    {{ country.name }} ({{ country.code }})
+                  </mat-option>
+                </mat-autocomplete>
+                <mat-hint id="Help" class="form-text">Selecione o <strong>código do país.</strong></mat-hint>
+                <mat-error [ngStyle]="{'white-space': 'nowrap'}" 
+                *ngIf="formUser.get('countryCode')?.hasError('required') 
+                && formUser.get('countryCode')?.touched">O <strong>Código do país</strong> é obrigatório.</mat-error>
+              </mat-form-field>
+        
+              <!-- Telefone celular -->
+              <mat-form-field appearance="fill" class="custom-input">
+                <mat-label>Telefone celular:</mat-label>
+                <input
+                  type="text"
+                  matInput
+                  [placeholder]="selectedCountryCode + ' 11 1234-1234'"
+                  [mask]="getMask()"
+                  formControlName="cellPhone"
+                  required
+                  aria-describedby="Help"
+                />
+                <mat-icon matSuffix>phone</mat-icon>
+                <mat-hint id="Help" class="form-text">Preencha apenas os <strong>números.</strong></mat-hint>
+                <mat-error *ngIf="formUser.get('cellPhone')?.hasError('required')">O <strong>telefone celular</strong> é obrigatório.</mat-error>
+                <mat-error *ngIf="formUser.get('cellPhone')?.hasError('mask')">O <strong>Telefone</strong> é inválido.</mat-error>
+              </mat-form-field>
+            </div>
+          </mat-card>
+        </div>
+         <button class="btn pulse-animation w-100" type="button" [disabled]="!formUser.valid" (click)="saveLocalStorage()">Continuar</button>
+      </form>
+    </div>
+  </div>
+</div>

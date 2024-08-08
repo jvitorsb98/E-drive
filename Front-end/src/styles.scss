@@ -3,5 +3,8 @@
 // Importando Bootstrap
 @import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
+// Importando Bootstrap Icons
+@import '../node_modules/bootstrap-icons/font/bootstrap-icons.min.css';
+
 // Importação do arquivo de variáveis _global.overrides.scss do pacote styles
 @import './styles/_global.overrides.scss';
