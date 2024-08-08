@@ -52,4 +52,6 @@ public class AuthService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
     }
+    
+    
 }
