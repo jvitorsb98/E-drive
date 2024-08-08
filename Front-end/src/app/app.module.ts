@@ -5,9 +5,11 @@ import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
 import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
 import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
+
 
 @NgModule({
   declarations: [
@@ -20,6 +22,8 @@ import { UserPasswordModalComponent } from './settings/features/users/components
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
     AngularMaterialModule
   ],
   providers: [
