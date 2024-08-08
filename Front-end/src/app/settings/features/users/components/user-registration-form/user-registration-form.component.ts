@@ -16,7 +16,6 @@ export class UserRegistrationFormComponent {
 
   formUser!: FormGroup;
   selectedCountryCode: string = '+55';
-  countryCodeControl = new FormControl();
   countries: any[] = [];
   filteredCountries!: Observable<any[]>; // Utilizado para filtrar países
   user: User = new User();
@@ -59,16 +58,15 @@ export class UserRegistrationFormComponent {
         });
 
         // Inicializa filteredCountries após definir countries
-        this.filteredCountries = this.countryCodeControl.valueChanges.pipe(
+        this.filteredCountries = this.formUser.get('countryCode')!.valueChanges.pipe(
           startWith(''),
-          map(value => this.filterCountries(value))
+          map(value => this.filterCountries(value || ''))
         );
       },
       error: (error: any) => {
         console.error('Erro ao buscar dados da API:', error);
       }
     });
-
   }
 
   saveLocalStorage() {
@@ -135,19 +133,28 @@ export class UserRegistrationFormComponent {
 
   // Função para concatenar e armazenar os dados do usuário no Local Storage 
   private concatenateAndStoreUserData(userData: any): void {
-    // Verifica se countryCode está presente antes de desestruturar
+    // Desestrutura o countryCode do userData
     const { countryCode, ...rest } = userData;
 
-    // Concatena o código do país com o telefone
     const cleanedPhone = rest.cellPhone.replace(/\D/g, '');
-    const cellPhoneWithCountryCode = `${countryCode} ${cleanedPhone}`;
 
-    // Atualiza o telefone no objeto e remove o countryCode
-    const updatedUserData = {
-      ...rest,
-      cellPhone: cellPhoneWithCountryCode
-    };
+    if (cleanedPhone.length === 11) {
+      // Formata o telefone 
+      const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '$1 $2-$3');
 
-    this.userService.saveUserData(updatedUserData);
+      // Concatena
+      const cellPhoneWithCountryCode = `${countryCode} ${formattedPhone}`;
+
+      // Atualiza o telefone no objeto e remove o countryCode
+      const updatedUserData = {
+        ...rest,
+        cellPhone: cellPhoneWithCountryCode
+      };
+
+      this.userService.saveUserData(updatedUserData);
+    } else {
+      console.error('Número de telefone inválido.');
+    }
   }
+
 }

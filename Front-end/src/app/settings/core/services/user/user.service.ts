@@ -11,6 +11,7 @@ export class UserService {
 
   private usersUrl!: string;
   private storageKey = 'user';
+  private users: User[] = [];
 
   constructor(private http: HttpClient) {
     // this.usersUrl = `${environment.apiUrl}/users`;
@@ -18,11 +19,14 @@ export class UserService {
 
   // Método para obter todos os usuários reais
   getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.usersUrl);
+    // return this.http.get<User[]>(this.usersUrl);
+    return of(this.users);
   }
 
   addUser(user: User): Observable<User> {
-    return this.http.post<User>(this.usersUrl, user);
+    this.users.push(user);
+      return of(user);
+    // return this.http.post<User>(this.usersUrl, user);
   }
 
   // Metodos para guardar e recuperar dados do usuário no localStorage

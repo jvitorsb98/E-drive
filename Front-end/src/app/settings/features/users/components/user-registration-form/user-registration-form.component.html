@@ -87,7 +87,9 @@
                   </mat-option>
                 </mat-autocomplete>
                 <mat-hint id="Help" class="form-text">Selecione o <strong>código do país.</strong></mat-hint>
-                <mat-error [ngStyle]="{'white-space': 'nowrap'}" *ngIf="formUser.get('countryCode')?.hasError('required') && formUser.get('countryCode')?.touched">O <strong>Código do país</strong> é obrigatório.</mat-error>
+                <mat-error [ngStyle]="{'white-space': 'nowrap'}" 
+                *ngIf="formUser.get('countryCode')?.hasError('required') 
+                && formUser.get('countryCode')?.touched">O <strong>Código do país</strong> é obrigatório.</mat-error>
               </mat-form-field>
         
               <!-- Telefone celular -->

@@ -9,13 +9,21 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
 import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
 import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
+import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
+import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     UserRegistrationFormComponent,
-    UserPasswordModalComponent
+    UserPasswordModalComponent,
+
+    // Diretivas
+    EmailPatternValidatorDirective,
+
+    // Pipes
+    PhoneMaskPipe,
   ],
   imports: [
     BrowserModule,
