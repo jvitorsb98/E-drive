@@ -46,8 +46,8 @@ public class LoginController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DataAuth data) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+    public ResponseEntity<Object> login(@RequestBody @Valid DataAuth data) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         Authentication authentication = manager.authenticate(authenticationToken);
 
         User user = (User) authentication.getPrincipal();
@@ -57,7 +57,7 @@ public class LoginController {
                     .body("User is not activated");
         }
 
-        var tokenJWT = tokenService.generateToken(user);
+        String tokenJWT = tokenService.generateToken(user);
 
         return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }
