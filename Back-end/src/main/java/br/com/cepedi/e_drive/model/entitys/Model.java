@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.model.entitys;
 
 import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
+import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,15 @@ public class Model {
 
     public Model(DataRegisterModel dataRegisterModel) {
         this.name = dataRegisterModel.name();
-        this.activated = dataRegisterModel.activated() != null ? dataRegisterModel.activated() : false;
+        this.activated =  false;
     }
+
+    public void updateDataModel(DataUpdateModel data) {
+        if (data.name() != null) {
+            this.name = data.name();
+        }
+    }
+
 
     public void activated() {
         this.activated = true;
