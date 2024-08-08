@@ -18,8 +18,8 @@ public class ValidationRegisterVehicle_VehicleType_NotDisabled implements Valida
 
     @Override
     public void validate(DataRegisterVehicle data) {
-        if (vehicleTypeRepository.existsById(data.modelId())) {
-            VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.modelId());
+        if (vehicleTypeRepository.existsById(data.typeId())) {
+            VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.typeId());
             if(!vehicleType.isActivated()){
                 throw new ValidationException("The provided vehicle type id is disabled");
             }

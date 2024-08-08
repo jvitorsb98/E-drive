@@ -16,8 +16,8 @@ public class ValidationRegisterVehicle_Category_NotDisabled implements Validatio
 
     @Override
     public void validate(DataRegisterVehicle data) {
-        if (categoryRepository.existsById(data.modelId())) {
-            Category category = categoryRepository.getReferenceById(data.modelId());
+        if (categoryRepository.existsById(data.categoryId())) {
+            Category category = categoryRepository.getReferenceById(data.categoryId());
             if(!category.getActivated()){
                 throw new ValidationException("The provided category id is disabled");
             }

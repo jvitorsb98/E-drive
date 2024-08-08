@@ -14,7 +14,7 @@ public class ValidationRegisterVehicle_VehicleTypeExists implements ValidationRe
 
     @Override
     public void validate(DataRegisterVehicle data) {
-        if(!vehicleTypeRepository.existsById(data.modelId())){
+        if(!vehicleTypeRepository.existsById(data.typeId())){
             throw new ValidationException("The provided vehicle type id does not exist");
         }
     }

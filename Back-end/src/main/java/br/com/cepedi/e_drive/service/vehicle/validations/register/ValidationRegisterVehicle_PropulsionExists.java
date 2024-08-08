@@ -15,7 +15,7 @@ public class ValidationRegisterVehicle_PropulsionExists implements ValidationReg
 
     @Override
     public void validate(DataRegisterVehicle data) {
-        if(!propulsionRepository.existsById(data.modelId())){
+        if(!propulsionRepository.existsById(data.propulsionId())){
             throw new ValidationException("The provided propulsion id does not exist");
         }
     }

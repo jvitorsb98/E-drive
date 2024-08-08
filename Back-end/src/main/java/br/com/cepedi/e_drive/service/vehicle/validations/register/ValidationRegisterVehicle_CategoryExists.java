@@ -15,7 +15,7 @@ public class ValidationRegisterVehicle_CategoryExists implements ValidationRegis
 
     @Override
     public void validate(DataRegisterVehicle data) {
-        if(!categoryRepository.existsById(data.modelId())){
+        if(!categoryRepository.existsById(data.categoryId())){
             throw new ValidationException("The provided category id does not exist");
         }
     }

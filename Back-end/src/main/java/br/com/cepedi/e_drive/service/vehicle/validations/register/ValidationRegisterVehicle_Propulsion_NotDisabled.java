@@ -19,8 +19,8 @@ public class ValidationRegisterVehicle_Propulsion_NotDisabled implements Validat
 
     @Override
     public void validate(DataRegisterVehicle data) {
-        if (propulsionRepository.existsById(data.modelId())) {
-            Propulsion propulsion = propulsionRepository.getReferenceById(data.modelId());
+        if (propulsionRepository.existsById(data.propulsionId())) {
+            Propulsion propulsion = propulsionRepository.getReferenceById(data.propulsionId());
             if(!propulsion.getActivated()){
                 throw new ValidationException("The provided propulsion id is disabled");
             }
