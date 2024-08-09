@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
 import { User } from '../../../../core/models/User';
@@ -29,16 +29,20 @@ export class UserRegistrationFormComponent {
     private countryService: CountryService,
     public dialog: MatDialog,
     private formBuilder: FormBuilder) {
+    this.buildForm();
   }
 
-  buildForm(_countries: { code: string }[]) {
+  buildForm(_countries: { code: string }[] = []) {
     this.userForm = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.minLength(2)]),
       email: new FormControl(null, [Validators.required, Validators.email]),
       birth: new FormControl(null, Validators.required),
       cellPhone: new FormControl(null, Validators.required),
       countryCode: new FormControl(null, Validators.required)
-    }, { validators: countryCodeValidator(_countries) });
+    });
+    if (_countries.length > 0) {
+      this.userForm.setValidators(countryCodeValidator(_countries));
+    }
   }
 
   ngOnInit() {

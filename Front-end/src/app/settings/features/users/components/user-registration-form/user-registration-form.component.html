@@ -14,16 +14,18 @@
             <mat-form-field>
               <mat-label>Nome completo:</mat-label>
               <input 
-                  type="text" 
-                  name="name" 
-                  matInput 
-                  formControlName="name" 
-                  required 
-                  aria-describedby="Help"
+                type="text" 
+                name="name" 
+                matInput 
+                formControlName="name" 
+                aria-describedby="Help"
+                required
               />
               <mat-hint id="Help" class="form-text">O <strong>Usuário</strong> será utilizado para login.</mat-hint>
               <mat-error *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.touched">O <strong>Usuário</strong> é obrigatório.</mat-error>
-              <mat-error *ngIf="userForm.get('name')?.hasError('minlength') && userForm.get('name')?.touched && userForm.get('name')?.invalid">O <strong>nome</strong> deve ter pelo menos 3 caracteres.</mat-error>
+              <mat-error *ngIf="userForm.get('name')?.touched && userForm.get('name')?.hasError('minlength')">
+                O <strong>nome</strong> deve ter pelo menos {{ userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.
+              </mat-error>
             </mat-form-field>
           </mat-card>
         </div>
