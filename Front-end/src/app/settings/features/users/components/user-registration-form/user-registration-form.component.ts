@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { map, Observable, startWith } from 'rxjs';
+import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
 import { User } from '../../../../core/models/User';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserPasswordModalComponent } from '../user-password-modal/user-password-modal.component';
+import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
 
 @Component({
   selector: 'app-user-registration-form',
@@ -14,8 +15,9 @@ import { UserPasswordModalComponent } from '../user-password-modal/user-password
 })
 export class UserRegistrationFormComponent {
 
-  formUser!: FormGroup;
+  userForm!: FormGroup;
   selectedCountryCode: string = '+55';
+  phoneType: string = 'MOBILE';
   countries: any[] = [];
   filteredCountries!: Observable<any[]>; // Utilizado para filtrar países
   user: User = new User();
@@ -29,19 +31,18 @@ export class UserRegistrationFormComponent {
     private formBuilder: FormBuilder) {
   }
 
-  buildForm() {
-    this.formUser = this.formBuilder.group({
-      name: new FormControl(null, [Validators.required, Validators.minLength(3)]),
+  buildForm(_countries: { code: string }[]) {
+    this.userForm = this.formBuilder.group({
+      name: new FormControl(null, [Validators.required, Validators.minLength(2)]),
       email: new FormControl(null, [Validators.required, Validators.email]),
-      birth: new FormControl(null, [Validators.required]),
-      cellPhone: new FormControl(null, [Validators.required]),
-      countryCode: new FormControl(null, [Validators.required]),
-    });
+      birth: new FormControl(null, Validators.required),
+      cellPhone: new FormControl(null, Validators.required),
+      countryCode: new FormControl(null, Validators.required)
+    }, { validators: countryCodeValidator(_countries) });
   }
 
   ngOnInit() {
     this.setMinAndMaxDate();
-    this.buildForm();
 
     this.countryService.getCountries().subscribe({
       next: (data: any[]) => {
@@ -57,9 +58,13 @@ export class UserRegistrationFormComponent {
           };
         });
 
+        // Inicializa o formulário após obter a lista de países
+        this.buildForm(this.countries);
+
         // Inicializa filteredCountries após definir countries
-        this.filteredCountries = this.formUser.get('countryCode')!.valueChanges.pipe(
+        this.filteredCountries = this.userForm.get('countryCode')!.valueChanges.pipe(
           startWith(''),
+          distinctUntilChanged(),
           map(value => this.filterCountries(value || ''))
         );
       },
@@ -70,11 +75,11 @@ export class UserRegistrationFormComponent {
   }
 
   saveLocalStorage() {
-    if (this.formUser.valid) {
-      const formData = this.formUser.value;
+    if (this.userForm.valid) {
+      const formData = this.userForm.value;
       this.concatenateAndStoreUserData(formData);
       this.openModalPasswordUser();
-      this.formUser.reset();
+      this.userForm.reset();
     } else {
       console.log('Formulário inválido');
     }
@@ -95,8 +100,13 @@ export class UserRegistrationFormComponent {
   }
 
   onCountryChange(code: string) {
-    this.selectedCountryCode = code;
-    this.formUser.get('countryCode')?.setValue(code);
+    const country = this.countries.find(c => c.code === code);
+    if (country) {
+      this.selectedCountryCode = country.code;
+      this.userForm.get('countryCode')?.setValue(country.code);
+    } else {
+      console.error('Código do país não encontrado.');
+    }
   }
 
   // Função para validar a data de nascimento do usuário
@@ -104,13 +114,6 @@ export class UserRegistrationFormComponent {
     const date = new Date();
     this.minDate = new Date(date.getFullYear() - 100, 0, 1);
     this.maxDate = date;
-  }
-
-  getMask(): string {
-    if (this.selectedCountryCode === '+55') {
-      return '00 00000-0000';
-    }
-    return '00 00000-0000'; // Máscara padrão
   }
 
   // Função para abrir o modal de visualização de usuário
@@ -134,16 +137,19 @@ export class UserRegistrationFormComponent {
   // Função para concatenar e armazenar os dados do usuário no Local Storage 
   private concatenateAndStoreUserData(userData: any): void {
     // Desestrutura o countryCode do userData
-    const { countryCode, ...rest } = userData;
+    let { countryCode, ...rest } = userData;
+
+    // Remove o sinal de mais se já estiver presente no countryCode
+    countryCode = countryCode.replace(/^\+/, '');
 
     const cleanedPhone = rest.cellPhone.replace(/\D/g, '');
 
     if (cleanedPhone.length === 11) {
       // Formata o telefone 
-      const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '$1 $2-$3');
+      const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
 
-      // Concatena
-      const cellPhoneWithCountryCode = `${countryCode} ${formattedPhone}`;
+      // Concatena com o código do país
+      const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
 
       // Atualiza o telefone no objeto e remove o countryCode
       const updatedUserData = {
