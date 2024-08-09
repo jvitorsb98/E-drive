@@ -1,60 +1,84 @@
 package br.com.cepedi.e_drive.model.entitys;
 
+import br.com.cepedi.e_drive.model.entitys.VehicleType;
+import br.com.cepedi.e_drive.model.records.vehicleType.input.DataRegisterVehicleType;
+import br.com.cepedi.e_drive.model.records.vehicleType.input.DataUpdateVehicleType;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@TestMethodOrder(MethodOrderer.Random.class)
-@DisplayName("Test entity VehicleType")
 public class VehicleTypeTest {
 
-    private Faker faker;
+    private final Faker faker = new Faker();
     private VehicleType vehicleType;
 
     @BeforeEach
-    void setUp() {
-        faker = new Faker();
-
-        // Criação da instância de VehicleType
-        vehicleType = new VehicleType(
-                null, // ID gerado automaticamente
-                faker.company().name(),
-                faker.bool().bool()
-        );
+    public void setUp() {
+        vehicleType = new VehicleType();
     }
 
     @Test
-    @DisplayName("Test creation of VehicleType entity")
-    void testVehicleTypeCreation() {
-        assertNotNull(vehicleType);
-        assertNotNull(vehicleType.getName());
-        assertNotNull(vehicleType.isActivated());
+    @DisplayName("Should activate the vehicle type")
+    public void testActivate() {
+        // Arrange
+        vehicleType.disabled(); // Desativa o veículo tipo primeiro
+
+        // Act
+        vehicleType.activated(); // Ativa o veículo tipo
+
+        // Assert
+        assertTrue(vehicleType.isActivated(), "O tipo de veículo deve estar ativado.");
     }
 
     @Test
-    @DisplayName("Test updating VehicleType entity")
-    void testVehicleTypeUpdate() {
-        vehicleType.setName(faker.company().name());
-        vehicleType.setActivated(faker.bool().bool());
+    @DisplayName("Should deactivate the vehicle type")
+    public void testDeactivate() {
+        // Arrange
+        vehicleType.activated(); // Ativa o veículo tipo primeiro
 
-        assertNotNull(vehicleType.getName());
-        assertNotNull(vehicleType.isActivated());
+        // Act
+        vehicleType.disabled(); // Desativa o veículo tipo
+
+        // Assert
+        assertFalse(vehicleType.isActivated(), "O tipo de veículo deve estar desativado.");
     }
 
     @Test
-    @DisplayName("Test activating and deactivating VehicleType entity")
-    void testVehicleTypeActivation() {
-        vehicleType.setActivated(false);
-        assertFalse(vehicleType.isActivated());
+    @DisplayName("Should update vehicle type data with new values")
+    public void testUpdateDataVehicleType() {
+        // Arrange
+        String newName = faker.lorem().word(); // Gera um nome aleatório
 
-        vehicleType.setActivated(true);
-        assertTrue(vehicleType.isActivated());
+        DataUpdateVehicleType data = mock(DataUpdateVehicleType.class);
+        when(data.name()).thenReturn(newName);
+
+        // Act
+        vehicleType.updateDataVehicleType(data);
+
+        // Assert
+        assertEquals(newName, vehicleType.getName(), "O nome do tipo de veículo deve ser atualizado.");
     }
 
+    @Test
+    @DisplayName("Should initialize vehicle type from registration data")
+    public void testConstructorFromDataRegisterVehicleType() {
+        // Arrange
+        String name = faker.lorem().word(); // Gera um nome aleatório
+        boolean activated = faker.bool().bool(); // Gera um valor booleano aleatório
 
+        DataRegisterVehicleType data = mock(DataRegisterVehicleType.class);
+        when(data.name()).thenReturn(name);
+        when(data.activated()).thenReturn(activated);
+
+        // Act
+        VehicleType vehicleType = new VehicleType(data);
+
+        // Assert
+        assertEquals(name, vehicleType.getName(), "O nome do tipo de veículo deve ser inicializado corretamente.");
+        assertEquals(activated, vehicleType.isActivated(), "O tipo de veículo deve estar ativado ou desativado corretamente.");
+    }
 }
+
