@@ -7,6 +7,7 @@ import { CountryService } from '../../../../core/services/apis/country/country.s
 import { MatDialog } from '@angular/material/dialog';
 import { UserPasswordModalComponent } from '../user-password-modal/user-password-modal.component';
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
+import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
 @Component({
   selector: 'app-user-registration-form',
@@ -26,6 +27,7 @@ export class UserRegistrationFormComponent {
   maxDate: Date | null = null;
 
   constructor(private userService: UserService,
+    private userDataService: UserDataService,
     private countryService: CountryService,
     public dialog: MatDialog,
     private formBuilder: FormBuilder) {
@@ -81,7 +83,7 @@ export class UserRegistrationFormComponent {
   saveLocalStorage() {
     if (this.userForm.valid) {
       const formData = this.userForm.value;
-      this.concatenateAndStoreUserData(formData);
+      this.userDataService.formatAndStoreUserData(formData);
       this.openModalPasswordUser();
       this.userForm.reset();
     } else {
@@ -139,32 +141,32 @@ export class UserRegistrationFormComponent {
   }
 
   // Função para concatenar e armazenar os dados do usuário no Local Storage 
-  private concatenateAndStoreUserData(userData: any): void {
-    // Desestrutura o countryCode do userData
-    let { countryCode, ...rest } = userData;
+  // private concatenateAndStoreUserData(userData: any): void {
+  //   // Desestrutura o countryCode do userData
+  //   let { countryCode, ...rest } = userData;
 
-    // Remove o sinal de mais se já estiver presente no countryCode
-    countryCode = countryCode.replace(/^\+/, '');
+  //   // Remove o sinal de mais se já estiver presente no countryCode
+  //   countryCode = countryCode.replace(/^\+/, '');
 
-    const cleanedPhone = rest.cellPhone.replace(/\D/g, '');
+  //   const cleanedPhone = rest.cellPhone.replace(/\D/g, '');
 
-    if (cleanedPhone.length === 11) {
-      // Formata o telefone 
-      const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  //   if (cleanedPhone.length === 11) {
+  //     // Formata o telefone 
+  //     const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
 
-      // Concatena com o código do país
-      const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
+  //     // Concatena com o código do país
+  //     const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
 
-      // Atualiza o telefone no objeto e remove o countryCode
-      const updatedUserData = {
-        ...rest,
-        cellPhone: cellPhoneWithCountryCode
-      };
+  //     // Atualiza o telefone no objeto e remove o countryCode
+  //     const updatedUserData = {
+  //       ...rest,
+  //       cellPhone: cellPhoneWithCountryCode
+  //     };
 
-      this.userService.saveUserData(updatedUserData);
-    } else {
-      console.error('Número de telefone inválido.');
-    }
-  }
+  //     this.userService.saveUserData(updatedUserData);
+  //   } else {
+  //     console.error('Número de telefone inválido.');
+  //   }
+  // }
 
 }

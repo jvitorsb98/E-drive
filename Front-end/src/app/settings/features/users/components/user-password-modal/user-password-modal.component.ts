@@ -4,6 +4,7 @@ import { UserService } from '../../../../core/services/user/user.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { isPlatformBrowser } from '@angular/common';
 import Swal from 'sweetalert2';
+import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -17,6 +18,7 @@ export class UserPasswordModalComponent {
 
   constructor(
     private userService: UserService,
+    private userDataService: UserDataService,
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
@@ -44,8 +46,8 @@ export class UserPasswordModalComponent {
 
   saveUser(): void {
     if (this.formUser.valid) {
-      const storedUserData = this.userService.getUserData();
-      this.userService.clearUserData();
+      const storedUserData = this.userDataService.getUserData();
+      this.userDataService.clearUserData();
 
       if (storedUserData) {
 
@@ -53,10 +55,10 @@ export class UserPasswordModalComponent {
 
         this.userService.addUser(storedUserData).subscribe(newUser => {
 
-          console.log('Local Storage:', this.userService.getUserData());
+          console.log('Local Storage:', this.userDataService.getUserData());
           console.log('Usuário cadastrado', newUser);
 
-          this.userService.clearUserData();
+          this.userDataService.clearUserData();
           this.formUser.reset();
           this.closeModal();
 
