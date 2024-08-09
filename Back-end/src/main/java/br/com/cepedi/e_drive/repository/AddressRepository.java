@@ -11,8 +11,7 @@ import java.util.Optional;
 
 public interface AddressRepository extends JpaRepository<Address, Long> {
 
-
-    @Query("SELECT a FROM Address a WHERE a.userId = :userId AND a.activated")
+    @Query("SELECT a FROM Address a WHERE a.user.id = :userId AND a.activated = true")
     Page<Address> findByUserIdAndActivated(@Param("userId") Long userId, Pageable pageable);
 
 }
