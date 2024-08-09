@@ -165,5 +165,26 @@ public class BrandController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping("/{id}")
+    @Transactional
+    @Operation(summary = "Disable brand by ID", method = "DELETE", description = "Disables a brand by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Brand disabled successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Brand not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Void> disable(
+            @Parameter(description = "ID of the brand to be disabled", required = true)
+            @PathVariable Long id
+    ) {
+        LOGGER.info("Disabling brand with id: {}", id);
+        brandService.disabled(id);
+        LOGGER.info("Brand disabled successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }

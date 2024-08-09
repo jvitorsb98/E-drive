@@ -6,6 +6,7 @@ import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
 import br.com.cepedi.e_drive.model.records.brand.input.DataUpdateBrand;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import br.com.cepedi.e_drive.service.brand.validations.activated.ValidationBrandActivated;
+import br.com.cepedi.e_drive.service.brand.validations.disabled.BrandValidatorDisabled;
 import br.com.cepedi.e_drive.service.brand.validations.update.ValidationBrandUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +26,9 @@ public class BrandService {
 
     @Autowired
     private List<ValidationBrandActivated> brandValidatorActivatedList;
+
+    @Autowired
+    private List<BrandValidatorDisabled> brandValidatorDisabledList;
 
     public DataBrandDetails register(DataRegisterBrand data) {
         Brand brand = new Brand(data);
@@ -54,11 +58,17 @@ public class BrandService {
         brand.activated();
     }
 
-
-
     public Page<DataBrandDetails> lisAllBrandsActivatedTrue(Pageable pageable) {
         return brandRepository.findAllByActivatedTrue(pageable).map(DataBrandDetails::new);
     }
 
+    public void disabled(Long id) {
+        brandValidatorDisabledList.forEach(v -> v.validation(id));
+        Brand brand = brandRepository.getReferenceById(id);
+        brand.disable();
+    }
 
+    public Page<DataBrandDetails> listAllBrandsAndDisabledTrue(Pageable pageable) {
+        return brandRepository.findAllByDisabledTrue(pageable).map(DataBrandDetails::new);
+    }
 }

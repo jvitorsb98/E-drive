@@ -7,13 +7,15 @@ import java.util.List;
 public record DataBrandDetails(
         Long id,
         String name,
-        Boolean activated
+        Boolean activated,
+        Boolean disabled
 ) {
     public DataBrandDetails(Brand brand) {
         this(
                 brand.getId(),
                 brand.getName(),
-                brand.getActivated()
+                brand.getActivated(),
+                brand.getDisabled()
         );
     }
 }
