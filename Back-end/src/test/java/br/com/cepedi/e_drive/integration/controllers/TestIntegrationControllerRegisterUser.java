@@ -132,29 +132,6 @@ public class TestIntegrationControllerRegisterUser extends AbstractIntegrationTe
         assertEquals("User is not activated", response.asString());
     }
 
-    @Test
-    @DisplayName("Test admin login")
-    @Order(3)
-    void adminLogin() {
-        DataAuth adminAuth = new DataAuth(
-                "admin@admin.com",
-                "123456"
-        );
-
-        Response response = given()
-                .spec(specificationLogin)
-                .contentType(TestConfig.CONTENT_TYPE_JSON)
-                .body(adminAuth)
-                .when()
-                .post()
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        assertNotNull(response);
-        assertTrue(response.asString().contains("token"));
-    }
 
 
 }

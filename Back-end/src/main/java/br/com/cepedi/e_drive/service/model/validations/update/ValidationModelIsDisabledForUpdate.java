@@ -17,7 +17,7 @@ public class ValidationModelIsDisabledForUpdate implements ValidationModelUpdate
     public void validation(DataUpdateModel data) {
         if (modelRepository.existsById(data.id())) {
             Model model = modelRepository.getReferenceById(data.id());
-            if (model.getDisabled()) {
+            if (!model.getActivated()) {
                 throw new ValidationException("The required model is disabled");
             }
         }

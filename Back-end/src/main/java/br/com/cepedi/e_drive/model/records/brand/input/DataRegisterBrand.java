@@ -4,8 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record DataRegisterBrand(
         @NotBlank(message = "Name cannot be blank")
-        String name,
+        String name
 
-        Boolean activated
 ) {
 }

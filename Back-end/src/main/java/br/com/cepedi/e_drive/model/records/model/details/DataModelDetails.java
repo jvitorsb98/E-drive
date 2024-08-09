@@ -6,20 +6,16 @@ import jakarta.validation.constraints.Size;
 
 public record DataModelDetails(
 
-        @NotNull(message = "Identifier cannot be null.")
         Long id,
 
-        @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters.")
         String name,
 
-        @NotNull(message = "Activation status must be specified.")
-        Boolean activated,
+        Boolean activated
 
-        @NotNull(message = "Disabled status must be specified.")
-        Boolean disabled
+
 
 ) {
     public DataModelDetails(Model model) {
-        this(model.getId(), model.getName(), model.getActivated(), model.getDisabled());
+        this(model.getId(), model.getName(), model.getActivated());
     }
 }

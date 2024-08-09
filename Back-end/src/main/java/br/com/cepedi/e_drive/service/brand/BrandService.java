@@ -65,10 +65,8 @@ public class BrandService {
     public void disabled(Long id) {
         brandValidatorDisabledList.forEach(v -> v.validation(id));
         Brand brand = brandRepository.getReferenceById(id);
-        brand.disable();
+        brand.deactivated();
     }
 
-    public Page<DataBrandDetails> listAllBrandsAndDisabledTrue(Pageable pageable) {
-        return brandRepository.findAllByDisabledTrue(pageable).map(DataBrandDetails::new);
-    }
+
 }

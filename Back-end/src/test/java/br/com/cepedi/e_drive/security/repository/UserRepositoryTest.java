@@ -2,11 +2,7 @@ package br.com.cepedi.e_drive.security.repository;
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import com.github.javafaker.Faker;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -24,13 +20,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepository; // Removido "static" para permitir a injeção de dependência
 
     private Faker faker;
 
     @BeforeEach
     public void setUp() {
         faker = new Faker();
+        userRepository.deleteAll();
+
+    }
+
+    @AfterEach
+    public void tearDown() {
+        userRepository.deleteAll();
     }
 
     @Test
@@ -69,6 +72,7 @@ public class UserRepositoryTest {
         // Verificar que o usuário não foi encontrado
         assertThat(foundUser).isNull();
     }
+
     @Test
     @Order(3)
     public void testUpdateUser() {
@@ -97,7 +101,6 @@ public class UserRepositoryTest {
         assertThat(foundUser).isNotNull();
         assertThat(foundUser.getName()).isEqualTo(newName);
     }
-
 
     @Test
     @Order(4)
@@ -146,5 +149,5 @@ public class UserRepositoryTest {
         // Verificar se vários usuários foram salvos corretamente
         assertThat(userRepository.findAll()).hasSize(5);
     }
-}
 
+}

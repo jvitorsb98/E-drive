@@ -16,7 +16,7 @@ public class ValidationBrandAlreadyDisabledForDisabled implements BrandValidator
     public void validation(Long id) {
         if(brandRepository.existsById(id)){
             Brand brand = brandRepository.getReferenceById(id);
-            if(brand.getDisabled()){
+            if(!brand.getActivated()){
                 throw new ValidationException("The brand is already disabled");
             }
         }

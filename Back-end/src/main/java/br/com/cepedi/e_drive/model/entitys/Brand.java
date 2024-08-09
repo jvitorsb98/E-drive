@@ -27,12 +27,10 @@ public class Brand {
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
-    @Column(name = "disabled", nullable = false)
-    private Boolean disabled;
 
     public Brand(DataRegisterBrand dataRegisterBrand) {
         this.name = dataRegisterBrand.name();
-        this.activated = dataRegisterBrand.activated() != null ? dataRegisterBrand.activated() : false;
+        this.activated = true;
     }
 
     public void updateDataBrand(DataUpdateBrand data) {
@@ -49,11 +47,5 @@ public class Brand {
         this.activated = false;
     }
 
-    public void disable() {
-        this.disabled = true;
-    }
 
-    public void enable() {
-        this.disabled = false;
-    }
 }

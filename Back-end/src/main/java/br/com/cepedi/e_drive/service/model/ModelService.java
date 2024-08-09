@@ -1,12 +1,15 @@
 package br.com.cepedi.e_drive.service.model;
 
+import br.com.cepedi.e_drive.model.entitys.Brand;
 import br.com.cepedi.e_drive.model.entitys.Model;
 import br.com.cepedi.e_drive.model.records.model.details.DataModelDetails;
 import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
+import br.com.cepedi.e_drive.repository.BrandRepository;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import br.com.cepedi.e_drive.service.model.validations.activated.ValidationModelActivated;
 import br.com.cepedi.e_drive.service.model.validations.disabled.ModelValidatorDisabled;
+import br.com.cepedi.e_drive.service.model.validations.register.ValidationRegisterModel;
 import br.com.cepedi.e_drive.service.model.validations.update.ValidationModelUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +25,9 @@ public class ModelService {
     private ModelRepository modelRepository;
 
     @Autowired
+    private BrandRepository brandRepository;
+
+    @Autowired
     private List<ValidationModelUpdate> modelValidationUpdateList;
 
     @Autowired
@@ -30,8 +36,13 @@ public class ModelService {
     @Autowired
     private List<ModelValidatorDisabled> modelValidatorDisabledList;
 
+    @Autowired
+    private List<ValidationRegisterModel> validationRegisterModelList;
+
     public DataModelDetails register(DataRegisterModel data) {
-        Model model = new Model(data);
+        validationRegisterModelList.forEach(v -> v.validation(data));
+        Brand brand = brandRepository.getReferenceById(data.idBrand());
+        Model model = new Model(data,brand);
         model = modelRepository.save(model);
         return new DataModelDetails(model);
     }
@@ -64,11 +75,9 @@ public class ModelService {
     public void disable(Long id) {
         modelValidatorDisabledList.forEach(v -> v.validation(id));
         Model model = modelRepository.getReferenceById(id);
-        model.disabled();
+        model.deactivated();
     }
 
-    public Page<DataModelDetails> listAllModelsAndDisabledTrue(Pageable pageable) {
-        return modelRepository.findAllByDisabledTrue(pageable).map(DataModelDetails::new);
-    }
+
 
 }

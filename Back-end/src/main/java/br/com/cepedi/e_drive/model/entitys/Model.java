@@ -30,12 +30,11 @@ public class Model {
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
-    @Column(name = "disabled", nullable = false)
-    private Boolean disabled;
 
-    public Model(DataRegisterModel dataRegisterModel) {
+    public Model(DataRegisterModel dataRegisterModel, Brand brand) {
         this.name = dataRegisterModel.name();
-        this.activated =  false;
+        this.brand = brand;
+        this.activated =  true;
     }
 
     public void updateDataModel(DataUpdateModel data) {
@@ -53,11 +52,4 @@ public class Model {
         this.activated = false;
     }
 
-    public void disabled() {
-        this.disabled = true;
-    }
-
-    public void enabled() {
-        this.disabled = false;
-    }
 }

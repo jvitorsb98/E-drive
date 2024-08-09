@@ -16,7 +16,7 @@ public class ValidationModelAlreadyDisabledForDisabled implements ModelValidator
     public void validation(Long id) {
         if (modelRepository.existsById(id)) {
             Model model = modelRepository.getReferenceById(id);
-            if (model.getDisabled()) {
+            if (!model.getActivated()) {
                 throw new ValidationException("The model is already disabled");
             }
         }
