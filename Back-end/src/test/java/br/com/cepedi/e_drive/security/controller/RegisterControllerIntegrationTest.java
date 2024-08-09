@@ -44,7 +44,7 @@ public class RegisterControllerIntegrationTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
+    
 
     @Test
     void testRegisterUser() throws Exception {
@@ -82,5 +82,73 @@ public class RegisterControllerIntegrationTest {
                 eq("sample-token")
         );
     }
+    
+    
+    @Test
+    void testActivateAccount() throws Exception {
+        String token = "valid-token";
+        
+        when(tokenService.isValidToken(token)).thenReturn(true);
+        doNothing().when(authService).activateUser(token);
+        doNothing().when(tokenService).revokeToken(token);
+
+        MvcResult result = mockMvc.perform(get("/auth/activate")
+                .param("token", token))
+                .andExpect(status().isOk())
+                .andExpect(content().string("User account activated successfully"))
+                .andReturn();
+
+        System.out.println("Response: " + result.getResponse().getContentAsString());
+
+        verify(authService, times(1)).activateUser(token);
+        verify(tokenService, times(1)).revokeToken(token);
+    }
+    
+    @Test
+    void testActivateAccountWithInvalidToken() throws Exception {
+        String token = "invalid-token";
+        
+        // Simula a validação do token como falso
+        when(tokenService.isValidToken(token)).thenReturn(false);
+
+        // Executa a requisição GET para o endpoint /auth/activate
+        MvcResult result = mockMvc.perform(get("/auth/activate")
+                .param("token", token))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Token invalid"))
+                .andReturn();
+
+        System.out.println("Response: " + result.getResponse().getContentAsString());
+
+        // Verifica que os métodos activateUser e revokeToken não foram chamados
+        verify(authService, times(0)).activateUser(token);
+        verify(tokenService, times(0)).revokeToken(token);
+    }
+    
+    @Test
+    void testActivateAccountWithException() throws Exception {
+        String token = "valid-token";
+
+        // Simula a validação do token como verdadeiro
+        when(tokenService.isValidToken(token)).thenReturn(true);
+        
+        // Simula a ativação do usuário lançando uma exceção
+        doThrow(new RuntimeException("Activation error")).when(authService).activateUser(token);
+
+        // Executa a requisição GET para o endpoint /auth/activate
+        MvcResult result = mockMvc.perform(get("/auth/activate")
+                .param("token", token))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().string("Failed to activate user account."))
+                .andReturn();
+
+        System.out.println("Response: " + result.getResponse().getContentAsString());
+
+        // Verifica que o método revokeToken não foi chamado
+        verify(tokenService, times(0)).revokeToken(token);
+    }
+
+
+
 }
 
