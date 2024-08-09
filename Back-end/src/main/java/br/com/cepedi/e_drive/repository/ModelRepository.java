@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ModelRepository extends JpaRepository<Model,Long> {
     Page<Model> findAllByActivatedTrue(Pageable pageable);
+    Page<Model> findAllByDisabledTrue(Pageable pageable);
 }

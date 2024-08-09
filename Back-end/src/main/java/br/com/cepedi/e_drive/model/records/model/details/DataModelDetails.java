@@ -13,10 +13,13 @@ public record DataModelDetails(
         String name,
 
         @NotNull(message = "Activation status must be specified.")
-        Boolean activated
+        Boolean activated,
+
+        @NotNull(message = "Disabled status must be specified.")
+        Boolean disabled
 
 ) {
     public DataModelDetails(Model model) {
-        this(model.getId(), model.getName(), model.getActivated());
+        this(model.getId(), model.getName(), model.getActivated(), model.getDisabled());
     }
 }

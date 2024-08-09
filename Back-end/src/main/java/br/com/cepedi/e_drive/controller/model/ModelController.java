@@ -163,4 +163,28 @@ public class ModelController {
         LOGGER.info("Model activated successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    @Operation(summary = "Disable model by ID", method = "DELETE", description = "Disables a model by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Model disabled successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Model not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Void> disable(
+            @Parameter(description = "ID of the model to be disabled", required = true)
+            @PathVariable Long id
+    ) {
+        LOGGER.info("Disabling model with id: {}", id);
+        modelService.disable(id);
+        LOGGER.info("Model disabled successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
 }

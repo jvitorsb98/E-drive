@@ -12,4 +12,5 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
 
     @Cacheable(value = "brands", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     Page<Brand> findAllByActivatedTrue(Pageable pageable);
+    Page<Brand> findAllByDisabledTrue(Pageable pageable);
 }
