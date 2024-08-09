@@ -30,8 +30,9 @@ public class VehicleType {
 
     public VehicleType(DataRegisterVehicleType dataRegisterVehicleType) {
         this.name = dataRegisterVehicleType.name();
-        this.activated = dataRegisterVehicleType.activated() != null ? dataRegisterVehicleType.activated() : false;
+        this.activated = Boolean.TRUE.equals(dataRegisterVehicleType.activated()); 
     }
+
 
     public void updateDataVehicleType(DataUpdateVehicleType data) {
         if (data.name() != null) {

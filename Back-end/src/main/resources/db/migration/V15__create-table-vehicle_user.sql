@@ -8,5 +8,5 @@ CREATE TABLE vehicle_users (
     autonomy_electric_mode DECIMAL(8, 2) NOT NULL,
     activated BOOLEAN NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (vehicle) REFERENCES vehicle(id)
+    FOREIGN KEY (vehicle_id) REFERENCES vehicle(id)
 );

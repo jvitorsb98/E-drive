@@ -76,8 +76,8 @@ public class EmailService {
     }
 
 
-
-    private String processHtmlTemplate(String templateName, Map<String, Object> model) throws MessagingException {
+    //ver se posso deixar isso publico, se não resolver o problema
+    protected String processHtmlTemplate(String templateName, Map<String, Object> model) throws MessagingException {
         try {
             Configuration configuration = freeMarkerConfigurer.getConfiguration();
             Template template = configuration.getTemplate(templateName);
