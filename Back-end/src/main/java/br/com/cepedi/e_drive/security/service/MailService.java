@@ -45,4 +45,5 @@ public class MailService {
         List<Mail> mails = mailRepository.findByFrom(from);
         return mails.stream().map(DataDetailsMail::new).collect(Collectors.toList());
     }
+    
 }
