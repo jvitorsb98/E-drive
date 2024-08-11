@@ -13,7 +13,7 @@ import { UserDataService } from '../../../../core/services/user/userdata/user-da
 })
 export class UserPasswordModalComponent {
 
-  formUser!: FormGroup;
+  userPassword!: FormGroup;
   private isBrowser: boolean;
 
   constructor(
@@ -38,20 +38,20 @@ export class UserPasswordModalComponent {
 
   // Cria e inicializa o formulário com validação de senha e confirmação de senha.
   buildForm() {
-    this.formUser = this.formBuilder.group({
+    this.userPassword = this.formBuilder.group({
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl(null, Validators.required)
     }, { validators: this.passwordMatchValidator });
   }
 
   saveUser(): void {
-    if (this.formUser.valid) {
+    if (this.userPassword.valid) {
       const storedUserData = this.userDataService.getUserData();
       this.userDataService.clearUserData();
 
       if (storedUserData) {
 
-        storedUserData.password = this.formUser.value.password;
+        storedUserData.password = this.userPassword.value.password;
 
         this.userService.addUser(storedUserData).subscribe(newUser => {
 
@@ -59,7 +59,7 @@ export class UserPasswordModalComponent {
           console.log('Usuário cadastrado', newUser);
 
           this.userDataService.clearUserData();
-          this.formUser.reset();
+          this.userPassword.reset();
           this.closeModal();
 
           Swal.fire({
@@ -133,8 +133,8 @@ export class UserPasswordModalComponent {
     return null;
   }
 
-   // Função para fechar o modal
-   closeModal() {
+  // Função para fechar o modal
+  closeModal() {
     this.dialogRef.close();
   }
 }

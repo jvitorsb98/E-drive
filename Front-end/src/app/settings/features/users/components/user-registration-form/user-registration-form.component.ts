@@ -97,6 +97,7 @@ export class UserRegistrationFormComponent {
     });
   }
 
+  // Filtra a lista de países com base na string de pesquisa, considerando nome e código.
   private filterCountries(value: string): any[] {
     const filterValue = value.toLowerCase();
     return this.countries.filter(country =>
@@ -105,6 +106,7 @@ export class UserRegistrationFormComponent {
     );
   }
 
+  // Atualiza o código do país selecionado pelo usuário no formulário 
   onCountryChange(code: string) {
     const country = this.countries.find(c => c.code === code);
     if (country) {
@@ -139,34 +141,5 @@ export class UserRegistrationFormComponent {
       data: this.user
     }).afterClosed().subscribe(() => this.getListUsers());
   }
-
-  // Função para concatenar e armazenar os dados do usuário no Local Storage 
-  // private concatenateAndStoreUserData(userData: any): void {
-  //   // Desestrutura o countryCode do userData
-  //   let { countryCode, ...rest } = userData;
-
-  //   // Remove o sinal de mais se já estiver presente no countryCode
-  //   countryCode = countryCode.replace(/^\+/, '');
-
-  //   const cleanedPhone = rest.cellPhone.replace(/\D/g, '');
-
-  //   if (cleanedPhone.length === 11) {
-  //     // Formata o telefone 
-  //     const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-
-  //     // Concatena com o código do país
-  //     const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
-
-  //     // Atualiza o telefone no objeto e remove o countryCode
-  //     const updatedUserData = {
-  //       ...rest,
-  //       cellPhone: cellPhoneWithCountryCode
-  //     };
-
-  //     this.userService.saveUserData(updatedUserData);
-  //   } else {
-  //     console.error('Número de telefone inválido.');
-  //   }
-  // }
 
 }
