@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.model.entitys;
 
-
 import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
 import br.com.cepedi.e_drive.model.records.brand.input.DataUpdateBrand;
 import com.github.javafaker.Faker;
@@ -24,7 +23,7 @@ public class BrandTest {
     @BeforeEach
     void setUp() {
         faker = new Faker();
-        dataRegisterBrand = new DataRegisterBrand(faker.company().name(), faker.bool().bool());
+        dataRegisterBrand = new DataRegisterBrand(faker.company().name());
         dataUpdateBrand = new DataUpdateBrand(faker.number().randomNumber(), faker.company().name());
         brand = new Brand(dataRegisterBrand);
     }
@@ -33,15 +32,13 @@ public class BrandTest {
     @DisplayName("Test creation of Brand entity with null activated value")
     void testBrandCreationWithNullActivated() {
         // Cria DataRegisterBrand com activated como null
-        DataRegisterBrand nullActivatedData = new DataRegisterBrand(faker.company().name(), null);
+        DataRegisterBrand nullActivatedData = new DataRegisterBrand(faker.company().name());
         Brand brandWithNullActivated = new Brand(nullActivatedData);
 
         assertNotNull(brandWithNullActivated);
         assertEquals(nullActivatedData.name(), brandWithNullActivated.getName());
-        assertFalse(brandWithNullActivated.getActivated(), "The activated status should default to false when null.");
+        assertTrue(brandWithNullActivated.getActivated(), "The activated status should default to true when null.");
     }
-
-
 
     @Test
     @DisplayName("Test updating Brand entity")
@@ -73,7 +70,7 @@ public class BrandTest {
     @Test
     @DisplayName("Test updating Brand entity with null values")
     void testBrandUpdateWithNullValues() {
-        DataUpdateBrand nullDataUpdate = new DataUpdateBrand(faker.number().randomNumber(),null);
+        DataUpdateBrand nullDataUpdate = new DataUpdateBrand(faker.number().randomNumber(), null);
         brand.updateDataBrand(nullDataUpdate);
         assertEquals(dataRegisterBrand.name(), brand.getName());
     }

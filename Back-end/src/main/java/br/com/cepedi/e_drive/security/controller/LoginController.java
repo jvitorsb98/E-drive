@@ -1,10 +1,10 @@
 package br.com.cepedi.e_drive.security.controller;
 
-
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.service.TokenService;
+import br.com.cepedi.e_drive.security.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("auth/login")
+@RequestMapping("/auth/login")
 @Tag(name = "Login User", description = "Login User messages")
 public class LoginController {
 
@@ -33,6 +33,9 @@ public class LoginController {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping
     @Transactional
@@ -46,20 +49,26 @@ public class LoginController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Object> login(@RequestBody @Valid DataAuth data) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        Authentication authentication = manager.authenticate(authenticationToken);
+    public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DataAuth data) {
+        // Primeiro, tente encontrar o usuário pelo email
+        User user = userService.getUserActivatedByEmail(data.login());
 
-        User user = (User) authentication.getPrincipal();
-
-        if (!user.getActivated()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("User is not activated");
+        // Verifique se o usuário foi encontrado
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
-        String tokenJWT = tokenService.generateToken(user);
+        // Verifique se o usuário está ativado
+        if (!user.getActivated()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not activated");
+        }
 
+        // Autentique o usuário se ele estiver ativado
+        var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+        Authentication authentication = manager.authenticate(authenticationToken);
+
+        // Gera o token JWT se a autenticação for bem-sucedida
+        var tokenJWT = tokenService.generateToken(user);
         return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }
 }
-

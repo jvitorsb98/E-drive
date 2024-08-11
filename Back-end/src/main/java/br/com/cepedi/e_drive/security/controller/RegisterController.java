@@ -25,7 +25,7 @@ import br.com.cepedi.e_drive.security.service.AuthService;
 import br.com.cepedi.e_drive.security.service.EmailService;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/auth")
 @Tag(name = "Register User", description = "Register User messages")
 public class RegisterController {
 

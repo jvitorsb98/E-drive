@@ -27,9 +27,10 @@ public class Brand {
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
+
     public Brand(DataRegisterBrand dataRegisterBrand) {
         this.name = dataRegisterBrand.name();
-        this.activated = dataRegisterBrand.activated() != null ? dataRegisterBrand.activated() : false;
+        this.activated = true;
     }
 
     public void updateDataBrand(DataUpdateBrand data) {
@@ -45,4 +46,6 @@ public class Brand {
     public void deactivated() {
         this.activated = false;
     }
+
+
 }
