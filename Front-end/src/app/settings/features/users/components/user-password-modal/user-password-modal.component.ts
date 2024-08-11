@@ -4,6 +4,7 @@ import { UserService } from '../../../../core/services/user/user.service';
 import { MatDialogRef } from '@angular/material/dialog';
 import { isPlatformBrowser } from '@angular/common';
 import Swal from 'sweetalert2';
+import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -12,11 +13,12 @@ import Swal from 'sweetalert2';
 })
 export class UserPasswordModalComponent {
 
-  formUser!: FormGroup;
+  userPassword!: FormGroup;
   private isBrowser: boolean;
 
   constructor(
     private userService: UserService,
+    private userDataService: UserDataService,
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
@@ -36,28 +38,28 @@ export class UserPasswordModalComponent {
 
   // Cria e inicializa o formulário com validação de senha e confirmação de senha.
   buildForm() {
-    this.formUser = this.formBuilder.group({
+    this.userPassword = this.formBuilder.group({
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl(null, Validators.required)
     }, { validators: this.passwordMatchValidator });
   }
 
   saveUser(): void {
-    if (this.formUser.valid) {
-      const storedUserData = this.userService.getUserData();
-      this.userService.clearUserData();
+    if (this.userPassword.valid) {
+      const storedUserData = this.userDataService.getUserData();
+      this.userDataService.clearUserData();
 
       if (storedUserData) {
 
-        storedUserData.password = this.formUser.value.password;
+        storedUserData.password = this.userPassword.value.password;
 
         this.userService.addUser(storedUserData).subscribe(newUser => {
 
-          console.log('Local Storage:', this.userService.getUserData());
+          console.log('Local Storage:', this.userDataService.getUserData());
           console.log('Usuário cadastrado', newUser);
 
-          this.userService.clearUserData();
-          this.formUser.reset();
+          this.userDataService.clearUserData();
+          this.userPassword.reset();
           this.closeModal();
 
           Swal.fire({
@@ -131,8 +133,8 @@ export class UserPasswordModalComponent {
     return null;
   }
 
-   // Função para fechar o modal
-   closeModal() {
+  // Função para fechar o modal
+  closeModal() {
     this.dialogRef.close();
   }
 }

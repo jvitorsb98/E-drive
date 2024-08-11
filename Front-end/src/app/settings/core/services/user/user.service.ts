@@ -10,7 +10,6 @@ import { User } from '../../models/User';
 export class UserService {
 
   private usersUrl!: string;
-  private storageKey = 'user';
   private users: User[] = [];
 
   constructor(private http: HttpClient) {
@@ -29,18 +28,4 @@ export class UserService {
     // return this.http.post<User>(this.usersUrl, user);
   }
 
-  // Metodos para guardar e recuperar dados do usuário no localStorage
-  saveUserData(data: any): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(data));
-  }
-
-  getUserData(): any {
-    const data = localStorage.getItem(this.storageKey);
-    return data ? JSON.parse(data) : null;
-  }
-
-  clearUserData(): void {
-    localStorage.removeItem(this.storageKey);
-  }
-  //-------------------------------------------------------------------
 }
