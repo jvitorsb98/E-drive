@@ -1,0 +1,49 @@
+.footer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  border-top: 2px solid white;
+
+
+  .card-fale-conosco mat-card-content{
+    font-size: 1rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
+
+  }
+
+  .card-fale-conosco{
+    background: none !important;
+    width: 100%;
+    box-shadow: none;
+  }
+
+  .card-fale-conosco mat-card-title{
+    font-size: 2rem;
+  }
+
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .social-icons a {
+    display: inline-block;
+    margin: 0 10px;
+    font-size: 1.5rem;
+    color: white;
+    text-decoration: none;
+  }
+
+  .social-icons mat-icon:hover {
+    color: #03a7ff;
+  }
+
+  .social-icons a:hover {
+    color: #03a7ff;
+  }
+}

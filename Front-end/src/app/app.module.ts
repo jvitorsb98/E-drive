@@ -16,6 +16,9 @@ import { EmailPatternValidatorDirective } from './settings/shared/directives/ema
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
+import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
+import { FooterComponent } from './settings/core/fragments/footer/footer.component';
+import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,9 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 
     // Pipes
     PhoneMaskPipe,
+      IntroPageComponent,
+      FooterComponent,
+      NavbarIntroComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,7 +42,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    AngularMaterialModule
+    AngularMaterialModule,
   ],
   providers: [
     provideAnimationsAsync()

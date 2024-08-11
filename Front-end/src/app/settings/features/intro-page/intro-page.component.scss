@@ -1,0 +1,176 @@
+.home {
+  padding: 0;
+  margin: 0;
+
+}
+
+#banner {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 60px);
+  background-image: url("../../../../assets/images/Background_Image.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  mat-card-title {
+    color: white;
+    width: 90%;
+    font-size: 4rem;
+    text-align: center;
+    text-shadow: 2px 2px 1px black;
+    padding: 1rem 0;
+    line-height: 1;
+  }
+
+  mat-card-content {
+    color: white;
+    width: 100%;
+    font-size: 1.7rem;
+    text-align: center;
+    text-shadow: 2px 2px 1px black;
+  }
+
+  button {
+    margin-top: 2rem;
+    font-size: 2rem;
+    padding: 1.7rem 2rem;
+    border: none;
+    background: linear-gradient(to bottom right, rgba(0, 128, 128, 0.5), rgba(0, 128, 128, 0.8));
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  button:hover {
+    background-color: #0099C2;
+    transition: 0.3s;
+    transform: translateY(-2px);
+  }
+}
+
+
+.servicos {
+  color: white;
+  padding: 40px 0;
+  text-align: center;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+  }
+
+  .card-servico {
+    display: inline-block;
+    background: none;
+    width: 100%;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card-servico:hover {
+    transform: translateY(-5px);
+
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
+  }
+
+  mat-card-title {
+    font-size: 1.2rem;
+
+    font-weight: bold;
+
+  }
+
+  mat-card-content {
+    font-size: 1rem;
+
+  }
+
+
+}
+
+
+.busca-eletropostos {
+
+  color: white;
+
+  padding: 30px;
+
+  text-align: center;
+
+  position: relative;
+
+  overflow: hidden;
+
+
+  mat-card-title {
+    text-align: center;
+
+    font-size: 1.8rem;
+
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+  }
+
+  mat-card-content {
+
+    font-size: 1.2rem;
+
+    line-height: 1.5;
+
+  }
+
+  #img-mapa {
+    margin-top: 20px;
+    bottom: -50px;
+    right: -50px;
+    width: 20%;
+  }
+}
+
+/* Estilos para telas maiores ou iguais a 768px */
+@media (min-width: 768px) {
+  mat-card-content {
+    text-align: center;
+  }
+
+  /* Estilos para o banner-card de Bem vindo */
+  .banner-card {
+    background: none;
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    line-height: 1.2;
+    border: none;
+  }
+}
+
+/* Estilos para telas menores ou iguais a 767px */
+@media (max-width: 767px){
+  mat-card-content {
+    text-align: justify;
+  }
+
+  /* Estilos para a imagem do mapa no smartphone */
+  #img-mapa{
+    width: 50% !important;
+  }
+
+  /* Estilos para o banner-card de Bem vindo */
+  .banner-card {
+    background: none;
+    line-height: 1.2;
+    backdrop-filter: blur(2px);
+    padding: 2rem;
+  }
+}

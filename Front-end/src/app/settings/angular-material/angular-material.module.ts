@@ -10,6 +10,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatToolbarModule } from '@angular/material/toolbar';
+
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -20,6 +22,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatToolbarModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
@@ -34,6 +37,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
+    MatToolbarModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
