@@ -18,10 +18,13 @@
             aria-describedby="Help" />
             <mat-hint id="Help" class="mat-hint-text">O <strong>Usuário</strong> será utilizado para login.</mat-hint>
           </mat-form-field>
+          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('hasNumbers')">
+            <mat-error class="mat-error-text">O <strong>Nome</strong> não pode conter números.</mat-error>
+          </div>
           <div *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.touched">
             <mat-error class="mat-error-text">O <strong>Usuário</strong> é obrigatório.</mat-error>
           </div>
-          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength')">
+          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength') && !userForm.get('name')?.hasError('hasNumbers')">
             <mat-error class="mat-error-text">O <strong>Nome</strong> deve ter pelo menos {{
               userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
           </div>
