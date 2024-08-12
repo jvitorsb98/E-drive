@@ -40,7 +40,8 @@ export class UserPasswordModalComponent {
   buildForm() {
     this.userPassword = this.formBuilder.group({
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      confirmPassword: new FormControl(null, Validators.required)
+      confirmPassword: new FormControl(null, Validators.required),
+      newsletter: new FormControl(false, Validators.requiredTrue)
     }, { validators: this.passwordMatchValidator });
   }
 
