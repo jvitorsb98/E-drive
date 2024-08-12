@@ -50,9 +50,11 @@ export class UserLoginModalComponent {
     this.auth.login(this.loginRequest).subscribe({
       next: () => {
         // armazenar a response de login no localStorage
-
+        console.log('Login realizado com sucesso!');
+        console.log(this.loginRequest);
         // redirecionar para a rota home/dashboard
 
+        // fechar o modal
         this.dialog.closeAll();
       },
       error: () => {

@@ -19,7 +19,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { FooterComponent } from './settings/core/fragments/footer/footer.component';
 import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
-import { UserLoginModalComponent } from './settings/features/users/components/user-login-modal/user-login-modal.component';
+import { UserLoginModalComponent } from './settings/core/security/login-form/user-login-modal/user-login-modal.component';
 
 @NgModule({
   declarations: [

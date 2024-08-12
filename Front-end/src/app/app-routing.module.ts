@@ -2,10 +2,14 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { FooterComponent } from './settings/core/fragments/footer/footer.component';
+import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
+import { UserLoginModalComponent } from './settings/core/security/login-form/user-login-modal/user-login-modal.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
   { path: 'footer', component: FooterComponent },
+  { path: 'user-registration', component: UserRegistrationFormComponent},
+  { path: 'login', component: UserLoginModalComponent}
 ];
 
 @NgModule({

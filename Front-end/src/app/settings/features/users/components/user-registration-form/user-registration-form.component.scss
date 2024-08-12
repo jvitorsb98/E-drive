@@ -3,8 +3,9 @@
   background-color: #FFF;
   border-radius: 10px;
   box-shadow: .2px 10px 15px rgba(0, 0, 0, 0.7);
-  margin: 5% auto;
   padding: 10px;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 
 #form-container h1 {
@@ -96,7 +97,7 @@
   }
 }
 
-// Animação do botão de continuar 
+// Animação do botão de continuar
 @keyframes pulse {
   0% {
     transform: scale(1);

@@ -26,7 +26,7 @@
 
       <mat-card-actions>
         <a class="forgot-password-link" (click)="modalResetPassword()">Esqueceu a senha?</a>
-        <button mat-stroked-button color="primary" routerLink="/register">Cadastre-se</button>
+        <button mat-stroked-button color="primary" routerLink="/user-registration" (click)="dialog.closeAll()">Cadastre-se</button>
         <button mat-raised-button color="primary" type="submit">Acessar meu E-Drive</button>
       </mat-card-actions>
     </form>

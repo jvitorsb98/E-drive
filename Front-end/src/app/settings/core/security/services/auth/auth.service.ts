@@ -17,6 +17,7 @@ export class AuthService {
 
   login(credential: LoginRequest): Observable<any> {
     // rever essa logica
+    todo: //console.log(crede ntial); remover
     return this.http.post(this.apiUrl, credential, { observe: 'response' });
   }
 
