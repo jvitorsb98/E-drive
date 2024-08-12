@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserPasswordModalComponent } from '../user-password-modal/user-password-modal.component';
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
+import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
 
 @Component({
   selector: 'app-user-registration-form',
@@ -36,7 +37,7 @@ export class UserRegistrationFormComponent {
 
   buildForm(_countries: { code: string }[] = []) {
     this.userForm = this.formBuilder.group({
-      name: new FormControl(null, [Validators.required, Validators.minLength(2)]),
+      name: new FormControl(null, [Validators.required, Validators.minLength(2), noNumbersValidator]),
       email: new FormControl(null, [Validators.required, Validators.email]),
       birth: new FormControl(null, Validators.required),
       cellPhone: new FormControl(null, Validators.required),

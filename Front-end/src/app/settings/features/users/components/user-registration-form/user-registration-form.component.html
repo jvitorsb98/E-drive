@@ -18,10 +18,13 @@
             aria-describedby="Help" />
             <mat-hint id="Help" class="mat-hint-text">O <strong>Usuário</strong> será utilizado para login.</mat-hint>
           </mat-form-field>
+          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('hasNumbers')">
+            <mat-error class="mat-error-text">O <strong>Nome</strong> não pode conter números.</mat-error>
+          </div>
           <div *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.touched">
             <mat-error class="mat-error-text">O <strong>Usuário</strong> é obrigatório.</mat-error>
           </div>
-          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength')">
+          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength') && !userForm.get('name')?.hasError('hasNumbers')">
             <mat-error class="mat-error-text">O <strong>Nome</strong> deve ter pelo menos {{
               userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
           </div>
@@ -66,11 +69,11 @@
             readonly required 
             aria-describedby="Help" />
             <mat-hint id="Help" class="mat-hint-text">É para sua segurança. Por isso pedimos sua <strong>data</strong></mat-hint>
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matIconSuffix class="custom-icon" [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker>
               <mat-datepicker-actions>
-                <button mat-button matDateRangePickerCancel>Cancelar</button>
-                <button mat-raised-button color="primary" matDateRangePickerApply>Confirmar</button>
+                <button mat-button matDateRangePickerCancel class="cancel-button">Cancelar</button>
+                <button mat-raised-button matDateRangePickerApply class="apply-button">Confirmar</button>
               </mat-datepicker-actions>
             </mat-datepicker>
             <mat-error class="mat-error-codigo-text">A <strong>Data de Nascimento</strong> é obrigatoria.</mat-error>
@@ -112,7 +115,7 @@
               formControlName="cellPhone" 
               required 
               aria-describedby="Help" />
-              <mat-icon matSuffix>phone</mat-icon>
+              <mat-icon matSuffix class="custom-icon">phone</mat-icon>
               <mat-hint [ngStyle]="{'white-space': 'nowrap'}" id="Help" class="mat-hint-cellPhone-text">Preencha apenas os <strong>números.</strong></mat-hint>
               <mat-error class="mat-hint-cellPhone-text" [ngStyle]="{'white-space': 'nowrap'}" *ngIf="userForm.get('cellPhone')?.hasError('required')">O <strong>telefone celular</strong> é obrigatório.</mat-error>
               <mat-error class="mat-hint-cellPhone-text" [ngStyle]="{'white-space': 'nowrap'}" *ngIf="userForm.get('cellPhone')?.hasError('mask') && userForm.get('cellPhone')?.dirty">O <strong>Telefone</strong> é inválido.</mat-error>
