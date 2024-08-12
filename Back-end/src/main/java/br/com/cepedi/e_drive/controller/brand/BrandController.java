@@ -32,8 +32,8 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/brands")
-//@SecurityRequirement(name = "bearer-key")
+@RequestMapping("/api/v1/brands")
+@SecurityRequirement(name = "bearer-key")
 @Tag(name = "Brand", description = "Brand messages")
 public class BrandController {
 
@@ -66,7 +66,7 @@ public class BrandController {
     ) {
         LOGGER.info("Registering a brand");
         DataBrandDetails brandDetails = brandService.register(data);
-        URI uri = uriBuilder.path("/brands/{id}").buildAndExpand(brandDetails.id()).toUri();
+        URI uri = uriBuilder.path("/api/v1/brands/{id}").buildAndExpand(brandDetails.id()).toUri();
         LOGGER.info("Brand registered successfully");
         return ResponseEntity.created(uri).body(brandDetails);
     }
@@ -84,12 +84,12 @@ public class BrandController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataBrandDetails> getBrandById(
+    public ResponseEntity<DataBrandDetails> getById(
             @Parameter(description = "ID of the brand to be retrieved", required = true)
             @PathVariable Long id
     ) {
         LOGGER.info("Retrieving brand with id: {}", id);
-        DataBrandDetails brandDetails = brandService.getBrandById(id);
+        DataBrandDetails brandDetails = brandService.getById(id);
         LOGGER.info("Brand retrieved successfully");
         return new ResponseEntity<>(brandDetails, HttpStatus.OK);
     }
@@ -107,17 +107,17 @@ public class BrandController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataBrandDetails>> listAllBrands(
+    public ResponseEntity<Page<DataBrandDetails>> listAll(
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
     ) {
         LOGGER.info("Retrieving all brands");
-        Page<DataBrandDetails> brands = brandService.listAllBrands(pageable);
+        Page<DataBrandDetails> brands = brandService.listAll(pageable);
         LOGGER.info("All brands retrieved successfully");
         return new ResponseEntity<>(brands, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update brand details", method = "PUT", description = "Updates the details of an existing brand.")
     @ApiResponses(value = {
@@ -134,36 +134,18 @@ public class BrandController {
                     content = @Content)
     })
     public ResponseEntity<DataBrandDetails> update(
+            @Parameter(description = "ID of the brand to be updated", required = true)
+            @PathVariable Long id,
             @Parameter(description = "Data required to update a brand", required = true)
             @Valid @RequestBody DataUpdateBrand data
     ) {
-        LOGGER.info("Updating brand with id: {}", data.id());
-        DataBrandDetails updatedBrand = brandService.update(data);
+        LOGGER.info("Updating brand with id: {}", id);
+        DataBrandDetails updatedBrand = brandService.update(data,id);
         LOGGER.info("Brand updated successfully");
         return new ResponseEntity<>(updatedBrand, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/activate")
-    @Transactional
-    @Operation(summary = "Activate brand by ID", method = "PUT", description = "Activates a brand by its ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Brand activated successfully"),
-            @ApiResponse(responseCode = "403", description = "Forbidden",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "Brand not found",
-                    content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content)
-    })
-    public ResponseEntity<Void> activated(
-            @Parameter(description = "ID of the brand to be activated", required = true)
-            @PathVariable Long id
-    ) {
-        LOGGER.info("Activating brand with id: {}", id);
-        brandService.activated(id);
-        LOGGER.info("Brand activated successfully");
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+
 
     @DeleteMapping("/{id}")
     @Transactional

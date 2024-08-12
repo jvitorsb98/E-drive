@@ -4,5 +4,5 @@ import br.com.cepedi.e_drive.model.records.category.update.DataUpdateCategory;
 
 
 public interface CategoryValidatorUpdate {
-	void validate(DataUpdateCategory data);
+	void validate(Long id);
 }

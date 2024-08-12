@@ -1,5 +1,19 @@
 package br.com.cepedi.e_drive.controller.propulsion;
 
+import br.com.cepedi.e_drive.model.records.propulsion.details.DataPropulsionDetails;
+import br.com.cepedi.e_drive.model.records.propulsion.input.DataRegisterPropulsion;
+import br.com.cepedi.e_drive.model.records.propulsion.update.DataUpdatePropulsion;
+import br.com.cepedi.e_drive.service.propulsion.PropulsionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,28 +21,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import br.com.cepedi.e_drive.model.records.propulsion.details.DataPropulsionDetails;
-import br.com.cepedi.e_drive.model.records.propulsion.input.DataRegisterPropulsion;
-import br.com.cepedi.e_drive.model.records.propulsion.update.DataUpdatePropulsion;
-import br.com.cepedi.e_drive.service.propulsion.PropulsionService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.net.URI;
 
 @RestController
-@RequestMapping("/api/propulsions")
-@Tag(name = "Propulsion", description = "Endpoints for managing propulsions")
+@RequestMapping("/api/v1/propulsions")
+@SecurityRequirement(name = "bearer-key")
+@Tag(name = "Propulsion", description = "Propulsion management operations")
 public class PropulsionController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PropulsionController.class);
@@ -36,89 +37,167 @@ public class PropulsionController {
     @Autowired
     private PropulsionService propulsionService;
 
-    @Operation(summary = "Register a new propulsion", responses = {
-        @ApiResponse(responseCode = "201", description = "Propulsion registered successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid input")
-    })
     @PostMapping
-    public ResponseEntity<DataPropulsionDetails> registerPropulsion(@Valid @RequestBody DataRegisterPropulsion data) {
-        LOGGER.info("Registering new propulsion with data: {}", data);
-        DataPropulsionDetails details = propulsionService.registerPropulsion(data);
-        LOGGER.info("Propulsion registered successfully with ID: {}", details.id());
-        return new ResponseEntity<>(details, HttpStatus.CREATED);
+    @Transactional
+    @Operation(summary = "Register a new Propulsion", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Propulsion registered successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DataPropulsionDetails.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<DataPropulsionDetails> register(
+            @Parameter(description = "Data required to register a Propulsion", required = true)
+            @Valid @RequestBody DataRegisterPropulsion data,
+            UriComponentsBuilder uriBuilder
+    ) {
+        LOGGER.info("Registering a new propulsion");
+        DataPropulsionDetails propulsionDetails = propulsionService.register(data);
+        URI uri = uriBuilder.path("/api/v1/propulsions/{id}").buildAndExpand(propulsionDetails.id()).toUri();
+        LOGGER.info("Propulsion registered successfully with ID: {}", propulsionDetails.id());
+        return ResponseEntity.created(uri).body(propulsionDetails);
     }
 
-    @Operation(summary = "List all propulsions", responses = {
-        @ApiResponse(responseCode = "200", description = "List of propulsions retrieved")
-    })
     @GetMapping
-    public ResponseEntity<Page<DataPropulsionDetails>> listAllPropulsions(Pageable pageable) {
-        LOGGER.info("Retrieving all propulsions with pageable: {}", pageable);
-        Page<DataPropulsionDetails> propulsions = propulsionService.listAllPropulsions(pageable);
-        LOGGER.info("Propulsions retrieved successfully, total count: {}", propulsions.getTotalElements());
+    @Operation(summary = "List all propulsions", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Propulsions retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Propulsions not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Page<DataPropulsionDetails>> listAll(Pageable pageable) {
+        LOGGER.info("Retrieving all propulsions");
+        Page<DataPropulsionDetails> propulsions = propulsionService.listAll(pageable);
+        LOGGER.info("Propulsions retrieved successfully");
         return new ResponseEntity<>(propulsions, HttpStatus.OK);
     }
 
-    @Operation(summary = "List all deactivated propulsions", responses = {
-        @ApiResponse(responseCode = "200", description = "List of deactivated propulsions retrieved")
-    })
     @GetMapping("/deactivated")
-    public ResponseEntity<Page<DataPropulsionDetails>> listAllDeactivatedPropulsions(Pageable pageable) {
-        LOGGER.info("Retrieving all deactivated propulsions with pageable: {}", pageable);
-        Page<DataPropulsionDetails> propulsions = propulsionService.listAllDeactivatedPropulsions(pageable);
-        LOGGER.info("Deactivated propulsions retrieved successfully, total count: {}", propulsions.getTotalElements());
+    @Operation(summary = "List all deactivated propulsions", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Deactivated propulsions retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Propulsions not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Page<DataPropulsionDetails>> listAllDeactivated(Pageable pageable) {
+        LOGGER.info("Retrieving all deactivated propulsions");
+        Page<DataPropulsionDetails> propulsions = propulsionService.listAllDeactivated(pageable);
+        LOGGER.info("Deactivated propulsions retrieved successfully");
         return new ResponseEntity<>(propulsions, HttpStatus.OK);
     }
 
-    @Operation(summary = "Search propulsions by name", responses = {
-        @ApiResponse(responseCode = "200", description = "List of propulsions retrieved by name"),
-        @ApiResponse(responseCode = "400", description = "Invalid search parameters")
-    })
     @GetMapping("/search")
-    public ResponseEntity<Page<DataPropulsionDetails>> listPropulsionsByName(
-            @RequestParam("name") String name, Pageable pageable) {
-        LOGGER.info("Searching propulsions by name: {} with pageable: {}", name, pageable);
-        Page<DataPropulsionDetails> propulsions = propulsionService.listPropulsionsByName(name, pageable);
-        LOGGER.info("Propulsions searched by name successfully, total count: {}", propulsions.getTotalElements());
+    @Operation(summary = "Search propulsions by name", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Propulsions retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Propulsions not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Page<DataPropulsionDetails>> listByName(
+            @Parameter(description = "Name of the propulsion to be searched", required = true)
+            @RequestParam("name") String name, Pageable pageable
+    ) {
+        LOGGER.info("Searching propulsions by name: {}", name);
+        Page<DataPropulsionDetails> propulsions = propulsionService.listByName(name, pageable);
+        LOGGER.info("Propulsions searched successfully");
         return new ResponseEntity<>(propulsions, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get a propulsion by ID", responses = {
-        @ApiResponse(responseCode = "200", description = "Propulsion retrieved"),
-        @ApiResponse(responseCode = "404", description = "Propulsion not found")
-    })
     @GetMapping("/{id}")
-    public ResponseEntity<DataPropulsionDetails> getPropulsionById(@PathVariable Long id) {
+    @Operation(summary = "Get propulsion by ID", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Propulsion retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DataPropulsionDetails.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Propulsion not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<DataPropulsionDetails> getById(
+            @Parameter(description = "ID of the propulsion to be retrieved", required = true)
+            @PathVariable Long id
+    ) {
         LOGGER.info("Retrieving propulsion with ID: {}", id);
-        DataPropulsionDetails details = propulsionService.getPropulsionById(id);
+        DataPropulsionDetails propulsionDetails = propulsionService.getById(id);
         LOGGER.info("Propulsion retrieved successfully with ID: {}", id);
-        return new ResponseEntity<>(details, HttpStatus.OK);
+        return new ResponseEntity<>(propulsionDetails, HttpStatus.OK);
     }
 
-    @Operation(summary = "Update a propulsion", responses = {
-        @ApiResponse(responseCode = "200", description = "Propulsion updated successfully"),
-        @ApiResponse(responseCode = "400", description = "Invalid input"),
-        @ApiResponse(responseCode = "404", description = "Propulsion not found")
-    })
     @PutMapping("/{id}")
-    public ResponseEntity<DataPropulsionDetails> updatePropulsion(
-            @PathVariable Long id, @Valid @RequestBody DataUpdatePropulsion data) {
-        LOGGER.info("Updating propulsion with ID: {} and data: {}", id, data);
-        data = new DataUpdatePropulsion(id, data.name(), data.activated()); // Ensure ID is included
-        DataPropulsionDetails details = propulsionService.updatePropulsion(data);
+    @Transactional
+    @Operation(summary = "Update propulsion details", method = "PUT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Propulsion updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DataPropulsionDetails.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid input data",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Propulsion not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<DataPropulsionDetails> update(
+            @Parameter(description = "ID of the propulsion to be updated", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "Data required to update a propulsion", required = true)
+            @Valid @RequestBody DataUpdatePropulsion data
+    ) {
+        LOGGER.info("Updating propulsion with ID: {}", id);
+        DataPropulsionDetails updatedPropulsion = propulsionService.update(data, id);
         LOGGER.info("Propulsion updated successfully with ID: {}", id);
-        return new ResponseEntity<>(details, HttpStatus.OK);
+        return new ResponseEntity<>(updatedPropulsion, HttpStatus.OK);
     }
 
-    @Operation(summary = "Disable a propulsion", responses = {
-        @ApiResponse(responseCode = "204", description = "Propulsion disabled successfully"),
-        @ApiResponse(responseCode = "404", description = "Propulsion not found")
+    @DeleteMapping("/{id}")
+    @Transactional
+    @Operation(summary = "Disable propulsion by ID", method = "DELETE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Propulsion disabled successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Propulsion not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
     })
-    @PatchMapping("/{id}/disable")
-    public ResponseEntity<Void> disablePropulsion(@PathVariable Long id) {
+    public ResponseEntity<Void> disabled(
+            @Parameter(description = "ID of the propulsion to be disabled", required = true)
+            @PathVariable Long id
+    ) {
         LOGGER.info("Disabling propulsion with ID: {}", id);
-        propulsionService.disablePropulsion(id);
+        propulsionService.disabled(id);
         LOGGER.info("Propulsion disabled successfully with ID: {}", id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
 }

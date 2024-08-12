@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/models")
-//@SecurityRequirement(name = "bearer-key")
+@SecurityRequirement(name = "bearer-key")
 @Tag(name = "Model", description = "Model messages")
 public class ModelController {
 
@@ -83,7 +83,7 @@ public class ModelController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataModelDetails> getModelById(
+    public ResponseEntity<DataModelDetails> getById(
             @Parameter(description = "ID of the model to be retrieved", required = true)
             @PathVariable Long id
     ) {
@@ -106,7 +106,7 @@ public class ModelController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataModelDetails>> listAllModels(
+    public ResponseEntity<Page<DataModelDetails>> listAll(
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
     ) {
@@ -116,7 +116,7 @@ public class ModelController {
         return new ResponseEntity<>(models, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update model details", method = "PUT", description = "Updates the details of an existing model.")
     @ApiResponses(value = {
@@ -133,12 +133,14 @@ public class ModelController {
                     content = @Content)
     })
     public ResponseEntity<DataModelDetails> update(
+            @Parameter(description = "ID of the model to be updated", required = true)
+            @PathVariable Long id,
             @Parameter(description = "Data required to update a model", required = true)
             @Valid @RequestBody DataUpdateModel data
     ) {
-        LOGGER.info("Updating model with id: {}", data.id());
-        DataModelDetails updatedModel = modelService.update(data);
-        LOGGER.info("Model updated successfully");
+        LOGGER.info("Updating model with id: {}", id);
+        DataModelDetails updatedModel = modelService.update(data,id);
+        LOGGER.info("Model updated successfully with ID: {}", id);
         return new ResponseEntity<>(updatedModel, HttpStatus.OK);
     }
 

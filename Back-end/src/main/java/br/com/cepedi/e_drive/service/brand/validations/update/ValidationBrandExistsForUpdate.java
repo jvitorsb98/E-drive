@@ -14,8 +14,8 @@ public class ValidationBrandExistsForUpdate implements ValidationBrandUpdate {
 
 
     @Override
-    public void validation(DataUpdateBrand data) {
-        if(!brandRepository.existsById(data.id())){
+    public void validation(Long id) {
+        if(!brandRepository.existsById(id)){
             throw new ValidationException("The required branch does not exists");
         }
     }

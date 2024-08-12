@@ -13,8 +13,8 @@ public class ValidationExistsForUpdate implements CategoryValidatorUpdate {
     private CategoryRepository categoryRepository;
 
     @Override
-    public void validate(DataUpdateCategory dataUpdateCategory) {
-        if (!categoryRepository.existsById(dataUpdateCategory.id())) {
+    public void validate(Long id) {
+        if (!categoryRepository.existsById(id)) {
             throw new ValidationException("The required category does not exist.");
         }
     }

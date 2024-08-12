@@ -47,10 +47,10 @@ public class ModelService {
         return new DataModelDetails(model);
     }
 
-    public DataModelDetails update(DataUpdateModel data) {
-        modelValidationUpdateList.forEach(v -> v.validation(data));
-        Model model = modelRepository.getReferenceById(data.id());
-        model.updateDataModel(data);
+    public DataModelDetails update(DataUpdateModel data, Long id) {
+        modelValidationUpdateList.forEach(v -> v.validation(data,id));
+        Model model = modelRepository.getReferenceById(id);
+        model.update(data);
         return new DataModelDetails(model);
     }
 

@@ -2,7 +2,7 @@ package br.com.cepedi.e_drive.controller.category;
 
 
 import br.com.cepedi.e_drive.model.records.category.details.DataCategoryDetails;
-import br.com.cepedi.e_drive.model.records.category.input.DataRegisterCategory;
+import br.com.cepedi.e_drive.model.records.category.register.DataRegisterCategory;
 import br.com.cepedi.e_drive.model.records.category.update.DataUpdateCategory;
 import br.com.cepedi.e_drive.service.category.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,8 +28,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/categories")
-//@SecurityRequirement(name = "bearer-key")
+@RequestMapping("/api/v1/categories")
+@SecurityRequirement(name = "bearer-key")
 @Tag(name = "Category", description = "Category management operations")
 public class CategoryController {
 
@@ -54,14 +54,14 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataCategoryDetails> registerCategory(
+    public ResponseEntity<DataCategoryDetails> register(
             @Parameter(description = "Data required to register a Category", required = true)
             @Valid @RequestBody DataRegisterCategory data,
             UriComponentsBuilder uriBuilder
     ) {
         LOGGER.info("Registering a new category");
-        DataCategoryDetails categoryDetails = categoryService.registerCategory(data);
-        URI uri = uriBuilder.path("/api/v2/categories/{id}").buildAndExpand(categoryDetails.id()).toUri();
+        DataCategoryDetails categoryDetails = categoryService.register(data);
+        URI uri = uriBuilder.path("/api/v1/categories/{id}").buildAndExpand(categoryDetails.id()).toUri();
         LOGGER.info("Category registered successfully with ID: {}", categoryDetails.id());
         return ResponseEntity.created(uri).body(categoryDetails);
     }
@@ -79,9 +79,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataCategoryDetails>> listAllCategories(Pageable pageable) {
+    public ResponseEntity<Page<DataCategoryDetails>> listAll(Pageable pageable) {
         LOGGER.info("Retrieving all categories");
-        Page<DataCategoryDetails> categories = categoryService.listAllCategories(pageable);
+        Page<DataCategoryDetails> categories = categoryService.listAll(pageable);
         LOGGER.info("Categories retrieved successfully");
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
@@ -99,9 +99,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataCategoryDetails>> listAllDeactivatedCategories(Pageable pageable) {
+    public ResponseEntity<Page<DataCategoryDetails>> listAllDeactivated(Pageable pageable) {
         LOGGER.info("Retrieving all deactivated categories");
-        Page<DataCategoryDetails> categories = categoryService.listAllDeactivatedCategories(pageable);
+        Page<DataCategoryDetails> categories = categoryService.listAllDeactivated(pageable);
         LOGGER.info("Deactivated categories retrieved successfully");
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
@@ -119,12 +119,12 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataCategoryDetails>> listCategoriesByName(
+    public ResponseEntity<Page<DataCategoryDetails>> listByName(
             @Parameter(description = "Name of the category to be searched", required = true)
             @RequestParam("name") String name, Pageable pageable
     ) {
         LOGGER.info("Searching categories by name: {}", name);
-        Page<DataCategoryDetails> categories = categoryService.listCategoriesByName(name, pageable);
+        Page<DataCategoryDetails> categories = categoryService.listByName(name, pageable);
         LOGGER.info("Categories searched successfully");
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
@@ -142,17 +142,17 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataCategoryDetails> getCategoryById(
+    public ResponseEntity<DataCategoryDetails> getById(
             @Parameter(description = "ID of the category to be retrieved", required = true)
             @PathVariable Long id
     ) {
         LOGGER.info("Retrieving category with ID: {}", id);
-        DataCategoryDetails categoryDetails = categoryService.getCategoryById(id);
+        DataCategoryDetails categoryDetails = categoryService.getById(id);
         LOGGER.info("Category retrieved successfully with ID: {}", id);
         return new ResponseEntity<>(categoryDetails, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update category details", method = "PUT")
     @ApiResponses(value = {
@@ -168,13 +168,15 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataCategoryDetails> updateCategory(
+    public ResponseEntity<DataCategoryDetails> update(
+            @Parameter(description = "ID of the category to be updated", required = true)
+            @PathVariable Long id,
             @Parameter(description = "Data required to update a category", required = true)
             @Valid @RequestBody DataUpdateCategory data
     ) {
-        LOGGER.info("Updating category with ID: {}", data.id());
-        DataCategoryDetails updatedCategory = categoryService.updateCategory(data);
-        LOGGER.info("Category updated successfully with ID: {}", data.id());
+        LOGGER.info("Updating category with ID: {}", id);
+        DataCategoryDetails updatedCategory = categoryService.update(data,id);
+        LOGGER.info("Category updated successfully with ID: {}", id);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
 
@@ -190,12 +192,12 @@ public class CategoryController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Void> disableCategory(
+    public ResponseEntity<Void> disabled(
             @Parameter(description = "ID of the category to be disabled", required = true)
             @PathVariable Long id
     ) {
         LOGGER.info("Disabling category with ID: {}", id);
-        categoryService.disableCategory(id);
+        categoryService.disabled(id);
         LOGGER.info("Category disabled successfully with ID: {}", id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

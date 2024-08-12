@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record DataUpdateModel(
-        @NotNull(message = "{notnull.model.id}")
-        Long id,
 
-        @NotNull(message = "{notnull.model.name}")
-        @NotBlank(message = "{notblank.model.name}")
         @Size(max = 100, message = "{size.model.name}")
-        String name
+        String name,
+
+        Long idBrand
+
+
 ) {
 }

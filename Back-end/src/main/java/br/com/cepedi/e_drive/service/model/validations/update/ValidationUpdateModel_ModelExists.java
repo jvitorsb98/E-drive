@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidationModelExistsForUpdate implements ValidationModelUpdate {
+public class ValidationUpdateModel_ModelExists implements ValidationModelUpdate {
 
     @Autowired
     private ModelRepository modelRepository;
 
     @Override
-    public void validation(DataUpdateModel data) {
-        if (!modelRepository.existsById(data.id())) {
+    public void validation(DataUpdateModel data, Long id) {
+        if (!modelRepository.existsById(id)) {
             throw new ValidationException("The required model does not exist");
         }
     }

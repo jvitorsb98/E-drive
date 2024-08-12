@@ -8,15 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ValidationModelIsActivatedForUpdate implements ValidationModelUpdate {
+public class ValidationUpdateModel_ModelNotDisabled implements ValidationModelUpdate {
 
     @Autowired
     private ModelRepository modelRepository;
 
     @Override
-    public void validation(DataUpdateModel data) {
-        if (modelRepository.existsById(data.id())) {
-            Model model = modelRepository.getReferenceById(data.id());
+    public void validation(DataUpdateModel data, Long id) {
+        if (modelRepository.existsById(id)) {
+            Model model = modelRepository.getReferenceById(id);
             if (model.getActivated()) {
                 throw new ValidationException("The required model is activated");
             }

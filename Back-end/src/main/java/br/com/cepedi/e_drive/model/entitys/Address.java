@@ -62,7 +62,7 @@ public class Address {
         this.street = dataRegisterAddress.street();
         this.user = user;
         this.plugin = dataRegisterAddress.plugin() != null ? dataRegisterAddress.plugin() : false;
-        this.activated = dataRegisterAddress.activated() != null ? dataRegisterAddress.activated() : false;
+        this.activated = true;
     }
 
     public void updateData(DataUpdateAddress data) {

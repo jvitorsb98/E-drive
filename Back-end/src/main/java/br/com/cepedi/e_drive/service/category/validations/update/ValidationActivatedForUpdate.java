@@ -16,9 +16,9 @@ public class ValidationActivatedForUpdate implements CategoryValidatorUpdate {
     private CategoryRepository categoryRepository;
 
     @Override
-    public void validate(DataUpdateCategory dataUpdateCategory) {
-        if (categoryRepository.existsById(dataUpdateCategory.id())) {
-            Category category = categoryRepository.getReferenceById(dataUpdateCategory.id());
+    public void validate(Long id) {
+        if (categoryRepository.existsById(id)) {
+            Category category = categoryRepository.getReferenceById(id);
             if (!category.getActivated()) {
                 throw new ValidationException("The required category is not activated.");
             }

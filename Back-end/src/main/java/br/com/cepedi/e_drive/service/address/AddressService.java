@@ -44,22 +44,22 @@ public class AddressService {
         return new DataAddressDetails(address);
     }
 
-    public Page<DataAddressDetails> getAllAddresses(Pageable pageable) {
+    public Page<DataAddressDetails> getAll(Pageable pageable) {
         return addressRepository.findAll(pageable).map(DataAddressDetails::new);
     }
 
-    public Page<DataAddressDetails> getAddressesByUserId(Long userId, Pageable pageable) {
+    public Page<DataAddressDetails> getByUserId(Long userId, Pageable pageable) {
         return addressRepository.findByUserIdAndActivated(userId ,pageable)
                 .map(DataAddressDetails::new);
     }
 
-    public DataAddressDetails getAddressById(Long id) {
+    public DataAddressDetails getById(Long id) {
         Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Address not found with id: " + id));
         return new DataAddressDetails(address);
     }
 
-    public DataAddressDetails updateAddress(DataUpdateAddress data, Long id) {
+    public DataAddressDetails update(DataUpdateAddress data, Long id) {
         validationUpdateAddressList.forEach(v -> v.validate(id));
         Address address = addressRepository.getReferenceById(id);
         address.updateData(data);
@@ -67,14 +67,14 @@ public class AddressService {
         return new DataAddressDetails(address);
     }
 
-    public void disableAddress(Long id) {
+    public void disable(Long id) {
         validationDisabledAddressList.forEach(v -> v.validate(id));
         Address address = addressRepository.getReferenceById(id);
         address.disable();
         addressRepository.save(address);
     }
 
-    public void enableAddress(Long id) {
+    public void enable(Long id) {
         Address address = addressRepository.getReferenceById(id);
         address.enable();
         addressRepository.save(address);

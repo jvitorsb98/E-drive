@@ -26,7 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/vehicles")
+@RequestMapping("/api/v1/vehicles")
 @SecurityRequirement(name = "bearer-key")
 @Tag(name = "Vehicle", description = "Vehicle messages")
 public class VehicleController {

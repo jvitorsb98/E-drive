@@ -62,23 +62,6 @@ public class VehicleTypeTest {
         assertEquals(newName, vehicleType.getName(), "O nome do tipo de veículo deve ser atualizado.");
     }
 
-    @Test
-    @DisplayName("Should initialize vehicle type from registration data")
-    public void testConstructorFromDataRegisterVehicleType() {
-        // Arrange
-        String name = faker.lorem().word(); // Gera um nome aleatório
-        boolean activated = faker.bool().bool(); // Gera um valor booleano aleatório
 
-        DataRegisterVehicleType data = mock(DataRegisterVehicleType.class);
-        when(data.name()).thenReturn(name);
-        when(data.activated()).thenReturn(activated);
-
-        // Act
-        VehicleType vehicleType = new VehicleType(data);
-
-        // Assert
-        assertEquals(name, vehicleType.getName(), "O nome do tipo de veículo deve ser inicializado corretamente.");
-        assertEquals(activated, vehicleType.isActivated(), "O tipo de veículo deve estar ativado ou desativado corretamente.");
-    }
 }
 

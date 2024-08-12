@@ -37,7 +37,7 @@ public class Model {
         this.activated =  true;
     }
 
-    public void updateDataModel(DataUpdateModel data) {
+    public void update(DataUpdateModel data) {
         if (data.name() != null) {
             this.name = data.name();
         }

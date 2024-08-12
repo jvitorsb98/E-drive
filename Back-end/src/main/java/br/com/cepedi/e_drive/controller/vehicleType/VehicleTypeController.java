@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/v2/vehicleTypes")
+@RequestMapping("/api/v1/vehicleTypes")
 @SecurityRequirement(name = "bearer-key")
 @Tag(name = "VehicleType", description = "VehicleType messages")
 public class VehicleTypeController {
@@ -64,7 +64,7 @@ public class VehicleTypeController {
     ) {
         LOGGER.info("Registering a vehicle type");
         DataVehicleTypeDetails vehicleTypeDetails = vehicleTypeService.register(data);
-        URI uri = uriBuilder.path("/vehicleTypes/{id}").buildAndExpand(vehicleTypeDetails.id()).toUri();
+        URI uri = uriBuilder.path("/api/v1/vehicleTypes/{id}").buildAndExpand(vehicleTypeDetails.id()).toUri();
         LOGGER.info("Vehicle Type registered successfully");
         return ResponseEntity.created(uri).body(vehicleTypeDetails);
     }
@@ -82,12 +82,12 @@ public class VehicleTypeController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataVehicleTypeDetails> getVehicleTypeById(
+    public ResponseEntity<DataVehicleTypeDetails> getById(
             @Parameter(description = "ID of the vehicle type to be retrieved", required = true)
             @PathVariable Long id
     ) {
         LOGGER.info("Retrieving vehicle type with id: {}", id);
-        DataVehicleTypeDetails vehicleTypeDetails = vehicleTypeService.getVehicleTypeById(id);
+        DataVehicleTypeDetails vehicleTypeDetails = vehicleTypeService.getById(id);
         LOGGER.info("Vehicle Type retrieved successfully");
         return new ResponseEntity<>(vehicleTypeDetails, HttpStatus.OK);
     }
@@ -105,17 +105,17 @@ public class VehicleTypeController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataVehicleTypeDetails>> listAllVehicleTypes(
+    public ResponseEntity<Page<DataVehicleTypeDetails>> listAll(
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
     ) {
         LOGGER.info("Retrieving all vehicle types");
-        Page<DataVehicleTypeDetails> vehicleTypes = vehicleTypeService.listAllVehicleTypes(pageable);
+        Page<DataVehicleTypeDetails> vehicleTypes = vehicleTypeService.listAll(pageable);
         LOGGER.info("All vehicle types retrieved successfully");
         return new ResponseEntity<>(vehicleTypes, HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update vehicle type details", method = "PUT", description = "Updates the details of an existing vehicle type.")
     @ApiResponses(value = {
@@ -132,11 +132,13 @@ public class VehicleTypeController {
                     content = @Content)
     })
     public ResponseEntity<DataVehicleTypeDetails> update(
-            @Parameter(description = "Data required to update a vehicle type", required = true)
+            @Parameter(description = "ID of the model to be updated", required = true)
+            @PathVariable Long id,
+            @Parameter(description = "Data required to update a model", required = true)
             @Valid @RequestBody DataUpdateVehicleType data
     ) {
-        LOGGER.info("Updating vehicle type with id: {}", data.id());
-        DataVehicleTypeDetails updatedVehicleType = vehicleTypeService.update(data);
+        LOGGER.info("Updating vehicle type with id: {}", id);
+        DataVehicleTypeDetails updatedVehicleType = vehicleTypeService.update(data, id);
         LOGGER.info("Vehicle Type updated successfully");
         return new ResponseEntity<>(updatedVehicleType, HttpStatus.OK);
     }

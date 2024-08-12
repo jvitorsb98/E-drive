@@ -7,7 +7,7 @@ import br.com.cepedi.e_drive.model.records.vehicleType.input.DataUpdateVehicleTy
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import br.com.cepedi.e_drive.service.vehicleType.validations.activated.ValidationVehicleTypeActivated;
 import br.com.cepedi.e_drive.service.vehicleType.validations.disabled.VehicleTypeValidatorDisabled;
-import br.com.cepedi.e_drive.service.vehicleType.validations.update.ValidationVehicleTypeUpdate;
+import br.com.cepedi.e_drive.service.vehicleType.validations.update.ValidationUpdateVehicleType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,7 +22,7 @@ public class VehicleTypeService {
     private VehicleTypeRepository vehicleTypeRepository;
 
     @Autowired
-    private List<ValidationVehicleTypeUpdate> vehicleTypeValidationUpdateList;
+    private List<ValidationUpdateVehicleType> vehicleTypeValidationUpdateList;
 
     @Autowired
     private List<ValidationVehicleTypeActivated> vehicleTypeValidatorActivatedList;
@@ -36,19 +36,19 @@ public class VehicleTypeService {
         return new DataVehicleTypeDetails(vehicleType);
     }
 
-    public DataVehicleTypeDetails update(DataUpdateVehicleType data) {
-        vehicleTypeValidationUpdateList.forEach(v -> v.validation(data));
-        VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.id());
+    public DataVehicleTypeDetails update(DataUpdateVehicleType data, Long id) {
+        vehicleTypeValidationUpdateList.forEach(v -> v.validation(id));
+        VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
         vehicleType.updateDataVehicleType(data);
         return new DataVehicleTypeDetails(vehicleType);
     }
 
-    public DataVehicleTypeDetails getVehicleTypeById(Long id) {
+    public DataVehicleTypeDetails getById(Long id) {
         VehicleType vehicleType = vehicleTypeRepository.findById(id).orElseThrow(() -> new RuntimeException("VehicleType not found"));
         return new DataVehicleTypeDetails(vehicleType);
     }
 
-    public Page<DataVehicleTypeDetails> listAllVehicleTypes(Pageable pageable) {
+    public Page<DataVehicleTypeDetails> listAll(Pageable pageable) {
         return vehicleTypeRepository.findAll(pageable).map(DataVehicleTypeDetails::new);
     }
 
@@ -58,7 +58,7 @@ public class VehicleTypeService {
         vehicleType.activated();
     }
 
-    public Page<DataVehicleTypeDetails> listAllVehicleTypesActivatedTrue(Pageable pageable) {
+    public Page<DataVehicleTypeDetails> listAllActivated(Pageable pageable) {
         return vehicleTypeRepository.findAllByActivatedTrue(pageable).map(DataVehicleTypeDetails::new);
     }
 

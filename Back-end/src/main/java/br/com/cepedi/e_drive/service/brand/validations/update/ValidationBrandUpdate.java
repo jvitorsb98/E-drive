@@ -4,5 +4,5 @@ import br.com.cepedi.e_drive.model.records.brand.input.DataUpdateBrand;
 
 public interface ValidationBrandUpdate {
 
-    void validation(DataUpdateBrand data);
+    void validation(Long id);
 }

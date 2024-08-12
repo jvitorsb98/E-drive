@@ -14,9 +14,9 @@ public class ValidationBrandIsActivatedForUpdate implements ValidationBrandUpdat
 
 
     @Override
-    public void validation(DataUpdateBrand data) {
-        if(brandRepository.existsById(data.id())){
-            Brand brand = brandRepository.getReferenceById(data.id());
+    public void validation(Long id) {
+        if(brandRepository.existsById(id)){
+            Brand brand = brandRepository.getReferenceById(id);
             if(!brand.getActivated()){
                 throw new ValidationException("The required brand is disabled");
             }

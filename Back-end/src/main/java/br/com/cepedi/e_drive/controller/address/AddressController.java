@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -26,7 +28,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/addresses")
+@RequestMapping("/api/v1/address")
+@SecurityRequirement(name = "bearer-key")
+@Tag(name = "Address", description = "Address messages")
 public class AddressController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AddressController.class);
@@ -57,7 +61,7 @@ public class AddressController {
     ) {
         LOGGER.info("Registering a new address");
         DataAddressDetails addressDetails = addressService.register(data);
-        URI uri = uriBuilder.path("/addresses/{id}").buildAndExpand(addressDetails.id()).toUri();
+        URI uri = uriBuilder.path("/api/v1/address/{id}").buildAndExpand(addressDetails.id()).toUri();
         LOGGER.info("Address registered successfully");
         return ResponseEntity.created(uri).body(addressDetails);
     }
@@ -75,12 +79,12 @@ public class AddressController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<DataAddressDetails> getAddressById(
+    public ResponseEntity<DataAddressDetails> getById(
             @Parameter(description = "ID of the address to be retrieved", required = true)
             @PathVariable Long id
     ) {
         LOGGER.info("Retrieving address with id: {}", id);
-        DataAddressDetails addressDetails = addressService.getAddressById(id);
+        DataAddressDetails addressDetails = addressService.getById(id);
         LOGGER.info("Address retrieved successfully");
         return new ResponseEntity<>(addressDetails, HttpStatus.OK);
     }
@@ -98,14 +102,14 @@ public class AddressController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Page<DataAddressDetails>> getAddressesByUserId(
+    public ResponseEntity<Page<DataAddressDetails>> getByUserId(
             @Parameter(description = "ID of the user whose addresses are to be retrieved", required = true)
             @PathVariable Long userId,
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"city"}) Pageable pageable
     ) {
         LOGGER.info("Retrieving addresses for user with id: {}", userId);
-        Page<DataAddressDetails> addresses = addressService.getAddressesByUserId(userId, pageable);
+        Page<DataAddressDetails> addresses = addressService.getByUserId(userId, pageable);
         LOGGER.info("Addresses retrieved successfully");
         return new ResponseEntity<>(addresses, HttpStatus.OK);
     }
@@ -126,7 +130,7 @@ public class AddressController {
             @PageableDefault(size = 10, sort = {"city"}) Pageable pageable
     ) {
         LOGGER.info("Retrieving all addresses");
-        Page<DataAddressDetails> addresses = addressService.getAllAddresses(pageable);
+        Page<DataAddressDetails> addresses = addressService.getAll(pageable);
         LOGGER.info("All addresses retrieved successfully");
         return new ResponseEntity<>(addresses, HttpStatus.OK);
     }
@@ -154,12 +158,12 @@ public class AddressController {
             @PathVariable Long id
     ) {
         LOGGER.info("Updating address with id: {}", id);
-        DataAddressDetails updatedAddress = addressService.updateAddress(data, id);
+        DataAddressDetails updatedAddress = addressService.update(data, id);
         LOGGER.info("Address updated successfully");
         return new ResponseEntity<>(updatedAddress, HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/disable")
+    @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable address by ID", method = "PATCH", description = "Disables an address by its ID.")
     @ApiResponses(value = {
@@ -171,17 +175,17 @@ public class AddressController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
     })
-    public ResponseEntity<Void> disableAddress(
+    public ResponseEntity<Void> disabled(
             @Parameter(description = "ID of the address to be disabled", required = true)
             @PathVariable Long id
     ) {
         LOGGER.info("Disabling address with id: {}", id);
-        addressService.disableAddress(id);
+        addressService.disable(id);
         LOGGER.info("Address disabled successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/{id}/enable")
+    @PutMapping("/{id}/enable")
     @Transactional
     @Operation(summary = "Enable address by ID", method = "PATCH", description = "Enables an address by its ID.")
     @ApiResponses(value = {
@@ -198,7 +202,7 @@ public class AddressController {
             @PathVariable Long id
     ) {
         LOGGER.info("Enabling address with id: {}", id);
-        addressService.enableAddress(id);
+        addressService.enable(id);
         LOGGER.info("Address enabled successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

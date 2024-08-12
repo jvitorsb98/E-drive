@@ -28,9 +28,8 @@ public record DataRegisterAddress(
         @NotNull(message = "User ID cannot be null.")
         Long userId,
 
-        Boolean plugin,
+        Boolean plugin
 
-        Boolean activated
 
 ) {
 }

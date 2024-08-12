@@ -30,7 +30,7 @@ public class VehicleType {
 
     public VehicleType(DataRegisterVehicleType dataRegisterVehicleType) {
         this.name = dataRegisterVehicleType.name();
-        this.activated = Boolean.TRUE.equals(dataRegisterVehicleType.activated()); 
+        this.activated = true;
     }
 
 
