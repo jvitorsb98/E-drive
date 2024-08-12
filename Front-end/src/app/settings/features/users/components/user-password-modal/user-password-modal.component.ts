@@ -1,20 +1,20 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../core/services/user/user.service';
 import { MatDialogRef } from '@angular/material/dialog';
-import { isPlatformBrowser } from '@angular/common';
 import Swal from 'sweetalert2';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
+import { passwordMatchValidator } from '../../../../shared/validators/confirm-password.validators';
+import { PasswordFieldValidator } from '../../../../shared/validators/password-field.validator';
 
 @Component({
   selector: 'app-user-password-modal',
   templateUrl: './user-password-modal.component.html',
   styleUrl: './user-password-modal.component.scss'
 })
-export class UserPasswordModalComponent {
+export class UserPasswordModalComponent implements OnInit {
 
   userPassword!: FormGroup;
-  private isBrowser: boolean;
 
   constructor(
     private userService: UserService,
@@ -22,18 +22,12 @@ export class UserPasswordModalComponent {
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
-    @Inject(PLATFORM_ID)
-    private platformId: Object,
     public dialogRef: MatDialogRef<UserPasswordModalComponent>,
-  ) {
-    this.isBrowser = isPlatformBrowser(this.platformId);
-  }
+  ) { }
 
   ngOnInit() {
     this.buildForm();
-    if (this.isBrowser) {
-      this.initializePasswordField();
-    }
+    PasswordFieldValidator.initializePasswordField(this.renderer, this.el);
   }
 
   // Cria e inicializa o formulário com validação de senha e confirmação de senha.
@@ -42,7 +36,7 @@ export class UserPasswordModalComponent {
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl(null, Validators.required),
       newsletter: new FormControl(false, Validators.requiredTrue)
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: passwordMatchValidator });
   }
 
   saveUser(): void {
@@ -51,7 +45,6 @@ export class UserPasswordModalComponent {
       this.userDataService.clearUserData();
 
       if (storedUserData) {
-
         storedUserData.password = this.userPassword.value.password;
 
         this.userService.addUser(storedUserData).subscribe(newUser => {
@@ -76,62 +69,6 @@ export class UserPasswordModalComponent {
         // Exibir uma mensagem ao usuário ou redirecionar para um fluxo diferente.
       }
     }
-  }
-
-  // Função para validar se a senha possui os requisitos mínimos de segurança e para mostrar/ocultar a senha
-  initializePasswordField(): void {
-    const passwordInput = this.el.nativeElement.querySelector(".password-input");
-    const confirmPasswordInput = this.el.nativeElement.querySelector(".confirm-password-input");
-    const passwordEyeIcon = this.el.nativeElement.querySelector(".password-eye-icon");
-    const confirmPasswordEyeIcon = this.el.nativeElement.querySelector(".confirm-password-eye-icon");
-    const requirementList = this.el.nativeElement.querySelectorAll(".requirement-list li");
-
-    const requirements = [
-      { regex: /.{8,}/, index: 0 },
-      { regex: /[0-9]/, index: 1 },
-      { regex: /[a-z]/, index: 2 },
-      { regex: /[^A-Za-z0-9]/, index: 3 },
-      { regex: /[A-Z]/, index: 4 },
-    ];
-
-    // Lógica para os requisitos da senha 
-    this.renderer.listen(passwordInput, 'keyup', (e) => {
-      requirements.forEach(item => {
-        const isValid = item.regex.test(e.target.value);
-        const requirementItem = requirementList[item.index];
-        if (isValid) {
-          this.renderer.addClass(requirementItem, 'valid');
-          this.renderer.setAttribute(requirementItem.firstElementChild, 'class', 'bi bi-check-circle-fill');
-        } else {
-          this.renderer.removeClass(requirementItem, 'valid');
-          this.renderer.setAttribute(requirementItem.firstElementChild, 'class', 'bi bi-bag-x-fill');
-        }
-      });
-    });
-
-    // Lógica para o campo 'password'
-    this.renderer.listen(passwordEyeIcon, 'click', () => {
-      const isHidden = passwordInput.classList.toggle("hidden-text");
-      this.renderer.setAttribute(passwordEyeIcon, 'class', `bi ${isHidden ? "bi-eye-slash-fill" : "bi-eye"}`);
-    });
-
-    // Lógica para o campo 'confirmPassword'
-    this.renderer.listen(confirmPasswordEyeIcon, 'click', () => {
-      const isHidden = confirmPasswordInput.classList.toggle("hidden-text");
-      this.renderer.setAttribute(confirmPasswordEyeIcon, 'class', `bi ${isHidden ? "bi-eye-slash-fill" : "bi-eye"}`);
-    });
-  }
-
-  // Função para validar se a senha e a confirmação de senha são iguais
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const formGroup = control as FormGroup;
-    const password = formGroup.get('password')?.value;
-    const confirmPassword = formGroup.get('confirmPassword')?.value;
-
-    if (password !== confirmPassword) {
-      return { passwordMismatch: true };
-    }
-    return null;
   }
 
   // Função para fechar o modal
