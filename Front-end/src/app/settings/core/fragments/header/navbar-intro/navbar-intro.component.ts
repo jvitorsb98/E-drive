@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../services/modal/modal.service';
+import { UserLoginModalComponent } from '../../../../features/users/components/user-login-modal/user-login-modal.component';
 
 @Component({
   selector: 'app-navbar-intro',
@@ -14,6 +15,10 @@ export class NavbarIntroComponent {
   ) {}
 
   openLoginModal() {
-    this.modal.openModal('login'); // trocar para o componenete de login
+    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
+      if (result) {
+        //this.loginService.login(result.email, result.password); // Exemplo de chamada ao serviço
+      }
+    });
   }
 }
