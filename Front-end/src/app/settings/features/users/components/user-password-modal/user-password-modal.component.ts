@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../core/services/user/user.service';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -68,6 +68,28 @@ export class UserPasswordModalComponent implements OnInit {
         // Tratar o caso em que os dados do usuário não são encontrados,
         // Exibir uma mensagem ao usuário ou redirecionar para um fluxo diferente.
       }
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onFormClick(event: Event) {
+    // Verifica se as senhas foram preenchidas
+    const password = this.userPassword.get('password')?.value;
+    const confirmPassword = this.userPassword.get('confirmPassword')?.value;
+
+    if (password && confirmPassword) {
+      // Verifica se o clique foi dentro do formulário
+      const target = event.target as HTMLElement;
+      const formElement = document.querySelector('.container-fluid');
+      if (formElement && formElement.contains(target)) {
+        this.validateForm();
+      }
+    }
+  }
+
+  validateForm() {
+    if (this.userPassword.get('newsletter')?.invalid) {
+      this.userPassword.get('newsletter')?.markAsTouched();
     }
   }
 
