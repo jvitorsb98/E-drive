@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
+import { GoogleMapsModule } from '@angular/google-maps';
 
 // Providers
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -19,12 +20,17 @@ import { FooterComponent } from './settings/core/fragments/footer/footer.compone
 import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
+import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
+import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
+
+
+
 
 
 @NgModule({
@@ -37,12 +43,16 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     NavbarIntroComponent,
     UserLoginModalComponent,
     ResetPasswordComponent,
+    DeshboardComponent,
+    NavbarComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
 
     // Pipes
     PhoneMaskPipe,
+
+
 
   ],
   imports: [
@@ -53,6 +63,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     ReactiveFormsModule,
     FormsModule,
     AngularMaterialModule,
+    GoogleMapsModule
   ],
   providers: [
     provideAnimationsAsync()

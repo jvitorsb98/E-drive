@@ -1,0 +1,19 @@
+.search-container {
+  display: flex;
+  align-items: center;
+  flex: 1; /* Ocupa o espaço restante à esquerda */
+}
+
+.search-container input {
+  flex: 1;
+  margin: 0 8px;
+}
+
+.user-profile {
+  margin-left: auto; /* Empurra o perfil para a direita */
+}
+
+.ingenico-logo{
+  width: 150px;
+  height: 70px;
+}
