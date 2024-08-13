@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.security.model.records.register;
 
 import br.com.cepedi.e_drive.security.model.records.validations.Password;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ public record DataRegisterUser(
         @Past(message = "{past.user.birth}")
         LocalDate birth, // Valida que é uma data passada
 
+        @JsonProperty("cellPhone")
         @NotBlank(message = "{notblank.user.cellphone}")
         String cellphone // Adicione o celular
 
