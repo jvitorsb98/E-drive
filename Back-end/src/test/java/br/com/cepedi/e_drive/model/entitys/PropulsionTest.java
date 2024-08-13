@@ -1,83 +1,152 @@
 package br.com.cepedi.e_drive.model.entitys;
 
 import com.github.javafaker.Faker;
+
+import br.com.cepedi.e_drive.model.records.propulsion.input.DataRegisterPropulsion;
+import br.com.cepedi.e_drive.model.records.propulsion.update.DataUpdatePropulsion;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.Random.class)
-@DisplayName("Test entity Propulsion")
 public class PropulsionTest {
 
     private Faker faker;
+    private DataRegisterPropulsion dataRegisterPropulsion;
+    private DataUpdatePropulsion dataUpdatePropulsion;
     private Propulsion propulsion;
 
     @BeforeEach
     void setUp() {
         faker = new Faker();
-        propulsion = new Propulsion(
-                null, // ID will be generated automatically
-                faker.company().name(),
-                faker.bool().bool()
-        );
+        String name = faker.company().name();
+        dataRegisterPropulsion = Mockito.mock(DataRegisterPropulsion.class);
+        Mockito.when(dataRegisterPropulsion.name()).thenReturn(name);
+        dataUpdatePropulsion = Mockito.mock(DataUpdatePropulsion.class);
+        propulsion = new Propulsion(dataRegisterPropulsion);
     }
 
     @Test
-    @DisplayName("Test creation of Propulsion entity")
-    void testPropulsionCreation() {
-        assertNotNull(propulsion);
-        assertNotNull(propulsion.getName(), "Name should not be null");
-        assertNotNull(propulsion.getActivated(), "Activated should not be null");
+    @DisplayName("Test creation with no-args constructor")
+    void testNoArgsConstructor() {
+        // Arrange
+        Propulsion propulsion = new Propulsion(); 
+
+        // Act
+        // Não há ações adicionais, pois estamos testando o estado padrão da entidade
+
+        // Assert
+        assertNotNull(propulsion, "Propulsion instance should be created with no-args constructor.");
+        assertNull(propulsion.getName(), "Name should be null by default.");
+        assertNull(propulsion.getActivated(), "Activated should be null by default.");
     }
 
     @Test
-    @DisplayName("Test updating Propulsion entity")
-    void testPropulsionUpdate() {
-        // Simulate updating the Propulsion
+    @DisplayName("Test creation with all-args constructor")
+    void testAllArgsConstructor() {
+        // Arrange
+        Long id = faker.number().randomNumber();
+        String name = faker.company().name();
+        Boolean activated = faker.bool().bool();
+
+        // Act
+        Propulsion propulsion = new Propulsion(id, name, activated);
+
+        // Assert
+        assertNotNull(propulsion, "Propulsion instance should be created with all-args constructor.");
+        assertEquals(id, propulsion.getId(), "ID should be initialized correctly.");
+        assertEquals(name, propulsion.getName(), "Name should be initialized correctly.");
+        assertEquals(activated, propulsion.getActivated(), "Activated status should be initialized correctly.");
+    }
+
+    @Test
+    @DisplayName("Test creation with DataRegisterPropulsion")
+    void testCreationWithDataRegisterPropulsion() {
+        // Assert
+        assertNotNull(propulsion, "Propulsion instance should be created with DataRegisterPropulsion.");
+        assertEquals(dataRegisterPropulsion.name(), propulsion.getName(), "Name should be initialized correctly from DataRegisterPropulsion.");
+        assertTrue(propulsion.getActivated(), "Activated should default to true when using DataRegisterPropulsion.");
+    }
+
+    @Test
+    @DisplayName("Test updating Propulsion with new values")
+    void testUpdatePropulsion() {
+        // Arrange
         String newName = faker.company().name();
-        propulsion.setName(newName);
+        Mockito.when(dataUpdatePropulsion.name()).thenReturn(newName);
 
-        // Check if the update was successful
-        assertEquals(newName, propulsion.getName());
+        // Act
+        propulsion.update(dataUpdatePropulsion);
+
+        // Assert
+        assertEquals(newName, propulsion.getName(), "The name should be updated.");
     }
 
     @Test
-    @DisplayName("Test activating Propulsion entity")
-    void testPropulsionActivation() {
-        propulsion.setActivated(false);
-        assertFalse(propulsion.getActivated());
+    @DisplayName("Test updating Propulsion with null values")
+    void testUpdatePropulsionWithNullValues() {
+        // Arrange
+        String originalName = propulsion.getName();
+        Mockito.when(dataUpdatePropulsion.name()).thenReturn(null);
 
-        propulsion.setActivated(true);
-        assertTrue(propulsion.getActivated());
+        // Act
+        propulsion.update(dataUpdatePropulsion);
+
+        // Assert
+        assertEquals(originalName, propulsion.getName(), "The name should not change when the new name is null.");
     }
 
     @Test
-    @DisplayName("Test deactivating Propulsion entity")
-    void testPropulsionDeactivation() {
-        propulsion.setActivated(true);
-        assertTrue(propulsion.getActivated());
+    @DisplayName("Test activating Propulsion")
+    void testActivatePropulsion() {
+        // Act
+        propulsion.deactivated();
+        assertFalse(propulsion.getActivated(), "Propulsion should be deactivated.");
 
-        propulsion.setActivated(false);
-        assertFalse(propulsion.getActivated());
+        propulsion.activated();
+        assertTrue(propulsion.getActivated(), "Propulsion should be activated.");
     }
 
     @Test
-    @DisplayName("Test handling of null values")
-    void testPropulsionNullValues() {
-        Propulsion propulsionWithNulls = new Propulsion(null, null, null);
-        assertNull(propulsionWithNulls.getName(), "Name should be null");
-        assertNull(propulsionWithNulls.getActivated(), "Activated should be null");
+    @DisplayName("Test deactivating Propulsion")
+    void testDeactivatePropulsion() {
+        // Act
+        propulsion.activated();
+        assertTrue(propulsion.getActivated(), "Propulsion should be activated.");
 
-        // Update with valid values
-        propulsionWithNulls.setName(faker.company().name());
-        propulsionWithNulls.setActivated(faker.bool().bool());
+        propulsion.deactivated();
+        assertFalse(propulsion.getActivated(), "Propulsion should be deactivated.");
+    }
 
-        assertNotNull(propulsionWithNulls.getName(), "Name should not be null after setting");
-        assertNotNull(propulsionWithNulls.getActivated(), "Activated should not be null after setting");
+    @Test
+    @DisplayName("Test getter and setter for name")
+    void testNameGetterAndSetter() {
+        // Arrange
+        String name = faker.company().name();
+
+        // Act
+        propulsion.setName(name);
+        String retrievedName = propulsion.getName();
+
+        // Assert
+        assertEquals(name, retrievedName, "The name should be set and retrieved correctly.");
+    }
+
+    @Test
+    @DisplayName("Test getter and setter for activated")
+    void testActivatedGetterAndSetter() {
+        // Arrange
+        Boolean activated = faker.bool().bool();
+
+        // Act
+        propulsion.setActivated(activated);
+        Boolean retrievedActivated = propulsion.getActivated();
+
+        // Assert
+        assertEquals(activated, retrievedActivated, "The activated status should be set and retrieved correctly.");
     }
 }
 

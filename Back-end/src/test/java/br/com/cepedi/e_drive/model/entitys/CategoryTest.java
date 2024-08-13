@@ -1,74 +1,127 @@
 package br.com.cepedi.e_drive.model.entitys;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.Random.class)
-@DisplayName("Test entity Category")
+import com.github.javafaker.Faker;
+
+import br.com.cepedi.e_drive.model.records.category.register.DataRegisterCategory;
+import br.com.cepedi.e_drive.model.records.category.update.DataUpdateCategory;
+
 public class CategoryTest {
 
     private Faker faker;
+    private DataRegisterCategory dataRegisterCategory;
     private Category category;
 
     @BeforeEach
     void setUp() {
         faker = new Faker();
-        category = new Category(
-                null, 
-                faker.company().name(),
-                faker.bool().bool()
-        );
+        dataRegisterCategory = mock(DataRegisterCategory.class);
+        when(dataRegisterCategory.name()).thenReturn(faker.company().name());
+
+        category = new Category(dataRegisterCategory);
     }
 
     @Test
-    @DisplayName("Test creation of Category entity")
-    void testCategoryCreation() {
-        assertNotNull(category);
-        assertNotNull(category.getName());
-        assertNotNull(category.getActivated());
+    @DisplayName("Test constructor of Category with DataRegisterCategory")
+    void testCategoryConstructor() {
+        assertNotNull(category, "Category should not be null");
+        assertEquals(dataRegisterCategory.name(), category.getName(), "The name should be set correctly from DataRegisterCategory");
+        assertTrue(category.getActivated(), "The activated field should be set to true by default");
     }
 
     @Test
-    @DisplayName("Test updating Category name")
-    void testCategoryUpdateName() {
-        String newName = faker.company().name();
-        category.setName(newName);
-        assertEquals(newName, category.getName());
-    }
-
-    @Test
-    @DisplayName("Test activating Category entity")
-    void testCategoryActivation() {
-        category.setActivated(false);
-        assertFalse(category.getActivated());
-
+    @DisplayName("Should update category data with new values")
+    void testUpdateCategory() {
+        String initialName = faker.company().name();
+        category.setName(initialName);
         category.setActivated(true);
-        assertTrue(category.getActivated());
+
+        String updatedName = faker.company().name();
+        DataUpdateCategory dataUpdateCategory = mock(DataUpdateCategory.class);
+        when(dataUpdateCategory.name()).thenReturn(updatedName);
+
+        category.update(dataUpdateCategory);
+
+        assertEquals(updatedName, category.getName(), "The name should be updated.");
     }
 
     @Test
-    @DisplayName("Test deactivating Category entity")
-    void testCategoryDeactivation() {
-        category.setActivated(true);
-        assertTrue(category.getActivated());
-
+    @DisplayName("Should activate the category")
+    void testActivate() {
         category.setActivated(false);
-        assertFalse(category.getActivated());
+        category.activated();
+        assertTrue(category.getActivated(), "The category should be activated.");
     }
 
     @Test
-    @DisplayName("Test Category entity with null values")
-    void testCategoryWithNullValues() {
-        Category nullCategory = new Category(null, null, null);
-        assertNull(nullCategory.getName());
-        assertNull(nullCategory.getActivated());
+    @DisplayName("Should deactivate the category")
+    void testDeactivate() {
+        category.setActivated(true);
+        category.deactivated();
+        assertFalse(category.getActivated(), "The category should be deactivated.");
+    }
+
+    @Test
+    @DisplayName("Should handle null name in update")
+    void testUpdateCategoryWithNullName() {
+        category.setName(faker.company().name());
+        category.setActivated(true);
+
+        DataUpdateCategory dataUpdateCategory = mock(DataUpdateCategory.class);
+        when(dataUpdateCategory.name()).thenReturn(null);
+
+        category.update(dataUpdateCategory);
+
+        assertNotNull(category.getName(), "The name should not be null.");
+    }
+    
+    @Test
+    @DisplayName("Test creation with no-args constructor")
+    void testNoArgsConstructor() {
+        Category category = new Category(); // Usando o construtor padrão
+
+        assertNotNull(category, "Category instance should be created with no-args constructor.");
+        assertNull(category.getId(), "ID should be null by default.");
+        assertNull(category.getName(), "Name should be null by default.");
+        assertNull(category.getActivated(), "Activated should be null by default.");
+    }
+    
+    @Test
+    @DisplayName("Test creation with all-args constructor")
+    void testAllArgsConstructor() {
+        Long id = faker.number().randomNumber();
+        String name = faker.company().name();
+        Boolean activated = faker.bool().bool();
+
+        Category category = new Category(id, name, activated);
+
+        assertNotNull(category, "Category instance should be created with all-args constructor.");
+        assertEquals(id, category.getId(), "ID should be initialized correctly.");
+        assertEquals(name, category.getName(), "Name should be initialized correctly.");
+        assertEquals(activated, category.getActivated(), "Activated should be initialized correctly.");
+    }
+    
+    @Test
+    @DisplayName("Test getter and setter for name")
+    void testNameGetterAndSetter() {
+        String name = faker.company().name();
+        category.setName(name);
+        assertEquals(name, category.getName(), "The name should be set and retrieved correctly.");
+    }
+
+    @Test
+    @DisplayName("Test getter and setter for activated")
+    void testActivatedGetterAndSetter() {
+        Boolean activated = faker.bool().bool();
+        category.setActivated(activated);
+        assertEquals(activated, category.getActivated(), "The activated status should be set and retrieved correctly.");
     }
 }
 
