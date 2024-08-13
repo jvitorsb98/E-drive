@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
 import { LoginRequest } from '../../../../core/models/ineter-Login';
+import { ResetPasswordComponent } from '../recover-password/reset-password/reset-password.component';
 
 @Component({
   selector: 'app-user-login-modal',
@@ -23,9 +24,9 @@ export class UserLoginModalComponent {
 
   /* Chama o modal de-esquecimento de senha */
   modalResetPassword(){
-    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
+    this.modal.openModal(ResetPasswordComponent).subscribe(result => {
       if (result) {
-        //this.loginService.resetPassword(result.email); // Exemplo de chamada ao serviço
+        this.auth.resetPassword(result.email);
       }
     });
   }

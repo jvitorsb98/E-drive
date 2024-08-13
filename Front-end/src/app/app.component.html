@@ -1,6 +1,2 @@
-<div class="bkg-degrad-primary">
-  <app-navbar-intro></app-navbar-intro>
-  <app-intro-page *ngIf="isHomePage()"></app-intro-page>
-  <router-outlet [@routeAnimations]="prepareRoute(outlet)"></router-outlet>
-  <app-footer></app-footer>
-</div>
+<app-intro-page *ngIf="isHomePage()"></app-intro-page>
+<router-outlet [@routeAnimations]="prepareRoute(outlet)"></router-outlet>

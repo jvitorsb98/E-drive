@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { UserLoginModalComponent } from '../../core/security/login-form/user-login-modal/user-login-modal.component';
 import { ModalService } from '../../core/services/modal/modal.service';
+import { UserLoginModalComponent } from '../../core/security/login/user-login-modal/user-login-modal.component';
 
 @Component({
   selector: 'app-intro-page',

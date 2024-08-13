@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../services/modal/modal.service';
-import { UserLoginModalComponent } from '../../../security/login-form/user-login-modal/user-login-modal.component';
+import { UserLoginModalComponent } from '../../../security/login/user-login-modal/user-login-modal.component';
 
 @Component({
   selector: 'app-navbar-intro',
