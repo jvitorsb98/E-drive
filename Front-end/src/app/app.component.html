@@ -1,1 +1,2 @@
-<app-user-registration-form></app-user-registration-form>
+<app-intro-page *ngIf="isHomePage()"></app-intro-page>
+<router-outlet [@routeAnimations]="prepareRoute(outlet)"></router-outlet>
