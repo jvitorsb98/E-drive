@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { User } from '../../models/User';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class UserService {
   private users: User[] = [];
 
   constructor(private http: HttpClient) {
-    // this.usersUrl = `${environment.apiUrl}/users`;
+    this.usersUrl = `${environment.apiUrl}/auth/register`;
   }
 
   // Método para obter todos os usuários reais
@@ -22,10 +22,21 @@ export class UserService {
     return of(this.users);
   }
 
-  addUser(user: User): Observable<User> {
-    this.users.push(user);
-      return of(user);
-    // return this.http.post<User>(this.usersUrl, user);
+  addUser(user: User): Observable<any> {
+    return this.http.post(this.usersUrl, user, { responseType: 'text' })
+      .pipe(
+        map(response => {
+          // Como a resposta é um texto, você pode retornar um objeto com a mensagem.
+          return { message: response };
+        }),
+        catchError(e => {
+          if (e.status === 400) {
+            return throwError(() => e);
+          }
+          console.error('Erro ao cadastrar usuário:', e);
+          return throwError(() => e);
+        })
+      );
   }
 
 }

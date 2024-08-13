@@ -47,26 +47,31 @@ export class UserPasswordModalComponent implements OnInit {
       if (storedUserData) {
         storedUserData.password = this.userPassword.value.password;
 
-        this.userService.addUser(storedUserData).subscribe(newUser => {
+        this.userService.addUser(storedUserData).subscribe({
+          next: (response) => {
+            console.log('Usuário cadastrado', response);
 
-          console.log('Local Storage:', this.userDataService.getUserData());
-          console.log('Usuário cadastrado', newUser);
+            this.userDataService.clearUserData();
+            this.userPassword.reset();
+            this.closeModal();
 
-          this.userDataService.clearUserData();
-          this.userPassword.reset();
-          this.closeModal();
-
-          Swal.fire({
-            title: 'Sucesso!',
-            icon: 'success',
-            text: 'Usuário cadastrado com sucesso!',
-            showConfirmButton: true,
-          });
+            Swal.fire({
+              title: 'Cadastro bem-sucedido!',
+              icon: 'success',
+              text: `${storedUserData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`,
+              showConfirmButton: true,
+            });
+          },
+          error: (e) => {
+            console.error('Erro ao cadastrar usuário:', e);
+            Swal.fire({
+              title: 'Erro!',
+              icon: 'error',
+              text: 'Houve um problema ao cadastrar o usuário. Tente novamente mais tarde.',
+              showConfirmButton: true,
+            });
+          }
         });
-      } else {
-        console.error('Dados do usuário não encontrados no armazenamento local.');
-        // Tratar o caso em que os dados do usuário não são encontrados,
-        // Exibir uma mensagem ao usuário ou redirecionar para um fluxo diferente.
       }
     }
   }

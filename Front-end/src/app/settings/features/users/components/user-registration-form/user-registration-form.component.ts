@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
 import { User } from '../../../../core/models/User';
