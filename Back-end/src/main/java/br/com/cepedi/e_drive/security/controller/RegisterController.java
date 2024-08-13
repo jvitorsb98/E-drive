@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.security.controller;
 
 
+import br.com.cepedi.e_drive.controller.address.AddressController;
 import br.com.cepedi.e_drive.security.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +14,8 @@ import jakarta.validation.Valid;
 
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +41,9 @@ public class RegisterController {
     @Autowired
     private TokenService tokenService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddressController.class);
+
+
 
     @PostMapping("/register")
     @Transactional
@@ -53,7 +59,9 @@ public class RegisterController {
             @RequestBody @Valid DataRegisterUser data) throws MessagingException {
         DataDetailsRegisterUser dataDetailsRegisterUser = authService.register(data);
         String tokenForActivate = dataDetailsRegisterUser.confirmationToken(); // Obtém o token do retorno
-        emailService.sendActivationEmail(data.name(), data.email(), tokenForActivate);
+
+        emailService.sendActivationEmailAsync(data.name(), data.email(), tokenForActivate);
+
         return ResponseEntity.ok("User registered successfully. Activation email sent.");
     }
 

@@ -47,7 +47,7 @@ public class User implements UserDetails {
         this.password = passwordEncoder.encode(dataRegisterUser.password());
         this.activated = false;
         this.birth = dataRegisterUser.birth(); // Adicionado
-        this.cellphone = dataRegisterUser.cellphone(); // Adicionado
+        this.cellphone = dataRegisterUser.cellPhone(); // Adicionado
     }
 
     public void activate() {

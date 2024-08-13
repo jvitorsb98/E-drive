@@ -1,48 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Activation Email</title>
+    <title>e-Drive</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="e-Drive - Planeje suas viagens elétricas com segurança" />
+    <meta name="author" content="João" />
     <style>
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-
-        .button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
+        a:link,
+        a:visited {
+            background-color: #19B6DD;
+            border: 2px solid;
             border-radius: 5px;
+            color: white;
+            padding: 14px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        .button:hover {
-            background-color: #0056b3;
-        }
-
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #777;
+        a:hover,
+        a:active {
+            background-color: DodgerBlue;
         }
     </style>
 </head>
-<body>
-<div class="container">
-    <h2>Prezado ${name},</h2>
-    <p>Seu registro no E-drive foi concluído com sucesso!</p>
-    <p>Para ativar sua conta, clique no botão abaixo:</p>
-    <a href="http://localhost:8080/auth/activate?token=${token}" class="button">Ativar Conta</a>
-    <p>Se você não se cadastrou no E-Drive, por favor ignore este e-mail.</p>
-    <p>Por favor, não responda a este e-mail.</p>
-    <p class="footer">Atenciosamente,<br>Equipe de Shopping Store</p>
-</div>
+
+<body style="margin: 0; padding: 0;">
+<table align="center" border="0" cellpadding="0" cellspacing="0" width="600"
+       style="border-collapse: collapse; padding: 40px 30px 40px 30px; font-family: Arial, Helvetica, sans-serif;">
+    <tr>
+        <td align="center" style="padding: 20px 0 10px 0;">
+            <img src="cid:logo" alt="e-Drive"
+                 style="display: block; margin-left: auto; margin-right: auto; width: 15%;" />
+            <h1 style="font-weight: 200;">Bem-vindo(a) ao e-Drive, <span th:text="${nome}">[Nome]</span>!</h1>
+            <p style="margin-bottom: 0;">Estamos felizes em tê-lo(a) conosco.</p>
+        </td>
+    </tr>
+    <tr>
+        <td align="center" bgcolor="MediumSeaGreen" style="padding: 20px;">
+            <h4 class="text-center" th:text="${titulo}"><strong>Confirme seu cadastro</strong></h4>
+            <p th:text="${texto}">Para começar a usar o e-Drive, confirme seu cadastro clicando no botão abaixo.</p>
+            <p class="text-center mb-0" th:if="${linkConfirmacao != null}">
+                <a th:href="${linkConfirmacao}">Confirmar cadastro</a>
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td bgcolor="LightGray" style="padding: 10px 0px 10px 0px; text-align:center;">
+            <p style="margin-bottom: .25rem;">&copy; 2024 e-Drive. Todos os direitos reservados.</p>
+        </td>
+    </tr>
+</table>
 </body>
+
 </html>

@@ -26,8 +26,7 @@ public record DataRegisterUser(
         @Past(message = "{past.user.birth}")
         LocalDate birth, // Valida que é uma data passada
 
-        @JsonProperty("cellPhone")
         @NotBlank(message = "{notblank.user.cellphone}")
-        String cellphone // Adicione o celular
+        String cellPhone // Adicione o celular
 
 ) {}
