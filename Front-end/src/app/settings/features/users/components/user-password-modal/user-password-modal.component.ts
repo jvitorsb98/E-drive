@@ -46,7 +46,7 @@ export class UserPasswordModalComponent implements OnInit {
 
       if (storedUserData) {
         storedUserData.password = this.userPassword.value.password;
-
+       
         this.userService.addUser(storedUserData).subscribe({
           next: (response) => {
             console.log('Usuário cadastrado', response);
@@ -60,6 +60,7 @@ export class UserPasswordModalComponent implements OnInit {
               icon: 'success',
               text: `${storedUserData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`,
               showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
             });
           },
           error: (e) => {
@@ -69,6 +70,7 @@ export class UserPasswordModalComponent implements OnInit {
               icon: 'error',
               text: 'Houve um problema ao cadastrar o usuário. Tente novamente mais tarde.',
               showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
             });
           }
         });

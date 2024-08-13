@@ -129,7 +129,6 @@ export class UserRegistrationFormComponent {
 
   // Função para abrir o modal de visualização de usuário
   openModalViewUser(user: User) {
-
     this.modal.openModal(UserPasswordModalComponent, {
       width: '700px',
       height: '330px',
@@ -138,13 +137,21 @@ export class UserRegistrationFormComponent {
   }
 
   // Função para abrir o modal de alteração de senha
-  private openModalPasswordUser() {
+  // private openModalPasswordUser() {
+  //   this.modal.openModal(UserPasswordModalComponent, {
+  //     width: '430px',
+  //     height: '545px',
+  //     data: this.user
+  //   }).subscribe(() => this.getListUsers());
+  // }
 
-    this.modal.openModal(UserPasswordModalComponent, {
+  // Função para abrir o modal de alteração de senha
+  private openModalPasswordUser() {
+    this.dialog.open(UserPasswordModalComponent, {
       width: '430px',
-      height: '545px',
+      height: '650px',
       data: this.user
-    }).subscribe(() => this.getListUsers());
+    }).afterClosed().subscribe(() => this.getListUsers());
   }
 
 }
