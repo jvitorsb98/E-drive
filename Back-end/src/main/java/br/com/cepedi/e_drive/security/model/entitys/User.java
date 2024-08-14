@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.security.model.entitys;
 
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
+import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -56,6 +57,18 @@ public class User implements UserDetails {
 
     public void disabled() {
         this.activated = false;
+    }
+
+    public void update(DataUpdateUser dataUpdateUser) {
+        if (dataUpdateUser.name() != null) {
+            this.name = dataUpdateUser.name();
+        }
+        if (dataUpdateUser.cellPhone() != null) {
+            this.cellphone = dataUpdateUser.cellPhone();
+        }
+        if (dataUpdateUser.birth() != null) {
+            this.birth = dataUpdateUser.birth();
+        }
     }
 
     @Override
