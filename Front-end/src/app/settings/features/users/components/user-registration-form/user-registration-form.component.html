@@ -52,6 +52,9 @@
               && !userForm.get('email')?.hasError('required') && userForm.get('email')?.invalid">
             <mat-error class="mat-error-text">O <strong>Email</strong> é inválido.</mat-error>
           </div>
+          <div *ngIf="userForm.get('email')?.hasError('emailExists')">
+            <mat-error class="mat-error-text"><strong>Este e-mail já está cadastrado.</strong> Por favor, use outro e-mail.</mat-error>
+          </div>
         </mat-card>
       </div>
       <!-- Data de nascimento -->
@@ -95,7 +98,7 @@
               [matAutocompleteDisabled]="false" 
               (input)="userForm.get('countryCode')?.markAsTouched()">
               <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCountryChange($event.option.value)">
-                <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code">
+                <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code" class="custom-autocomplete-option">
                   {{ country.name }} ({{ country.code }})
                 </mat-option>
               </mat-autocomplete>

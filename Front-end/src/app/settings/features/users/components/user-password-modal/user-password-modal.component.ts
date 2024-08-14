@@ -6,6 +6,10 @@ import Swal from 'sweetalert2';
 import { passwordMatchValidator } from '../../../../shared/validators/confirm-password.validators';
 import { PasswordFieldValidator } from '../../../../shared/validators/password-field.validator';
 import { User } from '../../../../core/models/User';
+import { NavigationEnd, Router } from '@angular/router';
+import { UserLoginModalComponent } from '../../../../core/security/login/user-login-modal/user-login-modal.component';
+import { ModalService } from '../../../../core/services/modal/modal.service';
+import { filter, take } from 'rxjs';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -18,10 +22,12 @@ export class UserPasswordModalComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private modalService: ModalService,
+    private router: Router,
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
-    @Inject(MAT_DIALOG_DATA) public userData: User,
+    @Inject(MAT_DIALOG_DATA) private userData: User,
     public dialogRef: MatDialogRef<UserPasswordModalComponent>,
   ) { }
 
@@ -56,13 +62,26 @@ export class UserPasswordModalComponent implements OnInit {
             text: `${this.userData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`,
             showConfirmButton: true,
             confirmButtonColor: '#19B6DD',
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Primeiro inscreva-se no evento de navegação para abrir o modal
+              this.router.events.pipe(
+                filter(event => event instanceof NavigationEnd),
+                take(1) // Certifica-se de que o evento de navegação seja emitido apenas uma vez para evitar vazamentos de memória.
+              ).subscribe(() => {
+                // Abre o modal após a navegação
+                this.openLoginModal();
+              });
+              // Depois navega para a página de introdução
+              this.router.navigate(['/intro-page']);
+            }
           });
         },
         error: (e) => {
           Swal.fire({
             title: 'Erro!',
             icon: 'error',
-            text: 'Houve um problema ao cadastrar o usuário. Tente novamente mais tarde.',
+            text: `Houve um problema ao cadastrar ${this.userData.name}. Tente novamente mais tarde.`,
             showConfirmButton: true,
             confirmButtonColor: '#19B6DD',
           });
@@ -91,6 +110,14 @@ export class UserPasswordModalComponent implements OnInit {
     if (this.userPassword.get('newsletter')?.invalid) {
       this.userPassword.get('newsletter')?.markAsTouched();
     }
+  }
+
+  openLoginModal() {
+    this.modalService.openModal(UserLoginModalComponent).subscribe(result => {
+      if (result) {
+        console.log(result);
+      }
+    });
   }
 
   // Função para fechar o modal

@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserPasswordModalComponent } from '../user-password-modal/user-password-modal.component';
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
-import { ModalService } from '../../../../core/services/modal/modal.service';
+import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-user-registration-form',
@@ -30,7 +30,6 @@ export class UserRegistrationFormComponent {
   constructor(private userService: UserService,
     private countryService: CountryService,
     public dialog: MatDialog,
-    private modal: ModalService,
     private formBuilder: FormBuilder) {
     this.buildForm();
   }
@@ -38,7 +37,11 @@ export class UserRegistrationFormComponent {
   buildForm(_countries: { code: string }[] = []) {
     this.userForm = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.minLength(2), noNumbersValidator]),
-      email: new FormControl(null, [Validators.required, Validators.email]),
+      email: new FormControl(null, {
+        validators: [Validators.required, Validators.email],
+        asyncValidators: [emailExistsValidator(this.userService)],
+        updateOn: 'blur' // Verifica o e-mail quando o usuário sai do campo
+      }),
       birth: new FormControl(null, Validators.required),
       cellPhone: new FormControl(null, Validators.required),
       countryCode: new FormControl(null, Validators.required)
@@ -84,7 +87,6 @@ export class UserRegistrationFormComponent {
   continueToPasswordStep() {
     if (this.userForm.valid) {
       this.openModalPasswordUser();
-      this.userForm.reset();
     } else {
       console.log('Formulário inválido');
     }
@@ -125,11 +127,11 @@ export class UserRegistrationFormComponent {
 
   // Função para abrir o modal de visualização de usuário
   openModalViewUser(user: User) {
-    this.modal.openModal(UserPasswordModalComponent, {
+    this.dialog.open(UserPasswordModalComponent, {
       width: '700px',
       height: '330px',
       data: user
-    });
+    })
   }
 
   private openModalPasswordUser() {

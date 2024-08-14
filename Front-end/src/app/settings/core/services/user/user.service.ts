@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { catchError, map, Observable, of, throwError } from 'rxjs';
@@ -13,7 +13,7 @@ export class UserService {
   private users: User[] = [];
 
   constructor(private http: HttpClient) {
-    this.usersUrl = `${environment.apiUrl}/auth/register`;
+    this.usersUrl = `${environment.apiUrl}`;
   }
 
   // Método para obter todos os usuários reais
@@ -23,7 +23,7 @@ export class UserService {
   }
 
   addUser(user: User): Observable<any> {
-    return this.http.post(this.usersUrl, user, { responseType: 'text' })
+    return this.http.post(`${this.usersUrl}/auth/register`, user, { responseType: 'text' })
       .pipe(
         map(response => {
           // Como a resposta é um texto, você pode retornar um objeto com a mensagem.
@@ -37,6 +37,12 @@ export class UserService {
           return throwError(() => e);
         })
       );
+  }
+
+  checkEmailExists(email: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.usersUrl}/auth/user/exists`, {
+      params: new HttpParams().set('email', email)
+    });
   }
 
 }
