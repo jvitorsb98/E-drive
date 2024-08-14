@@ -39,9 +39,9 @@ public class PropulsionTest {
         // Não há ações adicionais, pois estamos testando o estado padrão da entidade
 
         // Assert
-        assertNotNull(propulsion, "Propulsion instance should be created with no-args constructor.");
-        assertNull(propulsion.getName(), "Name should be null by default.");
-        assertNull(propulsion.getActivated(), "Activated should be null by default.");
+        assertNotNull(propulsion, () -> "Propulsion instance should be created with no-args constructor.");
+        assertNull(propulsion.getName(), () -> "Name should be null by default.");
+        assertNull(propulsion.getActivated(), () -> "Activated should be null by default.");
     }
 
     @Test
@@ -56,19 +56,19 @@ public class PropulsionTest {
         Propulsion propulsion = new Propulsion(id, name, activated);
 
         // Assert
-        assertNotNull(propulsion, "Propulsion instance should be created with all-args constructor.");
-        assertEquals(id, propulsion.getId(), "ID should be initialized correctly.");
-        assertEquals(name, propulsion.getName(), "Name should be initialized correctly.");
-        assertEquals(activated, propulsion.getActivated(), "Activated status should be initialized correctly.");
+        assertNotNull(propulsion, () -> "Propulsion instance should be created with all-args constructor.");
+        assertEquals(id, propulsion.getId(), () -> "ID should be initialized correctly.");
+        assertEquals(name, propulsion.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(activated, propulsion.getActivated(), () -> "Activated status should be initialized correctly.");
     }
 
     @Test
     @DisplayName("Test creation with DataRegisterPropulsion")
     void testCreationWithDataRegisterPropulsion() {
         // Assert
-        assertNotNull(propulsion, "Propulsion instance should be created with DataRegisterPropulsion.");
-        assertEquals(dataRegisterPropulsion.name(), propulsion.getName(), "Name should be initialized correctly from DataRegisterPropulsion.");
-        assertTrue(propulsion.getActivated(), "Activated should default to true when using DataRegisterPropulsion.");
+        assertNotNull(propulsion, () -> "Propulsion instance should be created with DataRegisterPropulsion.");
+        assertEquals(dataRegisterPropulsion.name(), propulsion.getName(), () -> "Name should be initialized correctly from DataRegisterPropulsion.");
+        assertTrue(propulsion.getActivated(), () -> "Activated should default to true when using DataRegisterPropulsion.");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class PropulsionTest {
         propulsion.update(dataUpdatePropulsion);
 
         // Assert
-        assertEquals(newName, propulsion.getName(), "The name should be updated.");
+        assertEquals(newName, propulsion.getName(), () -> "The name should be updated.");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class PropulsionTest {
         propulsion.update(dataUpdatePropulsion);
 
         // Assert
-        assertEquals(originalName, propulsion.getName(), "The name should not change when the new name is null.");
+        assertEquals(originalName, propulsion.getName(), () -> "The name should not change when the new name is null.");
     }
 
     @Test
@@ -104,10 +104,10 @@ public class PropulsionTest {
     void testActivatePropulsion() {
         // Act
         propulsion.deactivated();
-        assertFalse(propulsion.getActivated(), "Propulsion should be deactivated.");
+        assertFalse(propulsion.getActivated(), () -> "Propulsion should be deactivated.");
 
         propulsion.activated();
-        assertTrue(propulsion.getActivated(), "Propulsion should be activated.");
+        assertTrue(propulsion.getActivated(), () -> "Propulsion should be activated.");
     }
 
     @Test
@@ -115,10 +115,10 @@ public class PropulsionTest {
     void testDeactivatePropulsion() {
         // Act
         propulsion.activated();
-        assertTrue(propulsion.getActivated(), "Propulsion should be activated.");
+        assertTrue(propulsion.getActivated(), () -> "Propulsion should be activated.");
 
         propulsion.deactivated();
-        assertFalse(propulsion.getActivated(), "Propulsion should be deactivated.");
+        assertFalse(propulsion.getActivated(), () -> "Propulsion should be deactivated.");
     }
 
     @Test
@@ -132,7 +132,7 @@ public class PropulsionTest {
         String retrievedName = propulsion.getName();
 
         // Assert
-        assertEquals(name, retrievedName, "The name should be set and retrieved correctly.");
+        assertEquals(name, retrievedName, () -> "The name should be set and retrieved correctly.");
     }
 
     @Test
@@ -146,7 +146,7 @@ public class PropulsionTest {
         Boolean retrievedActivated = propulsion.getActivated();
 
         // Assert
-        assertEquals(activated, retrievedActivated, "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
     }
 }
 

@@ -31,9 +31,9 @@ public class CategoryTest {
     @Test
     @DisplayName("Test constructor of Category with DataRegisterCategory")
     void testCategoryConstructor() {
-        assertNotNull(category, "Category should not be null");
-        assertEquals(dataRegisterCategory.name(), category.getName(), "The name should be set correctly from DataRegisterCategory");
-        assertTrue(category.getActivated(), "The activated field should be set to true by default");
+        assertNotNull(category, () -> "Category should not be null");
+        assertEquals(dataRegisterCategory.name(), category.getName(), () -> "The name should be set correctly from DataRegisterCategory");
+        assertTrue(category.getActivated(), () -> "The activated field should be set to true by default");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class CategoryTest {
 
         category.update(dataUpdateCategory);
 
-        assertEquals(updatedName, category.getName(), "The name should be updated.");
+        assertEquals(updatedName, category.getName(), () -> "The name should be updated.");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class CategoryTest {
     void testActivate() {
         category.setActivated(false);
         category.activated();
-        assertTrue(category.getActivated(), "The category should be activated.");
+        assertTrue(category.getActivated(), () -> "The category should be activated.");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class CategoryTest {
     void testDeactivate() {
         category.setActivated(true);
         category.deactivated();
-        assertFalse(category.getActivated(), "The category should be deactivated.");
+        assertFalse(category.getActivated(), () -> "The category should be deactivated.");
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CategoryTest {
 
         category.update(dataUpdateCategory);
 
-        assertNotNull(category.getName(), "The name should not be null.");
+        assertNotNull(category.getName(), () -> "The name should not be null.");
     }
     
     @Test
@@ -87,10 +87,10 @@ public class CategoryTest {
     void testNoArgsConstructor() {
         Category category = new Category(); // Usando o construtor padrão
 
-        assertNotNull(category, "Category instance should be created with no-args constructor.");
-        assertNull(category.getId(), "ID should be null by default.");
-        assertNull(category.getName(), "Name should be null by default.");
-        assertNull(category.getActivated(), "Activated should be null by default.");
+        assertNotNull(category, () -> "Category instance should be created with no-args constructor.");
+        assertNull(category.getId(), () -> "ID should be null by default.");
+        assertNull(category.getName(), () -> "Name should be null by default.");
+        assertNull(category.getActivated(), () -> "Activated should be null by default.");
     }
     
     @Test
@@ -102,10 +102,10 @@ public class CategoryTest {
 
         Category category = new Category(id, name, activated);
 
-        assertNotNull(category, "Category instance should be created with all-args constructor.");
-        assertEquals(id, category.getId(), "ID should be initialized correctly.");
-        assertEquals(name, category.getName(), "Name should be initialized correctly.");
-        assertEquals(activated, category.getActivated(), "Activated should be initialized correctly.");
+        assertNotNull(category, () -> "Category instance should be created with all-args constructor.");
+        assertEquals(id, category.getId(), () -> "ID should be initialized correctly.");
+        assertEquals(name, category.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(activated, category.getActivated(), () -> "Activated should be initialized correctly.");
     }
     
     @Test
@@ -113,7 +113,7 @@ public class CategoryTest {
     void testNameGetterAndSetter() {
         String name = faker.company().name();
         category.setName(name);
-        assertEquals(name, category.getName(), "The name should be set and retrieved correctly.");
+        assertEquals(name, category.getName(), () -> "The name should be set and retrieved correctly.");
     }
 
     @Test
@@ -121,7 +121,7 @@ public class CategoryTest {
     void testActivatedGetterAndSetter() {
         Boolean activated = faker.bool().bool();
         category.setActivated(activated);
-        assertEquals(activated, category.getActivated(), "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, category.getActivated(), () -> "The activated status should be set and retrieved correctly.");
     }
 }
 

@@ -38,10 +38,10 @@ public class AutonomyTest {
     @DisplayName("Test creation of Autonomy entity")
     void testAutonomyCreation() {
         assertNotNull(autonomy, "Autonomy should not be null");
-        assertNotNull(autonomy.getMileagePerLiterRoad(), "Mileage per liter road should not be null");
-        assertNotNull(autonomy.getMileagePerLiterCity(), "Mileage per liter city should not be null");
-        assertNotNull(autonomy.getConsumptionEnergetic(), "Consumption energetic should not be null");
-        assertNotNull(autonomy.getAutonomyElectricMode(), "Autonomy electric mode should not be null");
+        assertNotNull(autonomy.getMileagePerLiterRoad(), () -> "Mileage per liter road should not be null");
+        assertNotNull(autonomy.getMileagePerLiterCity(), () -> "Mileage per liter city should not be null");
+        assertNotNull(autonomy.getConsumptionEnergetic(), () -> "Consumption energetic should not be null");
+        assertNotNull(autonomy.getAutonomyElectricMode(), () -> "Autonomy electric mode should not be null");
     }
 
     @Test
@@ -64,10 +64,10 @@ public class AutonomyTest {
         autonomy = new Autonomy(newData);
 
         // Assert
-        assertEquals(newMileagePerLiterRoad, autonomy.getMileagePerLiterRoad(), "Mileage per liter road should be updated.");
-        assertEquals(newMileagePerLiterCity, autonomy.getMileagePerLiterCity(), "Mileage per liter city should be updated.");
-        assertEquals(newConsumptionEnergetic, autonomy.getConsumptionEnergetic(), "Consumption energetic should be updated.");
-        assertEquals(newAutonomyElectricMode, autonomy.getAutonomyElectricMode(), "Autonomy electric mode should be updated.");
+        assertEquals(newMileagePerLiterRoad, autonomy.getMileagePerLiterRoad(), () -> "Mileage per liter road should be updated.");
+        assertEquals(newMileagePerLiterCity, autonomy.getMileagePerLiterCity(), () -> "Mileage per liter city should be updated.");
+        assertEquals(newConsumptionEnergetic, autonomy.getConsumptionEnergetic(), () -> "Consumption energetic should be updated.");
+        assertEquals(newAutonomyElectricMode, autonomy.getAutonomyElectricMode(), () -> "Autonomy electric mode should be updated.");
     }
     
     @Test
@@ -82,10 +82,10 @@ public class AutonomyTest {
         // Assert
         assertNotNull(autonomy, "Autonomy instance should be created with no-args constructor.");
         assertNull(autonomy.getId(), "ID should be null by default.");
-        assertNull(autonomy.getMileagePerLiterRoad(), "MileagePerLiterRoad should be null by default.");
-        assertNull(autonomy.getMileagePerLiterCity(), "MileagePerLiterCity should be null by default.");
-        assertNull(autonomy.getConsumptionEnergetic(), "ConsumptionEnergetic should be null by default.");
-        assertNull(autonomy.getAutonomyElectricMode(), "AutonomyElectricMode should be null by default.");
+        assertNull(autonomy.getMileagePerLiterRoad(), () -> "MileagePerLiterRoad should be null by default.");
+        assertNull(autonomy.getMileagePerLiterCity(), () -> "MileagePerLiterCity should be null by default.");
+        assertNull(autonomy.getConsumptionEnergetic(), () -> "ConsumptionEnergetic should be null by default.");
+        assertNull(autonomy.getAutonomyElectricMode(), () -> "AutonomyElectricMode should be null by default.");
     }
     
     @Test
@@ -104,10 +104,10 @@ public class AutonomyTest {
         // Assert
         assertNotNull(autonomy, "Autonomy instance should be created with all-args constructor.");
         assertEquals(id, autonomy.getId(), "ID should be initialized correctly.");
-        assertEquals(mileagePerLiterRoad, autonomy.getMileagePerLiterRoad(), "MileagePerLiterRoad should be initialized correctly.");
-        assertEquals(mileagePerLiterCity, autonomy.getMileagePerLiterCity(), "MileagePerLiterCity should be initialized correctly.");
-        assertEquals(consumptionEnergetic, autonomy.getConsumptionEnergetic(), "ConsumptionEnergetic should be initialized correctly.");
-        assertEquals(autonomyElectricMode, autonomy.getAutonomyElectricMode(), "AutonomyElectricMode should be initialized correctly.");
+        assertEquals(mileagePerLiterRoad, autonomy.getMileagePerLiterRoad(), () -> "MileagePerLiterRoad should be initialized correctly.");
+        assertEquals(mileagePerLiterCity, autonomy.getMileagePerLiterCity(), () -> "MileagePerLiterCity should be initialized correctly.");
+        assertEquals(consumptionEnergetic, autonomy.getConsumptionEnergetic(), () -> "ConsumptionEnergetic should be initialized correctly.");
+        assertEquals(autonomyElectricMode, autonomy.getAutonomyElectricMode(), () -> "AutonomyElectricMode should be initialized correctly.");
     }
     
     
@@ -123,7 +123,7 @@ public class AutonomyTest {
         BigDecimal retrievedMileagePerLiterRoad = autonomy.getMileagePerLiterRoad();
 
         // Assert
-        assertEquals(mileagePerLiterRoad, retrievedMileagePerLiterRoad, "The mileagePerLiterRoad should be set and retrieved correctly.");
+        assertEquals(mileagePerLiterRoad, retrievedMileagePerLiterRoad, () -> "The mileagePerLiterRoad should be set and retrieved correctly.");
     }
 
     @Test
@@ -137,7 +137,7 @@ public class AutonomyTest {
         BigDecimal retrievedMileagePerLiterCity = autonomy.getMileagePerLiterCity();
 
         // Assert
-        assertEquals(mileagePerLiterCity, retrievedMileagePerLiterCity, "The mileagePerLiterCity should be set and retrieved correctly.");
+        assertEquals(mileagePerLiterCity, retrievedMileagePerLiterCity, () -> "The mileagePerLiterCity should be set and retrieved correctly.");
     }
 
     @Test
@@ -151,7 +151,7 @@ public class AutonomyTest {
         BigDecimal retrievedConsumptionEnergetic = autonomy.getConsumptionEnergetic();
 
         // Assert
-        assertEquals(consumptionEnergetic, retrievedConsumptionEnergetic, "The consumptionEnergetic should be set and retrieved correctly.");
+        assertEquals(consumptionEnergetic, retrievedConsumptionEnergetic, () -> "The consumptionEnergetic should be set and retrieved correctly.");
     }
 
     @Test
@@ -165,6 +165,6 @@ public class AutonomyTest {
         BigDecimal retrievedAutonomyElectricMode = autonomy.getAutonomyElectricMode();
 
         // Assert
-        assertEquals(autonomyElectricMode, retrievedAutonomyElectricMode, "The autonomyElectricMode should be set and retrieved correctly.");
+        assertEquals(autonomyElectricMode, retrievedAutonomyElectricMode, () -> "The autonomyElectricMode should be set and retrieved correctly.");
     }
 }

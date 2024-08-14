@@ -45,10 +45,10 @@ class ModelTest {
         Model model = new Model(null, name, brand, activated);
 
         // Assert
-        assertNotNull(model, "Model instance should be created with all-args constructor.");
-        assertEquals(name, model.getName(), "Name should be initialized correctly.");
-        assertEquals(brand, model.getBrand(), "Brand should be initialized correctly.");
-        assertEquals(activated, model.getActivated(), "Activated should be initialized correctly.");
+        assertNotNull(model, () -> "Model instance should be created with all-args constructor.");
+        assertEquals(name, model.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(brand, model.getBrand(), () -> "Brand should be initialized correctly.");
+        assertEquals(activated, model.getActivated(), () -> "Activated should be initialized correctly.");
     }
     
     @Test
@@ -58,10 +58,10 @@ class ModelTest {
         Model model = new Model(); 
 
         // Assert
-        assertNotNull(model, "Model instance should be created with no-args constructor.");
-        assertNull(model.getName(), "Name should be null by default.");
-        assertNull(model.getBrand(), "Brand should be null by default.");
-        assertNull(model.getActivated(), "Activated should be null by default.");
+        assertNotNull(model, () -> "Model instance should be created with no-args constructor.");
+        assertNull(model.getName(), () -> "Name should be null by default.");
+        assertNull(model.getBrand(), () -> "Brand should be null by default.");
+        assertNull(model.getActivated(), () -> "Activated should be null by default.");
     }
 
     @Test
@@ -75,10 +75,10 @@ class ModelTest {
         Model model = new Model(dataRegisterModel, brand);
 
         // Assert
-        assertNotNull(model, "Model instance should be created with DataRegisterModel and Brand.");
-        assertEquals(name, model.getName(), "Name should be initialized correctly.");
-        assertEquals(brand, model.getBrand(), "Brand should be initialized correctly.");
-        assertEquals(activated, model.getActivated(), "Activated should be initialized to true by default.");
+        assertNotNull(model, () -> "Model instance should be created with DataRegisterModel and Brand.");
+        assertEquals(name, model.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(brand, model.getBrand(), () -> "Brand should be initialized correctly.");
+        assertEquals(activated, model.getActivated(), () -> "Activated should be initialized to true by default.");
     }
 
     @Test
@@ -92,7 +92,7 @@ class ModelTest {
         model.update(dataUpdateModel);
 
         // Assert
-        assertEquals(newName, model.getName(), "Name should be updated.");
+        assertEquals(newName, model.getName(), () -> "Name should be updated.");
     }
 
     @Test
@@ -106,7 +106,7 @@ class ModelTest {
         model.update(dataUpdateModel);
 
         // Assert
-        assertEquals(originalName, model.getName(), "Name should not change when the new name is null.");
+        assertEquals(originalName, model.getName(), () -> "Name should not change when the new name is null.");
     }
 
     @Test
@@ -114,10 +114,10 @@ class ModelTest {
     void testActivateModel() {
         // Act
         model.deactivated();
-        assertFalse(model.getActivated(), "Model should be deactivated.");
+        assertFalse(model.getActivated(), () -> "Model should be deactivated.");
 
         model.activated();
-        assertTrue(model.getActivated(), "Model should be activated.");
+        assertTrue(model.getActivated(), () -> "Model should be activated.");
     }
 
     @Test
@@ -125,10 +125,10 @@ class ModelTest {
     void testDeactivateModel() {
         // Act
         model.activated();
-        assertTrue(model.getActivated(), "Model should be activated.");
+        assertTrue(model.getActivated(), () -> "Model should be activated.");
 
         model.deactivated();
-        assertFalse(model.getActivated(), "Model should be deactivated.");
+        assertFalse(model.getActivated(), () -> "Model should be deactivated.");
     }
 
     @Test
@@ -142,7 +142,7 @@ class ModelTest {
         String retrievedName = model.getName();
 
         // Assert
-        assertEquals(name, retrievedName, "The name should be set and retrieved correctly.");
+        assertEquals(name, retrievedName, () -> "The name should be set and retrieved correctly.");
     }
 
     @Test
@@ -156,7 +156,7 @@ class ModelTest {
         Brand retrievedBrand = model.getBrand();
 
         // Assert
-        assertEquals(newBrand, retrievedBrand, "The brand should be set and retrieved correctly.");
+        assertEquals(newBrand, retrievedBrand, () -> "The brand should be set and retrieved correctly.");
     }
 
     @Test
@@ -170,6 +170,6 @@ class ModelTest {
         Boolean retrievedActivated = model.getActivated();
 
         // Assert
-        assertEquals(activated, retrievedActivated, "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
     }
 }

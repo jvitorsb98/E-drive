@@ -44,14 +44,14 @@ public class VehicleUserTest {
     @Test
     @DisplayName("Test creation of VehicleUser entity")
     void testVehicleUserCreation() {
-        assertNotNull(vehicleUser, "VehicleUser should not be null");
-        assertEquals(user, vehicleUser.getUser(), "User should be set correctly");
-        assertEquals(vehicle, vehicleUser.getVehicle(), "Vehicle should be set correctly");
-        assertEquals(dataRegisterAutonomy.mileagePerLiterRoad(), vehicleUser.getMileagePerLiterRoad(), "Mileage per liter road should be set correctly");
-        assertEquals(dataRegisterAutonomy.mileagePerLiterCity(), vehicleUser.getMileagePerLiterCity(), "Mileage per liter city should be set correctly");
-        assertEquals(dataRegisterAutonomy.consumptionEnergetic(), vehicleUser.getConsumptionEnergetic(), "Consumption energetic should be set correctly");
-        assertEquals(dataRegisterAutonomy.autonomyElectricMode(), vehicleUser.getAutonomyElectricMode(), "Autonomy electric mode should be set correctly");
-        assertTrue(vehicleUser.isActivated(), "Activated status should default to true.");
+        assertNotNull(vehicleUser, () -> "VehicleUser should not be null");
+        assertEquals(user, vehicleUser.getUser(), () -> "User should be set correctly");
+        assertEquals(vehicle, vehicleUser.getVehicle(), () -> "Vehicle should be set correctly");
+        assertEquals(dataRegisterAutonomy.mileagePerLiterRoad(), vehicleUser.getMileagePerLiterRoad(), () -> "Mileage per liter road should be set correctly");
+        assertEquals(dataRegisterAutonomy.mileagePerLiterCity(), vehicleUser.getMileagePerLiterCity(), () -> "Mileage per liter city should be set correctly");
+        assertEquals(dataRegisterAutonomy.consumptionEnergetic(), vehicleUser.getConsumptionEnergetic(), () -> "Consumption energetic should be set correctly");
+        assertEquals(dataRegisterAutonomy.autonomyElectricMode(), vehicleUser.getAutonomyElectricMode(), () -> "Autonomy electric mode should be set correctly");
+        assertTrue(vehicleUser.isActivated(), () -> "Activated status should default to true.");
     }
 
     @Test
@@ -66,17 +66,17 @@ public class VehicleUserTest {
 
         vehicleUser.updateData(updateData);
 
-        assertEquals(updateData.mileagePerLiterRoad(), vehicleUser.getMileagePerLiterRoad(), "Mileage per liter road should be updated.");
-        assertEquals(updateData.mileagePerLiterCity(), vehicleUser.getMileagePerLiterCity(), "Mileage per liter city should be updated.");
-        assertEquals(updateData.consumptionEnergetic(), vehicleUser.getConsumptionEnergetic(), "Consumption energetic should be updated.");
-        assertEquals(updateData.autonomyElectricMode(), vehicleUser.getAutonomyElectricMode(), "Autonomy electric mode should be updated.");
+        assertEquals(updateData.mileagePerLiterRoad(), vehicleUser.getMileagePerLiterRoad(), () -> "Mileage per liter road should be updated.");
+        assertEquals(updateData.mileagePerLiterCity(), vehicleUser.getMileagePerLiterCity(), () -> "Mileage per liter city should be updated.");
+        assertEquals(updateData.consumptionEnergetic(), vehicleUser.getConsumptionEnergetic(), () -> "Consumption energetic should be updated.");
+        assertEquals(updateData.autonomyElectricMode(), vehicleUser.getAutonomyElectricMode(), () -> "Autonomy electric mode should be updated.");
     }
 
     @Test
     @DisplayName("Test disabling VehicleUser entity")
     void testVehicleUserDisable() {
         vehicleUser.disable();
-        assertFalse(vehicleUser.isActivated(), "VehicleUser should be deactivated.");
+        assertFalse(vehicleUser.isActivated(), () -> "VehicleUser should be deactivated.");
     }
 
     @Test
@@ -84,7 +84,7 @@ public class VehicleUserTest {
     void testVehicleUserEnable() {
         vehicleUser.disable(); // Primeiro desativa
         vehicleUser.enable(); // Em seguida, ativa novamente
-        assertTrue(vehicleUser.isActivated(), "VehicleUser should be activated.");
+        assertTrue(vehicleUser.isActivated(), () -> "VehicleUser should be activated.");
     }
 
     @Test
@@ -96,10 +96,10 @@ public class VehicleUserTest {
 
         vehicleUser.updateData(nullUpdateData);
 
-        assertEquals(dataRegisterAutonomy.mileagePerLiterRoad(), vehicleUser.getMileagePerLiterRoad(), "Mileage per liter road should remain unchanged.");
-        assertEquals(dataRegisterAutonomy.mileagePerLiterCity(), vehicleUser.getMileagePerLiterCity(), "Mileage per liter city should remain unchanged.");
-        assertEquals(dataRegisterAutonomy.consumptionEnergetic(), vehicleUser.getConsumptionEnergetic(), "Consumption energetic should remain unchanged.");
-        assertEquals(dataRegisterAutonomy.autonomyElectricMode(), vehicleUser.getAutonomyElectricMode(), "Autonomy electric mode should remain unchanged.");
+        assertEquals(dataRegisterAutonomy.mileagePerLiterRoad(), vehicleUser.getMileagePerLiterRoad(), () -> "Mileage per liter road should remain unchanged.");
+        assertEquals(dataRegisterAutonomy.mileagePerLiterCity(), vehicleUser.getMileagePerLiterCity(), () -> "Mileage per liter city should remain unchanged.");
+        assertEquals(dataRegisterAutonomy.consumptionEnergetic(), vehicleUser.getConsumptionEnergetic(), () -> "Consumption energetic should remain unchanged.");
+        assertEquals(dataRegisterAutonomy.autonomyElectricMode(), vehicleUser.getAutonomyElectricMode(), () -> "Autonomy electric mode should remain unchanged.");
     }
 
  
@@ -109,7 +109,7 @@ public class VehicleUserTest {
     void testMileagePerLiterRoadGetterAndSetter() {
         BigDecimal mileagePerLiterRoad = BigDecimal.valueOf(faker.number().randomDouble(2, 5, 15));
         vehicleUser.setMileagePerLiterRoad(mileagePerLiterRoad);
-        assertEquals(mileagePerLiterRoad, vehicleUser.getMileagePerLiterRoad(), "Mileage per liter road should be set and retrieved correctly.");
+        assertEquals(mileagePerLiterRoad, vehicleUser.getMileagePerLiterRoad(), () -> "Mileage per liter road should be set and retrieved correctly.");
     }
 
     @Test
@@ -117,7 +117,7 @@ public class VehicleUserTest {
     void testMileagePerLiterCityGetterAndSetter() {
         BigDecimal mileagePerLiterCity = BigDecimal.valueOf(faker.number().randomDouble(2, 5, 15));
         vehicleUser.setMileagePerLiterCity(mileagePerLiterCity);
-        assertEquals(mileagePerLiterCity, vehicleUser.getMileagePerLiterCity(), "Mileage per liter city should be set and retrieved correctly.");
+        assertEquals(mileagePerLiterCity, vehicleUser.getMileagePerLiterCity(), () -> "Mileage per liter city should be set and retrieved correctly.");
     }
 
     @Test
@@ -125,7 +125,7 @@ public class VehicleUserTest {
     void testConsumptionEnergeticGetterAndSetter() {
         BigDecimal consumptionEnergetic = BigDecimal.valueOf(faker.number().randomDouble(2, 5, 15));
         vehicleUser.setConsumptionEnergetic(consumptionEnergetic);
-        assertEquals(consumptionEnergetic, vehicleUser.getConsumptionEnergetic(), "Consumption energetic should be set and retrieved correctly.");
+        assertEquals(consumptionEnergetic, vehicleUser.getConsumptionEnergetic(), () -> "Consumption energetic should be set and retrieved correctly.");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class VehicleUserTest {
     void testAutonomyElectricModeGetterAndSetter() {
         BigDecimal autonomyElectricMode = BigDecimal.valueOf(faker.number().randomDouble(2, 5, 15));
         vehicleUser.setAutonomyElectricMode(autonomyElectricMode);
-        assertEquals(autonomyElectricMode, vehicleUser.getAutonomyElectricMode(), "Autonomy electric mode should be set and retrieved correctly.");
+        assertEquals(autonomyElectricMode, vehicleUser.getAutonomyElectricMode(), () -> "Autonomy electric mode should be set and retrieved correctly.");
     }
 
     @Test
@@ -141,7 +141,7 @@ public class VehicleUserTest {
     void testActivatedGetterAndSetter() {
         boolean activated = faker.bool().bool();
         vehicleUser.setActivated(activated);
-        assertEquals(activated, vehicleUser.isActivated(), "Activated status should be set and retrieved correctly.");
+        assertEquals(activated, vehicleUser.isActivated(), () -> "Activated status should be set and retrieved correctly.");
     }
 
     @Test
@@ -149,13 +149,13 @@ public class VehicleUserTest {
     void testNoArgsConstructor() {
         VehicleUser vehicleUser = new VehicleUser();
 
-        assertNotNull(vehicleUser, "VehicleUser instance should be created with no-args constructor.");
-        assertNull(vehicleUser.getUser(), "User should be null by default.");
-        assertNull(vehicleUser.getVehicle(), "Vehicle should be null by default.");
-        assertNull(vehicleUser.getMileagePerLiterRoad(), "Mileage per liter road should be null by default.");
-        assertNull(vehicleUser.getMileagePerLiterCity(), "Mileage per liter city should be null by default.");
-        assertNull(vehicleUser.getConsumptionEnergetic(), "Consumption energetic should be null by default.");
-        assertNull(vehicleUser.getAutonomyElectricMode(), "Autonomy electric mode should be null by default.");
-        assertFalse(vehicleUser.isActivated(), "Activated status should be false by default.");
+        assertNotNull(vehicleUser, () -> "VehicleUser instance should be created with no-args constructor.");
+        assertNull(vehicleUser.getUser(), () -> "User should be null by default.");
+        assertNull(vehicleUser.getVehicle(), () -> "Vehicle should be null by default.");
+        assertNull(vehicleUser.getMileagePerLiterRoad(), () -> "Mileage per liter road should be null by default.");
+        assertNull(vehicleUser.getMileagePerLiterCity(), () -> "Mileage per liter city should be null by default.");
+        assertNull(vehicleUser.getConsumptionEnergetic(), () -> "Consumption energetic should be null by default.");
+        assertNull(vehicleUser.getAutonomyElectricMode(), () -> "Autonomy electric mode should be null by default.");
+        assertFalse(vehicleUser.isActivated(), () -> "Activated status should be false by default.");
     }
 }

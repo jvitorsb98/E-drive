@@ -54,16 +54,16 @@ public class VehicleTest {
         Vehicle vehicle = new Vehicle(motor, version, model, category, type, propulsion, autonomy, year);
 
         // Assert
-        assertNotNull(vehicle, "Vehicle instance should be created with all-args constructor.");
-        assertEquals(motor, vehicle.getMotor(), "Motor should be initialized correctly.");
-        assertEquals(version, vehicle.getVersion(), "Version should be initialized correctly.");
-        assertEquals(year, vehicle.getYear(), "Year should be initialized correctly.");
-        assertEquals(model, vehicle.getModel(), "Model should be initialized correctly.");
-        assertEquals(category, vehicle.getCategory(), "Category should be initialized correctly.");
-        assertEquals(type, vehicle.getType(), "Type should be initialized correctly.");
-        assertEquals(propulsion, vehicle.getPropulsion(), "Propulsion should be initialized correctly.");
-        assertEquals(autonomy, vehicle.getAutonomy(), "Autonomy should be initialized correctly.");
-        assertTrue(vehicle.isActivated(), "Activated should be initialized to true by default.");
+        assertNotNull(vehicle, () -> "Vehicle instance should be created with all-args constructor.");
+        assertEquals(motor, vehicle.getMotor(), () -> "Motor should be initialized correctly.");
+        assertEquals(version, vehicle.getVersion(), () -> "Version should be initialized correctly.");
+        assertEquals(year, vehicle.getYear(), () -> "Year should be initialized correctly.");
+        assertEquals(model, vehicle.getModel(), () -> "Model should be initialized correctly.");
+        assertEquals(category, vehicle.getCategory(), () -> "Category should be initialized correctly.");
+        assertEquals(type, vehicle.getType(), () -> "Type should be initialized correctly.");
+        assertEquals(propulsion, vehicle.getPropulsion(), () -> "Propulsion should be initialized correctly.");
+        assertEquals(autonomy, vehicle.getAutonomy(), () -> "Autonomy should be initialized correctly.");
+        assertTrue(vehicle.isActivated(), () -> "Activated should be initialized to true by default.");
     }
 
     @Test
@@ -86,13 +86,13 @@ public class VehicleTest {
         vehicle.updateDataVehicle(dataUpdateVehicle, newModel, newCategory, newType, newPropulsion);
 
         // Assert
-        assertEquals(newMotor, vehicle.getMotor(), "Motor should be updated.");
-        assertEquals(newVersion, vehicle.getVersion(), "Version should be updated.");
-        assertEquals(newYear, vehicle.getYear(), "Year should be updated.");
-        assertEquals(newModel, vehicle.getModel(), "Model should be updated.");
-        assertEquals(newCategory, vehicle.getCategory(), "Category should be updated.");
-        assertEquals(newType, vehicle.getType(), "Type should be updated.");
-        assertEquals(newPropulsion, vehicle.getPropulsion(), "Propulsion should be updated.");
+        assertEquals(newMotor, vehicle.getMotor(), () -> "Motor should be updated.");
+        assertEquals(newVersion, vehicle.getVersion(), () -> "Version should be updated.");
+        assertEquals(newYear, vehicle.getYear(), () -> "Year should be updated.");
+        assertEquals(newModel, vehicle.getModel(), () -> "Model should be updated.");
+        assertEquals(newCategory, vehicle.getCategory(), () -> "Category should be updated.");
+        assertEquals(newType, vehicle.getType(), () -> "Type should be updated.");
+        assertEquals(newPropulsion, vehicle.getPropulsion(), () -> "Propulsion should be updated.");
     }
 
     @Test
@@ -115,13 +115,13 @@ public class VehicleTest {
         vehicle.updateDataVehicle(dataUpdateVehicle, null, null, null, null);
 
         // Assert
-        assertEquals(originalMotor, vehicle.getMotor(), "Motor should not change when the new motor is null.");
-        assertEquals(originalVersion, vehicle.getVersion(), "Version should not change when the new version is null.");
-        assertEquals(originalYear, vehicle.getYear(), "Year should not change when the new year is null.");
-        assertEquals(originalModel, vehicle.getModel(), "Model should not change when the new model is null.");
-        assertEquals(originalCategory, vehicle.getCategory(), "Category should not change when the new category is null.");
-        assertEquals(originalType, vehicle.getType(), "Type should not change when the new type is null.");
-        assertEquals(originalPropulsion, vehicle.getPropulsion(), "Propulsion should not change when the new propulsion is null.");
+        assertEquals(originalMotor, vehicle.getMotor(), () -> "Motor should not change when the new motor is null.");
+        assertEquals(originalVersion, vehicle.getVersion(), () -> "Version should not change when the new version is null.");
+        assertEquals(originalYear, vehicle.getYear(), () -> "Year should not change when the new year is null.");
+        assertEquals(originalModel, vehicle.getModel(), () -> "Model should not change when the new model is null.");
+        assertEquals(originalCategory, vehicle.getCategory(), () -> "Category should not change when the new category is null.");
+        assertEquals(originalType, vehicle.getType(), () -> "Type should not change when the new type is null.");
+        assertEquals(originalPropulsion, vehicle.getPropulsion(), () -> "Propulsion should not change when the new propulsion is null.");
     }
 
     @Test
@@ -129,10 +129,10 @@ public class VehicleTest {
     void testActivateVehicle() {
         // Act
         vehicle.disable();
-        assertFalse(vehicle.isActivated(), "Vehicle should be deactivated.");
+        assertFalse(vehicle.isActivated(), () -> "Vehicle should be deactivated.");
 
         vehicle.enable();
-        assertTrue(vehicle.isActivated(), "Vehicle should be activated.");
+        assertTrue(vehicle.isActivated(), () -> "Vehicle should be activated.");
     }
 
     @Test
@@ -140,10 +140,10 @@ public class VehicleTest {
     void testDeactivateVehicle() {
         // Act
         vehicle.enable();
-        assertTrue(vehicle.isActivated(), "Vehicle should be activated.");
+        assertTrue(vehicle.isActivated(), () -> "Vehicle should be activated.");
 
         vehicle.disable();
-        assertFalse(vehicle.isActivated(), "Vehicle should be deactivated.");
+        assertFalse(vehicle.isActivated(), () -> "Vehicle should be deactivated.");
     }
 
     @Test
@@ -157,7 +157,7 @@ public class VehicleTest {
         String retrievedMotor = vehicle.getMotor();
 
         // Assert
-        assertEquals(motor, retrievedMotor, "The motor should be set and retrieved correctly.");
+        assertEquals(motor, retrievedMotor, () -> "The motor should be set and retrieved correctly.");
     }
 
     @Test
@@ -171,7 +171,7 @@ public class VehicleTest {
         String retrievedVersion = vehicle.getVersion();
 
         // Assert
-        assertEquals(version, retrievedVersion, "The version should be set and retrieved correctly.");
+        assertEquals(version, retrievedVersion, () -> "The version should be set and retrieved correctly.");
     }
 
     @Test
@@ -185,7 +185,7 @@ public class VehicleTest {
         Long retrievedYear = vehicle.getYear();
 
         // Assert
-        assertEquals(year, retrievedYear, "The year should be set and retrieved correctly.");
+        assertEquals(year, retrievedYear, () -> "The year should be set and retrieved correctly.");
     }
 
     @Test
@@ -199,6 +199,6 @@ public class VehicleTest {
         boolean retrievedActivated = vehicle.isActivated();
 
         // Assert
-        assertEquals(activated, retrievedActivated, "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
     }
 }

@@ -28,9 +28,9 @@ public class VehicleTypeTest {
     @DisplayName("Test creation with no-args constructor")
     void testNoArgsConstructor() {
         VehicleType vehicleType = new VehicleType(); 
-        assertNotNull(vehicleType, "VehicleType instance should be created with no-args constructor.");
-        assertNull(vehicleType.getName(), "Name should be null by default.");
-        assertFalse(vehicleType.isActivated(), "Activated should be false by default.");
+        assertNotNull(vehicleType, () -> "VehicleType instance should be created with no-args constructor.");
+        assertNull(vehicleType.getName(), () -> "Name should be null by default.");
+        assertFalse(vehicleType.isActivated(), () -> "Activated should be false by default.");
     }
 
     @Test
@@ -39,17 +39,17 @@ public class VehicleTypeTest {
         String name = faker.company().name(); 
         boolean activated = faker.bool().bool();
         VehicleType vehicleType = new VehicleType(null, name, activated);
-        assertNotNull(vehicleType, "VehicleType instance should be created with all-args constructor.");
-        assertEquals(name, vehicleType.getName(), "Name should be initialized correctly.");
-        assertEquals(activated, vehicleType.isActivated(), "Activated status should be initialized correctly.");
+        assertNotNull(vehicleType, () -> "VehicleType instance should be created with all-args constructor.");
+        assertEquals(name, vehicleType.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(activated, vehicleType.isActivated(), () -> "Activated status should be initialized correctly.");
     }
 
     @Test
     @DisplayName("Test creation with DataRegisterVehicleType")
     void testCreationWithDataRegisterVehicleType() {
         assertNotNull(vehicleType, "VehicleType instance should be created with DataRegisterVehicleType.");
-        assertEquals(dataRegisterVehicleType.name(), vehicleType.getName(), "Name should be initialized correctly from DataRegisterVehicleType.");
-        assertTrue(vehicleType.isActivated(), "Activated should default to true when using DataRegisterVehicleType.");
+        assertEquals(dataRegisterVehicleType.name(), vehicleType.getName(), () -> "Name should be initialized correctly from DataRegisterVehicleType.");
+        assertTrue(vehicleType.isActivated(), () -> "Activated should default to true when using DataRegisterVehicleType.");
     }
 
     @Test
@@ -58,7 +58,7 @@ public class VehicleTypeTest {
         String newName = faker.company().name(); 
         DataUpdateVehicleType updateData = new DataUpdateVehicleType(newName);
         vehicleType.updateDataVehicleType(updateData);
-        assertEquals(newName, vehicleType.getName(), "The name should be updated.");
+        assertEquals(newName, vehicleType.getName(), () -> "The name should be updated.");
     }
 
     @Test
@@ -68,17 +68,17 @@ public class VehicleTypeTest {
         when(data.name()).thenReturn(null);
         String originalName = vehicleType.getName(); 
         vehicleType.updateDataVehicleType(data);
-        assertEquals(originalName, vehicleType.getName(), "The name should not be updated if the new name is null.");
+        assertEquals(originalName, vehicleType.getName(), () -> "The name should not be updated if the new name is null.");
     }
 
     @Test
     @DisplayName("Test activating and disabling VehicleType")
     void testActivateAndDisableVehicleType() {
         vehicleType.disabled();
-        assertFalse(vehicleType.isActivated(), "VehicleType should be deactivated.");
+        assertFalse(vehicleType.isActivated(), () -> "VehicleType should be deactivated.");
 
         vehicleType.activated();
-        assertTrue(vehicleType.isActivated(), "VehicleType should be activated.");
+        assertTrue(vehicleType.isActivated(), () -> "VehicleType should be activated.");
     }
 
     @Test
@@ -86,7 +86,7 @@ public class VehicleTypeTest {
     void testNameGetterAndSetter() {
         String name = faker.company().name(); 
         vehicleType.setName(name);
-        assertEquals(name, vehicleType.getName(), "The name should be set and retrieved correctly.");
+        assertEquals(name, vehicleType.getName(), () -> "The name should be set and retrieved correctly.");
     }
 
     @Test
@@ -94,7 +94,7 @@ public class VehicleTypeTest {
     void testActivatedGetterAndSetter() {
         boolean activated = faker.bool().bool();
         vehicleType.setActivated(activated);
-        assertEquals(activated, vehicleType.isActivated(), "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, vehicleType.isActivated(), () -> "The activated status should be set and retrieved correctly.");
     }
 
     @Test
@@ -104,9 +104,9 @@ public class VehicleTypeTest {
         DataRegisterVehicleType dataRegisterVehicleType = mock(DataRegisterVehicleType.class);
         when(dataRegisterVehicleType.name()).thenReturn(expectedName);
         VehicleType vehicleType = new VehicleType(dataRegisterVehicleType);
-        assertNotNull(vehicleType, "VehicleType should not be null");
-        assertEquals(expectedName, vehicleType.getName(), "The name should be set correctly from DataRegisterVehicleType");
-        assertTrue(vehicleType.isActivated(), "The activated field should be set to true by default");
+        assertNotNull(vehicleType, () -> "VehicleType should not be null");
+        assertEquals(expectedName, vehicleType.getName(), () -> "The name should be set correctly from DataRegisterVehicleType");
+        assertTrue(vehicleType.isActivated(), () -> "The activated field should be set to true by default");
     }
 }
 

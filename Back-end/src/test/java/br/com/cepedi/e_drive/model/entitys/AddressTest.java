@@ -45,9 +45,9 @@ public class AddressTest {
     @DisplayName("Test creation of Address entity")
     void testAddressCreation() {
         assertNotNull(address, "Address should not be null");
-        assertEquals(dataRegisterAddress.country(), address.getCountry(), "The country should be set correctly from DataRegisterAddress");
-        assertEquals(dataRegisterAddress.zipCode(), address.getZipCode(), "The zip code should be set correctly from DataRegisterAddress");
-        assertTrue(address.getActivated(), "The activated status should default to true.");
+        assertEquals(dataRegisterAddress.country(), address.getCountry(), () -> "The country should be set correctly from DataRegisterAddress");
+        assertEquals(dataRegisterAddress.zipCode(), address.getZipCode(), () -> "The zip code should be set correctly from DataRegisterAddress");
+        assertTrue(address.getActivated(), () -> "The activated status should default to true.");
     }
 
     @Test
@@ -60,27 +60,27 @@ public class AddressTest {
 
         address.updateData(updateData);
 
-        assertEquals(newCity, address.getCity(), "The city should be updated.");
+        assertEquals(newCity, address.getCity(), () -> "The city should be updated.");
     }
 
     @Test
     @DisplayName("Test activating Address entity")
     void testAddressActivation() {
         address.disable();
-        assertFalse(address.getActivated(), "Address should be deactivated.");
+        assertFalse(address.getActivated(), () -> "Address should be deactivated.");
 
         address.enable();
-        assertTrue(address.getActivated(), "Address should be activated.");
+        assertTrue(address.getActivated(), () -> "Address should be activated.");
     }
 
     @Test
     @DisplayName("Test deactivating Address entity")
     void testAddressDeactivation() {
         address.enable();
-        assertTrue(address.getActivated(), "Address should be activated.");
+        assertTrue(address.getActivated(), () -> "Address should be activated.");
 
         address.disable();
-        assertFalse(address.getActivated(), "Address should be deactivated.");
+        assertFalse(address.getActivated(), () -> "Address should be deactivated.");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class AddressTest {
 
         address.updateData(nullDataUpdate);
 
-        assertEquals(originalStreet, address.getStreet(), "The street should not change when the new street is null.");
+        assertEquals(originalStreet, address.getStreet(), () -> "The street should not change when the new street is null.");
     }
 
     @Test
@@ -104,7 +104,7 @@ public class AddressTest {
         address.setCountry(country);
         String retrievedCountry = address.getCountry();
 
-        assertEquals(country, retrievedCountry, "The country should be set and retrieved correctly.");
+        assertEquals(country, retrievedCountry, () -> "The country should be set and retrieved correctly.");
     }
 
     @Test
@@ -115,7 +115,7 @@ public class AddressTest {
         address.setActivated(activated);
         Boolean retrievedActivated = address.getActivated();
 
-        assertEquals(activated, retrievedActivated, "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
     }
 
     @Test
@@ -135,9 +135,9 @@ public class AddressTest {
             true 
         );
 
-        assertNotNull(newAddress, "Address instance should be created with all-args constructor.");
-        assertEquals(user, newAddress.getUser(), "User should be initialized correctly.");
-        assertTrue(newAddress.getActivated(), "Activated status should be initialized correctly.");
+        assertNotNull(newAddress, () -> "Address instance should be created with all-args constructor.");
+        assertEquals(user, newAddress.getUser(), () -> "User should be initialized correctly.");
+        assertTrue(newAddress.getActivated(), () -> "Activated status should be initialized correctly.");
     }
     
     @Test
@@ -157,7 +157,7 @@ public class AddressTest {
         Address address = new Address(dataRegisterAddress, user);
 
        
-        assertFalse(address.getPlugin(), "Plugin should default to false if not provided.");
+        assertFalse(address.getPlugin(), () -> "Plugin should default to false if not provided.");
     }
 
     @Test
@@ -176,7 +176,7 @@ public class AddressTest {
         );
         Address address = new Address(dataRegisterAddress, user);
 
-        assertTrue(address.getPlugin(), "Plugin should be set to true as provided.");
+        assertTrue(address.getPlugin(), () -> "Plugin should be set to true as provided.");
     }
 
 
@@ -186,9 +186,9 @@ public class AddressTest {
     void testNoArgsConstructor() {
         Address address = new Address();
 
-        assertNotNull(address, "Address instance should be created with no-args constructor.");
-        assertNull(address.getCountry(), "Country should be null by default.");
-        assertNull(address.getActivated(), "Activated status should be null by default.");
+        assertNotNull(address, () -> "Address instance should be created with no-args constructor.");
+        assertNull(address.getCountry(), () -> "Country should be null by default.");
+        assertNull(address.getActivated(), () -> "Activated status should be null by default.");
     }
     
     @Test

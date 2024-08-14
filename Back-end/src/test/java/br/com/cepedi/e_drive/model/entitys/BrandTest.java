@@ -36,9 +36,9 @@ public class BrandTest {
         String actualName = brand.getName();
 
         // Assert
-        assertNotNull(brand, "Brand should not be null");
-        assertEquals(dataRegisterBrand.name(), actualName, "The name should be set correctly from DataRegisterBrand");
-        assertTrue(brand.getActivated(), "The activated status should default to true.");
+        assertNotNull(brand, () -> "Brand should not be null");
+        assertEquals(dataRegisterBrand.name(), actualName, () -> "The name should be set correctly from DataRegisterBrand");
+        assertTrue(brand.getActivated(), () -> "The activated status should default to true.");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class BrandTest {
         brand.updateDataBrand(updateData);
 
         // Assert
-        assertEquals(newName, brand.getName(), "The name should be updated.");
+        assertEquals(newName, brand.getName(), () -> "The name should be updated.");
     }
 
     @Test
@@ -60,10 +60,10 @@ public class BrandTest {
     void testBrandActivation() {
         // Act
         brand.deactivated();
-        assertFalse(brand.getActivated(), "Brand should be deactivated.");
+        assertFalse(brand.getActivated(), () -> "Brand should be deactivated.");
 
         brand.activated();
-        assertTrue(brand.getActivated(), "Brand should be activated.");
+        assertTrue(brand.getActivated(), () -> "Brand should be activated.");
     }
 
     @Test
@@ -71,10 +71,10 @@ public class BrandTest {
     void testBrandDeactivation() {
         // Act
         brand.activated();
-        assertTrue(brand.getActivated(), "Brand should be activated.");
+        assertTrue(brand.getActivated(), () -> "Brand should be activated.");
 
         brand.deactivated();
-        assertFalse(brand.getActivated(), "Brand should be deactivated.");
+        assertFalse(brand.getActivated(), () -> "Brand should be deactivated.");
     }
 
     @Test
@@ -88,7 +88,7 @@ public class BrandTest {
         brand.updateDataBrand(nullDataUpdate);
 
         // Assert
-        assertEquals(originalName, brand.getName(), "The name should not change when the new name is null.");
+        assertEquals(originalName, brand.getName(), () -> "The name should not change when the new name is null.");
     }
     
     @Test
@@ -102,7 +102,7 @@ public class BrandTest {
         String retrievedName = brand.getName();
 
         // Assert
-        assertEquals(name, retrievedName, "The name should be set and retrieved correctly.");
+        assertEquals(name, retrievedName, () -> "The name should be set and retrieved correctly.");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class BrandTest {
         Boolean retrievedActivated = brand.getActivated();
 
         // Assert
-        assertEquals(activated, retrievedActivated, "The activated status should be set and retrieved correctly.");
+        assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
     }
     
     @Test
@@ -130,9 +130,9 @@ public class BrandTest {
         Brand brand = new Brand(null, name, activated);
 
         // Assert
-        assertNotNull(brand, "Brand instance should be created with all-args constructor.");
-        assertEquals(name, brand.getName(), "Name should be initialized correctly.");
-        assertEquals(activated, brand.getActivated(), "Activated status should be initialized correctly.");
+        assertNotNull(brand, () -> "Brand instance should be created with all-args constructor.");
+        assertEquals(name, brand.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(activated, brand.getActivated(), () -> "Activated status should be initialized correctly.");
     }
     
     @Test
@@ -141,9 +141,9 @@ public class BrandTest {
         // Act
         Brand brand = new Brand(); // Usando o construtor padrão
 
-        assertNotNull(brand, "Brand instance should be created with no-args constructor.");
-        assertNull(brand.getName(), "Name should be null by default.");
-        assertNull(brand.getActivated(), "Activated status should be null by default.");
+        assertNotNull(brand, () -> "Brand instance should be created with no-args constructor.");
+        assertNull(brand.getName(), () -> "Name should be null by default.");
+        assertNull(brand.getActivated(), () -> "Activated status should be null by default.");
     }
 
 }
