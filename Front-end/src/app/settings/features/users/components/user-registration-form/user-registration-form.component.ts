@@ -9,6 +9,7 @@ import { UserPasswordModalComponent } from '../user-password-modal/user-password
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
 import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
+import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
 @Component({
   selector: 'app-user-registration-form',
@@ -28,6 +29,7 @@ export class UserRegistrationFormComponent {
   maxDate: Date | null = null;
 
   constructor(private userService: UserService,
+    private userDataService: UserDataService,
     private countryService: CountryService,
     public dialog: MatDialog,
     private formBuilder: FormBuilder) {
@@ -86,6 +88,8 @@ export class UserRegistrationFormComponent {
 
   continueToPasswordStep() {
     if (this.userForm.valid) {
+      this.user = { ...this.userForm.value };
+      this.user.cellPhone = this.userDataService.formatAndStoreUserData(this.userForm.get('countryCode')!.value, this.userForm.get('cellPhone')!.value);
       this.openModalPasswordUser();
     } else {
       console.log('Formulário inválido');
@@ -135,8 +139,6 @@ export class UserRegistrationFormComponent {
   }
 
   private openModalPasswordUser() {
-    this.user = { ...this.userForm.value };
-
     this.dialog.open(UserPasswordModalComponent, {
       width: '430px',
       height: '650px',
