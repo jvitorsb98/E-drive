@@ -29,4 +29,9 @@ public class UserService {
             throw new RuntimeException("User not found");
         }
     }
+
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }
