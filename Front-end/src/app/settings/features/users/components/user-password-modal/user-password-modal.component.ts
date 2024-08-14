@@ -1,11 +1,11 @@
-import { Component, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../core/services/user/user.service';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
-import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 import { passwordMatchValidator } from '../../../../shared/validators/confirm-password.validators';
 import { PasswordFieldValidator } from '../../../../shared/validators/password-field.validator';
+import { User } from '../../../../core/models/User';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -18,10 +18,10 @@ export class UserPasswordModalComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private userDataService: UserDataService,
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
+    @Inject(MAT_DIALOG_DATA) public userData: User,
     public dialogRef: MatDialogRef<UserPasswordModalComponent>,
   ) { }
 
@@ -41,40 +41,33 @@ export class UserPasswordModalComponent implements OnInit {
 
   saveUser(): void {
     if (this.userPassword.valid) {
-      const storedUserData = this.userDataService.getUserData();
-      this.userDataService.clearUserData();
+      this.userData.password = this.userPassword.value.password;
 
-      if (storedUserData) {
-        storedUserData.password = this.userPassword.value.password;
-       
-        this.userService.addUser(storedUserData).subscribe({
-          next: (response) => {
-            console.log('Usuário cadastrado', response);
+      this.userService.addUser(this.userData).subscribe({
+        next: (response) => {
+          console.log('Usuário cadastrado', response);
 
-            this.userDataService.clearUserData();
-            this.userPassword.reset();
-            this.closeModal();
+          this.userPassword.reset();
+          this.closeModal();
 
-            Swal.fire({
-              title: 'Cadastro bem-sucedido!',
-              icon: 'success',
-              text: `${storedUserData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`,
-              showConfirmButton: true,
-              confirmButtonColor: '#19B6DD',
-            });
-          },
-          error: (e) => {
-            console.error('Erro ao cadastrar usuário:', e);
-            Swal.fire({
-              title: 'Erro!',
-              icon: 'error',
-              text: 'Houve um problema ao cadastrar o usuário. Tente novamente mais tarde.',
-              showConfirmButton: true,
-              confirmButtonColor: '#19B6DD',
-            });
-          }
-        });
-      }
+          Swal.fire({
+            title: 'Cadastro bem-sucedido!',
+            icon: 'success',
+            text: `${this.userData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`,
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          });
+        },
+        error: (e) => {
+          Swal.fire({
+            title: 'Erro!',
+            icon: 'error',
+            text: 'Houve um problema ao cadastrar o usuário. Tente novamente mais tarde.',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          });
+        }
+      });
     }
   }
 

@@ -7,7 +7,6 @@ import { CountryService } from '../../../../core/services/apis/country/country.s
 import { MatDialog } from '@angular/material/dialog';
 import { UserPasswordModalComponent } from '../user-password-modal/user-password-modal.component';
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
-import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 
@@ -29,7 +28,6 @@ export class UserRegistrationFormComponent {
   maxDate: Date | null = null;
 
   constructor(private userService: UserService,
-    private userDataService: UserDataService,
     private countryService: CountryService,
     public dialog: MatDialog,
     private modal: ModalService,
@@ -83,10 +81,8 @@ export class UserRegistrationFormComponent {
     });
   }
 
-  saveLocalStorage() {
+  continueToPasswordStep() {
     if (this.userForm.valid) {
-      const formData = this.userForm.value;
-      this.userDataService.formatAndStoreUserData(formData);
       this.openModalPasswordUser();
       this.userForm.reset();
     } else {
@@ -136,17 +132,9 @@ export class UserRegistrationFormComponent {
     });
   }
 
-  // Função para abrir o modal de alteração de senha
-  // private openModalPasswordUser() {
-  //   this.modal.openModal(UserPasswordModalComponent, {
-  //     width: '430px',
-  //     height: '545px',
-  //     data: this.user
-  //   }).subscribe(() => this.getListUsers());
-  // }
-
-  // Função para abrir o modal de alteração de senha
   private openModalPasswordUser() {
+    this.user = { ...this.userForm.value };
+
     this.dialog.open(UserPasswordModalComponent, {
       width: '430px',
       height: '650px',
