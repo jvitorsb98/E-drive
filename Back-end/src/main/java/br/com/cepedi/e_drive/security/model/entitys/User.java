@@ -110,4 +110,7 @@ public class User implements UserDetails {
 
     public void setAuthorities(Set<SimpleGrantedAuthority> roleUser) {
     }
+
+    public void setPassword(String encode) {
+    }
 }
