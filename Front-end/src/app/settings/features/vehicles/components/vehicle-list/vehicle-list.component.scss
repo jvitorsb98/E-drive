@@ -1,0 +1,85 @@
+/* Table */
+#form-container {
+  background-color: #FFF;
+  border-radius: 10px;
+  box-shadow: .2px 10px 15px rgba(0, 0, 0, 0.7);
+  margin: 5% auto;
+  padding: 10px;
+}
+
+.container-form {
+  display: flex;
+  justify-content: center;
+}
+
+#form-container .form-check-button:checked,
+#form-container button[type="button"] {
+  background-color: #19B6DD;
+  color: #FFF;
+
+  &:hover {
+    background-color: #32aecd;
+    box-shadow: 0px 0px 5px 3px #6d6e6e;
+  }
+
+  &[disabled] {
+    background-color: #444444;
+    color: white;
+    border: 1px solid #444444;
+    cursor: not-allowed;
+  }
+}
+
+// Animação do botão de continuar 
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.02);
+  }
+
+  50% {
+    transform: scale(1);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 1s infinite;
+}
+
+.pulse-animation:hover {
+  animation: none;
+}
+
+.seta-voltar {
+  margin-left: -18px;
+  width: 30px;
+  transform: rotate(0deg);
+  transition: 0.3s linear all;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 3px #19B6DD;
+    // transform: rotate(359deg);
+    transform: translateX(10px);
+  }
+}
+
+/* container-fluid pt-3 */
+
+.titulo{
+  font-size: 26px;
+  color: #19B6DD;
+  padding: 0;
+  margin: 0 !important;
+}
+
+.subtitulo{
+  font-size: 16px;
+  font-weight: 300;
+  color: #747474;
+  padding: 2px 0px 14px 0px;
+  margin: 0 !important;
+}
