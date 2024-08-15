@@ -1,9 +1,26 @@
-.ingenico-logo{
+.ingenico-logo {
   width: 150px;
-  height: 60px;
+  height: 80px;
+  border: none; 
+  background: none; 
 }
-header{
+
+.navbar {
+  background-color: #ffffff; 
+  border: none; 
+  box-shadow: none; 
+}
+
+header {
   position: sticky;
   top: 0;
   z-index: 2;
+  background-color: #ffffff;
+}
+
+.nav-link {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  color: #000000;
 }

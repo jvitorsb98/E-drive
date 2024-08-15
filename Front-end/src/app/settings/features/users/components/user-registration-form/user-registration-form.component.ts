@@ -19,7 +19,6 @@ import { UserDataService } from '../../../../core/services/user/userdata/user-da
 export class UserRegistrationFormComponent {
 
   userForm!: FormGroup;
-  selectedCountryCode: string = '+55';
   phoneType: string = 'MOBILE';
   countries: any[] = [];
   filteredCountries!: Observable<any[]>; // Utilizado para filtrar países
@@ -115,7 +114,7 @@ export class UserRegistrationFormComponent {
   onCountryChange(code: string) {
     const country = this.countries.find(c => c.code === code);
     if (country) {
-      this.selectedCountryCode = country.code;
+      // this.selectedCountryCode = country.code;
       this.userForm.get('countryCode')?.setValue(country.code);
     } else {
       console.error('Código do país não encontrado.');

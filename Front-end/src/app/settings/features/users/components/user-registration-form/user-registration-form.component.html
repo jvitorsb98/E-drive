@@ -97,7 +97,7 @@
               [matAutocomplete]="auto"
               [matAutocompleteDisabled]="false" 
               (input)="userForm.get('countryCode')?.markAsTouched()">
-              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCountryChange($event.option.value)">
+              <mat-autocomplete #auto="matAutocomplete">
                 <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code" class="custom-autocomplete-option">
                   {{ country.name }} ({{ country.code }})
                 </mat-option>
@@ -113,7 +113,7 @@
               <input 
               type="text" 
               matInput 
-              [placeholder]="selectedCountryCode + ' (xx) xxxxx-xxxx'"
+              [placeholder]="'(xx) xxxxx-xxxx'"
               [mask]="phoneType | phoneMask" 
               formControlName="cellPhone" 
               required 
