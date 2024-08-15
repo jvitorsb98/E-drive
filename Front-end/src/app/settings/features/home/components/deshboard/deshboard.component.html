@@ -1,0 +1,26 @@
+<div class="deshboard-container">
+  <app-navbar></app-navbar>
+  <mat-sidenav-container>
+    <mat-sidenav mode="side" opened>
+      <mat-nav-list>
+        
+        <a mat-list-item routerLink="/meus-enderecos">
+          <mat-icon>home</mat-icon>
+          <span>Meus endereços</span>
+        </a>
+        <a mat-list-item routerLink="/meus-carros">
+          <mat-icon>directions_car</mat-icon>
+          <span>Meus carros</span>
+        </a>
+        <a mat-list-item routerLink="/planejar-viagem">
+          <mat-icon>map</mat-icon>
+          <span>Planejar Viagem</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content class="google-map">
+      <div id="map"></div>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
