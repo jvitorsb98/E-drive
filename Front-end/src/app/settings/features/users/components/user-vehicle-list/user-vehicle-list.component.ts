@@ -1,33 +1,32 @@
 import { Component, ViewChild } from '@angular/core';
-import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { Vehicle } from '../../../../core/models/Vehicle';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MockData } from '../../../../core/models/moke/MockData';
+import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
+import { UserVehicle } from '../../../../core/models/UserVehicle';
+import { mockUserVehicles } from '../../../../core/models/moke/MockUserVehicleData';
 
 @Component({
-  selector: 'app-vehicle-list',
-  templateUrl: './vehicle-list.component.html',
-  styleUrl: './vehicle-list.component.scss'
+  selector: 'app-user-vehicle-list',
+  templateUrl: './user-vehicle-list.component.html',
+  styleUrl: './user-vehicle-list.component.scss'
 })
-export class VehicleListComponent {
+export class UserVehicleListComponent {
 
   displayedColumns: string[] = ['id', 'mark', 'model', 'version', 'actions'];
   // dataSource = new MatTableDataSource<Vehicle>();
   dataSource: any;
-  listVehicles: Vehicle[] = [];
+  listUserVehicles: UserVehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  // this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private vehicleService: VehicleService) {
-    this.dataSource = new MatTableDataSource(this.listVehicles);
+  constructor(private userVehicleService: UserVehicleService) {
+    this.dataSource = new MatTableDataSource(this.listUserVehicles);
   }
 
   ngOnInit() {
-    this.getListVehicles();
+    this.getListUserVehicles();
   }
 
   ngAfterViewInit() {
@@ -35,24 +34,24 @@ export class VehicleListComponent {
     this.dataSource.sort = this.sort;
   }
 
-  getListVehicles() {
-    // this.vehicleService.getAllVehicle().subscribe({
-    //   next: (response: Vehicle[]) => { // Tipando a resposta como um array de Vehicle
+  getListUserVehicles() {
+    // this.userVehicleService.getAllUserVehicle().subscribe({
+    //   next: (response: UserVehicle[]) => { // Tipando a resposta como um array de Vehicle
     //     // this.dataSource.data = response;
-    //     this.listVehicles = response;
+    //     this.listUserVehicles = response;
 
-    //     this.dataSource = new MatTableDataSource(this.listVehicles);
+    //     this.dataSource = new MatTableDataSource(this.listUserVehicles);
     //     this.dataSource.paginator = this.paginator;
     //     this.dataSource.sort = this.sort;
     //   },
     //   error: (err) => {
-    //     console.error('Error fetching vehicles:', err); // Melhor prática: usar console.error para erros
+    //     console.error('Error fetching userVehicles:', err); // Melhor prática: usar console.error para erros
     //   }
     // });
 
-    this.listVehicles = MockData.mockVehicles(); // Obtém os dados mockados
-    this.dataSource = new MatTableDataSource(this.listVehicles);
-    // this.dataSource.data = this.listVehicles;
+    this.listUserVehicles = mockUserVehicles;
+    this.dataSource = new MatTableDataSource(this.listUserVehicles);
+    // this.dataSource.data = this.listUserVehicles;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
@@ -73,5 +72,4 @@ export class VehicleListComponent {
   //     return searchString.includes(filter);
   //   };
   // }
-
 }

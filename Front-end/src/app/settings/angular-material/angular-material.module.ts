@@ -11,7 +11,8 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatToolbarModule } from '@angular/material/toolbar';
-
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -31,6 +32,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatSelectModule,
     MatAutocompleteModule,
     NgxMaskDirective,
+    MatSortModule, 
+    MatPaginatorModule,
   ],
   exports: [
     MatCardModule,
@@ -46,6 +49,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatSelectModule,
     MatAutocompleteModule,
     NgxMaskDirective,
+    MatSortModule, 
+    MatPaginatorModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },

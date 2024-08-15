@@ -19,14 +19,14 @@ import { FooterComponent } from './settings/core/fragments/footer/footer.compone
 import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
+import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
+import { UserVehicleListComponent } from './settings/features/users/components/user-vehicle-list/user-vehicle-list.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
-import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
-
 
 @NgModule({
   declarations: [
@@ -45,6 +45,7 @@ import { VehicleListComponent } from './settings/features/vehicles/components/ve
     // Pipes
     PhoneMaskPipe,
       VehicleListComponent,
+      UserVehicleListComponent,
 
   ],
   imports: [

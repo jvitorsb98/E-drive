@@ -13,7 +13,6 @@
 
       <div class="row mt-2">
         <div class="col-12">
-          <button class="btn pulse-animation float-end" type="button">+ cadastrar</button>
 
           <mat-form-field>
             <mat-label>Busca de veículos</mat-label>
@@ -25,25 +24,25 @@
             <!-- ID Column -->
             <ng-container matColumnDef="id">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.id}} </td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.id}} </td>
             </ng-container>
 
             <!-- Marca Column -->
             <ng-container matColumnDef="mark">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Marca </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.category.name}}</td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.vehicle.category.name}}</td>
             </ng-container>
 
             <!-- Modelo Column -->
             <ng-container matColumnDef="model">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Modelo </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.model.name}} </td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.vehicle.model.name}} </td>
             </ng-container>
 
             <!-- Versão Column -->
             <ng-container matColumnDef="version">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Versão </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.version}} </td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.vehicle.version}} </td>
             </ng-container>
 
             <!-- Versão Column -->
@@ -66,8 +65,10 @@
             </tr>
           </table>
 
-          <mat-paginator class="shadow-sn" [pageSizeOptions]="[3, 5, 7]" aria-label="Selecione veículos por página"></mat-paginator>
+          <mat-paginator class="shadow-sn" [pageSizeOptions]="[3, 5, 7]"
+            aria-label="Selecione veículos por página"></mat-paginator>
         </div>
+        <button class="btn pulse-animation" type="button">+ cadastrar</button>
       </div>
     </div>
   </div>
