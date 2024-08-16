@@ -1,6 +1,6 @@
-import { User } from "../User";
-import { UserVehicle } from "../UserVehicle";
-import { Vehicle } from "../Vehicle";
+import { User } from "../user";
+import { UserVehicle } from "../user-vehicle";
+import { Vehicle } from "../vehicle";
 
 // Dados mockados para o User
 const mockUser1: User = {

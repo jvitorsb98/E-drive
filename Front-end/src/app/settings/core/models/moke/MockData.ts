@@ -1,10 +1,10 @@
-import { Autonomy } from "../Autonomy";
-import { Brand } from "../Brand";
-import { Category } from "../Category";
-import { Model } from "../Model";
-import { Propulsion } from "../Propulsion";
-import { Vehicle } from "../Vehicle";
-import { VehicleType } from "../VehicleType";
+import { Autonomy } from "../autonomy";
+import { Brand } from "../brand";
+import { Category } from "../category";
+import { Model } from "../model";
+import { Propulsion } from "../propulsion";
+import { Vehicle } from "../vehicle";
+import { VehicleType } from "../vehicle-type";
 
 export class MockData {
   static mockVehicles(): Vehicle[] {

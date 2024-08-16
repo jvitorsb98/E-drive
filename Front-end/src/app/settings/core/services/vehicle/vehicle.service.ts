@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { Vehicle } from '../../models/Vehicle';
+import { Vehicle } from '../../models/vehicle';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,6 @@ import { Vehicle } from '../../models/Vehicle';
 export class VehicleService {
 
   private vehicleUrl!: string;
-  private vehicle: Vehicle[] = [];
 
   constructor(private http: HttpClient) {
     this.vehicleUrl = `${environment.apiUrl}`;
@@ -22,14 +21,14 @@ export class VehicleService {
     // return of(this.vehicle);
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzNzgzNTg4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.SJfibmAL7JXup-q5CCrhi98IEtc4tpHTWh0wYUQ_Iq0'; 
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzODI3MDAyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.yaZMCcnFEk-6H46psnIE2aDihLICappKg-K9w2N_6Nw';
 
 
   getVehicleDetails(id: number): Observable<Vehicle> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}` // Utilize o token mockado ou real
     });
-  
+
     return this.http.get<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, { headers });
   }
 }

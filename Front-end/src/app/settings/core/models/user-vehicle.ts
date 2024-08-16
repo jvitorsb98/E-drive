@@ -1,6 +1,3 @@
-import { User } from "./User";
-import { Vehicle } from "./Vehicle";
-
 export class UserVehicle {
   id!: number;
   userId!: number;

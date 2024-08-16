@@ -2,7 +2,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { UserVehicle } from '../../../models/UserVehicle';
+import { UserVehicle } from '../../../models/user-vehicle';
+import { IApiResponse } from '../../../interface/api-response';
 
 @Injectable({
   providedIn: 'root'
@@ -10,20 +11,28 @@ import { UserVehicle } from '../../../models/UserVehicle';
 export class UserVehicleService {
 
   private userVehicleUrl!: string;
-  private userVehicle: UserVehicle[] = [];
 
   constructor(private http: HttpClient) {
     this.userVehicleUrl = `${environment.apiUrl}/api/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzNzgzNTg4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.SJfibmAL7JXup-q5CCrhi98IEtc4tpHTWh0wYUQ_Iq0'; 
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzODI3MDAyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.yaZMCcnFEk-6H46psnIE2aDihLICappKg-K9w2N_6Nw';
 
   // Método para obter todos os veículos do usuário
-  getAllUserVehicle(): Observable<UserVehicle[]> {
+  // getAllUserVehicle(): Observable<UserVehicle[]> {
+  //   const headers = new HttpHeaders({
+  //     'Authorization': `Bearer ${this.authToken}`
+  //   });
+
+  //   return this.http.get<UserVehicle[]>(this.userVehicleUrl, { headers });
+  // }
+
+  getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}`
     });
   
-    return this.http.get<UserVehicle[]>(this.userVehicleUrl, { headers });
+    return this.http.get<IApiResponse<UserVehicle[]>>(this.userVehicleUrl, { headers });
   }
+  
 }

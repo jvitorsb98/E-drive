@@ -1,19 +1,18 @@
-import { Autonomy } from "./Autonomy";
-import { Brand } from "./Brand";
-import { Category } from "./Category";
-import { Model } from "./Model";
-import { Propulsion } from "./Propulsion";
-import { VehicleType } from "./VehicleType";
+import { Autonomy } from "./autonomy";
+import { Category } from "./category";
+import { Model } from "./model";
+import { Propulsion } from "./propulsion";
+import { VehicleType } from "./vehicle-type";
 
-export class Vehicle{
+export class Vehicle {
   id!: number;
   motor!: string;
   version!: string;
-  model!: Model; 
-  category!: Category; 
-  vehicleType!: VehicleType; 
-  propulsion!: Propulsion; 
-  autonomy!: Autonomy; 
+  model!: Model;
+  category!: Category;
+  vehicleType!: VehicleType;
+  propulsion!: Propulsion;
+  autonomy!: Autonomy;
   activated!: boolean;
   year!: number;
 }
