@@ -20,7 +20,7 @@ import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-in
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
-import { UserVehicleListComponent } from './settings/features/users/components/user-vehicle-list/user-vehicle-list.component';
+import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -38,14 +38,14 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     NavbarIntroComponent,
     UserLoginModalComponent,
     ResetPasswordComponent,
+    VehicleListComponent,
+    UserVehicleComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
 
     // Pipes
     PhoneMaskPipe,
-      VehicleListComponent,
-      UserVehicleListComponent,
 
   ],
   imports: [

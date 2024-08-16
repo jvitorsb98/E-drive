@@ -19,7 +19,6 @@ export class VehicleListComponent {
   listVehicles: Vehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  // this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private vehicleService: VehicleService) {
@@ -33,6 +32,7 @@ export class VehicleListComponent {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
   getListVehicles() {
@@ -55,7 +55,6 @@ export class VehicleListComponent {
     // this.dataSource.data = this.listVehicles;
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
   applyFilter(event: Event) {
@@ -66,12 +65,5 @@ export class VehicleListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
-  // createFilter(): (data: Vehicle, filter: string) => boolean {
-  //   return (data: Vehicle, filter: string): boolean => {
-  //     const searchString = `${data.id} ${data.category.name} ${data.model.name} ${data.version}`.toLowerCase();
-  //     return searchString.includes(filter);
-  //   };
-  // }
 
 }

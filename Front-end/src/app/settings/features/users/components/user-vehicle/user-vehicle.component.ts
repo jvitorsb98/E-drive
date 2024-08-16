@@ -10,11 +10,11 @@ import { forkJoin } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 
 @Component({
-  selector: 'app-user-vehicle-list',
-  templateUrl: './user-vehicle-list.component.html',
-  styleUrl: './user-vehicle-list.component.scss'
+  selector: 'app-user-vehicle',
+  templateUrl: './user-vehicle.component.html',
+  styleUrl: './user-vehicle.component.scss'
 })
-export class UserVehicleListComponent {
+export class UserVehicleComponent {
 
   displayedColumns: string[] = ['mark', 'model', 'version', 'actions'];
   dataSource = new MatTableDataSource<Vehicle>();
@@ -105,5 +105,4 @@ export class UserVehicleListComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
 }

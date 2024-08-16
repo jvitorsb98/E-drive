@@ -23,19 +23,19 @@
             <!-- Marca Column -->
             <ng-container matColumnDef="mark">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Marca </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.model.brand.name}} </td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.model.brand.name}} </td>
             </ng-container>
           
             <!-- Modelo Column -->
             <ng-container matColumnDef="model">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Modelo </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.model.name}} </td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.model.name}} </td>
             </ng-container>
           
             <!-- Versão Column -->
             <ng-container matColumnDef="version">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Versão </th>
-              <td class="td-table" mat-cell *matCellDef="let vehicle"> {{vehicle.version}} </td>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.version}} </td>
             </ng-container>
           
             <!-- Actions Column -->
