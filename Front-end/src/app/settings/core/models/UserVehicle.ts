@@ -3,8 +3,8 @@ import { Vehicle } from "./Vehicle";
 
 export class UserVehicle {
   id!: number;
-  user!: User;
-  vehicle!: Vehicle;
+  userId!: number;
+  vehicleId!: number;
   mileagePerLiterRoad!: number;
   mileagePerLiterCity!: number;
   consumptionEnergetic!: number;

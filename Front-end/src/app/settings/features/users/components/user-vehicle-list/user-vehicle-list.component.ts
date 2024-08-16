@@ -4,7 +4,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { UserVehicle } from '../../../../core/models/UserVehicle';
-import { mockUserVehicles } from '../../../../core/models/moke/MockUserVehicleData';
+import { Vehicle } from '../../../../core/models/Vehicle';
+import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-user-vehicle-list',
@@ -13,15 +15,16 @@ import { mockUserVehicles } from '../../../../core/models/moke/MockUserVehicleDa
 })
 export class UserVehicleListComponent {
 
-  displayedColumns: string[] = ['id', 'mark', 'model', 'version', 'actions'];
-  dataSource = new MatTableDataSource<UserVehicle>();
+  displayedColumns: string[] = ['mark', 'model', 'version', 'actions'];
+  dataSource = new MatTableDataSource<Vehicle>();
   listUserVehicles: UserVehicle[] = [];
+  vehiclesDetails: Vehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private userVehicleService: UserVehicleService) {
-    // this.dataSource = new MatTableDataSource(this.listUserVehicles);
+  constructor(private userVehicleService: UserVehicleService, private vehicleService: VehicleService) {
+    this.dataSource = new MatTableDataSource(this.vehiclesDetails);
   }
 
   ngOnInit() {
@@ -37,38 +40,55 @@ export class UserVehicleListComponent {
 
   // getListUserVehicles() {
   //   this.userVehicleService.getAllUserVehicle().subscribe({
-  //     next: (response: UserVehicle[]) => { 
-  //       this.dataSource.data = response;
-  //       this.listUserVehicles = response;
+  //     next: (response: any) => {
+  //       console.log('Response from getAllUserVehicle:', response);
 
-  //       this.dataSource = new MatTableDataSource(this.listUserVehicles);
-  //       this.dataSource.paginator = this.paginator;
-  //       this.dataSource.sort = this.sort;
-  //       this.paginator._intl.itemsPerPageLabel = 'Itens por página';
+  //       // Acesse o array de veículos dentro de response.content
+  //       if (response && Array.isArray(response.content)) {
+  //         this.listUserVehicles = response.content;
+  //         // this.dataSource.data = response.content;
+
+  //         // Buscar detalhes dos veículos
+  //         this.listUserVehicles.forEach(userVehicle => {
+  //           this.vehicleService.getVehicleDetails(userVehicle.vehicleId).subscribe((vehicle: Vehicle) => {
+  //             this.vehiclesDetails.push(vehicle);
+  //             this.dataSource.data = this.vehiclesDetails;
+  //           });
+  //         });
+  //         // this.dataSource.data = this.vehiclesDetails;
+  //         // this.dataSource.data = this.vehiclesDetails;  
+  //         console.log('dataSource:', this.dataSource);
+  //       } else {
+  //         console.error('Expected an array in response.content but got:', response.content);
+  //       }
   //     },
   //     error: (err) => {
-  //       console.error('Error fetching userVehicles:', err); 
+  //       console.error('Error fetching userVehicles:', err);
   //     }
   //   });
-
-  //   // this.listUserVehicles = mockUserVehicles;
-  //   // this.dataSource = new MatTableDataSource(this.listUserVehicles);
-  //   // // this.dataSource.data = this.listUserVehicles;
-  //   // this.dataSource.paginator = this.paginator;
-  //   // this.dataSource.sort = this.sort;
-  //   // this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   // }
 
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
-      next: (response: UserVehicle[]) => {
-        this.listUserVehicles = response;
-        this.dataSource.data = response;
+      next: (response: any) => {
+        console.log('Response from getAllUserVehicle:', response);
 
-        console.log("Resopnse: ", response);  
+        if (response && Array.isArray(response.content)) {
+          this.listUserVehicles = response.content;
 
-        // this.dataSource = new MatTableDataSource(this.listUserVehicles);
+          // Cria um array de observables para buscar detalhes dos veículos
+          const vehicleDetailsObservables = this.listUserVehicles.map(userVehicle =>
+            this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
+          );
 
+          // Usa forkJoin para esperar até que todas as requisições estejam completas
+          forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
+            this.vehiclesDetails = vehicles;
+            this.dataSource.data = this.vehiclesDetails;
+          });
+        } else {
+          console.error('Expected an array in response.content but got:', response.content);
+        }
       },
       error: (err) => {
         console.error('Error fetching userVehicles:', err);

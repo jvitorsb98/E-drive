@@ -22,27 +22,27 @@
           <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
 
             <!-- ID Column -->
-            <ng-container matColumnDef="id">
+            <!-- <ng-container matColumnDef="id">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
-              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.id}} </td>
-            </ng-container>
+              <td class="td-table" mat-cell *matCellDef="let vehiclesDetails"> {{vehiclesDetails.id}} </td>
+            </ng-container> -->
 
             <!-- Marca Column -->
             <ng-container matColumnDef="mark">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Marca </th>
-              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.vehicle.category.name}}</td>
+              <td class="td-table" mat-cell *matCellDef="let vehiclesDetails"> {{vehiclesDetails.brand?.name}}</td>
             </ng-container>
 
             <!-- Modelo Column -->
             <ng-container matColumnDef="model">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Modelo </th>
-              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.vehicle.model.name}} </td>
+              <td class="td-table" mat-cell *matCellDef="let vehiclesDetails"> {{vehiclesDetails.vehicle?.model?.name}} </td>
             </ng-container>
 
             <!-- Versão Column -->
             <ng-container matColumnDef="version">
               <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header> Versão </th>
-              <td class="td-table" mat-cell *matCellDef="let userVehicle"> {{userVehicle.vehicle.version}} </td>
+              <td class="td-table" mat-cell *matCellDef="let vehiclesDetails"> {{vehiclesDetails.vehicle?.version}} </td>
             </ng-container>
 
             <!-- Versão Column -->
