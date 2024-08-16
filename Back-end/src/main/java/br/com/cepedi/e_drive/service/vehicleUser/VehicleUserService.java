@@ -40,9 +40,9 @@ public class VehicleUserService {
     @Autowired
     private List<ValidationDisabledVehicleUser> validationDisabledVehicleUsers;
 
-    public DataVehicleUserDetails register(DataRegisterVehicleUser data) {
+    public DataVehicleUserDetails register(DataRegisterVehicleUser data, String email) {
         validationRegisterVehicleUserList.forEach(v -> v.validate(data));
-        User user = userRepository.getReferenceById(data.userId());
+        User user = userRepository.findByEmail(email);
         Vehicle vehicle = vehicleRepository.getReferenceById(data.vehicleId());
         VehicleUser vehicleUser = new VehicleUser(user, vehicle, data.dataRegisterAutonomy());
         vehicleUser = vehicleUserRepository.save(vehicleUser);
@@ -53,8 +53,9 @@ public class VehicleUserService {
         return vehicleUserRepository.findAllActivated(pageable).map(DataVehicleUserDetails::new);
     }
 
-    public Page<DataVehicleUserDetails> getVehicleUsersByUser(Long userId, Pageable pageable) {
-        return vehicleUserRepository.findByUserId(userId, pageable).map(DataVehicleUserDetails::new);
+    public Page<DataVehicleUserDetails> getVehicleUsersByUser(String email, Pageable pageable) {
+        User user = userRepository.findByEmail(email);
+        return vehicleUserRepository.findByUserId(user.getId(), pageable).map(DataVehicleUserDetails::new);
     }
 
     public Page<DataVehicleUserDetails> getVehicleUsersByVehicle(Long vehicleId, Pageable pageable) {

@@ -21,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,11 +54,13 @@ public class VehicleUserController {
     })
     public ResponseEntity<DataVehicleUserDetails> register(
             @Parameter(description = "Data required to register a Vehicle User", required = true)
-            @Valid @RequestBody DataRegisterVehicleUser data
+            @Valid @RequestBody DataRegisterVehicleUser data,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         try {
-            LOGGER.info("Registering a vehicle user");
-            DataVehicleUserDetails dataVehicleUserDetails = vehicleUserService.register(data);
+            String email = userDetails.getUsername();
+            LOGGER.info("Registering a vehicle user for authenticated user: {}", email);
+            DataVehicleUserDetails dataVehicleUserDetails = vehicleUserService.register(data,email);
             LOGGER.info("Vehicle user registered successfully");
             return ResponseEntity.status(201).body(dataVehicleUserDetails);
         } catch (Exception e) {
@@ -73,13 +77,15 @@ public class VehicleUserController {
         return ResponseEntity.ok(vehicleUsers);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     @Operation(summary = "Get Vehicle Users by User", method = "GET")
     public ResponseEntity<Page<DataVehicleUserDetails>> getVehicleUsersByUser(
-            @Parameter(description = "ID of the user", required = true) @PathVariable Long userId,
-            Pageable pageable) {
-        LOGGER.info("Retrieving vehicle users for user ID: {}", userId);
-        Page<DataVehicleUserDetails> vehicleUsers = vehicleUserService.getVehicleUsersByUser(userId, pageable);
+            Pageable pageable,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        LOGGER.info("Retrieving vehicle users for user ID: {} by authenticated user: {}", userDetails.getUsername(), email);
+        Page<DataVehicleUserDetails> vehicleUsers = vehicleUserService.getVehicleUsersByUser(email, pageable);
         return ResponseEntity.ok(vehicleUsers);
     }
 
@@ -87,8 +93,11 @@ public class VehicleUserController {
     @Operation(summary = "Get Vehicle Users by Vehicle", method = "GET")
     public ResponseEntity<Page<DataVehicleUserDetails>> getVehicleUsersByVehicle(
             @Parameter(description = "ID of the vehicle", required = true) @PathVariable Long vehicleId,
-            Pageable pageable) {
-        LOGGER.info("Retrieving vehicle users for vehicle ID: {}", vehicleId);
+            Pageable pageable,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        String email = userDetails.getUsername();
+        LOGGER.info("Retrieving vehicle users for vehicle ID: {} by authenticated user: {}", vehicleId, email);
         Page<DataVehicleUserDetails> vehicleUsers = vehicleUserService.getVehicleUsersByVehicle(vehicleId, pageable);
         return ResponseEntity.ok(vehicleUsers);
     }
@@ -114,12 +123,15 @@ public class VehicleUserController {
     public ResponseEntity<DataVehicleUserDetails> updateVehicleUser(
             @Parameter(description = "Data required to update a Vehicle User", required = true)
             @Valid @RequestBody DataUpdateVehicleUser data,
-            @Parameter(description = "ID of the Vehicle User to update", required = true) @PathVariable Long id) {
+            @Parameter(description = "ID of the Vehicle User to update", required = true) @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         try {
-            LOGGER.info("Updating vehicle user with ID: {}", id);
+            String email = userDetails.getUsername();
+            LOGGER.info("Updating vehicle user with ID: {} by authenticated user: {}", id, email);
             DataVehicleUserDetails updatedVehicleUserDetails = vehicleUserService.updateVehicleUser(data, id);
             return ResponseEntity.ok(updatedVehicleUserDetails);
-        }catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error updating vehicle user with ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -140,12 +152,15 @@ public class VehicleUserController {
                     content = @Content)
     })
     public ResponseEntity<Void> disableVehicleUser(
-            @Parameter(description = "ID of the Vehicle User to disable", required = true) @PathVariable Long id) {
+            @Parameter(description = "ID of the Vehicle User to disable", required = true) @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         try {
-            LOGGER.info("Disabling vehicle user with ID: {}", id);
+            String email = userDetails.getUsername();
+            LOGGER.info("Disabling vehicle user with ID: {} by authenticated user: {}", id, email);
             vehicleUserService.disableVehicleUser(id);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
+        }  catch (Exception e) {
             LOGGER.error("Error disabling vehicle user with ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -166,9 +181,12 @@ public class VehicleUserController {
                     content = @Content)
     })
     public ResponseEntity<Void> enableVehicleUser(
-            @Parameter(description = "ID of the Vehicle User to enable", required = true) @PathVariable Long id) {
+            @Parameter(description = "ID of the Vehicle User to enable", required = true) @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
         try {
-            LOGGER.info("Enabling vehicle user with ID: {}", id);
+            String email = userDetails.getUsername();
+            LOGGER.info("Enabling vehicle user with ID: {} by authenticated user: {}", id, email);
             vehicleUserService.enableVehicleUser(id);
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
