@@ -14,15 +14,14 @@ import { mockUserVehicles } from '../../../../core/models/moke/MockUserVehicleDa
 export class UserVehicleListComponent {
 
   displayedColumns: string[] = ['id', 'mark', 'model', 'version', 'actions'];
-  // dataSource = new MatTableDataSource<Vehicle>();
-  dataSource: any;
+  dataSource = new MatTableDataSource<UserVehicle>();
   listUserVehicles: UserVehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(private userVehicleService: UserVehicleService) {
-    this.dataSource = new MatTableDataSource(this.listUserVehicles);
+    // this.dataSource = new MatTableDataSource(this.listUserVehicles);
   }
 
   ngOnInit() {
@@ -32,29 +31,49 @@ export class UserVehicleListComponent {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
+  // getListUserVehicles() {
+  //   this.userVehicleService.getAllUserVehicle().subscribe({
+  //     next: (response: UserVehicle[]) => { 
+  //       this.dataSource.data = response;
+  //       this.listUserVehicles = response;
+
+  //       this.dataSource = new MatTableDataSource(this.listUserVehicles);
+  //       this.dataSource.paginator = this.paginator;
+  //       this.dataSource.sort = this.sort;
+  //       this.paginator._intl.itemsPerPageLabel = 'Itens por página';
+  //     },
+  //     error: (err) => {
+  //       console.error('Error fetching userVehicles:', err); 
+  //     }
+  //   });
+
+  //   // this.listUserVehicles = mockUserVehicles;
+  //   // this.dataSource = new MatTableDataSource(this.listUserVehicles);
+  //   // // this.dataSource.data = this.listUserVehicles;
+  //   // this.dataSource.paginator = this.paginator;
+  //   // this.dataSource.sort = this.sort;
+  //   // this.paginator._intl.itemsPerPageLabel = 'Itens por página';
+  // }
+
   getListUserVehicles() {
-    // this.userVehicleService.getAllUserVehicle().subscribe({
-    //   next: (response: UserVehicle[]) => { // Tipando a resposta como um array de Vehicle
-    //     // this.dataSource.data = response;
-    //     this.listUserVehicles = response;
+    this.userVehicleService.getAllUserVehicle().subscribe({
+      next: (response: UserVehicle[]) => {
+        this.listUserVehicles = response;
+        this.dataSource.data = response;
 
-    //     this.dataSource = new MatTableDataSource(this.listUserVehicles);
-    //     this.dataSource.paginator = this.paginator;
-    //     this.dataSource.sort = this.sort;
-    //   },
-    //   error: (err) => {
-    //     console.error('Error fetching userVehicles:', err); // Melhor prática: usar console.error para erros
-    //   }
-    // });
+        console.log("Resopnse: ", response);  
 
-    this.listUserVehicles = mockUserVehicles;
-    this.dataSource = new MatTableDataSource(this.listUserVehicles);
-    // this.dataSource.data = this.listUserVehicles;
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
+        // this.dataSource = new MatTableDataSource(this.listUserVehicles);
+
+      },
+      error: (err) => {
+        console.error('Error fetching userVehicles:', err);
+      }
+    });
   }
 
   applyFilter(event: Event) {
@@ -66,10 +85,4 @@ export class UserVehicleListComponent {
     }
   }
 
-  // createFilter(): (data: Vehicle, filter: string) => boolean {
-  //   return (data: Vehicle, filter: string): boolean => {
-  //     const searchString = `${data.id} ${data.category.name} ${data.model.name} ${data.version}`.toLowerCase();
-  //     return searchString.includes(filter);
-  //   };
-  // }
 }
