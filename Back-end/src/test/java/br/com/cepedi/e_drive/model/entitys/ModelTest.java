@@ -1,83 +1,175 @@
 package br.com.cepedi.e_drive.model.entitys;
 
+import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
+import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.Random.class)
-@DisplayName("Test entity Model")
-public class ModelTest {
+class ModelTest {
 
     private Faker faker;
     private Model model;
+    private Brand brand;
+    private DataRegisterModel dataRegisterModel;
+    private DataUpdateModel dataUpdateModel;
 
     @BeforeEach
     void setUp() {
         faker = new Faker();
+        brand = Mockito.mock(Brand.class);
+        dataRegisterModel = Mockito.mock(DataRegisterModel.class);
+        dataUpdateModel = Mockito.mock(DataUpdateModel.class);
+        
+        Mockito.when(dataRegisterModel.name()).thenReturn(faker.commerce().productName());
+        
         model = new Model(
-                null, // ID gerado automaticamente
-                faker.company().name(), // Nome da marca
-                null, // Assumindo que você pode deixar a marca como null por enquanto
-                faker.bool().bool() // Estado de ativação
+            null, dataRegisterModel.name(),
+            brand,
+            faker.bool().bool()
         );
     }
 
     @Test
-    @DisplayName("Test creation of Model entity")
-    void testModelCreation() {
-        assertNotNull(model, "Model should not be null");
-        assertNotNull(model.getName(), "Name should not be null");
-        assertNotNull(model.getActivated(), "Activated should not be null");
+    @DisplayName("Test all-args constructor")
+    void testAllArgsConstructor() {
+        // Arrange
+        String name = faker.commerce().productName();
+        Boolean activated = faker.bool().bool();
+
+        // Act
+        Model model = new Model(null, name, brand, activated);
+
+        // Assert
+        assertNotNull(model, () -> "Model instance should be created with all-args constructor.");
+        assertEquals(name, model.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(brand, model.getBrand(), () -> "Brand should be initialized correctly.");
+        assertEquals(activated, model.getActivated(), () -> "Activated should be initialized correctly.");
+    }
+    
+    @Test
+    @DisplayName("Test no-args constructor")
+    void testNoArgsConstructor() {
+        // Act
+        Model model = new Model(); 
+
+        // Assert
+        assertNotNull(model, () -> "Model instance should be created with no-args constructor.");
+        assertNull(model.getName(), () -> "Name should be null by default.");
+        assertNull(model.getBrand(), () -> "Brand should be null by default.");
+        assertNull(model.getActivated(), () -> "Activated should be null by default.");
     }
 
     @Test
-    @DisplayName("Test updating Model entity")
-    void testModelUpdate() {
-        // Simulate updating the Model
-        String newName = faker.company().name();
-        model.setName(newName);
+    @DisplayName("Test creation with DataRegisterModel and Brand")
+    void testConstructorWithDataRegisterModelAndBrand() {
+        // Arrange
+        String name = dataRegisterModel.name();
+        Boolean activated = true;
 
-        // Check if the update was successful
-        assertEquals(newName, model.getName(), "Model name should be updated");
+        // Act
+        Model model = new Model(dataRegisterModel, brand);
+
+        // Assert
+        assertNotNull(model, () -> "Model instance should be created with DataRegisterModel and Brand.");
+        assertEquals(name, model.getName(), () -> "Name should be initialized correctly.");
+        assertEquals(brand, model.getBrand(), () -> "Brand should be initialized correctly.");
+        assertEquals(activated, model.getActivated(), () -> "Activated should be initialized to true by default.");
     }
 
     @Test
-    @DisplayName("Test activating Model entity")
-    void testModelActivation() {
-        model.setActivated(false);
-        assertFalse(model.getActivated(), "Model should be deactivated");
+    @DisplayName("Test update model data")
+    void testUpdateModelData() {
+        // Arrange
+        String newName = faker.commerce().productName();
+        Mockito.when(dataUpdateModel.name()).thenReturn(newName);
 
-        model.setActivated(true);
-        assertTrue(model.getActivated(), "Model should be activated");
+        // Act
+        model.update(dataUpdateModel);
+
+        // Assert
+        assertEquals(newName, model.getName(), () -> "Name should be updated.");
     }
 
     @Test
-    @DisplayName("Test deactivating Model entity")
-    void testModelDeactivation() {
-        model.setActivated(true);
-        assertTrue(model.getActivated(), "Model should be activated");
+    @DisplayName("Test update model data with null values")
+    void testUpdateModelDataWithNullValues() {
+        // Arrange
+        String originalName = model.getName();
+        Mockito.when(dataUpdateModel.name()).thenReturn(null);
 
-        model.setActivated(false);
-        assertFalse(model.getActivated(), "Model should be deactivated");
+        // Act
+        model.update(dataUpdateModel);
+
+        // Assert
+        assertEquals(originalName, model.getName(), () -> "Name should not change when the new name is null.");
     }
 
     @Test
-    @DisplayName("Test handling of null values")
-    void testModelNullValues() {
-        Model modelWithNulls = new Model(null, null, null, null);
-        assertNull(modelWithNulls.getName(), "Name should be null");
-        assertNull(modelWithNulls.getActivated(), "Activated should be null");
+    @DisplayName("Test activating Model")
+    void testActivateModel() {
+        // Act
+        model.deactivated();
+        assertFalse(model.getActivated(), () -> "Model should be deactivated.");
 
-        // Update with valid values
-        modelWithNulls.setName(faker.company().name());
-        modelWithNulls.setActivated(faker.bool().bool());
+        model.activated();
+        assertTrue(model.getActivated(), () -> "Model should be activated.");
+    }
 
-        assertNotNull(modelWithNulls.getName(), "Name should not be null after setting");
-        assertNotNull(modelWithNulls.getActivated(), "Activated should not be null after setting");
+    @Test
+    @DisplayName("Test deactivating Model")
+    void testDeactivateModel() {
+        // Act
+        model.activated();
+        assertTrue(model.getActivated(), () -> "Model should be activated.");
+
+        model.deactivated();
+        assertFalse(model.getActivated(), () -> "Model should be deactivated.");
+    }
+
+    @Test
+    @DisplayName("Test getter and setter for name")
+    void testNameGetterAndSetter() {
+        // Arrange
+        String name = faker.commerce().productName();
+
+        // Act
+        model.setName(name);
+        String retrievedName = model.getName();
+
+        // Assert
+        assertEquals(name, retrievedName, () -> "The name should be set and retrieved correctly.");
+    }
+
+    @Test
+    @DisplayName("Test getter and setter for brand")
+    void testBrandGetterAndSetter() {
+        // Arrange
+        Brand newBrand = Mockito.mock(Brand.class);
+
+        // Act
+        model.setBrand(newBrand);
+        Brand retrievedBrand = model.getBrand();
+
+        // Assert
+        assertEquals(newBrand, retrievedBrand, () -> "The brand should be set and retrieved correctly.");
+    }
+
+    @Test
+    @DisplayName("Test getter and setter for activated")
+    void testActivatedGetterAndSetter() {
+        // Arrange
+        Boolean activated = faker.bool().bool();
+
+        // Act
+        model.setActivated(activated);
+        Boolean retrievedActivated = model.getActivated();
+
+        // Assert
+        assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
     }
 }
