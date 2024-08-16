@@ -21,7 +21,7 @@ export class UserVehicleService {
   //   return this.http.get<UserVehicle[]>(`${this.userVehicleUrl}`);
   // }
 
-  private authToken: string = ''; 
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzNzc4MDg2LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.O9fjlqrPip7AAZbqMIbAintxqTiit6DN08_JyCpueJ8'; 
 
   // Método para obter todos os veículos do usuário
   getAllUserVehicle(): Observable<UserVehicle[]> {
