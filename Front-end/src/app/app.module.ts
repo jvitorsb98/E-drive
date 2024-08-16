@@ -21,6 +21,8 @@ import { UserLoginModalComponent } from './settings/core/security/login/user-log
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
+import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
+
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -40,6 +42,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     ResetPasswordComponent,
     VehicleListComponent,
     UserVehicleComponent,
+    ModalViewVehicleComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
