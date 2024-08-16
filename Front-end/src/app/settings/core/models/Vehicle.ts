@@ -1,4 +1,5 @@
 import { Autonomy } from "./Autonomy";
+import { Brand } from "./Brand";
 import { Category } from "./Category";
 import { Model } from "./Model";
 import { Propulsion } from "./Propulsion";

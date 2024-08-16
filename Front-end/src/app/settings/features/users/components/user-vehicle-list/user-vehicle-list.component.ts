@@ -85,6 +85,7 @@ export class UserVehicleListComponent {
           forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
             this.vehiclesDetails = vehicles;
             this.dataSource.data = this.vehiclesDetails;
+            console.log(this.dataSource)
           });
         } else {
           console.error('Expected an array in response.content but got:', response.content);
