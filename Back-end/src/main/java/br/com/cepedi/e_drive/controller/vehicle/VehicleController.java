@@ -72,6 +72,28 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Get Vehicle by ID", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vehicle found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DataVehicleDetails.class))),
+            @ApiResponse(responseCode = "404", description = "Vehicle not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<DataVehicleDetails> getVehicleById(
+            @Parameter(description = "ID of the vehicle to retrieve", required = true) @PathVariable Long id) {
+        LOGGER.info("Retrieving vehicle with ID: {}", id);
+        DataVehicleDetails vehicle = vehicleService.getVehicleById(id);
+        return ResponseEntity.ok(vehicle);
+    }
+
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get Vehicles by Category", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByCategory(
