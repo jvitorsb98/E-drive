@@ -30,6 +30,6 @@ export class VehicleService {
       'Authorization': `Bearer ${this.authToken}` // Utilize o token mockado ou real
     });
   
-    return this.http.get<Vehicle>(`http://localhost:8080/api/v1/vehicles/${id}`, { headers });
+    return this.http.get<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, { headers });
   }
 }
