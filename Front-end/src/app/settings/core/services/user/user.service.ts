@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { User } from '../../models/User';
 
 @Injectable({
@@ -9,24 +9,28 @@ import { User } from '../../models/User';
 })
 export class UserService {
 
-  private usersUrl!: string;
-  private users: User[] = [];
+  private usersUrl: string;
 
   constructor(private http: HttpClient) {
-    this.usersUrl = `${environment.apiUrl}`;
+    this.usersUrl = `${environment.apiUrl}/auth`;
   }
 
-  // Método para obter todos os usuários reais
+  // Método para obter o usuário logado
   getAllUsers(): Observable<User[]> {
-    // return this.http.get<User[]>(this.usersUrl);
-    return of(this.users);
+    return this.http.get<User[]>(`${this.usersUrl}/user/me`)
+      .pipe(
+        catchError(e => {
+          console.error('Erro ao buscar usuários:', e);
+          return throwError(() => e);
+        })
+      );
   }
 
+  // Método para adicionar um usuário
   addUser(user: User): Observable<any> {
-    return this.http.post(`${this.usersUrl}/auth/register`, user, { responseType: 'text' })
+    return this.http.post(`${this.usersUrl}/register`, user, { responseType: 'text' })
       .pipe(
         map(response => {
-          // Como a resposta é um texto, você pode retornar um objeto com a mensagem.
           return { message: response };
         }),
         catchError(e => {
@@ -39,10 +43,32 @@ export class UserService {
       );
   }
 
+  // Método para verificar se o email já existe
   checkEmailExists(email: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.usersUrl}/auth/user/exists`, {
+    return this.http.get<boolean>(`${this.usersUrl}/user/update`, {
       params: new HttpParams().set('email', email)
-    });
+    }).pipe(
+      catchError(e => {
+        console.error('Erro ao verificar e-mail:', e);
+        return throwError(() => e);
+      })
+    );
   }
 
+  // Método para atualizar um usuário
+  updateUser(user: User): Observable<any> {
+    return this.http.put(`${this.usersUrl}/user/${user.email}`, user, { responseType: 'text' })
+      .pipe(
+        map(response => {
+          return { message: 'Usuário atualizado com sucesso.' };
+        }),
+        catchError(e => {
+          if (e.status === 400) {
+            return throwError(() => e);
+          }
+          console.error('Erro ao atualizar usuário:', e);
+          return throwError(() => e);
+        })
+      );
+  }
 }

@@ -25,6 +25,7 @@ import { EmailPatternValidatorDirective } from './settings/shared/directives/ema
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
+import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 
     // Pipes
     PhoneMaskPipe,
+      UserUpdateComponent,
 
   ],
   imports: [

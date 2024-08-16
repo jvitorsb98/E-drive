@@ -1,0 +1,82 @@
+<div class="container" id="form-container">
+
+  <!-- Formulário de visualização dos dados do usuário -->
+  <div class="container-form" *ngIf="!isEditing">
+    <h1>Dados Pessoais</h1>
+    <form [formGroup]="userForm">
+      <!-- Nome -->
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Nome completo:</mat-label>
+          <input matInput formControlName="name" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Data de nascimento -->
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Data de Nascimento:</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="birth" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Telefone celular -->
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Telefone:</mat-label>
+          <input matInput formControlName="cellPhone" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Botões -->
+      <div class="button-group mt-5">
+        <button mat-raised-button color="primary" type="button" (click)="editData()">Alterar Dados</button>
+        <button mat-raised-button color="warn" type="button" (click)="deleteAccount()">Excluir Minha Conta</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Formulário de edição dos dados do usuário -->
+  <div class="container-form" *ngIf="isEditing">
+    <h1>Alterar Dados</h1>
+    <form [formGroup]="userForm" (ngSubmit)="updateUser()">
+      <!-- Nome -->
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Nome completo:</mat-label>
+          <input matInput formControlName="name" required />
+          <mat-error *ngIf="userForm.get('name')?.hasError('required')">O nome é obrigatório.</mat-error>
+          <mat-error *ngIf="userForm.get('name')?.hasError('minlength')">O nome deve ter pelo menos 2 caracteres.</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Data de nascimento -->
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Data de Nascimento:</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="birth" required readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Telefone celular -->
+      <div class="form-group">
+        <mat-form-field appearance="fill">
+          <mat-label>Telefone:</mat-label>
+          <input matInput formControlName="cellPhone" required />
+          <mat-error *ngIf="userForm.get('cellPhone')?.hasError('required')">O telefone celular é obrigatório.</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Botões -->
+      <div class="button-group mt-5">
+        <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid">Salvar Dados</button>
+        <button mat-raised-button color="warn" type="button" (click)="cancelEdit()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+</div>
