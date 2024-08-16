@@ -4,6 +4,8 @@ import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterU
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.validations.register.ValidationRegisterUser;
+import java.time.LocalDate;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.github.javafaker.Faker;
@@ -14,14 +16,17 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -46,21 +51,28 @@ public class AuthServiceTest {
 
     private Faker faker;
 
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         faker = new Faker();
+        
+        ReflectionTestUtils.setField(authService, "validationRegisterUserList", Collections.singletonList(Mockito.mock(ValidationRegisterUser.class)));
+        
     }
 
     @Test
     @DisplayName("Test Register User")
     public void testRegisterUser() {
+    	
+    	LocalDate birthDate = LocalDate.now();
+
         String email = faker.internet().emailAddress();
         DataRegisterUser data = new DataRegisterUser(
             faker.name().fullName(),
             email,
             faker.internet().password(),
-            faker.date().past(30, TimeUnit.DAYS).toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate(),
+            birthDate,
             faker.phoneNumber().phoneNumber()
         );
         
@@ -94,7 +106,7 @@ public class AuthServiceTest {
 
         authService.activateUser(token);
 
-        assertTrue(user.getActivated(), "User should be activated");
+        assertTrue(user.getActivated(), () -> "User should be activated");
         verify(userRepository).save(user);
     }
 
