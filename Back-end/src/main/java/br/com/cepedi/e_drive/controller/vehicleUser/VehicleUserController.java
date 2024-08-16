@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,10 +54,15 @@ public class VehicleUserController {
             @Parameter(description = "Data required to register a Vehicle User", required = true)
             @Valid @RequestBody DataRegisterVehicleUser data
     ) {
-        LOGGER.info("Registering a vehicle user");
-        DataVehicleUserDetails dataVehicleUserDetails = vehicleUserService.register(data);
-        LOGGER.info("Vehicle user registered successfully");
-        return ResponseEntity.status(201).body(dataVehicleUserDetails);
+        try {
+            LOGGER.info("Registering a vehicle user");
+            DataVehicleUserDetails dataVehicleUserDetails = vehicleUserService.register(data);
+            LOGGER.info("Vehicle user registered successfully");
+            return ResponseEntity.status(201).body(dataVehicleUserDetails);
+        } catch (Exception e) {
+            LOGGER.error("Error registering vehicle user", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @GetMapping
@@ -109,9 +115,14 @@ public class VehicleUserController {
             @Parameter(description = "Data required to update a Vehicle User", required = true)
             @Valid @RequestBody DataUpdateVehicleUser data,
             @Parameter(description = "ID of the Vehicle User to update", required = true) @PathVariable Long id) {
-        LOGGER.info("Updating vehicle user with ID: {}", id);
-        DataVehicleUserDetails updatedVehicleUserDetails = vehicleUserService.updateVehicleUser(data, id);
-        return ResponseEntity.ok(updatedVehicleUserDetails);
+        try {
+            LOGGER.info("Updating vehicle user with ID: {}", id);
+            DataVehicleUserDetails updatedVehicleUserDetails = vehicleUserService.updateVehicleUser(data, id);
+            return ResponseEntity.ok(updatedVehicleUserDetails);
+        }catch (Exception e) {
+            LOGGER.error("Error updating vehicle user with ID: {}", id, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     @DeleteMapping("/{id}")
@@ -130,9 +141,14 @@ public class VehicleUserController {
     })
     public ResponseEntity<Void> disableVehicleUser(
             @Parameter(description = "ID of the Vehicle User to disable", required = true) @PathVariable Long id) {
-        LOGGER.info("Disabling vehicle user with ID: {}", id);
-        vehicleUserService.disableVehicleUser(id);
-        return ResponseEntity.noContent().build();
+        try {
+            LOGGER.info("Disabling vehicle user with ID: {}", id);
+            vehicleUserService.disableVehicleUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            LOGGER.error("Error disabling vehicle user with ID: {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/enable/{id}")
@@ -151,8 +167,13 @@ public class VehicleUserController {
     })
     public ResponseEntity<Void> enableVehicleUser(
             @Parameter(description = "ID of the Vehicle User to enable", required = true) @PathVariable Long id) {
-        LOGGER.info("Enabling vehicle user with ID: {}", id);
-        vehicleUserService.enableVehicleUser(id);
-        return ResponseEntity.noContent().build();
+        try {
+            LOGGER.info("Enabling vehicle user with ID: {}", id);
+            vehicleUserService.enableVehicleUser(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            LOGGER.error("Error enabling vehicle user with ID: {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
