@@ -17,7 +17,7 @@ export class AuthService {
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
   constructor(private http: HttpClient) {
-    this.apiUrl = `${environment.apiUrl}/auth/login`;
+    this.apiUrl = `${environment.apiUrl}/auth`;
   }
 
   login(credential: LoginRequest): Observable<any> {
@@ -25,7 +25,7 @@ export class AuthService {
     todo: //console.log(crede ntial); remover
     console.log("Login:", credential);
     console.log("Login API URL:", this.apiUrl);
-    return this.http.post(this.apiUrl, credential)
+    return this.http.post(this.apiUrl + '/login', credential)
     .pipe(
       tap((response: any) => {
         localStorage.setItem('token', response.token);
@@ -38,8 +38,14 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
     this.isLoggedInSubject.next(false); // Atualizar o estado do usuário deslogado
+    todo://descomentar essa parte quando o back-end for implementado
+    // this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
+    // .pipe(
+    //   catchError(this.handleError)
+    // )
+    // .subscribe();
+    localStorage.removeItem('token');
   }
 
   isLoggedIn(): boolean {

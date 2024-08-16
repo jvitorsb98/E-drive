@@ -1,5 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MatMenu } from '@angular/material/menu';
+import { AuthService } from '../../../../core/security/services/auth/auth.service';
+import { Router } from '@angular/router';
 
 declare const google: any;
 
@@ -14,8 +16,12 @@ export class NavbarComponent {
   map: any;
   searchTerm: string = '';
 
-  constructor() { }
+  constructor(private auth: AuthService, private router: Router) { }
 
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['']);
+  }
   search() {
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ address: this.searchTerm }, (results: any, status: any) => {

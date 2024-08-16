@@ -8,10 +8,11 @@ import { DeshboardComponent } from './settings/features/home/components/deshboar
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
-  { path:'dashboard', component: DeshboardComponent},
+  { path:'deshboard', component: DeshboardComponent},
   { path: 'footer', component: FooterComponent },
   { path: 'user-registration', component: UserRegistrationFormComponent},
-  { path: 'login', component: UserLoginModalComponent}
+  { path: 'login', component: UserLoginModalComponent},
+  { path: '', redirectTo: '/intro-page', pathMatch: 'full' }
 ];
 
 @NgModule({

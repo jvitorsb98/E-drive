@@ -50,7 +50,7 @@ export class UserLoginModalComponent {
     this.errorMessage = null;
 
     this.loginRequest = {
-      email: this.loginForm.get('email')?.value,
+      login: this.loginForm.get('email')?.value,
       password: this.loginForm.get('password')?.value
     };
 
@@ -58,7 +58,7 @@ export class UserLoginModalComponent {
       next: () => {
         this.isLoading = false;
         // redirecionar para a rota home/dashboard
-        this.router.navigate(['/deshboard']);
+        this.router.navigate(['deshboard']);
         // fechar o modal
         this.dialog.closeAll();
       },
