@@ -9,6 +9,7 @@ import br.com.cepedi.e_drive.service.vehicle.validations.disabled.ValidationDisa
 import br.com.cepedi.e_drive.service.vehicle.validations.register.ValidationRegisterVehicle;
 import br.com.cepedi.e_drive.service.vehicle.validations.update.ValidationUpdateVehicle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,13 @@ public class VehicleService {
 
     public Page<DataVehicleDetails> getAllVehicles(Pageable pageable) {
         return vehicleRepository.findAll(pageable).map(DataVehicleDetails::new);
+    }
+
+    @Cacheable(value = "vehicleById", key = "#id")
+    public DataVehicleDetails getVehicleById(Long id) {
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Veículo não encontrado com ID: " + id));
+        return new DataVehicleDetails(vehicle);
     }
 
     public Page<DataVehicleDetails> getVehiclesByCategory(Long categoryId, Pageable pageable) {
