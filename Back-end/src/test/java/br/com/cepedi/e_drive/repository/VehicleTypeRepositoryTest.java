@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.repository;
 
-
 import br.com.cepedi.e_drive.model.entitys.VehicleType;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
@@ -54,9 +53,10 @@ public class VehicleTypeRepositoryTest {
         Page<VehicleType> page = vehicleTypeRepository.findAllByActivatedTrue(pageable);
 
         // Assert
-        assertFalse(page.getContent().isEmpty(), "Active vehicle types should be found");
-        assertEquals(1, page.getTotalElements(), "Only active vehicle types should be present");
-        assertTrue(page.getContent().stream().allMatch(vt -> vt.isActivated()), "All vehicle types should be activated");
+        assertFalse(page.getContent().isEmpty(), () -> "Active vehicle types should be found");
+        assertEquals(1, page.getTotalElements(), () -> "Only active vehicle types should be present");
+        assertTrue(page.getContent().stream().allMatch(vt -> vt.isActivated()), 
+                   () -> "All vehicle types should be activated");
     }
 
     @Test
@@ -75,7 +75,72 @@ public class VehicleTypeRepositoryTest {
         Page<VehicleType> secondPage = vehicleTypeRepository.findAllByActivatedTrue(pageable);
 
         // Assert
-        assertEquals(firstPage.getContent(), secondPage.getContent(), "The results should be cached and the same");
-        assertEquals(firstPage.getTotalElements(), secondPage.getTotalElements(), "Total elements should be cached and the same");
+        assertEquals(firstPage.getContent(), secondPage.getContent(), 
+                     () -> "The results should be cached and the same");
+        assertEquals(firstPage.getTotalElements(), secondPage.getTotalElements(), 
+                     () -> "Total elements should be cached and the same");
+    }
+
+    @Test
+    @DisplayName("Should return empty page when no active vehicle types are present")
+    public void testNoActiveVehicleTypes() {
+        // Arrange
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // Act
+        Page<VehicleType> page = vehicleTypeRepository.findAllByActivatedTrue(pageable);
+
+        // Assert
+        assertTrue(page.getContent().isEmpty(), () -> "No active vehicle types should be present");
+        assertEquals(0, page.getTotalElements(), () -> "Total elements should be zero");
+    }
+
+    @Test
+    @DisplayName("Should handle pagination correctly")
+    public void testPagination() {
+        // Arrange
+        IntStream.range(0, 15).forEach(i -> {
+            VehicleType activeType = new VehicleType(null, faker.company().name(), true);
+            vehicleTypeRepository.save(activeType);
+        });
+
+        Pageable firstPage = PageRequest.of(0, 10);
+        Pageable secondPage = PageRequest.of(1, 10);
+
+        // Act
+        Page<VehicleType> firstPageResult = vehicleTypeRepository.findAllByActivatedTrue(firstPage);
+        Page<VehicleType> secondPageResult = vehicleTypeRepository.findAllByActivatedTrue(secondPage);
+
+    
+
+        // Assert
+        assertEquals(10, firstPageResult.getContent().size(), 
+                     () -> "First page should contain 10 items");
+        assertEquals(5, secondPageResult.getContent().size(), 
+                     () -> "Second page should contain 5 items");
+        assertEquals(15, vehicleTypeRepository.findAllByActivatedTrue(PageRequest.of(0, 1000)).getTotalElements(), 
+                     () -> "Total elements should match the number of saved items");
+    }
+
+
+    @Test
+    @DisplayName("Should reflect changes in cache after update")
+    public void testCacheEviction() {
+        // Arrange
+        VehicleType activeType = new VehicleType(null, faker.company().name(), true);
+        vehicleTypeRepository.save(activeType);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<VehicleType> firstPage = vehicleTypeRepository.findAllByActivatedTrue(pageable);
+
+        // Act
+        activeType.setActivated(false);
+        vehicleTypeRepository.save(activeType);
+        Page<VehicleType> secondPage = vehicleTypeRepository.findAllByActivatedTrue(pageable);
+
+        // Assert
+        assertNotEquals(firstPage.getContent(), secondPage.getContent(), 
+                        () -> "Cache should be updated after the vehicle type is deactivated");
     }
 }
+

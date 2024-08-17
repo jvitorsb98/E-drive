@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { Vehicle } from '../../../../core/models/vehicle';
+import { Vehicle } from '../../../../core/models/Vehicle';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';

@@ -34,11 +34,11 @@ public record DataVehicleDetails(
         DataVehicleTypeDetails type,
 
 
-        @NotNull(message = "Propulsion cannot be null.")
         DataPropulsionDetails propulsion,
 
-        @NotNull(message = "Autonomy cannot be null.")
-        DataAutonomyDetails autonomy
+        DataAutonomyDetails autonomy,
+
+        Long year
 
 ) {
     public DataVehicleDetails(Vehicle vehicle) {
@@ -50,7 +50,8 @@ public record DataVehicleDetails(
                 new DataCategoryDetails(vehicle.getCategory()),
                 new DataVehicleTypeDetails(vehicle.getType()),
                 new DataPropulsionDetails(vehicle.getPropulsion()),
-                new DataAutonomyDetails(vehicle.getAutonomy())
+                new DataAutonomyDetails(vehicle.getAutonomy()),
+                vehicle.getYear()
         );
     }
 }

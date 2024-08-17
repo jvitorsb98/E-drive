@@ -1,8 +1,8 @@
 package br.com.cepedi.e_drive.repository;
 
 import br.com.cepedi.e_drive.model.entitys.Propulsion;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
@@ -18,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.Random.class)
-@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class PropulsionRepositoryTest {
@@ -26,120 +24,192 @@ public class PropulsionRepositoryTest {
     @Autowired
     private PropulsionRepository propulsionRepository;
 
+    private Faker faker;
+
     @BeforeEach
-    public void deleteAllPropulsions() {
+    public void setUp() {
+        faker = new Faker();
         propulsionRepository.deleteAll();
     }
 
-    // Test to verify if a propulsion can be saved correctly in the database
-    @Test
-    public void testSavePropulsion() {
-        // Create a new propulsion instance
+    private Propulsion createTestPropulsion(String name, boolean activated) {
         Propulsion propulsion = new Propulsion();
-        propulsion.setName("Test Propulsion");
-        propulsion.setActivated(true);
-
-        // Save the propulsion in the database and verify if the ID was generated
-        Propulsion savedPropulsion = propulsionRepository.save(propulsion);
-        assertNotNull(savedPropulsion.getId());
+        propulsion.setName(name);
+        propulsion.setActivated(activated);
+        return propulsion;
     }
 
-    // Test to verify if all deactivated propulsions can be retrieved correctly from the database
     @Test
-    public void testFindAllDeactivatedPropulsions() {
-        // Create a new propulsion instance
-        Propulsion propulsion = new Propulsion();
-        propulsion.setName("Test Propulsion");
-        propulsion.setActivated(false);
+    @DisplayName("Test saving propulsion and verifying ID")
+    public void testSavePropulsion() {
+        // Arrange
+        Propulsion propulsion = createTestPropulsion(faker.company().name(), true);
 
-        // Save the propulsion in the database
+        // Act
+        Propulsion savedPropulsion = propulsionRepository.save(propulsion);
+
+        // Assert
+        assertNotNull(savedPropulsion.getId(), () -> "ID should be generated");
+    }
+
+    @Test
+    @DisplayName("Test retrieving all deactivated propulsions")
+    public void testFindAllDeactivatedPropulsions() {
+        // Arrange
+        Propulsion propulsion = createTestPropulsion(faker.company().name(), false);
         propulsionRepository.save(propulsion);
 
-        // Retrieve all deactivated propulsions from the database
+        // Act
         Pageable pageable = PageRequest.of(0, 10);
         Page<Propulsion> propulsions = propulsionRepository.findAllByActivatedFalse(pageable);
 
-        // Verify if the number of retrieved propulsions matches the expected number
-        assertEquals(1, propulsions.getTotalElements());
+        // Assert
+        assertEquals(1, propulsions.getTotalElements(), () -> "There should be one deactivated propulsion");
     }
 
-    // Test to verify if a propulsion can be deleted correctly from the database
     @Test
+    @DisplayName("Test deleting a propulsion")
     public void testDeletePropulsion() {
-        // Create a new propulsion instance
-        Propulsion propulsion = new Propulsion();
-        propulsion.setName("Test Propulsion");
-        propulsion.setActivated(true);
-
-        // Save the propulsion in the database
+        // Arrange
+        Propulsion propulsion = createTestPropulsion(faker.company().name(), true);
         Propulsion savedPropulsion = propulsionRepository.save(propulsion);
 
-        // Delete the propulsion from the database
+        // Act
         propulsionRepository.delete(savedPropulsion);
-
-        // Verify if the propulsion was deleted
         Optional<Propulsion> deletedPropulsion = propulsionRepository.findById(savedPropulsion.getId());
-        assertFalse(deletedPropulsion.isPresent());
+
+        // Assert
+        assertFalse(deletedPropulsion.isPresent(), () -> "Propulsion should be deleted");
     }
 
-    // Test to verify if a propulsion can be updated correctly in the database
     @Test
+    @DisplayName("Test updating a propulsion")
     public void testUpdatePropulsion() {
-        // Create a new propulsion instance
-        Propulsion propulsion = new Propulsion();
-        propulsion.setName("Test Propulsion");
-        propulsion.setActivated(true);
-
-        // Save the propulsion in the database
+        // Arrange
+        Propulsion propulsion = createTestPropulsion(faker.company().name(), true);
         Propulsion savedPropulsion = propulsionRepository.save(propulsion);
 
-        // Update the propulsion details
-        savedPropulsion.setName("Updated Propulsion");
+        // Act
+        savedPropulsion.setName(faker.company().name());
         savedPropulsion.setActivated(false);
-
-        // Save the updated propulsion in the database
         Propulsion updatedPropulsion = propulsionRepository.save(savedPropulsion);
 
-        // Verify if the updated propulsion details are correct
-        assertEquals("Updated Propulsion", updatedPropulsion.getName());
-        assertFalse(updatedPropulsion.getActivated());
+        // Assert
+        assertEquals(savedPropulsion.getName(), updatedPropulsion.getName(), () -> "Name should be updated");
+        assertFalse(updatedPropulsion.getActivated(), () -> "Activated status should be updated");
     }
 
-    // Test to verify if propulsions can be retrieved by name containing a specific string
     @Test
+    @DisplayName("Test finding propulsions by name containing a specific string")
     public void testFindByNameContaining() {
-        // Create a new propulsion instance
-        Propulsion propulsion = new Propulsion();
-        propulsion.setName("Sample Propulsion");
-        propulsion.setActivated(true);
-
-        // Save the propulsion in the database
+        // Arrange
+        String namePart = "Sample";
+        Propulsion propulsion = createTestPropulsion(namePart + " Propulsion", true);
         propulsionRepository.save(propulsion);
 
-        // Retrieve propulsions by name containing "Sample"
+        // Act
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Propulsion> propulsions = propulsionRepository.findByNameContaining("Sample", pageable);
+        Page<Propulsion> propulsions = propulsionRepository.findByNameContaining(namePart, pageable);
 
-        // Verify if the number of retrieved propulsions matches the expected number
-        assertEquals(1, propulsions.getTotalElements());
+        // Assert
+        assertEquals(1, propulsions.getTotalElements(), () -> "There should be one propulsion containing the name part");
     }
 
-    // Test to verify if all activated propulsions can be retrieved correctly from the database
     @Test
+    @DisplayName("Test retrieving all activated propulsions")
     public void testFindAllActivatedPropulsions() {
-        // Create a new propulsion instance
-        Propulsion propulsion = new Propulsion();
-        propulsion.setName("Active Propulsion");
-        propulsion.setActivated(true);
-
-        // Save the propulsion in the database
+        // Arrange
+        Propulsion propulsion = createTestPropulsion(faker.company().name(), true);
         propulsionRepository.save(propulsion);
 
-        // Retrieve all activated propulsions from the database
+        // Act
         Pageable pageable = PageRequest.of(0, 10);
         Page<Propulsion> propulsions = propulsionRepository.findAllByActivatedTrue(pageable);
 
-        // Verify if the number of retrieved propulsions matches the expected number
-        assertEquals(1, propulsions.getTotalElements());
+        // Assert
+        assertEquals(1, propulsions.getTotalElements(), () -> "There should be one activated propulsion");
     }
+
+    @Test
+    @DisplayName("Test finding propulsions with pagination")
+    public void testFindAllPropulsionsWithPagination() {
+        // Arrange
+        for (int i = 0; i < 5; i++) {
+            propulsionRepository.save(createTestPropulsion(faker.company().name(), true));
+        }
+
+        // Act
+        Pageable pageable = PageRequest.of(0, 3); // Requesting 3 propulsions per page
+        Page<Propulsion> propulsionsPage1 = propulsionRepository.findAll(pageable);
+
+        // Assert
+        assertEquals(3, propulsionsPage1.getNumberOfElements(), () -> "Page 1 should contain three propulsions");
+        assertTrue(propulsionsPage1.hasNext(), () -> "There should be a next page");
+
+        // Act - Fetch the next page
+        pageable = PageRequest.of(1, 3); // Requesting 3 propulsions per page, second page
+        Page<Propulsion> propulsionsPage2 = propulsionRepository.findAll(pageable);
+
+        // Assert
+        assertEquals(2, propulsionsPage2.getNumberOfElements(), () -> "Page 2 should contain two propulsions");
+        assertFalse(propulsionsPage2.hasNext(), () -> "There should be no next page");
+    }
+
+    @Test
+    @DisplayName("Test finding by ID for non-existent propulsion")
+    public void testFindByIdForNonExistentPropulsion() {
+        // Act
+        Optional<Propulsion> foundPropulsion = propulsionRepository.findById(Long.MAX_VALUE); // Using an unlikely ID
+
+        // Assert
+        assertFalse(foundPropulsion.isPresent(), () -> "Propulsion should not be found for a non-existent ID");
+    }
+    
+    @Test
+    @DisplayName("Test saving propulsion with minimal data")
+    public void testSavePropulsionWithMinimalData() {
+        // Arrange
+        Propulsion propulsion = createTestPropulsion("", false);
+
+        // Act
+        Propulsion savedPropulsion = propulsionRepository.save(propulsion);
+
+        // Assert
+        assertNotNull(savedPropulsion.getId(), () -> "ID should be generated even with minimal data");
+    }
+    
+    @Test
+    @DisplayName("Test saving propulsion with maximum length name")
+    public void testSavePropulsionWithMaxLengthName() {
+        // Arrange
+        String longName = "A".repeat(255); // Assume 255 is the maximum length allowed
+        Propulsion propulsion = createTestPropulsion(longName, true);
+
+        // Act
+        Propulsion savedPropulsion = propulsionRepository.save(propulsion);
+
+        // Assert
+        assertNotNull(savedPropulsion.getId(), () -> "ID should be generated for max length name");
+        assertEquals(longName, savedPropulsion.getName(), () -> "Name should be saved correctly");
+    }
+    
+    @Test
+    @DisplayName("Test saving propulsion with duplicate names")
+    public void testSavePropulsionWithDuplicateNames() {
+        // Arrange
+        String modelName = faker.company().name();
+        Propulsion propulsion1 = createTestPropulsion(modelName, true);
+        Propulsion propulsion2 = createTestPropulsion(modelName, true);
+        propulsionRepository.save(propulsion1);
+
+        // Act
+        Propulsion savedPropulsion2 = propulsionRepository.save(propulsion2);
+
+        // Assert
+        assertNotNull(savedPropulsion2.getId(), () -> "Second propulsion should be saved even with duplicate name");
+        assertNotEquals(propulsion1.getId(), savedPropulsion2.getId(), () -> "Propulsions with the same name should have different IDs");
+    }
+
+
+
 }

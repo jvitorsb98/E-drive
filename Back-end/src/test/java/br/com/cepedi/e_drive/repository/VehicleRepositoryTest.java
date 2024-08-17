@@ -1,8 +1,6 @@
 package br.com.cepedi.e_drive.repository;
 
 import br.com.cepedi.e_drive.model.entitys.*;
-import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
-import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +50,7 @@ public class VehicleRepositoryTest {
     public void setUp() {
         faker = new Faker();
 
-        // Limpar repositórios antes de cada teste
+        // Clean repositories before each test
         vehicleRepository.deleteAll();
         categoryRepository.deleteAll();
         vehicleTypeRepository.deleteAll();
@@ -62,213 +60,110 @@ public class VehicleRepositoryTest {
         brandRepository.deleteAll();
     }
 
+    private Vehicle createTestVehicle() {
+        Category category = new Category(null, faker.company().name(), faker.bool().bool());
+        categoryRepository.save(category);
+
+        VehicleType type = new VehicleType(null, faker.company().name(), faker.bool().bool());
+        vehicleTypeRepository.save(type);
+
+        Propulsion propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
+        propulsionRepository.save(propulsion);
+
+        Autonomy autonomy = new Autonomy(
+                null,
+                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
+                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
+                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
+                new BigDecimal(faker.number().randomDouble(2, 1, 100))
+        );
+        autonomyRepository.save(autonomy);
+
+        Vehicle vehicle = new Vehicle(
+                faker.company().catchPhrase(),
+                faker.company().bs(),
+                null,
+                category,
+                type,
+                propulsion,
+                autonomy,
+                null
+        );
+        return vehicleRepository.save(vehicle);
+    }
+
     @Test
-    @DisplayName("Deve salvar e encontrar veículo por ID")
+    @DisplayName("Should save and find vehicle by ID")
     public void testSaveAndFindById() {
         // Arrange
-        Category category = new Category(null, faker.company().name(), faker.bool().bool());
-        categoryRepository.save(category);
-
-        VehicleType type = new VehicleType(null, faker.company().name(), faker.bool().bool());
-        vehicleTypeRepository.save(type);
-
-        Propulsion propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
-        propulsionRepository.save(propulsion);
-
-        Autonomy autonomy = new Autonomy(
-                null,
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100))
-        );
-        autonomyRepository.save(autonomy);
-
-        Vehicle vehicle = new Vehicle(
-                faker.company().catchPhrase(),
-                faker.company().bs(),
-                null,
-                category,
-                type,
-                propulsion,
-                autonomy,
-                null
-        );
-        Vehicle savedVehicle = vehicleRepository.save(vehicle);
+        Vehicle savedVehicle = createTestVehicle();
 
         // Act
-        Vehicle foundVehicle = vehicleRepository.findById(savedVehicle.getId()).orElse(null);
+        Vehicle foundVehicle = vehicleRepository.findById(savedVehicle.getId())
+                .orElse(null);
 
         // Assert
-        assertNotNull(foundVehicle, "Veículo deve ser encontrado");
-        assertEquals(savedVehicle.getId(), foundVehicle.getId(), "ID do veículo deve coincidir");
+        assertNotNull(foundVehicle, () -> "Vehicle should be found");
+        assertEquals(savedVehicle.getId(), foundVehicle.getId(), () -> "Vehicle ID should match");
     }
 
     @Test
-    @DisplayName("Deve encontrar veículos por ID da categoria")
+    @DisplayName("Should find vehicles by category ID")
     public void testFindByCategoryId() {
         // Arrange
-        Category category = new Category(null, faker.company().name(), faker.bool().bool());
-        categoryRepository.save(category);
-
-        VehicleType type = new VehicleType(null, faker.company().name(), faker.bool().bool());
-        vehicleTypeRepository.save(type);
-
-        Propulsion propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
-        propulsionRepository.save(propulsion);
-
-        Autonomy autonomy = new Autonomy(
-                null,
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100))
-        );
-        autonomyRepository.save(autonomy);
-
-        Vehicle vehicle = new Vehicle(
-                faker.company().catchPhrase(),
-                faker.company().bs(),
-                null,
-                category,
-                type,
-                propulsion,
-                autonomy,
-                null
-        );
-        vehicleRepository.save(vehicle);
+        Vehicle savedVehicle = createTestVehicle();
 
         // Act
-        List<Vehicle> vehicles = vehicleRepository.findByCategoryId(category.getId(), Pageable.unpaged()).getContent();
+        List<Vehicle> vehicles = vehicleRepository.findByCategoryId(savedVehicle.getCategory().getId(), Pageable.unpaged())
+                .getContent();
 
         // Assert
-        assertFalse(vehicles.isEmpty(), "Veículos devem ser encontrados pelo ID da categoria");
-        assertEquals(category.getId(), vehicles.get(0).getCategory().getId(), "ID da categoria deve coincidir");
+        assertFalse(vehicles.isEmpty(), () -> "Vehicles should be found by category ID");
+        assertEquals(savedVehicle.getCategory().getId(), vehicles.get(0).getCategory().getId(), () -> "Category ID should match");
     }
 
     @Test
-    @DisplayName("Deve encontrar veículos por ID do tipo")
+    @DisplayName("Should find vehicles by type ID")
     public void testFindByTypeId() {
         // Arrange
-        Category category = new Category(null, faker.company().name(), faker.bool().bool());
-        categoryRepository.save(category);
-
-        VehicleType type = new VehicleType(null, faker.company().name(), faker.bool().bool());
-        vehicleTypeRepository.save(type);
-
-        Propulsion propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
-        propulsionRepository.save(propulsion);
-
-        Autonomy autonomy = new Autonomy(
-                null,
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100))
-        );
-        autonomyRepository.save(autonomy);
-
-        Vehicle vehicle = new Vehicle(
-                faker.company().catchPhrase(),
-                faker.company().bs(),
-                null,
-                category,
-                type,
-                propulsion,
-                autonomy,
-                null
-        );
-        vehicleRepository.save(vehicle);
+        Vehicle savedVehicle = createTestVehicle();
 
         // Act
-        List<Vehicle> vehicles = vehicleRepository.findByTypeId(type.getId(), Pageable.unpaged()).getContent();
+        List<Vehicle> vehicles = vehicleRepository.findByTypeId(savedVehicle.getType().getId(), Pageable.unpaged())
+                .getContent();
 
         // Assert
-        assertFalse(vehicles.isEmpty(), "Veículos devem ser encontrados pelo ID do tipo");
-        assertEquals(type.getId(), vehicles.get(0).getType().getId(), "ID do tipo deve coincidir");
+        assertFalse(vehicles.isEmpty(), () -> "Vehicles should be found by type ID");
+        assertEquals(savedVehicle.getType().getId(), vehicles.get(0).getType().getId(), () -> "Type ID should match");
     }
 
     @Test
-    @DisplayName("Deve encontrar veículos por ID da propulsão")
+    @DisplayName("Should find vehicles by propulsion ID")
     public void testFindByPropulsionId() {
         // Arrange
-        Category category = new Category(null, faker.company().name(), faker.bool().bool());
-        categoryRepository.save(category);
-
-        VehicleType type = new VehicleType(null, faker.company().name(), faker.bool().bool());
-        vehicleTypeRepository.save(type);
-
-        Propulsion propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
-        propulsionRepository.save(propulsion);
-
-        Autonomy autonomy = new Autonomy(
-                null,
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100))
-        );
-        autonomyRepository.save(autonomy);
-
-        Vehicle vehicle = new Vehicle(
-                faker.company().catchPhrase(),
-                faker.company().bs(),
-                null,
-                category,
-                type,
-                propulsion,
-                autonomy,
-                null
-        );
-        vehicleRepository.save(vehicle);
+        Vehicle savedVehicle = createTestVehicle();
 
         // Act
-        List<Vehicle> vehicles = vehicleRepository.findByPropulsionId(propulsion.getId(), Pageable.unpaged()).getContent();
+        List<Vehicle> vehicles = vehicleRepository.findByPropulsionId(savedVehicle.getPropulsion().getId(), Pageable.unpaged())
+                .getContent();
 
         // Assert
-        assertFalse(vehicles.isEmpty(), "Veículos devem ser encontrados pelo ID da propulsão");
-        assertEquals(propulsion.getId(), vehicles.get(0).getPropulsion().getId(), "ID da propulsão deve coincidir");
+        assertFalse(vehicles.isEmpty(), () -> "Vehicles should be found by propulsion ID");
+        assertEquals(savedVehicle.getPropulsion().getId(), vehicles.get(0).getPropulsion().getId(), () -> "Propulsion ID should match");
     }
 
     @Test
-    @DisplayName("Deve encontrar veículos por ID da autonomia")
+    @DisplayName("Should find vehicles by autonomy ID")
     public void testFindByAutonomyId() {
         // Arrange
-        Category category = new Category(null, faker.company().name(), faker.bool().bool());
-        categoryRepository.save(category);
-
-        VehicleType type = new VehicleType(null, faker.company().name(), faker.bool().bool());
-        vehicleTypeRepository.save(type);
-
-        Propulsion propulsion = new Propulsion(null, faker.company().name(), faker.bool().bool());
-        propulsionRepository.save(propulsion);
-
-        Autonomy autonomy = new Autonomy(
-                null,
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100))
-        );
-        autonomyRepository.save(autonomy);
-
-        Vehicle vehicle = new Vehicle(
-                faker.company().catchPhrase(),
-                faker.company().bs(),
-                null,
-                category,
-                type,
-                propulsion,
-                autonomy,
-                null
-        );
-        vehicleRepository.save(vehicle);
+        Vehicle savedVehicle = createTestVehicle();
 
         // Act
-        List<Vehicle> vehicles = vehicleRepository.findByAutonomyId(autonomy.getId(), Pageable.unpaged()).getContent();
+        List<Vehicle> vehicles = vehicleRepository.findByAutonomyId(savedVehicle.getAutonomy().getId(), Pageable.unpaged())
+                .getContent();
 
         // Assert
-        assertFalse(vehicles.isEmpty(), "Veículos devem ser encontrados pelo ID da autonomia");
-        assertEquals(autonomy.getId(), vehicles.get(0).getAutonomy().getId(), "ID da autonomia deve coincidir");
+        assertFalse(vehicles.isEmpty(), () -> "Vehicles should be found by autonomy ID");
+        assertEquals(savedVehicle.getAutonomy().getId(), vehicles.get(0).getAutonomy().getId(), () -> "Autonomy ID should match");
     }
 }

@@ -18,7 +18,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.springframework.core.io.ClassPathResource;
-import org.thymeleaf.spring6.SpringTemplateEngine;
+
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

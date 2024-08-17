@@ -153,4 +153,6 @@ public class MailServiceTest {
         assertEquals(5, result.size());
         assertTrue(result.stream().allMatch(mail -> mail.from().equals(sender)));
     }
+    
+    
 }

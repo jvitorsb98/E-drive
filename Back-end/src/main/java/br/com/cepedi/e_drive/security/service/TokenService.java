@@ -55,10 +55,10 @@ public class TokenService {
             registerToken(token, user);
 
             return token;
-        } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro ao gerar o token JWT", exception);
-        }
-    }
+	        } catch (JWTCreationException exception) {
+	            throw new RuntimeException("Erro ao gerar o token JWT", exception);
+	        }
+	    }
 
     private void registerToken(String tokenValue, User user) {
         Instant expiresAt = JWT.decode(tokenValue).getExpiresAtAsInstant();
