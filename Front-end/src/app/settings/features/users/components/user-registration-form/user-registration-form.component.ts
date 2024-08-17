@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
-import { User } from '../../../../core/models/User';
+import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { countryCodeValidator } from '../../../../shared/validators/country-code
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
 import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
+
 
 @Component({
   selector: 'app-user-registration-form',

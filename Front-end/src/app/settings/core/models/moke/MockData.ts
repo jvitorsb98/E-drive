@@ -1,9 +1,9 @@
 import { Autonomy } from "../Autonomy";
 import { Brand } from "../Brand";
 import { Category } from "../Category";
-import { Model } from "../Model";
+import { Model } from "../model";
 import { Propulsion } from "../Propulsion";
-import { Vehicle } from "../Vehicle";
+import { Vehicle } from "../vehicle";
 import { VehicleType } from "../vehicle-type";
 
 export class MockData {

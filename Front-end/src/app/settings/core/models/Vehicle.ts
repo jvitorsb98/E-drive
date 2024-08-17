@@ -1,7 +1,7 @@
-import { Category } from './Category';
-import { Autonomy } from "./Autonomy";
-import { Model } from "./Model";
-import { Propulsion } from "./Propulsion";
+import { Category } from './category';
+import { Autonomy } from "./autonomy";
+import { Model } from "./model";
+import { Propulsion } from "./propulsion";
 import { VehicleType } from "./vehicle-type";
 
 export class Vehicle {
