@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
-import { User } from '../../../../core/models/User';
+import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
 import { MatDialog } from '@angular/material/dialog';
