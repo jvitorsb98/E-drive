@@ -27,8 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -143,8 +142,8 @@ public class AuthServiceTest {
 
         UserDetails userDetails = authService.loadUserByUsername(email);
 
-        assertThat(userDetails).isNotNull();
-        assertThat(userDetails.getUsername()).isEqualTo(email);
+        assertNotNull(userDetails);
+        assertEquals(userDetails.getUsername(),email);
     }
 
     @Test

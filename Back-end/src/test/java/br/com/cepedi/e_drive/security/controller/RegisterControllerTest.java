@@ -7,9 +7,7 @@ import br.com.cepedi.e_drive.security.service.AuthService;
 import br.com.cepedi.e_drive.security.service.EmailService;
 import br.com.cepedi.e_drive.security.service.TokenService;
 import jakarta.mail.MessagingException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
+@TestMethodOrder(MethodOrderer.Random.class)
+@DisplayName("Test controller auth for register")
 public class RegisterControllerTest {
 
     @Mock
@@ -32,7 +33,7 @@ public class RegisterControllerTest {
     private TokenService tokenService;
 
     @InjectMocks
-    private RegisterController registerController;
+    private AuthController registerController;
 
     @BeforeEach
     void setUp() {

@@ -118,14 +118,26 @@ class ModelServiceTest {
     void update_ValidData_ModelUpdated() {
         // Arrange
         Long id = faker.number().randomNumber();
+        Long idBrand = faker.number().randomNumber();
         String updatedModelName = faker.company().name(); // Generates a random company name
-        DataUpdateModel dataUpdate = new DataUpdateModel(updatedModelName, id);
+        DataUpdateModel dataUpdate = new DataUpdateModel(updatedModelName, idBrand);
 
+        // Mocking the existing model
         Model existingModel = new Model();
         existingModel.setId(id);
         existingModel.setName("Original Model Name");
 
+        // Mocking the brand that is being validated
+        Brand mockBrand = new Brand();
+        mockBrand.setId(idBrand);
+        mockBrand.setName("Test Brand");
+
+        // Set the brand to the existing model
+        existingModel.setBrand(mockBrand);
+
         when(modelRepository.getReferenceById(id)).thenReturn(existingModel);
+        when(brandRepository.getReferenceById(idBrand)).thenReturn(mockBrand);
+        when(brandRepository.existsById(idBrand)).thenReturn(true); // Ensure that the brand exists in the mock
 
         // Act
         DataModelDetails result = modelService.update(dataUpdate, id);
@@ -133,9 +145,10 @@ class ModelServiceTest {
         // Assert
         verify(modelRepository, never()).save(any(Model.class)); // Ensure save() was not called
         assertEquals(updatedModelName, result.name(),
-        		() -> "The returned model name should match the updated value");
+                () -> "The returned model name should match the updated value");
+        assertEquals(idBrand, result.brand().id(),
+                () -> "The returned brand ID should match the updated brand ID");
     }
-
 
     @Test
     @DisplayName("Should get model by ID successfully")
