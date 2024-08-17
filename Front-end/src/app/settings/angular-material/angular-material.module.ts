@@ -69,6 +69,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatNavList,
     MatMenu,
     MatMenuModule,
+    MatPaginatorModule,
     NgxMaskDirective,
   ],
   providers: [
