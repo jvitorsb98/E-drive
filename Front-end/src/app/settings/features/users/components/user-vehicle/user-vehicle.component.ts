@@ -10,6 +10,7 @@ import { forkJoin } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
+import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
 
 @Component({
   selector: 'app-user-vehicle',
@@ -118,4 +119,13 @@ export class UserVehicleComponent {
       data: userVehicle
     });
   }
+
+  openModalAddUserVehicle() {
+    this.dialog.open(ModalFormVehicleComponent, {
+      width: '700px',
+      height: '400px',
+      data: {}
+    }).afterClosed().subscribe(() => this.getListUserVehicles());
+  }
+  
 }
