@@ -22,7 +22,7 @@ import { ResetPasswordComponent } from './settings/core/security/login/recover-p
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
-import { ModalEditVehicleComponent } from './settings/features/users/components/user-vehicle/modal-edit-vehicle/modal-edit-vehicle.component';
+import { ModalFormVehicleComponent } from './settings/features/users/components/user-vehicle/modal-form-vehicle/modal-form-vehicle.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -43,14 +43,13 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     VehicleListComponent,
     UserVehicleComponent,
     ModalViewVehicleComponent,
-    ModalEditVehicleComponent,
+    ModalFormVehicleComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
 
     // Pipes
     PhoneMaskPipe,
-
   ],
   imports: [
     BrowserModule,
