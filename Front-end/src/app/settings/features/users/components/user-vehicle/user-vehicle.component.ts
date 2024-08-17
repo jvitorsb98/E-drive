@@ -8,6 +8,8 @@ import { Vehicle } from '../../../../core/models/vehicle';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { forkJoin } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
 
 @Component({
   selector: 'app-user-vehicle',
@@ -24,7 +26,10 @@ export class UserVehicleComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private userVehicleService: UserVehicleService, private vehicleService: VehicleService) {
+  constructor(
+    private userVehicleService: UserVehicleService,
+    private vehicleService: VehicleService,
+    private dialog: MatDialog) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
   }
 
@@ -35,7 +40,6 @@ export class UserVehicleComponent {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
@@ -104,5 +108,14 @@ export class UserVehicleComponent {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  // LOGICA DO MODAL
+  openModalViewVeicle(userVehicle: Vehicle) {
+    this.dialog.open(ModalViewVehicleComponent, {
+      width: '600px',
+      height: '570px',
+      data: userVehicle
+    });
   }
 }

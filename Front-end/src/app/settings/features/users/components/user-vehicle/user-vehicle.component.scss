@@ -69,11 +69,21 @@
 
 /* container-fluid pt-3 */
 
+.custom-filter {
+  display: flex;
+  width: 100%;
+}
+
+.custom-filter mat-form-field {
+  flex: 1;
+}
+
 .titulo {
   font-size: 26px;
   color: #19B6DD;
   padding: 0;
   margin: 0 !important;
+  text-align: center;
 }
 
 .subtitulo {
