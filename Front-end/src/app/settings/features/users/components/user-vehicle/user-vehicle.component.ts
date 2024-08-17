@@ -17,8 +17,8 @@ import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehic
   styleUrl: './user-vehicle.component.scss'
 })
 export class UserVehicleComponent {
-
-  displayedColumns: string[] = ['mark', 'model', 'version', 'actions'];
+  // displayedColumns: string[] = ['mark', 'model', 'version', 'actions'];
+  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'Details', 'edit', 'delete'];
   dataSource = new MatTableDataSource<Vehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: Vehicle[] = [];
