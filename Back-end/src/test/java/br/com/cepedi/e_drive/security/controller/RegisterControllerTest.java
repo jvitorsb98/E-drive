@@ -60,7 +60,7 @@ public class RegisterControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("User registered successfully. Activation email sent.", response.getBody());
 
-        verify(emailService, times(1)).sendActivationEmail(anyString(), anyString(), anyString());
+        verify(emailService, times(1)).sendActivationEmailAsync(anyString(), anyString(), anyString());
     }
 
     @Test
