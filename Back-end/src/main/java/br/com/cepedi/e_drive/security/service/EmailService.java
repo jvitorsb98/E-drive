@@ -18,7 +18,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.springframework.core.io.ClassPathResource;
-import org.thymeleaf.spring6.SpringTemplateEngine;
+
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -83,7 +83,7 @@ public class EmailService {
         context.setVariable("titulo", "Bem-vindo ao e-Drive, " + name + "!");
         context.setVariable("texto", "Estamos felizes em tê-lo(a) conosco. Para começar a usar o e-Drive, confirme seu cadastro clicando no link abaixo.");
         context.setVariable("verificador", "8050jk"); // Ou outro código de verificação dinâmico, se houver
-        context.setVariable("linkConfirmacao", "http://localhost:8080/api/v1/usuarios/confirmacao/cadastro?token=" + tokenForActivate);
+        context.setVariable("linkConfirmacao", "http://localhost:8080/auth/activate?token=" + tokenForActivate);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("activate_user_by_email_template", context);

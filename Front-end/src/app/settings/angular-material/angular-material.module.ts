@@ -14,6 +14,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSidenav, MatSidenavContainer, MatSidenavContent } from '@angular/material/sidenav';
 import { MatList, MatListItem, MatNavList } from '@angular/material/list';
 import { MatMenu, MatMenuModule } from '@angular/material/menu';
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -41,6 +44,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatMenu,
     MatMenuModule,
     NgxMaskDirective,
+    MatSortModule,
+    MatPaginatorModule,
+    MatTooltipModule,
   ],
   exports: [
     MatCardModule,
