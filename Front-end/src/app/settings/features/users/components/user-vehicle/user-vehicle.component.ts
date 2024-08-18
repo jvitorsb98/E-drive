@@ -1,3 +1,4 @@
+import { UserDataService } from './../../../../core/services/user/userdata/user-data.service';
 import { Component, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -30,6 +31,7 @@ export class UserVehicleComponent {
   constructor(
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
+    private userDataService: UserDataService,
     private dialog: MatDialog) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
   }
@@ -103,10 +105,10 @@ export class UserVehicleComponent {
   }
 
   formatVehicleData(vehicle: Vehicle): Vehicle {
-    vehicle.model.name = this.capitalizeWords(vehicle.model.name);
-    vehicle.version = this.capitalizeWords(vehicle.version);
-    vehicle.motor = this.capitalizeWords(vehicle.motor);
-    vehicle.type.name = this.getVehicleTypeDisplay(vehicle.type.name);
+    vehicle.model.name = this.userDataService.capitalizeWords(vehicle.model.name);
+    vehicle.version = this.userDataService.capitalizeWords(vehicle.version);
+    vehicle.motor = this.userDataService.capitalizeWords(vehicle.motor);
+    vehicle.type.name = this.userDataService.getVehicleTypeDisplay(vehicle.type.name);
     return vehicle;
   }
 
@@ -136,17 +138,7 @@ export class UserVehicleComponent {
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
-  getVehicleTypeDisplay(type: string): string {
-    return type === 'CAR' ? 'Carro' : this.capitalizeWords(type);
-  }
 
-  capitalizeWords(str: string): string {
-    return str
-      .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
 
 
 }

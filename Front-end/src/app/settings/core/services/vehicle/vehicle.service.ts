@@ -21,8 +21,7 @@ export class VehicleService {
     // return of(this.vehicle);
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzOTkwMTY4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.HesycWvyy0Za4kfR1vIOfK587Hy-o_Pe-xbIcWpDfME';
-
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MDA1OTUwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.nX85wTs6U-aktbl8G3mYKfDctQrrCqjnq9uemjO6WLE';
 
   getVehicleDetails(id: number): Observable<Vehicle> {
     const headers = new HttpHeaders({
@@ -31,4 +30,12 @@ export class VehicleService {
 
     return this.http.get<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, { headers });
   }
+
+  getVehiclesByModel(modelId: number): Observable<Vehicle[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}` // Utilize o token mockado ou real
+    });
+    return this.http.get<Vehicle[]>(`${this.vehicleUrl}/api/v1/vehicles/model/${modelId}`, { headers });
+  }
+
 }
