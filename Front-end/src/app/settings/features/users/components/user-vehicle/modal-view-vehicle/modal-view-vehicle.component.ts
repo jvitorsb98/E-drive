@@ -24,10 +24,19 @@ export class ModalViewVehicleComponent {
     this.dialogRef.close();
   }
 
-  
+
+
+
+  capitalizeWords(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
   getVehicleTypeDisplay(type: string): string {
     return type === 'CAR' ? 'Carro' : type;
   }
-
 
 }

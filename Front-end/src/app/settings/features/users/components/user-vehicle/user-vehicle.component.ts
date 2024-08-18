@@ -88,7 +88,7 @@ export class UserVehicleComponent {
 
           // Usa forkJoin para esperar até que todas as requisições estejam completas
           forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-            this.userVehicleDetails = vehicles;
+            this.userVehicleDetails = vehicles.map(vehicle => this.formatVehicleData(vehicle));
             this.dataSource.data = this.userVehicleDetails;
             console.log(this.dataSource);
           });
@@ -100,6 +100,14 @@ export class UserVehicleComponent {
         console.error('Error fetching userVehicles:', err);
       }
     });
+  }
+
+  formatVehicleData(vehicle: Vehicle): Vehicle {
+    vehicle.model.name = this.capitalizeWords(vehicle.model.name);
+    vehicle.version = this.capitalizeWords(vehicle.version);
+    vehicle.motor = this.capitalizeWords(vehicle.motor);
+    vehicle.type.name = this.getVehicleTypeDisplay(vehicle.type.name);
+    return vehicle;
   }
 
   applyFilter(event: Event) {
@@ -128,6 +136,17 @@ export class UserVehicleComponent {
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
-  
+  getVehicleTypeDisplay(type: string): string {
+    return type === 'CAR' ? 'Carro' : this.capitalizeWords(type);
+  }
+
+  capitalizeWords(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
 
 }
