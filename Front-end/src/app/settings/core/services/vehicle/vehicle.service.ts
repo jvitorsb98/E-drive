@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { Vehicle } from '../../models/vehicle';
+import { Vehicle } from '../../models/Vehicle';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +21,7 @@ export class VehicleService {
     // return of(this.vehicle);
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzOTcxNjM3LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.8FQ7BjZ46TZKHqBPi_M8gkZX-uNEtdyhybEEZjHOWBo';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzOTkwMTY4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.HesycWvyy0Za4kfR1vIOfK587Hy-o_Pe-xbIcWpDfME';
 
 
   getVehicleDetails(id: number): Observable<Vehicle> {
