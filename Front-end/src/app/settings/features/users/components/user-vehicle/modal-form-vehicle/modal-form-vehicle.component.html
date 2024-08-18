@@ -1,1 +1,142 @@
-<p>modal-form-vehicle works!</p>
+<div class="container-fluid pt-3">
+  <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+  <div class="col-12">
+    <button routerLink="/intro-page" class="btn">
+      <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
+    </button>
+    <h1 class="titulo">Cadastrar Veículo</h1>
+    <!-- <h1 class="titulo"><strong>Cadastrar Veículo</strong></h1> -->
+    <!-- <h2 class="subtitulo">Preencha o formulário para salvar o veículo</h2> -->
+
+    <form [formGroup]="userVehicleForm">
+
+      <div class="col-12 col-md-6 mb-2 w-100">
+        <mat-form-field class="custom-select">
+          <mat-label>Marca do veículo:</mat-label>
+          <input 
+          type="text" 
+          matInput 
+          formControlName="brand" 
+          [matAutocomplete]="autoBrand"
+          >
+          <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint>
+          <mat-autocomplete #autoBrand="matAutocomplete">
+            <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand.name">
+              {{ brand.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6 mb-2 w-100">
+        <mat-form-field class="custom-select">
+          <mat-label>Modelo do veículo:</mat-label>
+          <input 
+          type="text" 
+          matInput 
+          formControlName="model" 
+          [matAutocomplete]="autoModel"
+          >
+          <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>modelo.</strong></mat-hint>
+          <mat-autocomplete #autoModel="matAutocomplete">
+            <mat-option *ngFor="let model of filteredModels | async" [value]="model.name">
+              {{ model.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <div class="col-12 col-md-6 mb-2 w-100">
+        <mat-form-field class="custom-select">
+          <mat-label>Versão do veículo:</mat-label>
+          <input 
+            type="text" 
+            matInput 
+            formControlName="version" 
+            [matAutocomplete]="autoVersion"
+            >
+            <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>versão.</strong></mat-hint>
+          <mat-autocomplete #autoVersion="matAutocomplete" position="above">
+            <mat-option *ngFor="let version of filteredVersions | async" [value]="version.name">
+              {{version.name}}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- <div class="col-12 col-md-6 mb-2 w-100">
+        <mat-form-field class="custom-select-version">
+          <mat-label>Versão do veículo:</mat-label>
+          
+          <mat-select formControlName="version" position="above">
+            @for (version of filteredVersions | async; track version) {
+              <mat-option [value]="version">{{version.name}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div> -->
+      
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select w-100">
+            <mat-label>Estrada:</mat-label>
+            <input 
+            type="text"
+            name="name" 
+            matInput 
+            formControlName="propulsion" 
+            required 
+            aria-describedby="Help" />
+            <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select w-100">
+            <mat-label>Cidade:</mat-label>
+            <input 
+            type="text"
+            name="name" 
+            matInput 
+            formControlName="propulsion" 
+            required 
+            aria-describedby="Help" />
+            <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong> litro em cidade.</strong></mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select w-100">
+            <mat-label>Consumo:</mat-label>
+            <input 
+            type="text"
+            name="name" 
+            matInput 
+            formControlName="propulsion" 
+            required 
+            aria-describedby="Help" />
+            <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
+          </mat-form-field>
+        </div> 
+
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select w-100">
+            <mat-label>Autonomia:</mat-label>
+            <input 
+            type="text"
+            name="name" 
+            matInput 
+            formControlName="propulsion" 
+            required 
+            aria-describedby="Help" />
+            <mat-hint id="Help" class="mat-hint-text">Autonomia <strong>em modo elétrico</strong></mat-hint>
+          </mat-form-field>
+        </div> 
+
+      <button class="btn pulse-animation w-100 mb-3" type="button">Redefinir</button>
+      <button class="btn pulse-animation w-100 mb-2" type="button">Finalizar cadastro</button>
+    </form>
+  </div>
+</div>

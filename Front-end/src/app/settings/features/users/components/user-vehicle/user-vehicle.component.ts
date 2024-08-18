@@ -115,15 +115,15 @@ export class UserVehicleComponent {
   openModalViewVeicle(userVehicle: Vehicle) {
     this.dialog.open(ModalViewVehicleComponent, {
       width: '600px',
-      height: '570px',
+      height: '550px',
       data: userVehicle
     });
   }
 
   openModalAddUserVehicle() {
     this.dialog.open(ModalFormVehicleComponent, {
-      width: '700px',
-      height: '400px',
+      width: '600px',
+      height: '800px',
       data: {}
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }

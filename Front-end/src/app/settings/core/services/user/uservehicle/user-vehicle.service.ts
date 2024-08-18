@@ -16,7 +16,7 @@ export class UserVehicleService {
     this.userVehicleUrl = `${environment.apiUrl}/api/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzOTMwODI0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.eamMTUdYmISewlGDDHwzOa8Yj1SRmBtuUNioRJZcjh0';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzIzOTQ3NjE4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.g2HQGw0jFb7tUfCqczWAmDsmgeGtmp2j7ecHEGsCzx4';
 
 
   // Método para obter todos os veículos do usuário
