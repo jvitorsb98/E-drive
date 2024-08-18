@@ -18,8 +18,8 @@ import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehic
   styleUrl: './user-vehicle.component.scss'
 })
 export class UserVehicleComponent {
-  // displayedColumns: string[] = ['mark', 'model', 'version', 'actions'];
-  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'Details', 'edit', 'delete'];
+  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions'];
+  // displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'Details', 'edit', 'delete'];
   dataSource = new MatTableDataSource<Vehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: Vehicle[] = [];
