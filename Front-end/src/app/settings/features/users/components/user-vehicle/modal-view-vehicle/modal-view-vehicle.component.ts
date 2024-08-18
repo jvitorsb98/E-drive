@@ -23,4 +23,11 @@ export class ModalViewVehicleComponent {
   closeModal() {
     this.dialogRef.close();
   }
+
+  
+  getVehicleTypeDisplay(type: string): string {
+    return type === 'CAR' ? 'Carro' : type;
+  }
+
+
 }

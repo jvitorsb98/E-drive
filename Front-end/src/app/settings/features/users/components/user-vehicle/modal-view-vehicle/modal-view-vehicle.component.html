@@ -30,8 +30,8 @@
       <p class="informacao">{{ userVehicle.year }}</p>
     </div>
     <div class="col-6">
-      <h4 class="titulo-informacao">Tipo do veiculo</h4>
-      <p class="informacao">{{ userVehicle.type.name }} -</p>
+      <h4 class="titulo-informacao">Tipo do veículo</h4>
+      <p class="informacao">{{ getVehicleTypeDisplay(userVehicle.type.name) }}</p>
     </div>
     <div class="col-6">
       <h4 class="titulo-informacao">Autonomia eletrica</h4>
