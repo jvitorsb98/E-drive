@@ -38,15 +38,14 @@ export class ModalFormVehicleComponent implements OnInit {
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
   ) {
     this.userVehicleForm = this.formBuilder.group({
-      motor: [null, Validators.required],
       version: [null, Validators.required],
       brand: [null, Validators.required],
       model: [null, Validators.required],
-      category: [null, Validators.required],
-      vehicleType: [null, Validators.required],
-      propulsion: [null, Validators.required],
       autonomy: [null, Validators.required],
-      year: [null, Validators.required],
+      mileagePerLiterRoad: [null, Validators.required],
+      mileagePerLiterCity: [null, Validators.required],
+      consumptionEnergetic: [null, Validators.required],
+      autonomyElectricMode: [null, Validators.required],
     });
   }
 
@@ -167,8 +166,15 @@ export class ModalFormVehicleComponent implements OnInit {
 
   onVersionSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedVehicle = event.option.value;
-    this.userVehicleForm.get('version')?.setValue(selectedVehicle.version);
-  
+    if(selectedVehicle.id){
+      this.userVehicleForm.get('version')?.setValue(selectedVehicle.version);
+      console.log(selectedVehicle)
+      this.userVehicleForm.get('mileagePerLiterRoad')?.setValue(selectedVehicle.autonomy.mileagePerLiterRoad);
+      this.userVehicleForm.get('mileagePerLiterCity')?.setValue(selectedVehicle.autonomy.mileagePerLiterCity);
+      this.userVehicleForm.get('consumptionEnergetic')?.setValue(selectedVehicle.autonomy.consumptionEnergetic);
+      this.userVehicleForm.get('autonomyElectricMode')?.setValue(selectedVehicle.autonomy.autonomyElectricMode);
+    }
+
 
   }
 

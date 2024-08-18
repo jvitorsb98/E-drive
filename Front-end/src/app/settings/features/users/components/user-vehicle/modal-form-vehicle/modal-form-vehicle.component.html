@@ -72,60 +72,60 @@
                 <!-- Campos adicionais -->
                 <div class="col-12" [ngClass]="{'hidden': !userVehicleForm.get('version')?.value}">
                     <div class="row">
-                        <div class="col-12 col-md-6 mb-2">
-                            <mat-form-field class="custom-select w-100">
-                                <mat-label>Estrada:</mat-label>
-                                <input 
-                                    type="text"
-                                    matInput 
-                                    formControlName="propulsion" 
-                                    required 
-                                    aria-describedby="Help">
-                                <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
-                            </mat-form-field>
-                        </div>
-  
-                        <div class="col-12 col-md-6 mb-2">
-                            <mat-form-field class="custom-select w-100">
-                                <mat-label>Cidade:</mat-label>
-                                <input 
-                                    type="text"
-                                    matInput 
-                                    formControlName="propulsion" 
-                                    required 
-                                    aria-describedby="Help">
-                                <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em cidade.</strong></mat-hint>
-                            </mat-form-field>
-                        </div>
-  
-                        <div class="col-12 col-md-6 mb-2">
-                            <mat-form-field class="custom-select w-100">
-                                <mat-label>Consumo:</mat-label>
-                                <input 
-                                    type="text"
-                                    matInput 
-                                    formControlName="propulsion" 
-                                    required 
-                                    aria-describedby="Help">
-                                <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
-                            </mat-form-field>
-                        </div> 
-  
-                        <div class="col-12 col-md-6 mb-2">
-                            <mat-form-field class="custom-select w-100">
-                                <mat-label>Autonomia:</mat-label>
-                                <input 
-                                    type="text"
-                                    matInput 
-                                    formControlName="propulsion" 
-                                    required 
-                                    aria-describedby="Help">
-                                <mat-hint id="Help" class="mat-hint-text">Autonomia <strong>em modo elétrico</strong></mat-hint>
-                            </mat-form-field>
-                        </div> 
+                      <div class="col-12 col-md-6 mb-2">
+                        <mat-form-field class="custom-select w-100">
+                          <mat-label>Estrada:</mat-label>
+                          <input 
+                            type="text"
+                            matInput 
+                            formControlName="mileagePerLiterRoad" 
+                            required 
+                            aria-describedby="Help">
+                          <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
+                        </mat-form-field>
+                      </div>
+          
+                      <div class="col-12 col-md-6 mb-2">
+                        <mat-form-field class="custom-select w-100">
+                          <mat-label>Cidade:</mat-label>
+                          <input 
+                            type="text"
+                            matInput 
+                            formControlName="mileagePerLiterCity" 
+                            required 
+                            aria-describedby="Help">
+                          <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em cidade.</strong></mat-hint>
+                        </mat-form-field>
+                      </div>
+          
+                      <div class="col-12 col-md-6 mb-2">
+                        <mat-form-field class="custom-select w-100">
+                          <mat-label>Consumo:</mat-label>
+                          <input 
+                            type="text"
+                            matInput 
+                            formControlName="consumptionEnergetic" 
+                            required 
+                            aria-describedby="Help">
+                          <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
+                        </mat-form-field>
+                      </div> 
+          
+                      <div class="col-12 col-md-6 mb-2">
+                        <mat-form-field class="custom-select w-100">
+                          <mat-label>Autonomia:</mat-label>
+                          <input 
+                            type="text"
+                            matInput 
+                            formControlName="autonomyElectricMode" 
+                            required 
+                            aria-describedby="Help">
+                          <mat-hint id="Help" class="mat-hint-text">Autonomia <strong>em modo elétrico</strong></mat-hint>
+                        </mat-form-field>
+                      </div> 
                     </div>
+                  </div>
                 </div>
-            </div>
   
             <div class="buttons-container">
                 <button class="btn pulse-animation w-100 mb-3" type="button">Redefinir</button>
