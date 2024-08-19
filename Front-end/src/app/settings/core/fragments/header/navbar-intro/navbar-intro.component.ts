@@ -15,10 +15,21 @@ export class NavbarIntroComponent {
   ) {}
 
   openLoginModal() {
+    this.closeMenu();
     this.modal.openModal(UserLoginModalComponent).subscribe(result => {
       if (result) {
         console.log(result);
       }
     });
+  }
+
+  isMenuOpen = false;
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  closeMenu() {
+    this.isMenuOpen = false;
   }
 }
