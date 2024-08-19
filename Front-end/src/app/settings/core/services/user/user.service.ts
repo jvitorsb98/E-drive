@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -16,15 +16,25 @@ export class UserService {
   }
 
   // Método para obter o usuário logado
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.usersUrl}/user/me`)
-      .pipe(
-        catchError(e => {
-          console.error('Erro ao buscar usuários:', e);
-          return throwError(() => e);
-        })
-      );
-  }
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIiwiaXNzIjoiQVBJIFZvbGwubWVkIiwiaWQiOjEsImV4cCI6MTcyNDA0MzE5NSwiZW1haWwiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIn0.QVIu6jMCSMgLFJa_GfeOTne2hfFiQhy7BXYIwaJqFa8';
+
+    // Método para obter o usuário logado
+    getAllUsers(): Observable<User[]> {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${this.authToken}`
+      });
+
+      return this.http.get<User[]>(`${this.usersUrl}/user/me`, { headers });
+    }
+
+    // Método para obter os detalhes do usuário autenticado sem passar o ID explicitamente
+    getAuthenticatedUserDetails(): Observable<User> {
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${this.authToken}`
+      });
+
+      return this.http.get<User>(`${this.usersUrl}/user/me`, { headers });
+    }
 
   // Método para adicionar um usuário
   addUser(user: User): Observable<any> {
@@ -55,18 +65,17 @@ export class UserService {
     );
   }
 
-  // Método para atualizar um usuário
-  updateUser(user: User): Observable<any> {
-    return this.http.put(`${this.usersUrl}/user/${user.email}`, user, { responseType: 'text' })
+   // Método para atualizar os dados do usuário
+   updateUser(user: User): Observable<User> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.put<User>(`${this.usersUrl}/user/update`, user, { headers })
       .pipe(
-        map(response => {
-          return { message: 'Usuário atualizado com sucesso.' };
-        }),
         catchError(e => {
-          if (e.status === 400) {
-            return throwError(() => e);
-          }
-          console.error('Erro ao atualizar usuário:', e);
+          console.error('Erro ao atualizar os dados do usuário:', e);
           return throwError(() => e);
         })
       );

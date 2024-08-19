@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UserService } from '../../../../core/services/user/user.service';
 import { User } from '../../../../core/models/User';
 
@@ -11,14 +11,13 @@ import { User } from '../../../../core/models/User';
 })
 export class UserUpdateComponent implements OnInit {
 
-  isEditing: boolean = false; // Controla o modo de edição, tipo booleano
+  isEditing: boolean = false; // Controla o modo de edição
   userForm!: FormGroup;
   user: User = new User();
 
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private route: ActivatedRoute,
     private router: Router
   ) {}
 
@@ -28,58 +27,70 @@ export class UserUpdateComponent implements OnInit {
   }
 
   // Método para construir o formulário
-  buildForm() {
+  private buildForm() {
     this.userForm = this.formBuilder.group({
-      name: new FormControl(null, [Validators.required, Validators.minLength(2)]),
-      email: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.email]),
-      birth: new FormControl(null, Validators.required),
-      cellPhone: new FormControl(null, Validators.required)
+      name: [{ value: '', disabled: !this.isEditing }, [Validators.required, Validators.minLength(2)]],
+      birth: [{ value: '', disabled: !this.isEditing }, Validators.required],
+      cellPhone: [{ value: '', disabled: !this.isEditing }, Validators.required]
     });
   }
 
-  // Carrega os dados do usuário para edição
-  loadUserData() {
-    const userEmail = this.route.snapshot.paramMap.get('email');
-    this.userService.getAllUsers().subscribe(users => {
-      const foundUser = users.find(user => user.email === userEmail);
-      if (foundUser) {
-        this.user = foundUser;
-        this.userForm.patchValue(this.user);
+  // Método para carregar os dados do usuário autenticado
+  private loadUserData() {
+    this.userService.getAuthenticatedUserDetails().subscribe(
+      (user: User) => {
+        this.user = user;
+        this.userForm.patchValue({
+          name: user.name || '',
+          birth: user.birth ? new Date(user.birth).toISOString().substring(0, 10) : '', // Formatando a data para o formato 'yyyy-MM-dd'
+          cellPhone: user.cellPhone || ''
+        });
+      },
+      (error) => {
+        console.error('Erro ao carregar os dados do usuário:', error);
       }
-    });
+    );
   }
 
-  // Método para iniciar a edição dos dados
+  // Método para alternar para o modo de edição
   editData() {
-    this.isEditing = true; // Seta o modo de edição como verdadeiro
+    this.isEditing = true;
+    this.userForm.enable();
   }
 
   // Método para cancelar a edição
   cancelEdit() {
-    this.isEditing = false; // Seta o modo de edição como falso
-    this.userForm.patchValue(this.user); // Reverte as alterações
+    this.isEditing = false;
+    this.userForm.disable();
+    this.loadUserData(); // Recarrega os dados originais do usuário
   }
 
-  // Método para atualizar o usuário
+  // Método para atualizar os dados do usuário
   updateUser() {
     if (this.userForm.valid) {
-      const updatedUser = { ...this.user, ...this.userForm.value };
-      this.userService.updateUser(updatedUser).subscribe({
-        next: () => {
-          alert('Usuário atualizado com sucesso!');
+      const updatedUser: User = {
+        ...this.user,
+        ...this.userForm.value,
+        birth: this.userForm.get('birth')?.value ? new Date(this.userForm.get('birth')?.value) : null // Convertendo a data do formato string para Date
+      };
+      this.userService.updateUser(updatedUser).subscribe(
+        (response: User) => {
+          console.log('Dados do usuário atualizados com sucesso:', response);
           this.isEditing = false;
-          this.router.navigate(['/user-list']); // Redireciona para a lista de usuários
+          this.userForm.disable();
+          // Redirecionar ou mostrar uma mensagem de sucesso
         },
-        error: (e) => {
-          console.error('Erro ao atualizar usuário:', e);
-          alert('Ocorreu um erro ao atualizar o usuário.');
+        (error) => {
+          console.error('Erro ao atualizar os dados do usuário:', error);
         }
-      });
+      );
     }
   }
 
   // Método para excluir a conta do usuário
   deleteAccount() {
-    // Implementação da exclusão de conta
+    // Implementar a lógica de exclusão da conta aqui
+    console.log('Excluir conta do usuário');
   }
+
 }

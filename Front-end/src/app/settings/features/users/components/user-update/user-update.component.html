@@ -73,7 +73,7 @@
 
       <!-- Botões -->
       <div class="button-group mt-5">
-        <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid">Salvar Dados</button>
+        <button mat-raised-button color="primary" type="submit" (click)="updateUser()" >Salvar Dados</button>
         <button mat-raised-button color="warn" type="button" (click)="cancelEdit()">Cancelar</button>
       </div>
     </form>
