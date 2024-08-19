@@ -7,13 +7,13 @@
           <button routerLink="/intro-page" class="btn">
             <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
           </button>
-          
+
           <h1 class="titulo">Meus Veículos</h1>
-          
+
           <button class="btn">
             <img class="filtro" src="../../../../../../assets/images/filtro-list-vehicle.svg" alt="Filto">
           </button>
-        </div>        
+        </div>
 
         <div class="custom-filter">
           <mat-form-field>
@@ -22,15 +22,30 @@
           </mat-form-field>
         </div>
 
-        <table class="mat-elevation-z8"  mat-table [dataSource]="dataSource" matSort>
+        <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
           <ng-container matColumnDef="icon">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
               <mat-icon
-                matTooltip="Estes ícones representam cada carro listado abaixo. Clique para ver detalhes de cada um.">directions_car</mat-icon>
+                matTooltip="Estes ícones representam cada carro listado abaixo. Clique para ver detalhes de cada um.">directions_car
+              </mat-icon>
             </th>
+
             <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <mat-icon class="icone-carro" matTooltip={{userVehicle.v}}>directions_car</mat-icon>
+              <mat-icon class="icone-carro" 
+              [matTooltip]=" 'Autonomia/cidade: ' + userVehicle.autonomy.mileagePerLiterCity + ' km/l' 
+              + '\nAutonomia/estrada: ' + userVehicle.autonomy.mileagePerLiterRoad + ' km/l' 
+              + '\nAno: ' + userVehicle.year" matTooltipClass="multi-line-tooltip"> directions_car
+              </mat-icon>
             </td>
+
+            <!-- <td class="td-table" mat-cell *matCellDef="let userVehicle">
+              <mat-icon class="icone-carro" [matTooltip]="
+              'Autonomia (Cidade: ' + userVehicle.autonomy.mileagePerLiterCity + ' km/l' 
+              + ', Estrada: ' + userVehicle.autonomy.mileagePerLiterRoad + ' km/l, ' 
+              + 'Ano: ' + userVehicle.year + ')'" matTooltipClass="multi-line-tooltip"> directions_car
+              </mat-icon>
+            </td> -->
+            
           </ng-container>
 
           <ng-container matColumnDef="mark">

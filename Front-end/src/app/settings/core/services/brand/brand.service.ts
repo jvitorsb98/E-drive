@@ -11,7 +11,7 @@ export class BrandService {
 
   private brandUrl: string;
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTA2NDI3LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.yy6xCU3pTkpcDHOxYKpI0MiXb63A81YXacGoCtIIwks';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTEzNzY2LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.-DJy0TlkqNoyc2X_xBED_W1ZHseCsrsfSUXyioFOTHY';
 
   constructor(private http: HttpClient) {
     this.brandUrl = `${environment.apiUrl}/api/v1/brands`; 
