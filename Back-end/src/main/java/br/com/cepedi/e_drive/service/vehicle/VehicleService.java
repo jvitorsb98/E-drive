@@ -87,7 +87,7 @@ public class VehicleService {
     }
 
     public DataVehicleDetails updateVehicle(DataUpdateVehicle data, Long id) {
-        validationUpdateVehicleList.forEach(v -> v.validate(data));
+        getValidationUpdateVehicleList().forEach(v -> v.validate(data));
         Vehicle vehicle = vehicleRepository.getReferenceById(id);
         Category category = data.categoryId() != null ? categoryRepository.getReferenceById(data.categoryId()) : null;
         Propulsion propulsion = data.propulsionId() != null ? propulsionRepository.getReferenceById(data.propulsionId()) : null;
@@ -110,6 +110,14 @@ public class VehicleService {
         vehicle.enable();
         vehicleRepository.save(vehicle);
     }
+
+	public List<ValidationUpdateVehicle> getValidationUpdateVehicleList() {
+		return validationUpdateVehicleList;
+	}
+
+	public void setValidationUpdateVehicleList(List<ValidationUpdateVehicle> validationUpdateVehicleList) {
+		this.validationUpdateVehicleList = validationUpdateVehicleList;
+	}
 
 
 }

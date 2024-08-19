@@ -69,12 +69,12 @@ public class VehicleUserService {
         return new DataVehicleUserDetails(vehicleUser);
     }
 
-    public void disableVehicleUser(Long id) {
-        validationDisabledVehicleUsers.forEach(v -> v.validate(id));
-        VehicleUser vehicleUser = vehicleUserRepository.getReferenceById(id);
-        vehicleUser.disable();
-        vehicleUserRepository.save(vehicleUser);
-    }
+	    public void disableVehicleUser(Long id) {
+	        validationDisabledVehicleUsers.forEach(v -> v.validate(id));
+	        VehicleUser vehicleUser = vehicleUserRepository.getReferenceById(id);
+	        vehicleUser.disable();
+	        vehicleUserRepository.save(vehicleUser);
+	    }
 
     public void enableVehicleUser(Long id) {
         VehicleUser vehicleUser = vehicleUserRepository.getReferenceById(id);

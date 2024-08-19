@@ -10,19 +10,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidationUpdateVehicle_VehicleType_NotDisabled implements ValidationUpdateVehicle{
 
-    @Autowired
-    private VehicleTypeRepository vehicleTypeRepository;
+	@Autowired
+	private VehicleTypeRepository vehicleTypeRepository;
 
 
-    @Override
-    public void validate(DataUpdateVehicle data) {
-        if(data.typeId()!=null){
-            if (vehicleTypeRepository.existsById(data.modelId())) {
-                VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.modelId());
-                if(!vehicleType.isActivated()){
-                    throw new ValidationException("The provided vehicle type id is disabled");
-                }
-            }
-        }
-    }
+	@Override
+	public void validate(DataUpdateVehicle data) {
+		if(data.typeId()!=null){
+			if (vehicleTypeRepository.existsById(data.typeId())) {
+				VehicleType vehicleType = vehicleTypeRepository.getReferenceById(data.typeId());
+				if(!vehicleType.isActivated()){
+					throw new ValidationException("The provided vehicle type id is disabled");
+				}
+			} else {
+				throw new ValidationException("The provided vehicle type id does not exist");
+			}
+		}
+	}
 }
+

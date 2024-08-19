@@ -15,8 +15,8 @@ public class ValidationUpdateVehicle_Category_NotDisabled implements ValidationU
     @Override
     public void validate(DataUpdateVehicle data) {
         if(data.categoryId()!=null){
-            if (categoryRepository.existsById(data.modelId())) {
-                Category category = categoryRepository.getReferenceById(data.modelId());
+            if (categoryRepository.existsById(data.categoryId())) {
+                Category category = categoryRepository.getReferenceById(data.categoryId());
                 if(!category.getActivated()){
                     throw new ValidationException("The provided category id is disabled");
                 }
