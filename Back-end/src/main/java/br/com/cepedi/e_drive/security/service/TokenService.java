@@ -36,6 +36,7 @@ public class TokenService {
         Optional<Token> tokenEntity = tokenRepository.findByToken(token);
         if (tokenEntity.isPresent()) {
             Token tokenToUpdate = tokenEntity.get();
+            System.out.println("OIII" + tokenToUpdate.getToken());
             tokenToUpdate.disabled();
             tokenRepository.save(tokenToUpdate);
         }
