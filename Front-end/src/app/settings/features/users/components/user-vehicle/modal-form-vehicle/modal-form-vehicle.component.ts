@@ -1,9 +1,7 @@
 import { ModelService } from './../../../../../core/services/model/model.service';
 import { BrandService } from './../../../../../core/services/brand/brand.service';
 import { VehicleService } from './../../../../../core/services/vehicle/vehicle.service';
-import { Brand } from './../../../../../core/models/brand';
-import { Model } from './../../../../../core/models/model';
-import { Vehicle } from '../../../../../core/models/vehicle';
+import { Vehicle } from '../../../../../core/models/Vehicle';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -11,6 +9,8 @@ import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
+import { UserVehicleService } from '../../../../../core/services/user/uservehicle/user-vehicle.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -20,6 +20,8 @@ import { UserDataService } from '../../../../../core/services/user/userdata/user
 export class ModalFormVehicleComponent implements OnInit {
 
   userVehicleForm: FormGroup;
+  selectedVehicle: Vehicle | null = null; 
+  isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
 
   brands: { name: string; id: number }[] = [];
   models: { name: string; id: number }[] = [];
@@ -35,17 +37,17 @@ export class ModalFormVehicleComponent implements OnInit {
     private modelService: ModelService,
     private vehicleService: VehicleService,
     private userDataService: UserDataService,
+    private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
   ) {
     this.userVehicleForm = this.formBuilder.group({
       version: [null, Validators.required],
       brand: [null, Validators.required],
       model: [null, Validators.required],
-      autonomy: [null, Validators.required],
-      mileagePerLiterRoad: [null, Validators.required],
-      mileagePerLiterCity: [null, Validators.required],
-      consumptionEnergetic: [null, Validators.required],
-      autonomyElectricMode: [null, Validators.required],
+      mileagePerLiterRoad: [null],
+      mileagePerLiterCity: [null],
+      consumptionEnergetic: [null],
+      autonomyElectricMode: [null]
     });
   }
 
@@ -165,17 +167,84 @@ export class ModalFormVehicleComponent implements OnInit {
   }
 
   onVersionSelected(event: MatAutocompleteSelectedEvent): void {
-    const selectedVehicle = event.option.value;
-    if (selectedVehicle.id) {
+    const selectedVehicle = event.option.value as Vehicle;
+    this.selectedVehicle = selectedVehicle;
+    if(selectedVehicle.id){
       this.userVehicleForm.get('version')?.setValue(selectedVehicle.version);
-      console.log(selectedVehicle)
       this.userVehicleForm.get('mileagePerLiterRoad')?.setValue(selectedVehicle.autonomy.mileagePerLiterRoad);
       this.userVehicleForm.get('mileagePerLiterCity')?.setValue(selectedVehicle.autonomy.mileagePerLiterCity);
       this.userVehicleForm.get('consumptionEnergetic')?.setValue(selectedVehicle.autonomy.consumptionEnergetic);
       this.userVehicleForm.get('autonomyElectricMode')?.setValue(selectedVehicle.autonomy.autonomyElectricMode);
     }
 
+    this.isAutonomyDataMissing = !(
+      selectedVehicle.autonomy.mileagePerLiterRoad &&
+      selectedVehicle.autonomy.mileagePerLiterCity &&
+      selectedVehicle.autonomy.consumptionEnergetic &&
+      selectedVehicle.autonomy.autonomyElectricMode
+    );
+
 
   }
+
+  submitForm() {
+    if (this.userVehicleForm.valid) {
+      const formData = this.userVehicleForm.value;
+      const dataRegisterAutonomy = {
+        mileagePerLiterRoad: formData.mileagePerLiterRoad,
+        mileagePerLiterCity: formData.mileagePerLiterCity,
+        consumptionEnergetic: formData.consumptionEnergetic,
+        autonomyElectricMode: formData.autonomyElectricMode,
+      };
+
+
+
+      const dataRegisterVehicleUser = {
+        vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
+        dataRegisterAutonomy: dataRegisterAutonomy,
+      };
+      console.log(dataRegisterVehicleUser)
+
+      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTAxMzk4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.DmpcZfLIXbvcVg8g5QOSHS7-oG7TLq9kapiXJDf-REM';
+      this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+        response => {
+          console.log('Cadastro realizado com sucesso!', response);
+          Swal.fire({
+            title: 'Cadastro realizado com sucesso!',
+            icon: 'success',
+            text: 'O veículo foi cadastrado com sucesso.',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          }).then(() => {
+            this.closeModal();
+          });
+        },
+        error => {
+          console.error('Erro ao realizar cadastro:', error);
+          Swal.fire({
+            title: 'Erro!',
+            icon: 'error',
+            text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          });
+        }
+      );
+    } else {
+      Swal.fire({
+        title: 'Formulário inválido!',
+        icon: 'warning',
+        text: 'Por favor, preencha todos os campos obrigatórios.',
+        showConfirmButton: true,
+        confirmButtonColor: '#19B6DD',
+      });
+    }
+  }
+  resetForm() {
+    this.userVehicleForm.reset();
+    this.isAutonomyDataMissing = false;
+  }
+
+
 
 }

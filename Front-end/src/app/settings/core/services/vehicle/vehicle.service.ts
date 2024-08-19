@@ -21,7 +21,11 @@ export class VehicleService {
     // return of(this.vehicle);
   }
 
+<<<<<<< HEAD
   private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MDc1Nzg2LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.tjKgmxBD5RUu55uIh0lifoEwlXhKrHTqXyB3RtynnwA';
+=======
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTAxMzk4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.DmpcZfLIXbvcVg8g5QOSHS7-oG7TLq9kapiXJDf-REM';
+>>>>>>> front_feature/logica_cadastro_vehicle_user
 
   getVehicleDetails(id: number): Observable<Vehicle> {
     const headers = new HttpHeaders({
