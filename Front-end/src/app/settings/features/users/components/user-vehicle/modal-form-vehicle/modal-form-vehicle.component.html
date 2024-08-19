@@ -1,10 +1,17 @@
 <div class="container-fluid pt-3">
-    <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
     <div class="col-12">
-        <button routerLink="/intro-page" class="btn">
+
+        <div class="header-container">
+          <button routerLink="/intro-page" class="btn">
             <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
-        </button>
-        <h1 class="titulo">Cadastrar Veículo</h1>
+          </button>
+          
+          <h1 class="titulo">Cadastrar Veículo</h1>
+          
+          <button class="btn">
+            <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+          </button>
+        </div> 
   
         <form [formGroup]="userVehicleForm">
             <div class="content">

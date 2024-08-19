@@ -1,4 +1,13 @@
-html, body {
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+html,
+body {
   height: 100%;
   margin: 0;
 }
@@ -30,23 +39,35 @@ html, body {
 }
 
 .titulo {
-  font-size: 26px;
+  font-size: 20px;
   color: #19B6DD;
-  padding: 0;
-  margin: 10 !important;
+  margin: 0;
   text-align: center;
+  flex-grow: 1;
 }
 
 .seta-voltar {
   margin-left: -18px;
-  width: 30px;
+  width: 20px;
   transform: rotate(0deg);
   transition: 0.3s linear all;
 
   &:hover {
-      cursor: pointer;
-      box-shadow: 0px 0px 5px 3px #19B6DD;
-      transform: translateX(10px);
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 3px #19B6DD;
+    transform: translateX(10px);
+  }
+}
+
+.filtro {
+  width: 20px;
+  transform: rotate(0deg);
+  transition: 0.3s linear all;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0px 0px 5px 3px #19B6DD;
+    transform: translateX(10px);
   }
 }
 
@@ -59,30 +80,30 @@ button[type="button"] {
   color: #FFF;
 
   &:hover {
-      background-color: #32aecd;
-      box-shadow: 0px 0px 5px 3px #6d6e6e;
+    background-color: #32aecd;
+    box-shadow: 0px 0px 5px 3px #6d6e6e;
   }
 
   &[disabled] {
-      background-color: #444444;
-      color: white;
-      border: 1px solid #444444;
-      cursor: not-allowed;
+    background-color: #444444;
+    color: white;
+    border: 1px solid #444444;
+    cursor: not-allowed;
   }
 }
 
 // Animação do botão de continuar 
 @keyframes pulse {
   0% {
-      transform: scale(1);
+    transform: scale(1);
   }
 
   30% {
-      transform: scale(1.02);
+    transform: scale(1.02);
   }
 
   50% {
-      transform: scale(1);
+    transform: scale(1);
   }
 }
 
@@ -104,7 +125,7 @@ button[type="button"] {
 .mat-autocomplete-panel {
   position: absolute;
   top: calc(100% + 8px);
-  z-index: 1000; 
+  z-index: 1000;
 }
 
 .autocomplete-icon {
@@ -114,13 +135,13 @@ button[type="button"] {
   transform: translateY(-50%);
   color: #19B6DD;
   pointer-events: none;
-  margin-right: 5px; 
-  pointer-events: auto; 
-  cursor: pointer;  
+  margin-right: 5px;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 @media (max-width: 350px) {
   .mat-autocomplete-panel {
-      top: calc(100% + 4px); 
+    top: calc(100% + 4px);
   }
 }
