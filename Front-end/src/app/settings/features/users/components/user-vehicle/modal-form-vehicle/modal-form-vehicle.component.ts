@@ -1,9 +1,9 @@
 import { ModelService } from './../../../../../core/services/model/model.service';
 import { BrandService } from './../../../../../core/services/brand/brand.service';
 import { VehicleService } from './../../../../../core/services/vehicle/vehicle.service';
-import { Brand } from './../../../../../core/models/Brand';
-import { Model } from './../../../../../core/models/Model';
-import { Vehicle } from './../../../../../core/models/Vehicle';
+import { Brand } from './../../../../../core/models/brand';
+import { Model } from './../../../../../core/models/model';
+import { Vehicle } from '../../../../../core/models/vehicle';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -71,7 +71,7 @@ export class ModalFormVehicleComponent implements OnInit {
       (response: any) => {
         const models = response.content || [];
         console.log('Models loaded:', response);
-        
+
         if (Array.isArray(models)) {
           this.models = models.map(model => ({
             name: this.userDataService.capitalizeWords(model.name),
@@ -93,13 +93,13 @@ export class ModalFormVehicleComponent implements OnInit {
     this.vehicleService.getVehiclesByModel(modelId).subscribe(
       (response: any) => {
         const vehicles = response.content || [];
-        
+
         if (Array.isArray(vehicles)) {
           this.vehicles = vehicles.map(vehicle => ({
             ...vehicle,
             version: this.userDataService.capitalizeWords(vehicle.version),
           }));
-  
+
           this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
         } else {
           console.error('Expected an array but got:', vehicles);
@@ -119,7 +119,7 @@ export class ModalFormVehicleComponent implements OnInit {
         return this._filter(this.brands, filterValue);
       })
     );
-  
+
     this.filteredModels = this.userVehicleForm.get('model')!.valueChanges.pipe(
       startWith(''),
       map(value => {
@@ -127,7 +127,7 @@ export class ModalFormVehicleComponent implements OnInit {
         return this._filter(this.models, filterValue);
       })
     );
-  
+
     this.filteredVersions = this.userVehicleForm.get('version')!.valueChanges.pipe(
       startWith(''),
       map(value => {
@@ -149,7 +149,7 @@ export class ModalFormVehicleComponent implements OnInit {
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value;
     this.userVehicleForm.get('brand')?.setValue(selectedBrand.name);
-  
+
     if (selectedBrand.id) {
       this.loadModels(selectedBrand.id);
     }
@@ -158,7 +158,7 @@ export class ModalFormVehicleComponent implements OnInit {
   onModelSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedModel = event.option.value;
     this.userVehicleForm.get('model')?.setValue(selectedModel.name);
-  
+
     if (selectedModel.id) {
       this.loadVehiclesByModel(selectedModel.id);
     }
@@ -166,7 +166,7 @@ export class ModalFormVehicleComponent implements OnInit {
 
   onVersionSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedVehicle = event.option.value;
-    if(selectedVehicle.id){
+    if (selectedVehicle.id) {
       this.userVehicleForm.get('version')?.setValue(selectedVehicle.version);
       console.log(selectedVehicle)
       this.userVehicleForm.get('mileagePerLiterRoad')?.setValue(selectedVehicle.autonomy.mileagePerLiterRoad);
