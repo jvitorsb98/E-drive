@@ -13,10 +13,10 @@ export class UserVehicleService {
   private userVehicleUrl!: string;
 
   constructor(private http: HttpClient) {
-    this.userVehicleUrl = `${environment.apiUrl}/api/vehicle-users`;
+    this.userVehicleUrl = `${environment.apiUrl}/api/v1/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MDA1OTUwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.nX85wTs6U-aktbl8G3mYKfDctQrrCqjnq9uemjO6WLE';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTAxMzk4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.DmpcZfLIXbvcVg8g5QOSHS7-oG7TLq9kapiXJDf-REM';
 
 
   // Método para obter todos os veículos do usuário
@@ -34,6 +34,15 @@ export class UserVehicleService {
     });
 
     return this.http.get<IApiResponse<UserVehicle[]>>(this.userVehicleUrl, { headers });
+  }
+
+  registerVehicleUser(dataRegisterVehicleUser: any, authToken: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post(this.userVehicleUrl, dataRegisterVehicleUser, { headers });
   }
 
 }
