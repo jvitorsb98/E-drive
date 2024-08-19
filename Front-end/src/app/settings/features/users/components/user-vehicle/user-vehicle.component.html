@@ -3,12 +3,17 @@
     <div class="container-fluid pt-3">
       <div class="row">
 
-        <div class="col-12">
+        <div class="header-container">
           <button routerLink="/intro-page" class="btn">
             <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
           </button>
+          
           <h1 class="titulo">Meus Veículos</h1>
-        </div>
+          
+          <button class="btn">
+            <img class="filtro" src="../../../../../../assets/images/filtro-list-vehicle.svg" alt="Filto">
+          </button>
+        </div>        
 
         <div class="custom-filter">
           <mat-form-field>
@@ -24,7 +29,7 @@
                 matTooltip="Estes ícones representam cada carro listado abaixo. Clique para ver detalhes de cada um.">directions_car</mat-icon>
             </th>
             <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <mat-icon class="icone-carro" matTooltip="Ver detalhes do carro">directions_car</mat-icon>
+              <mat-icon class="icone-carro" matTooltip={{userVehicle.v}}>directions_car</mat-icon>
             </td>
           </ng-container>
 
