@@ -1,6 +1,6 @@
 .titulo {
-  font-size: 20px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 500;
   padding: 0;
   color: #19B6DD;
   margin: 0;
@@ -13,10 +13,10 @@
 }
 
 .subtitulo {
-  font-size: 15px;
-  font-weight: 100;
+  font-size: 12px;
+  font-weight: 500;
   padding: 2px 0px 14px 0px;
-  margin: 0;
+  margin: -10px 0 14px 0;
   color: #747474;
   text-align: center;
   flex-grow: 1;
@@ -31,7 +31,7 @@
 
 .informacao {
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
   color: #747474;
   margin-bottom: 12px;
 }
