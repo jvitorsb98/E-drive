@@ -29,6 +29,8 @@ public class VehicleTypeService {
 
 	@Autowired
 	private List<VehicleTypeValidatorDisabled> vehicleTypeValidatorDisabledList;
+	
+	
 
 	public DataVehicleTypeDetails register(DataRegisterVehicleType data) {
 		VehicleType vehicleType = new VehicleType(data);

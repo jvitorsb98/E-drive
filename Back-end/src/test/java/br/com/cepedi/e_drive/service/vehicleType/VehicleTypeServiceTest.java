@@ -45,12 +45,6 @@ class VehicleTypeServiceTest {
 	@Mock
 	private List<VehicleTypeValidatorDisabled> vehicleTypeValidatorDisabledList;
 
-    @Mock
-    private ValidationUpdateVehicleType validator1;
-
-    @Mock
-    private ValidationUpdateVehicleType validator2;
-	
 	@Mock
 	private ValidationUpdateVehicleType validationUpdateVehicleType;
 
@@ -64,8 +58,8 @@ class VehicleTypeServiceTest {
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
 		faker = new Faker();
-		 vehicleTypeValidationUpdateList = List.of(validator1, validator2);
-    }
+	}
+    
 	
 
 	@Test
@@ -155,36 +149,31 @@ class VehicleTypeServiceTest {
 		verify(vehicleType).disabled();
 	}
 
-	@Disabled
 	@Test
-    @DisplayName("Should update VehicleType and return updated details")
-    void testUpdateVehicleType() {
-        // Arrange
-        Long vehicleTypeId = 226L;
-        String newName = "UpdatedName";
-        DataUpdateVehicleType dataUpdate = new DataUpdateVehicleType(newName);
-        VehicleType vehicleType = mock(VehicleType.class);
+	@DisplayName("Should Update Vehicle Type Data Correctly")
+	void shouldUpdateVehicleTypeCorrectly() {
+	    // Arrange
+	    Long id = faker.number().randomNumber();
+	    String name = faker.commerce().productName();
+	    DataUpdateVehicleType dataUpdateVehicleType = new DataUpdateVehicleType(name);
 
-        // Configura o comportamento esperado
-        when(vehicleTypeRepository.getReferenceById(vehicleTypeId)).thenReturn(vehicleType);
-        when(vehicleTypeRepository.save(vehicleType)).thenReturn(vehicleType);
-        doNothing().when(validator1).validation(vehicleTypeId);
-        doNothing().when(validator2).validation(vehicleTypeId);
-        doNothing().when(vehicleType).updateDataVehicleType(dataUpdate);
+	    when(vehicleTypeRepository.getReferenceById(id)).thenReturn(vehicleType);
 
-        // Act
-        DataVehicleTypeDetails result = vehicleTypeService.update(dataUpdate, vehicleTypeId);
+	    when(vehicleType.getId()).thenReturn(id);
+	    when(vehicleType.getName()).thenReturn(name);
+	    when(vehicleType.isActivated()).thenReturn(true); 
+	    doNothing().when(vehicleType).updateDataVehicleType(dataUpdateVehicleType);
 
-        // Assert
-        verify(validator1, times(1)).validation(vehicleTypeId);
-        verify(validator2, times(1)).validation(vehicleTypeId);
-        verify(vehicleType, times(1)).updateDataVehicleType(dataUpdate);
-        verify(vehicleTypeRepository, times(1)).save(vehicleType);
+	    // Act
+	    DataVehicleTypeDetails result = vehicleTypeService.update(dataUpdateVehicleType, id);
 
-        // Verifica o resultado esperado
-        DataVehicleTypeDetails expectedDetails = new DataVehicleTypeDetails(vehicleTypeId, newName, true);
-        assertEquals(expectedDetails, result, "Expected the updated vehicle type details to match the result");
-    }
+	    // Assert
+	    assertNotNull(result);
+	    assertEquals(id, result.id());
+	    assertEquals(name, result.name());
+	    assertTrue(result.activated());
+	}
+
 }
 
 
