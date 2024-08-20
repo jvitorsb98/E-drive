@@ -28,6 +28,16 @@ body {
   flex-direction: column; // Permite que os campos do formulário sejam empilhados
 }
 
+#Help {
+  color: #b5abab;
+}
+
+.mat-hint-text {
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -14px;
+}
+
 .buttons-container {
   display: flex;
   flex-direction: column;

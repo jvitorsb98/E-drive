@@ -24,7 +24,8 @@
             matInput 
             formControlName="brand"
             [value]="userVehicleForm.get('brand')?.value?.name || ''" 
-            [matAutocomplete]="autoBrand">
+            [matAutocomplete]="autoBrand"
+            aria-describedby="Help">
             <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint>
             <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
               <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
@@ -123,7 +124,7 @@
                 matInput 
                 formControlName="autonomyElectricMode" 
                 aria-describedby="Help">
-                <mat-hint id="Help" class="mat-hint-text">Autonomia <strong>em modo elétrico</strong></mat-hint>
+                <mat-hint id="Help" class="mat-hint-text">Autonomia em<strong> modo elétrico</strong></mat-hint>
               </mat-form-field>
             </div>
           </div>

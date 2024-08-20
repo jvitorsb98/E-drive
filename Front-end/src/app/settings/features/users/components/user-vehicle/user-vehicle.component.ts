@@ -108,4 +108,12 @@ export class UserVehicleComponent {
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
+  openModalEditUserVehicle(userVehicle: Vehicle) {
+    this.dialog.open(ModalFormVehicleComponent, {
+      width: '600px',
+      height: '810px',
+      data: userVehicle
+    }).afterClosed().subscribe(() => this.getListUserVehicles());
+  }
+
 }

@@ -70,7 +70,7 @@
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
             <td class="td-table" mat-cell *matCellDef="let userVehicle">
               <mat-icon class="icone-table" (click)="openModalViewVeicle(userVehicle)">visibility</mat-icon>
-              <mat-icon class="icone-table">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="openModalEditUserVehicle(userVehicle)">edit</mat-icon>
               <mat-icon class="icone-table">delete</mat-icon>
             </td>
           </ng-container>

@@ -2,9 +2,9 @@ import { ModelService } from './../../../../../core/services/model/model.service
 import { BrandService } from './../../../../../core/services/brand/brand.service';
 import { VehicleService } from './../../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../../core/models/vehicle';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -19,7 +19,7 @@ import Swal from 'sweetalert2';
 })
 export class ModalFormVehicleComponent implements OnInit {
 
-  userVehicleForm: FormGroup;
+  userVehicleForm!: FormGroup;
   selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
 
@@ -39,7 +39,15 @@ export class ModalFormVehicleComponent implements OnInit {
     private userDataService: UserDataService,
     private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
-  ) {
+    @Inject(MAT_DIALOG_DATA) public data: Vehicle,
+  ) { }
+
+  ngOnInit() {
+    this.loadBrands();
+    this.setupAutocomplete();
+  }
+
+  buildForm() {
     this.userVehicleForm = this.formBuilder.group({
       version: [null, Validators.required],
       brand: [null, Validators.required],
@@ -49,11 +57,23 @@ export class ModalFormVehicleComponent implements OnInit {
       consumptionEnergetic: [null],
       autonomyElectricMode: [null]
     });
+
+    if (this.data && this.data.id) {
+      this.fillForm();
+    }
   }
 
-  ngOnInit() {
-    this.loadBrands();
-    this.setupAutocomplete();
+  //Preenche o formulário com os dados do veículo para edição
+  fillForm() {
+    this.userVehicleForm.patchValue({
+      version: this.data.version,
+      brand: this.data.model.brand.name,
+      model: this.data.model.name,
+      mileagePerLiterRoad: this.data.autonomy.mileagePerLiterRoad,
+      mileagePerLiterCity: this.data.autonomy.mileagePerLiterCity,
+      consumptionEnergetic: this.data.autonomy.consumptionEnergetic,
+      autonomyElectricMode: this.data.autonomy.autonomyElectricMode
+    });
   }
 
   loadBrands() {
@@ -144,10 +164,6 @@ export class ModalFormVehicleComponent implements OnInit {
     return array.filter(item => item[field]?.toLowerCase().includes(filterValue));
   }
 
-  closeModal() {
-    this.dialogRef.close();
-  }
-
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value;
     this.userVehicleForm.get('brand')?.setValue(selectedBrand.name);
@@ -197,15 +213,13 @@ export class ModalFormVehicleComponent implements OnInit {
         autonomyElectricMode: formData.autonomyElectricMode,
       };
 
-
-
       const dataRegisterVehicleUser = {
         vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
         dataRegisterAutonomy: dataRegisterAutonomy,
       };
       console.log(dataRegisterVehicleUser)
 
-      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTg1MDM1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.3Dqs6f-eUeeohrepHuol0XdDKD5L76zCzNZjtZyYCsY';
+      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MjAxMjA1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.iGgOMfFOZb7bPzdpzkkmFNaRWJpGHEL7lHDr6ATribc';
       this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
         response => {
           console.log('Cadastro realizado com sucesso!', response);
@@ -240,11 +254,14 @@ export class ModalFormVehicleComponent implements OnInit {
       });
     }
   }
+
   resetForm() {
     this.userVehicleForm.reset();
     this.isAutonomyDataMissing = false;
   }
 
-
+  closeModal() {
+    this.dialogRef.close();
+  }
 
 }
