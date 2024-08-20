@@ -6,21 +6,22 @@ import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 @Component
-public class ValidationUpdateVehicle_Propulsion_NotDisabled implements ValidationUpdateVehicle{
+public class ValidationUpdateVehicle_Propulsion_NotDisabled implements ValidationUpdateVehicle {
 
     @Autowired
     private PropulsionRepository propulsionRepository;
 
     @Override
     public void validate(DataUpdateVehicle data) {
-        if(data.propulsionId()!=null){
-            if (propulsionRepository.existsById(data.modelId())) {
-                Propulsion propulsion = propulsionRepository.getReferenceById(data.modelId());
-                if(!propulsion.getActivated()){
+        if (data.propulsionId() != null) {
+            if (propulsionRepository.existsById(data.propulsionId())) {
+                Propulsion propulsion = propulsionRepository.getReferenceById(data.propulsionId());
+                if (!propulsion.getActivated()) {
                     throw new ValidationException("The provided propulsion id is disabled");
                 }
+            } else {
+                throw new ValidationException("The provided propulsion id does not exist");
             }
         }
     }
