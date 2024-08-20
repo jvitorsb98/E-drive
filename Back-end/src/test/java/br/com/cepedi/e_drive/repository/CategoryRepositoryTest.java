@@ -27,100 +27,97 @@ public class CategoryRepositoryTest {
     private CategoryRepository categoryRepository;
 
     @BeforeEach
-    public void deleteAllCategories() {
+    public void setUp() {
         categoryRepository.deleteAll();
     }
 
-    // Test to verify if a category can be saved correctly in the database
-    @Test
-    public void testSaveCategory() {
-        // Create a new category instance
+    private Category createTestCategory(String name, boolean activated) {
         Category category = new Category();
-        category.setName("Test Category");
-        category.setActivated(true);
-
-        // Save the category in the database and verify if the ID was generated
-        Category savedCategory = categoryRepository.save(category);
-        assertNotNull(savedCategory.getId());
+        category.setName(name);
+        category.setActivated(activated);
+        return category;
     }
 
-    // Test to verify if all deactivated categories can be retrieved correctly from the database
     @Test
+    @DisplayName("Test save and find by ID")
+    public void testSaveCategory() {
+        // Arrange
+        Category category = createTestCategory("Test Category", true);
+
+        // Act
+        Category savedCategory = categoryRepository.save(category);
+        Optional<Category> foundCategory = categoryRepository.findById(savedCategory.getId());
+
+        // Assert
+        assertTrue(foundCategory.isPresent(), () -> "Category should be present");
+        assertEquals(savedCategory.getId(), foundCategory.get().getId(), () -> "ID should match");
+    }
+
+    @Test
+    @DisplayName("Test find all deactivated categories")
     public void testFindAllDeactivatedCategories() {
-        // Create a new category instance
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setActivated(false);
+        // Arrange
+        Category activeCategory = createTestCategory("Active Category", true);
+        Category deactivatedCategory = createTestCategory("Deactivated Category", false);
+        categoryRepository.save(activeCategory);
+        categoryRepository.save(deactivatedCategory);
 
-        // Save the category in the database
-        categoryRepository.save(category);
-
-        // Retrieve all deactivated categories from the database
+        // Act
         Pageable pageable = PageRequest.of(0, 10);
         Page<Category> categories = categoryRepository.findAllByActivatedFalse(pageable);
 
-        // Verify if the number of retrieved categories matches the expected number
-        assertEquals(1, categories.getTotalElements());
+        // Assert
+        assertEquals(1, categories.getTotalElements(), () -> "There should be one deactivated category");
+        assertTrue(categories.getContent().stream().allMatch(c -> !c.getActivated()), () -> "All retrieved categories should be deactivated");
     }
 
-    // Test to verify if a category can be deleted correctly from the database
     @Test
+    @DisplayName("Test delete category")
     public void testDeleteCategory() {
-        // Create a new category instance
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setActivated(true);
-
-        // Save the category in the database
+        // Arrange
+        Category category = createTestCategory("Test Category", true);
         Category savedCategory = categoryRepository.save(category);
 
-        // Delete the category from the database
+        // Act
         categoryRepository.delete(savedCategory);
-
-        // Verify if the category was deleted
         Optional<Category> deletedCategory = categoryRepository.findById(savedCategory.getId());
-        assertFalse(deletedCategory.isPresent());
+
+        // Assert
+        assertFalse(deletedCategory.isPresent(), () -> "Category should be deleted");
     }
 
-    // Test to verify if a category can be updated correctly in the database
     @Test
+    @DisplayName("Test update category")
     public void testUpdateCategory() {
-        // Create a new category instance
-        Category category = new Category();
-        category.setName("Test Category");
-        category.setActivated(true);
-
-        // Save the category in the database
+        // Arrange
+        Category category = createTestCategory("Test Category", true);
         Category savedCategory = categoryRepository.save(category);
 
-        // Update the category details
+        // Act
         savedCategory.setName("Updated Category");
         savedCategory.setActivated(false);
-
-        // Save the updated category in the database
         Category updatedCategory = categoryRepository.save(savedCategory);
 
-        // Verify if the updated category details are correct
-        assertEquals("Updated Category", updatedCategory.getName());
-        assertFalse(updatedCategory.getActivated());
+        // Assert
+        assertEquals("Updated Category", updatedCategory.getName(), () -> "Name should be updated");
+        assertFalse(updatedCategory.getActivated(), () -> "Activated status should be updated");
     }
 
-    // Test to verify if categories can be retrieved by name containing a specific string
     @Test
+    @DisplayName("Test find by name containing")
     public void testFindByNameContaining() {
-        // Create a new category instance
-        Category category = new Category();
-        category.setName("Sample Category");
-        category.setActivated(true);
+        // Arrange
+        Category category1 = createTestCategory("Sample Category", true);
+        Category category2 = createTestCategory("Another Category", true);
+        categoryRepository.save(category1);
+        categoryRepository.save(category2);
 
-        // Save the category in the database
-        categoryRepository.save(category);
-
-        // Retrieve categories by name containing "Sample"
+        // Act
         Pageable pageable = PageRequest.of(0, 10);
         Page<Category> categories = categoryRepository.findByNameContaining("Sample", pageable);
 
-        // Verify if the number of retrieved categories matches the expected number
-        assertEquals(1, categories.getTotalElements());
+        // Assert
+        assertEquals(1, categories.getTotalElements(), () -> "There should be one category containing 'Sample' in its name");
+        assertTrue(categories.getContent().stream().anyMatch(c -> c.getName().contains("Sample")), () -> "The category name should contain 'Sample'");
     }
 }

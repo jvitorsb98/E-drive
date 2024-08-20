@@ -31,7 +31,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/models")
+@RequestMapping("/api/v1/models")
 @SecurityRequirement(name = "bearer-key")
 @Tag(name = "Model", description = "Model messages")
 public class ModelController {
@@ -142,6 +142,31 @@ public class ModelController {
         DataModelDetails updatedModel = modelService.update(data,id);
         LOGGER.info("Model updated successfully with ID: {}", id);
         return new ResponseEntity<>(updatedModel, HttpStatus.OK);
+    }
+
+    @GetMapping("/brand/{brandId}")
+    @Operation(summary = "Get models by Brand", method = "GET", description = "Retrieves a paginated list of models by brand.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Models retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Page.class))),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Models not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Page<DataModelDetails>> listByBrand(
+            @Parameter(description = "ID of the brand", required = true)
+            @PathVariable Long brandId,
+            @Parameter(description = "Pagination and sorting information")
+            @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
+    ) {
+        LOGGER.info("Retrieving models by brand id: {}", brandId);
+        Page<DataModelDetails> models = modelService.listAllModelsByBrand(brandId, pageable);
+        LOGGER.info("Models by brand retrieved successfully");
+        return new ResponseEntity<>(models, HttpStatus.OK);
     }
 
     @PutMapping("/{id}/activate")

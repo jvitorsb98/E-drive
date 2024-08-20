@@ -19,6 +19,10 @@ import { FooterComponent } from './settings/core/fragments/footer/footer.compone
 import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
+import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
+import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
+import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
+import { ModalFormVehicleComponent } from './settings/features/users/components/user-vehicle/modal-form-vehicle/modal-form-vehicle.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -38,6 +42,10 @@ import { UserUpdateComponent } from './settings/features/users/components/user-u
     NavbarIntroComponent,
     UserLoginModalComponent,
     ResetPasswordComponent,
+    VehicleListComponent,
+    UserVehicleComponent,
+    ModalViewVehicleComponent,
+    ModalFormVehicleComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,

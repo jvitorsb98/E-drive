@@ -49,13 +49,13 @@ public class RegisterControllerIntegrationTest {
     @Test
     void testRegisterUser() throws Exception {
         DataRegisterUser dataRegisterUser = new DataRegisterUser(
-        		"validuser@example.com",
+                "validuser@example.com",
                 "UserName",
                 "Password143@",
                 LocalDate.of(1990, 1, 1),
                 "+1234567890"
         );
-        
+
         DataDetailsRegisterUser dataDetails = new DataDetailsRegisterUser(
                 "UserName",
                 "validuser@example.com",
@@ -76,12 +76,10 @@ public class RegisterControllerIntegrationTest {
 
         System.out.println("Response: " + result.getResponse().getContentAsString());
 
-        verify(emailService, times(1)).sendActivationEmail(
-                eq("UserName"), 
-                eq("validuser@example.com"), 
-                eq("sample-token")
-        );
+        // Atualize para verificar o método async
+        verify(emailService).sendActivationEmailAsync("UserName", "validuser@example.com", "sample-token");
     }
+
     
     
     @Test

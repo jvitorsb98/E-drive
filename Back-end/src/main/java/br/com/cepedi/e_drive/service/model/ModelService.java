@@ -42,13 +42,13 @@ public class ModelService {
     public DataModelDetails register(DataRegisterModel data) {
         validationRegisterModelList.forEach(v -> v.validation(data));
         Brand brand = brandRepository.getReferenceById(data.idBrand());
-        Model model = new Model(data,brand);
+        Model model = new Model(data, brand);
         model = modelRepository.save(model);
         return new DataModelDetails(model);
     }
 
     public DataModelDetails update(DataUpdateModel data, Long id) {
-        modelValidationUpdateList.forEach(v -> v.validation(data,id));
+        modelValidationUpdateList.forEach(v -> v.validation(data, id));
         Model model = modelRepository.getReferenceById(id);
         model.update(data);
         return new DataModelDetails(model);
@@ -63,6 +63,11 @@ public class ModelService {
         return modelRepository.findAll(pageable).map(DataModelDetails::new);
     }
 
+    public Page<DataModelDetails> listAllModelsByBrand(Long brandId, Pageable pageable) {
+        Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new RuntimeException("Brand not found"));
+        return modelRepository.findByBrand(brand, pageable).map(DataModelDetails::new);
+    }
+
     public void activated(Long id) {
         modelValidatorActivatedList.forEach(v -> v.validation(id));
         Model model = modelRepository.getReferenceById(id);
@@ -72,12 +77,10 @@ public class ModelService {
     public Page<DataModelDetails> listAllModelsActivatedTrue(Pageable pageable) {
         return modelRepository.findAllByActivatedTrue(pageable).map(DataModelDetails::new);
     }
+
     public void disable(Long id) {
         modelValidatorDisabledList.forEach(v -> v.validation(id));
         Model model = modelRepository.getReferenceById(id);
         model.deactivated();
     }
-
-
-
 }

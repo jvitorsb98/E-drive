@@ -1,12 +1,13 @@
 package br.com.cepedi.e_drive.repository;
 
-
 import br.com.cepedi.e_drive.model.entitys.Brand;
+import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,83 +28,130 @@ public class BrandRepositoryTest {
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private CacheManager cacheManager;
+
+    private Faker faker;
+
     @BeforeEach
-    public void deleteAllBrands() {
+    public void setUp() {
+        faker = new Faker();
         brandRepository.deleteAll();
+        cacheManager.getCache("brands").clear(); // Clear the cache before each test
     }
 
-    // Test to verify if a brand can be saved correctly in the database
+    private Brand createTestBrand() {
+        Brand brand = new Brand();
+        brand.setName(faker.company().name());
+        brand.setActivated(faker.bool().bool());
+        return brand;
+    }
+
     @Test
+    @DisplayName("Test save brand")
     public void testSaveBrand() {
-        // Create a new brand instance
-        Brand brand = new Brand();
-        brand.setName("Test Brand");
-        brand.setActivated(true);
+        // Arrange
+        Brand brand = createTestBrand();
 
-        // Save the brand in the database and verify if the ID was generated
+        // Act
         Brand savedBrand = brandRepository.save(brand);
-        assertNotNull(savedBrand.getId());
+
+        // Assert
+        assertNotNull(savedBrand.getId(), () -> "Saved brand ID should not be null");
     }
 
-    // Test to verify if all activated brands can be retrieved correctly from the database
     @Test
+    @DisplayName("Test find all activated brands")
     public void testFindAllActivatedBrands() {
-        // Create a new brand instance
-        Brand brand = new Brand();
-        brand.setName("Test Brand");
+        // Arrange
+        Brand brand = createTestBrand();
         brand.setActivated(true);
-
-        // Save the brand in the database
         brandRepository.save(brand);
 
-        // Retrieve all activated brands from the database
+        // Act
         Pageable pageable = PageRequest.of(0, 10);
         Page<Brand> brands = brandRepository.findAllByActivatedTrue(pageable);
 
-        // Verify if the number of retrieved brands matches the expected number
-        assertEquals(1, brands.getTotalElements());
+        // Assert
+        assertEquals(1, brands.getTotalElements(), () -> "There should be one activated brand");
     }
 
-    // Test to verify if a brand can be deleted correctly from the database
+
     @Test
+    @DisplayName("Test delete brand")
     public void testDeleteBrand() {
-        // Create a new brand instance
-        Brand brand = new Brand();
-        brand.setName("Test Brand");
-        brand.setActivated(true);
-
-        // Save the brand in the database
+        // Arrange
+        Brand brand = createTestBrand();
         Brand savedBrand = brandRepository.save(brand);
 
-        // Delete the brand from the database
+        // Act
         brandRepository.delete(savedBrand);
-
-        // Verify if the brand was deleted
         Optional<Brand> deletedBrand = brandRepository.findById(savedBrand.getId());
-        assertFalse(deletedBrand.isPresent());
+
+        // Assert
+        assertFalse(deletedBrand.isPresent(), () -> "Brand should be deleted");
     }
 
-    // Test to verify if a brand can be updated correctly in the database
     @Test
+    @DisplayName("Test update brand")
     public void testUpdateBrand() {
-        // Create a new brand instance
-        Brand brand = new Brand();
-        brand.setName("Test Brand");
-        brand.setActivated(true);
-
-        // Save the brand in the database
+        // Arrange
+        Brand brand = createTestBrand();
         Brand savedBrand = brandRepository.save(brand);
 
-        // Update the brand details
-        savedBrand.setName("Updated Brand");
-        savedBrand.setActivated(false);
-
-        // Save the updated brand in the database
+        // Act
+        savedBrand.setName(faker.company().name());
+        savedBrand.setActivated(faker.bool().bool());
         Brand updatedBrand = brandRepository.save(savedBrand);
 
-        // Verify if the updated brand details are correct
-        assertEquals("Updated Brand", updatedBrand.getName());
-        assertFalse(updatedBrand.getActivated());
+        // Assert
+        assertEquals(savedBrand.getName(), updatedBrand.getName(), () -> "Brand name should be updated");
+        assertEquals(savedBrand.getActivated(), updatedBrand.getActivated(), () -> "Brand activation status should be updated");
+    }
+
+    @Test
+    @DisplayName("Test find by non-existing ID")
+    public void testFindByNonExistingId() {
+        // Act
+        Optional<Brand> foundBrand = brandRepository.findById(Long.MAX_VALUE);
+
+        // Assert
+        assertFalse(foundBrand.isPresent(), () -> "Brand should not be present");
+    }
+
+    @Test
+    @DisplayName("Test delete non-existing entity")
+    public void testDeleteNonExistingEntity() {
+        // Arrange
+        Brand brand = createTestBrand();
+        brand.setId(Long.MAX_VALUE); // Non-existing ID
+
+        // Act
+        brandRepository.delete(brand);
+
+        // Assert
+        // No exception should be thrown and nothing should be affected
+    }
+
+    @Test
+    @DisplayName("Test caching of activated brands")
+    public void testCachingActivatedBrands() {
+        // Arrange
+        Brand brand1 = createTestBrand();
+        brand1.setActivated(true);
+        Brand brand2 = createTestBrand();
+        brand2.setActivated(true);
+        brandRepository.save(brand1);
+        brandRepository.save(brand2);
+
+        // Act & Assert - First call should populate the cache
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Brand> brandsFirstCall = brandRepository.findAllByActivatedTrue(pageable);
+        assertEquals(2, brandsFirstCall.getTotalElements(), () -> "There should be two activated brands");
+
+        // Act - Second call should hit the cache
+        Page<Brand> brandsSecondCall = brandRepository.findAllByActivatedTrue(pageable);
+        assertEquals(2, brandsSecondCall.getTotalElements(), () -> "There should be two activated brands from cache");
     }
 }
 

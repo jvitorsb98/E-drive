@@ -5,81 +5,166 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterToken;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ExtendWith(SpringExtension.class)
 public class TokenRepositoryTest {
 
     @Autowired
     private TokenRepository tokenRepository;
 
     @Autowired
-    private UserRepository userRepository; // Adicione um UserRepository
+    private UserRepository userRepository;
 
     private Faker faker;
 
     @BeforeEach
     public void setUp() {
         faker = new Faker();
+        userRepository.deleteAll();
+        tokenRepository.deleteAll();
     }
 
     @Test
-    @Order(1)
-    @Transactional
+    @DisplayName("Should create and find a token by its value")
     public void testCreateAndFindToken() {
-        // Criar e salvar um usuário fictício
+        // Arrange
         User user = new User();
-        // Configure o usuário conforme necessário
-        userRepository.save(user); // Salvar o usuário antes de criar o token
+        userRepository.save(user);
 
-        // Criar um Token com Faker
         String tokenValue = faker.lorem().characters(32);
         Instant expireDate = Instant.now().plusSeconds(3600);
-
         Token token = new Token(new DataRegisterToken(tokenValue, null, expireDate), user);
 
-        // Salvar o token
+        // Act
         tokenRepository.save(token);
-
-        // Encontrar o token pelo valor
         Optional<Token> foundToken = tokenRepository.findByToken(tokenValue);
 
-        // Verificar se o token foi encontrado
-        assertThat(foundToken).isPresent();
-        assertThat(foundToken.get().getToken()).isEqualTo(tokenValue);
-        assertThat(foundToken.get().getExpireDate()).isEqualTo(expireDate);
-        assertThat(foundToken.get().getUser()).isEqualTo(user);
-        assertThat(foundToken.get().getDisabled()).isFalse();
+        // Assert
+        assertTrue(foundToken.isPresent(), () -> "Token should be present in the repository");
+        assertEquals(tokenValue, foundToken.get().getToken(), () -> "Token value should match");
+        assertEquals(expireDate, foundToken.get().getExpireDate(), () -> "Expire date should match");
+        assertEquals(user, foundToken.get().getUser(), () -> "User should match");
+        assertFalse(foundToken.get().getDisabled(), () -> "Token should not be disabled");
     }
 
     @Test
-    @Order(2)
-    @Transactional
+    @DisplayName("Should return empty when finding a non-existent token")
     public void testFindNonExistentToken() {
-        // Tentar encontrar um token que não existe
+        // Act
         Optional<Token> foundToken = tokenRepository.findByToken("nonexistenttoken");
 
-        // Verificar se o token não foi encontrado
-        assertThat(foundToken).isNotPresent();
+        // Assert
+        assertFalse(foundToken.isPresent(),() -> "Token should not be found in the repository");
     }
+
+    @Test
+    @DisplayName("Should update an existing token")
+    public void testUpdateToken() {
+        // Arrange
+        User user = new User();
+        userRepository.save(user);
+
+        String tokenValue = faker.lorem().characters(32);
+        Instant expireDate = Instant.now().plusSeconds(3600);
+        Token token = new Token(new DataRegisterToken(tokenValue, null, expireDate), user);
+        tokenRepository.save(token);
+
+        String newTokenValue = faker.lorem().characters(32);
+        Instant newExpireDate = Instant.now().plusSeconds(7200);
+        token.setToken(newTokenValue);
+        token.setExpireDate(newExpireDate);
+        tokenRepository.save(token);
+
+        // Act
+        Optional<Token> foundToken = tokenRepository.findByToken(newTokenValue);
+
+        // Assert
+        assertTrue(foundToken.isPresent(), () -> "Token should be present in the repository after update");
+        assertEquals(newTokenValue, foundToken.get().getToken(), () -> "Updated token value should match");
+        assertEquals(newExpireDate, foundToken.get().getExpireDate(), () -> "Updated expire date should match");
+    }
+
+    @Test
+    @DisplayName("Should delete a token and not find it anymore")
+    public void testDeleteToken() {
+        // Arrange
+        User user = new User();
+        userRepository.save(user);
+
+        String tokenValue = faker.lorem().characters(32);
+        Instant expireDate = Instant.now().plusSeconds(3600);
+        Token token = new Token(new DataRegisterToken(tokenValue, null, expireDate), user);
+        tokenRepository.save(token);
+
+        // Act
+        tokenRepository.delete(token);
+
+        // Assert
+        Optional<Token> foundToken = tokenRepository.findByToken(tokenValue);
+        assertFalse(foundToken.isPresent(), () -> "Token should be removed from the repository");
+    }
+    
+    @Test
+    @DisplayName("Should ensure that tokens are consistently saved and retrieved")
+    public void testTokenPersistenceConsistency() {
+        // Arrange
+        User user = new User();
+        userRepository.save(user);
+
+        String tokenValue = faker.lorem().characters(32);
+        Instant expireDate = Instant.now().plusSeconds(3600);
+        Token token = new Token(new DataRegisterToken(tokenValue, null, expireDate), user);
+        tokenRepository.save(token);
+
+        // Act
+        Optional<Token> foundTokenFirstTime = tokenRepository.findByToken(tokenValue);
+        Optional<Token> foundTokenSecondTime = tokenRepository.findByToken(tokenValue);
+
+        // Assert
+        assertTrue(foundTokenFirstTime.isPresent(), () -> "Token should be present in the repository");
+        assertTrue(foundTokenSecondTime.isPresent(), () -> "Token should be present in the repository the second time");
+        assertEquals(foundTokenFirstTime.get(), foundTokenSecondTime.get(), () -> "Tokens should be identical");
+    }
+    
+    @Test
+    @DisplayName("Should not alter token if updated with the same values")
+    public void testUpdateTokenWithSameValues() {
+        // Arrange
+        User user = new User();
+        userRepository.save(user);
+
+        String tokenValue = faker.lorem().characters(32);
+        Instant expireDate = Instant.now().plusSeconds(3600);
+        Token token = new Token(new DataRegisterToken(tokenValue, null, expireDate), user);
+        tokenRepository.save(token);
+
+        // Act
+        Token updatedToken = tokenRepository.findByToken(tokenValue).orElseThrow();
+        tokenRepository.save(updatedToken); // Save with the same values
+
+        // Assert
+        Optional<Token> foundToken = tokenRepository.findByToken(tokenValue);
+        assertTrue(foundToken.isPresent(), () ->"Token should be present after saving with the same values");
+        assertEquals(expireDate, foundToken.get().getExpireDate(), () -> "Expire date should remain the same");
+    }
+
+
 }
 

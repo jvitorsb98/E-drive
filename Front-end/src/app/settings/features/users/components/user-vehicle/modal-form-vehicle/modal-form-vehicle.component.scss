@@ -1,0 +1,126 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // Garante que o contêiner ocupe pelo menos 100% da altura da viewport
+}
+
+.col-12 {
+  flex: 1; // Permite que o conteúdo ocupe o espaço disponível
+}
+
+.content {
+  flex: 1; // Faz com que a área de conteúdo cresça para ocupar o espaço disponível
+  display: flex;
+  flex-direction: column; // Permite que os campos do formulário sejam empilhados
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto; // Empurra os botões para o fundo
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.titulo {
+  font-size: 26px;
+  color: #19B6DD;
+  padding: 0;
+  margin: 10 !important;
+  text-align: center;
+}
+
+.seta-voltar {
+  margin-left: -18px;
+  width: 30px;
+  transform: rotate(0deg);
+  transition: 0.3s linear all;
+
+  &:hover {
+      cursor: pointer;
+      box-shadow: 0px 0px 5px 3px #19B6DD;
+      transform: translateX(10px);
+  }
+}
+
+.hover:hover {
+  cursor: pointer;
+}
+
+button[type="button"] {
+  background-color: #19B6DD;
+  color: #FFF;
+
+  &:hover {
+      background-color: #32aecd;
+      box-shadow: 0px 0px 5px 3px #6d6e6e;
+  }
+
+  &[disabled] {
+      background-color: #444444;
+      color: white;
+      border: 1px solid #444444;
+      cursor: not-allowed;
+  }
+}
+
+// Animação do botão de continuar 
+@keyframes pulse {
+  0% {
+      transform: scale(1);
+  }
+
+  30% {
+      transform: scale(1.02);
+  }
+
+  50% {
+      transform: scale(1);
+  }
+}
+
+.pulse-animation {
+  animation: pulse 1s infinite;
+}
+
+.pulse-animation:hover {
+  animation: none;
+}
+
+.custom-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+
+.mat-autocomplete-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 1000; 
+}
+
+.autocomplete-icon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #19B6DD;
+  pointer-events: none;
+  margin-right: 5px; 
+  pointer-events: auto; 
+  cursor: pointer;  
+}
+
+@media (max-width: 350px) {
+  .mat-autocomplete-panel {
+      top: calc(100% + 4px); 
+  }
+}

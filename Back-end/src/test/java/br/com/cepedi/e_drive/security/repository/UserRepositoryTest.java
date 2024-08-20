@@ -3,151 +3,149 @@ package br.com.cepedi.e_drive.security.repository;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @DataJpaTest
 @ActiveProfiles("test")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ExtendWith(SpringExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository; // Removido "static" para permitir a injeção de dependência
+    private UserRepository userRepository;
 
     private Faker faker;
 
     @BeforeEach
     public void setUp() {
         faker = new Faker();
-        userRepository.deleteAll();
-
-    }
-
-    @AfterEach
-    public void tearDown() {
-        userRepository.deleteAll();
+        userRepository.deleteAll(); 
     }
 
     @Test
-    @Order(1)
+    @DisplayName("Should save and find a user by email")
     public void testCreateAndFindUserByEmail() {
-        // Gerar dados com Faker
+        // Arrange
         String email = faker.internet().emailAddress();
         String password = faker.internet().password();
         String name = faker.name().fullName();
-
-        // Criar e salvar um usuário
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
         user.setName(name);
 
-        User savedUser = userRepository.save(user);
-
-        // Buscar o usuário pelo e-mail
+        // Act
+        userRepository.save(user);
         User foundUser = userRepository.findByEmail(email);
 
-        // Verificar se o usuário foi encontrado e se os dados estão corretos
-        assertThat(foundUser).isNotNull();
-        assertThat(foundUser.getEmail()).isEqualTo(email);
-        assertThat(foundUser.getPassword()).isEqualTo(password);
-        assertThat(foundUser.getName()).isEqualTo(name);
+        // Assert
+        assertEquals(email, foundUser.getEmail(), () -> "Expected email to be " + email + " but was " + foundUser.getEmail());
+        assertEquals(password, foundUser.getPassword(), () -> "Expected password to be " + password + " but was " + foundUser.getPassword());
+        assertEquals(name, foundUser.getName(), () -> "Expected name to be " + name + " but was " + foundUser.getName());
     }
 
     @Test
-    @Order(2)
+    @DisplayName("Should return null when finding a user by non-existent email")
     public void testFindUserByNonExistentEmail() {
-        // Tentar buscar um usuário com um e-mail que não existe
+        // Arrange
         String nonExistentEmail = faker.internet().emailAddress();
+
+        // Act
         User foundUser = userRepository.findByEmail(nonExistentEmail);
 
-        // Verificar que o usuário não foi encontrado
-        assertThat(foundUser).isNull();
+        // Assert
+        assertNull(foundUser, () -> "Expected no user to be found for email " + nonExistentEmail);
     }
 
     @Test
-    @Order(3)
+    @DisplayName("Should update a user and reflect the changes")
     public void testUpdateUser() {
-        // Gerar dados com Faker
+        // Arrange
         String email = faker.internet().emailAddress();
         String password = faker.internet().password();
         String name = faker.name().fullName();
-
-        // Criar e salvar um usuário
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
         user.setName(name);
-
         User savedUser = userRepository.save(user);
 
-        // Atualizar os dados do usuário
+        // Act
         String newName = faker.name().fullName();
         savedUser.setName(newName);
-        userRepository.save(savedUser); // Salvar as alterações
-
-        // Buscar o usuário atualizado pelo e-mail
+        userRepository.save(savedUser); // Atualiza o usuário
         User foundUser = userRepository.findByEmail(email);
 
-        // Verificar se os dados foram atualizados corretamente
-        assertThat(foundUser).isNotNull();
-        assertThat(foundUser.getName()).isEqualTo(newName);
+        // Assert
+        assertEquals(newName, foundUser.getName(), () -> "Expected updated name to be " + newName + " but was " + foundUser.getName());
     }
 
+
     @Test
-    @Order(4)
+    @DisplayName("Should delete a user and not find it by email")
     public void testDeleteUser() {
-        // Gerar dados com Faker
+        // Arrange
         String email = faker.internet().emailAddress();
         String password = faker.internet().password();
         String name = faker.name().fullName();
-
-        // Criar e salvar um usuário
         User user = new User();
         user.setEmail(email);
         user.setPassword(password);
         user.setName(name);
-
         User savedUser = userRepository.save(user);
 
-        // Excluir o usuário
+        // Act
         userRepository.delete(savedUser);
-
-        // Tentar buscar o usuário pelo e-mail
         User foundUser = userRepository.findByEmail(email);
 
-        // Verificar que o usuário não foi encontrado após a exclusão
-        assertThat(foundUser).isNull();
+        // Assert
+        assertNull(foundUser, () -> "Expected no user to be found for email " + email + " after deletion");
+    }
+
+
+
+
+    @Test
+    @DisplayName("Should return true if the email exists")
+    public void testExistsByEmail() {
+        // Arrange
+        String email = faker.internet().emailAddress();
+        String password = faker.internet().password();
+        String name = faker.name().fullName();
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setName(name);
+        userRepository.save(user);
+
+        // Act
+        boolean exists = userRepository.existsByEmail(email);
+
+        // Assert
+        assertEquals(true, exists, () -> "Expected existsByEmail to return true for email " + email + " but returned false");
     }
 
     @Test
-    @Order(5)
-    public void testSaveAndFindMultipleUsers() {
-        // Gerar dados com Faker
-        for (int i = 0; i < 5; i++) {
-            String email = faker.internet().emailAddress();
-            String password = faker.internet().password();
-            String name = faker.name().fullName();
+    @DisplayName("Should return false if the email does not exist")
+    public void testExistsByNonExistentEmail() {
+        // Arrange
+        String nonExistentEmail = faker.internet().emailAddress();
 
-            // Criar e salvar um usuário
-            User user = new User();
-            user.setEmail(email);
-            user.setPassword(password);
-            user.setName(name);
+        // Act
+        boolean exists = userRepository.existsByEmail(nonExistentEmail);
 
-            userRepository.save(user);
-        }
-
-        // Verificar se vários usuários foram salvos corretamente
-        assertThat(userRepository.findAll()).hasSize(5);
+        // Assert
+        assertEquals(false, exists, () -> "Expected existsByEmail to return false for non-existent email " + nonExistentEmail + " but returned true");
     }
 
+
+
 }
+
+
