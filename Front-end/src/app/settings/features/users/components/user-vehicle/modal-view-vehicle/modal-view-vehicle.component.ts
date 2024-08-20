@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { UserVehicle } from '../../../../../core/models/user-vehicle';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Vehicle } from '../../../../../core/models/vehicle';
+import { Vehicle } from '../../../../../core/models/Vehicle';
 
 @Component({
   selector: 'app-modal-view-vehicle',

@@ -26,7 +26,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/vehicle-users")
+@RequestMapping("/api/v1/vehicle-users")
 @SecurityRequirement(name = "bearer-key")
 @Tag(name = "Vehicle User", description = "Vehicle User management")
 public class VehicleUserController {

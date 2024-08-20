@@ -1,4 +1,4 @@
-import { Brand } from "./brand";
+import { Brand } from "./Brand";
 
 export class Model {
   id!: number

@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
-import { Vehicle } from '../../../../core/models/vehicle';
+import { Vehicle } from '../../../../core/models/Vehicle';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { forkJoin } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
