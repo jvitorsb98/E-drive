@@ -14,6 +14,9 @@ export class UserUpdateComponent implements OnInit {
   isEditing: boolean = false; // Controla o modo de edição
   userForm!: FormGroup;
   user: User = new User();
+  phoneType: string = 'MOBILE';
+  minDate: Date | null = null;
+  maxDate: Date | null = null;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -39,6 +42,7 @@ export class UserUpdateComponent implements OnInit {
   private loadUserData() {
     this.userService.getAuthenticatedUserDetails().subscribe(
       (user: User) => {
+        console.log('Dados do usuário:', user);
         this.user = user;
         this.userForm.patchValue({
           name: user.name || '',

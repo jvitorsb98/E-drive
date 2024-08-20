@@ -16,7 +16,7 @@ export class UserService {
   }
 
   // Método para obter o usuário logado
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIiwiaXNzIjoiQVBJIFZvbGwubWVkIiwiaWQiOjEsImV4cCI6MTcyNDA0MzE5NSwiZW1haWwiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIn0.QVIu6jMCSMgLFJa_GfeOTne2hfFiQhy7BXYIwaJqFa8';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIiwiaXNzIjoiQVBJIFZvbGwubWVkIiwiaWQiOjEsImV4cCI6MTcyNDExOTYwNSwiZW1haWwiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIn0.avom28z_u-AZZCAojmb70Up6OwY0ODQbLIpsHpgn3Oc';
 
     // Método para obter o usuário logado
     getAllUsers(): Observable<User[]> {

@@ -2,32 +2,38 @@
 
   <!-- Formulário de visualização dos dados do usuário -->
   <div class="container-form" *ngIf="!isEditing">
-    <h1>Dados Pessoais</h1>
+    <h1 class="title">Dados Pessoais</h1>
     <form [formGroup]="userForm">
       <!-- Nome -->
-      <div class="form-group">
+      <div class="form-group mt-5">
+        <mat-card>
         <mat-form-field appearance="fill">
           <mat-label>Nome completo:</mat-label>
           <input matInput formControlName="name" readonly />
         </mat-form-field>
+        </mat-card>
       </div>
 
       <!-- Data de nascimento -->
       <div class="form-group">
+        <mat-card>
         <mat-form-field appearance="fill">
           <mat-label>Data de Nascimento:</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="birth" readonly />
           <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
+      </mat-card>
       </div>
 
       <!-- Telefone celular -->
       <div class="form-group">
+        <mat-card>
         <mat-form-field appearance="fill">
           <mat-label>Telefone:</mat-label>
           <input matInput formControlName="cellPhone" readonly />
         </mat-form-field>
+        </mat-card>
       </div>
 
       <!-- Botões -->
@@ -43,38 +49,84 @@
     <h1>Alterar Dados</h1>
     <form [formGroup]="userForm" (ngSubmit)="updateUser()">
       <!-- Nome -->
-      <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Nome completo:</mat-label>
-          <input matInput formControlName="name" required />
-          <mat-error *ngIf="userForm.get('name')?.hasError('required')">O nome é obrigatório.</mat-error>
-          <mat-error *ngIf="userForm.get('name')?.hasError('minlength')">O nome deve ter pelo menos 2 caracteres.</mat-error>
-        </mat-form-field>
+      <div class="form-group mt-5">
+        <mat-card>
+          <mat-form-field>
+            <mat-label>Nome completo:</mat-label>
+            <input
+            type="text"
+            name="name"
+            matInput
+            formControlName="name"
+            required
+            aria-describedby="Help" />
+            <!-- <mat-hint id="Help" class="mat-hint-text">O <strong>Usuário</strong> será utilizado para login.</mat-hint> -->
+          </mat-form-field>
+          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('hasNumbers')">
+            <mat-error class="mat-error-text">O <strong>Nome</strong> não pode conter números.</mat-error>
+          </div>
+          <div *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.touched">
+            <mat-error class="mat-error-text">O <strong>Usuário</strong> é obrigatório.</mat-error>
+          </div>
+          <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength') && !userForm.get('name')?.hasError('hasNumbers')">
+            <mat-error class="mat-error-text">O <strong>Nome</strong> deve ter pelo menos {{
+              userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+          </div>
+        </mat-card>
       </div>
 
       <!-- Data de nascimento -->
       <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Data de Nascimento:</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="birth" required readonly />
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
+        <mat-card>
+          <mat-form-field>
+            <mat-label>Data de nascimento:</mat-label>
+            <input
+            matInput
+            [matDatepicker]="picker"
+            [min]="minDate"
+            [max]="maxDate"
+            name="birth"
+            formControlName="birth"
+            readonly required
+            aria-describedby="Help" />
+            <!-- <mat-hint id="Help" class="mat-hint-text">É para sua segurança. Por isso pedimos sua <strong>data</strong></mat-hint> -->
+            <mat-datepicker-toggle matIconSuffix class="custom-icon" [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker>
+              <mat-datepicker-actions>
+                <button mat-button matDateRangePickerCancel class="cancel-button">Cancelar</button>
+                <button mat-raised-button matDateRangePickerApply class="apply-button">Confirmar</button>
+              </mat-datepicker-actions>
+            </mat-datepicker>
+            <mat-error class="mat-error-codigo-text">A <strong>Data de Nascimento</strong> é obrigatoria.</mat-error>
+          </mat-form-field>
+        </mat-card>
       </div>
 
       <!-- Telefone celular -->
       <div class="form-group">
-        <mat-form-field appearance="fill">
-          <mat-label>Telefone:</mat-label>
-          <input matInput formControlName="cellPhone" required />
-          <mat-error *ngIf="userForm.get('cellPhone')?.hasError('required')">O telefone celular é obrigatório.</mat-error>
+        <mat-card>
+        <mat-form-field appearance="fill" class="custom-input">
+          <mat-label>Telefone celular:</mat-label>
+          <input
+          type="text"
+          matInput
+          [placeholder]="'(xx) xxxxx-xxxx'"
+          [mask]="phoneType | phoneMask"
+          formControlName="cellPhone"
+          required
+          aria-describedby="Help" />
+          <mat-icon matSuffix class="custom-icon">phone</mat-icon>
+          <!-- <mat-hint [ngStyle]="{'white-space': 'nowrap'}" id="Help" class="mat-hint-cellPhone-text">Preencha apenas os <strong>números.</strong></mat-hint> -->
+          <mat-error class="mat-hint-cellPhone-text" [ngStyle]="{'white-space': 'nowrap'}" *ngIf="userForm.get('cellPhone')?.hasError('required')">O <strong>telefone celular</strong> é obrigatório.</mat-error>
+          <mat-error class="mat-hint-cellPhone-text" [ngStyle]="{'white-space': 'nowrap'}" *ngIf="userForm.get('cellPhone')?.hasError('mask') && userForm.get('cellPhone')?.dirty">O <strong>Telefone</strong> é inválido.</mat-error>
         </mat-form-field>
+        </mat-card>
       </div>
 
       <!-- Botões -->
       <div class="button-group mt-5">
-        <button mat-raised-button color="primary" type="submit" (click)="updateUser()" >Salvar Dados</button>
-        <button mat-raised-button color="warn" type="button" (click)="cancelEdit()">Cancelar</button>
+        <button class="apply-button" mat-raised-button color="primary" type="submit" (click)="updateUser()" >Salvar Dados</button>
+        <button class="cancel-button" mat-raised-button color="warn" type="button" (click)="cancelEdit()">Cancelar</button>
       </div>
     </form>
   </div>

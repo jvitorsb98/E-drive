@@ -24,7 +24,7 @@ body {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -59,9 +59,22 @@ h1 {
   font-weight: bold;
 }
 
-button[mat-raised-button][color="warn"] {
-  background-color: #fbe9e7;
-  color: #d32f2f;
+// button[mat-raised-button][color="warn"] {
+//   background-color: #fbe9e7;
+//   color: #d32f2f;
+// }
+.custom-icon {
+  color: #19B6DD;
+}
+
+.apply-button {
+  background-color: #19B6DD !important;
+  color: white !important;
+}
+
+.cancel-button {
+  background-color: red !important;
+  color: white !important;
 }
 
 /* Desktop-specific styles */
