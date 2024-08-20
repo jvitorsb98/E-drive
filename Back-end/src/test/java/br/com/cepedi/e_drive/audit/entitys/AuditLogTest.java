@@ -121,12 +121,15 @@ public class AuditLogTest {
     @Test
     @DisplayName("Test AuditLog timestamp is set during creation")
     void testAuditLogTimestamp() {
+        // Arrange
+        Date beforeCreation = new Date();
+
         // Act
         Date timestamp = auditLog.getTimestamp();
 
         // Assert
         assertNotNull(timestamp, () -> "Timestamp should not be null after creation.");
-        assertTrue(timestamp.before(new Date()), () -> "Timestamp should be before the current time.");
+        assertTrue(!timestamp.after(beforeCreation), () -> "Timestamp should be before or equal to the current time.");
     }
 }
 

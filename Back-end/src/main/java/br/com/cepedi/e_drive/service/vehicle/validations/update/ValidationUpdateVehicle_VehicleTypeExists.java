@@ -15,7 +15,7 @@ public class ValidationUpdateVehicle_VehicleTypeExists implements ValidationUpda
     @Override
     public void validate(DataUpdateVehicle data) {
         if(data.typeId()!=null){
-            if(!vehicleTypeRepository.existsById(data.modelId())){
+            if(!vehicleTypeRepository.existsById(data.typeId())){
                 throw new ValidationException("The provided vehicle type id does not exist");
             }
         }
