@@ -67,12 +67,13 @@ public class VehicleUserServiceTest {
 		// Arrange
 		User user = new User();
 		user.setId(1L);
+		user.setEmail("email@email.com");
 
 		Vehicle vehicle = new Vehicle();
 		vehicle.setId(1L);
 
 		DataRegisterVehicleUser data = new DataRegisterVehicleUser(
-				1L, 1L, 
+				1L,
 				new DataRegisterAutonomy(
 						BigDecimal.valueOf(10), 
 						BigDecimal.valueOf(8), 
@@ -93,7 +94,7 @@ public class VehicleUserServiceTest {
 		when(validationRegisterVehicleUserList.get(0)).thenReturn(mockValidation);
 
 		// Act
-		vehicleUserService.register(data);
+		vehicleUserService.register(data,user.getEmail());
 
 		// Assert
 		verify(validationRegisterVehicleUserList).forEach(any());
@@ -233,15 +234,18 @@ public class VehicleUserServiceTest {
 		Long userId = 1L;
 		Pageable pageable = mock(Pageable.class);
 
-		User user = new User();
-		user.setId(userId);
+		String email = "test@example.com";  // Defina um e-mail para o teste
+
+		User user = mock(User.class);  // Mock o User
+		when(user.getId()).thenReturn(userId);  // Certifique-se de que getId() retorna o userId
+		when(user.getEmail()).thenReturn(email);  // Mock o e-mail do User
 
 		Vehicle vehicle = new Vehicle();
 		vehicle.setId(1L);
 
 		VehicleUser vehicleUser = new VehicleUser();
 		vehicleUser.setId(1L);
-		vehicleUser.setUser(user);
+		vehicleUser.setUser(user);  // Configure o User mockado
 		vehicleUser.setVehicle(vehicle);
 		vehicleUser.setMileagePerLiterRoad(BigDecimal.valueOf(10));
 		vehicleUser.setMileagePerLiterCity(BigDecimal.valueOf(8));
@@ -251,21 +255,21 @@ public class VehicleUserServiceTest {
 
 		Page<VehicleUser> page = new PageImpl<>(Collections.singletonList(vehicleUser));
 
+		when(userRepository.findByEmail(email)).thenReturn(user);  // Mock o retorno do repositório de usuários
 		when(vehicleUserRepository.findByUserId(userId, pageable)).thenReturn(page);
 
 		// Act
-		Page<DataVehicleUserDetails> result = vehicleUserService.getVehicleUsersByUser(userId, pageable);
+		Page<DataVehicleUserDetails> result = vehicleUserService.getVehicleUsersByUser(email, pageable);
 
 		// Assert
-		assertNotNull(result,
-				() -> "Result should not be null");
-		assertEquals(1, result.getTotalElements(),
-				() -> "Total elements should be 1");
+		assertNotNull(result, "Result should not be null");
+		assertEquals(1, result.getTotalElements(), "Total elements should be 1");
 
 		DataVehicleUserDetails details = result.getContent().get(0);
-		assertEquals(user.getId(), details.userId(),
-				() -> "User ID should match");
+		assertEquals(userId, details.userId(), "User ID should match");
 	}
+
+
 
 
 	@Test

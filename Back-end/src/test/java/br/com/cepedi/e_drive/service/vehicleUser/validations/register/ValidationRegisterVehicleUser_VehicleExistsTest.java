@@ -34,7 +34,7 @@ public class ValidationRegisterVehicleUser_VehicleExistsTest {
     void testValidate_WhenVehicleDoesNotExist() {
         // Arrange
         Long vehicleId = 1L;
-        DataRegisterVehicleUser data = new DataRegisterVehicleUser(1L, vehicleId, null); // Mock userId
+        DataRegisterVehicleUser data = new DataRegisterVehicleUser(vehicleId, null); // Mock userId
         when(vehicleRepository.existsById(vehicleId)).thenReturn(false);
 
         // Act & Assert
@@ -49,7 +49,7 @@ public class ValidationRegisterVehicleUser_VehicleExistsTest {
     void testValidate_WhenVehicleExists() {
         // Arrange
         Long vehicleId = 1L;
-        DataRegisterVehicleUser data = new DataRegisterVehicleUser(1L, vehicleId, null); // Mock userId
+        DataRegisterVehicleUser data = new DataRegisterVehicleUser(vehicleId, null); // Mock userId
         when(vehicleRepository.existsById(vehicleId)).thenReturn(true);
 
         // Act & Assert

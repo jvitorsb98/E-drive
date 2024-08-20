@@ -73,8 +73,16 @@ public class VehicleServiceTest {
     @DisplayName("Should register a vehicle correctly")
     void testRegister() {
         // Arrange
+        // Arrange
+        Brand mockBrand = new Brand();
+        mockBrand.setId(1L);
+        mockBrand.setName("BrandName");
+
         Model mockModel = new Model();
         mockModel.setId(1L);
+        mockModel.setName("ModelName");
+        mockModel.setBrand(mockBrand);
+
 
         Category mockCategory = new Category();
         mockCategory.setId(2L);
@@ -141,8 +149,14 @@ public class VehicleServiceTest {
         vehicle.setMotor("V8 Engine");
         vehicle.setVersion("2024 Model");
 
+        Brand brand = new Brand();
+        brand.setId(1L);
+        brand.setName("BrandName");
+
         Model model = new Model();
         model.setId(1L);
+        model.setName("ModelName");
+        model.setBrand(brand);
         vehicle.setModel(model);
 
         Category category = new Category();
@@ -179,8 +193,14 @@ public class VehicleServiceTest {
     @DisplayName("Should get vehicles by category correctly")
     void testGetVehiclesByCategory() {
         // Arrange
+
+        Brand brand = new Brand();
+        brand.setId(1L);
+
+
         Model model = new Model();
         model.setId(1L);
+        model.setBrand(brand);
 
         Category category = new Category();
         category.setId(1L);
@@ -225,8 +245,14 @@ public class VehicleServiceTest {
         vehicle.setId(1L);
         vehicle.setMotor("V8 Engine");
 
+        Brand brand = new Brand();
+        brand.setId(1L);
+        brand.setName("BrandName");
+
         Model model = new Model();
-        model.setId(modelId);
+        model.setId(1L);
+        model.setName("ModelName");
+        model.setBrand(brand);
         vehicle.setModel(model);
 
         Category category = new Category();
@@ -267,9 +293,16 @@ public class VehicleServiceTest {
         vehicle.setId(1L);
         vehicle.setMotor("V8 Engine");
 
+        Brand brand = new Brand();
+        brand.setId(1L);
+        brand.setName("BrandName");
+
         Model model = new Model();
         model.setId(1L);
+        model.setName("ModelName");
+        model.setBrand(brand);
         vehicle.setModel(model);
+
 
         Category category = new Category();
         category.setId(1L);
@@ -305,12 +338,16 @@ public class VehicleServiceTest {
     void testGetVehiclesByBrand() {
         // Arrange
         Long brandId = 3L;
-        Vehicle vehicle = new Vehicle();
-        vehicle.setId(1L);
-        vehicle.setMotor("V8 Engine");
+        Brand brand = new Brand();
+        brand.setId(brandId);
 
         Model model = new Model();
         model.setId(1L);
+        model.setBrand(brand); // Certifique-se de setar a marca corretamente.
+
+        Vehicle vehicle = new Vehicle();
+        vehicle.setId(1L);
+        vehicle.setMotor("V8 Engine");
         vehicle.setModel(model);
 
         Category category = new Category();
@@ -352,8 +389,14 @@ public class VehicleServiceTest {
         vehicle.setMotor("Motor");
         vehicle.setVersion("Version");
 
+        Brand brand = new Brand();
+        brand.setId(1L);
+        brand.setName("BrandName");
+
         Model model = new Model();
         model.setId(1L);
+        model.setName("ModelName");
+        model.setBrand(brand);
         vehicle.setModel(model);
 
         Category category = new Category();
@@ -385,6 +428,7 @@ public class VehicleServiceTest {
         assertEquals(vehicle.getMotor(), result.getContent().get(0).motor(), () -> "Vehicle motor should match.");
     }
 
+
     @Test
     @DisplayName("Should return vehicles by autonomy ID")
     void testGetVehiclesByAutonomy() {
@@ -394,9 +438,16 @@ public class VehicleServiceTest {
         vehicle.setId(1L);
         vehicle.setMotor("V8 Engine");
 
+        Brand brand = new Brand();
+        brand.setId(1L);
+        brand.setName("BrandName");
+
         Model model = new Model();
         model.setId(1L);
+        model.setName("ModelName");
+        model.setBrand(brand);
         vehicle.setModel(model);
+
 
         Category category = new Category();
         category.setId(1L);
@@ -456,8 +507,14 @@ public class VehicleServiceTest {
         Long propulsionId = 3L;
         Long autonomyId = 5L;
 
+        // Criação da Brand e associação com Model
+        Brand mockBrand = mock(Brand.class);
+        when(mockBrand.getId()).thenReturn(1L);
+        when(mockBrand.getName()).thenReturn("BrandName");
+
         Model mockModel = mock(Model.class);
         when(mockModel.getId()).thenReturn(modelId);
+        when(mockModel.getBrand()).thenReturn(mockBrand);
 
         Category mockCategory = mock(Category.class);
         when(mockCategory.getId()).thenReturn(categoryId);
@@ -522,7 +579,7 @@ public class VehicleServiceTest {
         assertEquals("New Motor", result.motor(), () -> "Motor should be updated.");
         assertEquals("New Version", result.version(), () -> "Version should be updated.");
     }
-    
+
     @Test
     @DisplayName("Should disable vehicle correctly")
     void testDisableVehicle() {

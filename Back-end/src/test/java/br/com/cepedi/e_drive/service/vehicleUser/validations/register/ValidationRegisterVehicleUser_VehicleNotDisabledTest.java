@@ -35,7 +35,7 @@ public class ValidationRegisterVehicleUser_VehicleNotDisabledTest {
     void testValidate_WhenVehicleIsDisabled() {
         // Arrange
         Long vehicleId = 1L;
-        DataRegisterVehicleUser data = new DataRegisterVehicleUser(1L, vehicleId, null); // Mock userId
+        DataRegisterVehicleUser data = new DataRegisterVehicleUser(vehicleId, null); // Mock userId
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicleRepository.existsById(vehicleId)).thenReturn(true);
         when(vehicleRepository.getReferenceById(vehicleId)).thenReturn(vehicle);
@@ -53,7 +53,7 @@ public class ValidationRegisterVehicleUser_VehicleNotDisabledTest {
     void testValidate_WhenVehicleIsActive() {
         // Arrange
         Long vehicleId = 1L;
-        DataRegisterVehicleUser data = new DataRegisterVehicleUser(1L, vehicleId, null); // Mock userId
+        DataRegisterVehicleUser data = new DataRegisterVehicleUser(vehicleId, null); // Mock userId
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicleRepository.existsById(vehicleId)).thenReturn(true);
         when(vehicleRepository.getReferenceById(vehicleId)).thenReturn(vehicle);
@@ -68,7 +68,7 @@ public class ValidationRegisterVehicleUser_VehicleNotDisabledTest {
     void testValidate_WhenVehicleDoesNotExist() {
         // Arrange
         Long vehicleId = 1L;
-        DataRegisterVehicleUser data = new DataRegisterVehicleUser(1L, vehicleId, null); // Mock userId
+        DataRegisterVehicleUser data = new DataRegisterVehicleUser(vehicleId, null); // Mock userId
         when(vehicleRepository.existsById(vehicleId)).thenReturn(false);
 
         // Act & Assert
