@@ -45,35 +45,6 @@ export class UserVehicleComponent {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
-  // getListUserVehicles() {
-  //   this.userVehicleService.getAllUserVehicle().subscribe({
-  //     next: (response: any) => {
-  //       console.log('Response from getAllUserVehicle:', response);
-
-  //       if (response && Array.isArray(response.content)) {
-  //         this.userVehicleList = response.content;
-
-  //         // Cria um array de observables para buscar detalhes dos veículos
-  //         const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
-  //           this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
-  //         );
-
-  //         // Usa forkJoin para esperar até que todas as requisições estejam completas
-  //         forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-  //           this.userVehicleDetails = vehicles;
-  //           this.dataSource.data = this.userVehicleDetails;
-  //           console.log(this.dataSource)
-  //         });
-  //       } else {
-  //         console.error('Expected an array in response.content but got:', response.content);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching userVehicles:', err);
-  //     }
-  //   });
-  // }
-
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {

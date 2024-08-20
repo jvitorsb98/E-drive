@@ -205,7 +205,7 @@ export class ModalFormVehicleComponent implements OnInit {
       };
       console.log(dataRegisterVehicleUser)
 
-      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTAxMzk4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.DmpcZfLIXbvcVg8g5QOSHS7-oG7TLq9kapiXJDf-REM';
+      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTg1MDM1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.3Dqs6f-eUeeohrepHuol0XdDKD5L76zCzNZjtZyYCsY';
       this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
         response => {
           console.log('Cadastro realizado com sucesso!', response);
