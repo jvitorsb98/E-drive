@@ -11,7 +11,7 @@ export class ModelService {
 
   private modelUrl: string;
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTEzNzY2LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.-DJy0TlkqNoyc2X_xBED_W1ZHseCsrsfSUXyioFOTHY';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTg0MTEwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.7wXWwVViNPcDHAfn0HAT5i0cHXwM-N_Q_szZfVVofOE';
 
   constructor(private http: HttpClient) {
     this.modelUrl = `${environment.apiUrl}/api/v1/models`;
