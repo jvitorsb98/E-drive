@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
-import { LoginRequest } from '../../../../core/models/ineter-Login';
+import { ILoginRequest } from '../../../interface/inter-Login';
 import { ResetPasswordComponent } from '../recover-password/reset-password/reset-password.component';
 import { Router } from '@angular/router';
 
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 })
 export class UserLoginModalComponent {
   loginForm !: FormGroup;
-  loginRequest!: LoginRequest;
+  loginRequest!: ILoginRequest;
   isLoading = false;
   errorMessage: string | null = null;
 

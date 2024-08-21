@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
-import { LoginRequest, ResetPasswordRequest, ResetPasswordResponse } from '../../../models/ineter-Login';
+import { ILoginRequest, IResetPasswordRequest, IResetPasswordResponse } from '../../../interface/inter-Login';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
@@ -20,7 +20,7 @@ export class AuthService {
     this.apiUrl = `${environment.apiUrl}/auth`;
   }
 
-  login(credential: LoginRequest): Observable<any> {
+  login(credential: ILoginRequest): Observable<any> {
     // rever essa logica
     todo: //console.log(crede ntial); remover
     console.log("Login:", credential);
@@ -72,8 +72,8 @@ export class AuthService {
     return throwError(() => new Error(error || 'Server Error'));
   }
 
-  resetPassword(email: ResetPasswordRequest): Observable<ResetPasswordResponse> {
-    return this.http.post<ResetPasswordResponse>(this.apiUrl + '/reset-password', email);
+  resetPassword(email: IResetPasswordRequest): Observable<IResetPasswordResponse> {
+    return this.http.post<IResetPasswordResponse>(this.apiUrl + '/reset-password', email);
   }
 
 }
