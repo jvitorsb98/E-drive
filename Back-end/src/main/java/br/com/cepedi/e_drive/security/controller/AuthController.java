@@ -184,4 +184,21 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    @Transactional
+    @Operation(summary = "User logout", description = "Logs out the user by revoking their authentication token.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Logout successful"),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired token",
+                    content = @Content)
+    })
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+        try {
+            authService.logout(token);
+            return ResponseEntity.ok("Logout successful");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
 }

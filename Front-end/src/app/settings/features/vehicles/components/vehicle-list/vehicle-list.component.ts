@@ -4,7 +4,6 @@ import { Vehicle } from '../../../../core/models/Vehicle';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MockData } from '../../../../core/models/moke/MockData';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -50,7 +49,6 @@ export class VehicleListComponent {
     //   }
     // });
 
-    this.listVehicles = MockData.mockVehicles(); // Obtém os dados mockados
     this.dataSource = new MatTableDataSource(this.listVehicles);
     // this.dataSource.data = this.listVehicles;
     this.dataSource.paginator = this.paginator;

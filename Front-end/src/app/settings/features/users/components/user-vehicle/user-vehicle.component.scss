@@ -5,13 +5,29 @@
   box-shadow: .2px 10px 15px rgba(0, 0, 0, 0.7);
   margin: 5% auto;
   padding: 10px;
+  overflow-x: auto;
+  /* Adiciona rolagem horizontal se necessário */
 }
 
 .container-table {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0% 0%;
+  text-align: left;
+  font-size: 10px;
+}
+
+/* Outras regras */
 #table-container .table-check-button:checked,
 #table-container button[type="button"] {
   background-color: #19B6DD;
@@ -33,15 +49,15 @@
 // Animação do botão de continuar 
 @keyframes pulse {
   0% {
-    transform: scale(1);
+      transform: scale(1);
   }
 
   30% {
-    transform: scale(1.02);
+      transform: scale(1.02);
   }
 
   50% {
-    transform: scale(1);
+      transform: scale(1);
   }
 }
 
@@ -62,16 +78,14 @@
   &:hover {
     cursor: pointer;
     box-shadow: 0px 0px 5px 3px #19B6DD;
-    // transform: rotate(359deg);
     transform: translateX(10px);
   }
 }
 
-/* container-fluid pt-3 */
-
 .custom-filter {
   display: flex;
   width: 100%;
+  margin-bottom: -15px;
 }
 
 .custom-filter mat-form-field {
@@ -94,7 +108,6 @@
   margin: 0 !important;
 }
 
-/* Tabela */
 .no-data {
   padding: 8px 14px;
   font-weight: 400;
@@ -102,18 +115,14 @@
   color: #19B6DD;
 }
 
-tr {
-  height: 40px;
-}
-
-.th-table {
+th {
   font-size: 12px;
   font-weight: 350;
   color: #5a5a5a;
 }
 
-.td-table {
-  font-size: 10px;
+td {
+  font-size: 9px;
   font-weight: 350;
   color: #8f8f8f;
 }
@@ -133,12 +142,22 @@ tr {
 }
 
 .icone-carro {
+  font-size: 20px;
   color: #767676;
-  margin-right: 10px; 
-  cursor: pointer; 
+  margin-right: 10px;
+  cursor: pointer;
   transition: color 0.3s;
 
   &:hover {
-    color: #19B6DD; 
+    color: #19B6DD;
   }
 }
+
+.th-table mat-icon {
+  font-size: 20px;
+}
+
+// Utiliza dessa forma, quando as Ações estão separadas por detalhe, edit e excluir
+// .th-table {
+//   font-size: 10px;
+// }

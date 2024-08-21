@@ -1,3 +1,4 @@
+import { UserDataService } from './../../../../core/services/user/userdata/user-data.service';
 import { Component, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -10,6 +11,7 @@ import { forkJoin } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
+import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
 
 @Component({
   selector: 'app-user-vehicle',
@@ -17,8 +19,7 @@ import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehic
   styleUrl: './user-vehicle.component.scss'
 })
 export class UserVehicleComponent {
-  // displayedColumns: string[] = ['mark', 'model', 'version', 'actions'];
-  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'Details', 'edit', 'delete'];
+  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions'];
   dataSource = new MatTableDataSource<Vehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: Vehicle[] = [];
@@ -29,6 +30,7 @@ export class UserVehicleComponent {
   constructor(
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
+    private userDataService: UserDataService,
     private dialog: MatDialog) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
   }
@@ -87,7 +89,7 @@ export class UserVehicleComponent {
 
           // Usa forkJoin para esperar até que todas as requisições estejam completas
           forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-            this.userVehicleDetails = vehicles;
+            this.userVehicleDetails = vehicles.map(vehicle => this.formatVehicleData(vehicle));
             this.dataSource.data = this.userVehicleDetails;
             console.log(this.dataSource);
           });
@@ -99,6 +101,14 @@ export class UserVehicleComponent {
         console.error('Error fetching userVehicles:', err);
       }
     });
+  }
+
+  formatVehicleData(vehicle: Vehicle): Vehicle {
+    vehicle.model.name = this.userDataService.capitalizeWords(vehicle.model.name);
+    vehicle.version = this.userDataService.capitalizeWords(vehicle.version);
+    vehicle.motor = this.userDataService.capitalizeWords(vehicle.motor);
+    vehicle.type.name = this.userDataService.getVehicleTypeDisplay(vehicle.type.name);
+    return vehicle;
   }
 
   applyFilter(event: Event) {
@@ -114,8 +124,20 @@ export class UserVehicleComponent {
   openModalViewVeicle(userVehicle: Vehicle) {
     this.dialog.open(ModalViewVehicleComponent, {
       width: '600px',
-      height: '570px',
+      height: '510px',
       data: userVehicle
     });
   }
+
+  openModalAddUserVehicle() {
+    this.dialog.open(ModalFormVehicleComponent, {
+      width: '600px',
+      height: '810px',
+      data: {}
+    }).afterClosed().subscribe(() => this.getListUserVehicles());
+  }
+
+
+
+
 }

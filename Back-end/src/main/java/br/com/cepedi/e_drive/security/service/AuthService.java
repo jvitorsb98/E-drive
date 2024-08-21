@@ -59,6 +59,15 @@ public class AuthService implements UserDetailsService {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
     }
+
+    public void logout(String token) {
+        String tokenWithoutBearer = token.replace("Bearer ", "");
+        if (tokenService.isValidToken(tokenWithoutBearer)) {
+            tokenService.revokeToken(tokenWithoutBearer);
+        } else {
+            throw new IllegalArgumentException("Invalid or expired token.");
+        }
+    }
     
     
 }

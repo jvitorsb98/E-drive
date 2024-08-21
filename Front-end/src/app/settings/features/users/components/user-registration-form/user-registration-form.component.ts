@@ -11,6 +11,7 @@ import { noNumbersValidator } from '../../../../shared/validators/no-numbers.val
 import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
+
 @Component({
   selector: 'app-user-registration-form',
   templateUrl: './user-registration-form.component.html',

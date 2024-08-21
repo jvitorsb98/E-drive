@@ -24,7 +24,7 @@ import { DeshboardComponent } from './settings/features/home/components/deshboar
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
-import { ModalEditVehicleComponent } from './settings/features/users/components/user-vehicle/modal-edit-vehicle/modal-edit-vehicle.component';
+import { ModalFormVehicleComponent } from './settings/features/users/components/user-vehicle/modal-form-vehicle/modal-form-vehicle.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -51,14 +51,13 @@ import { NavbarComponent } from './settings/features/home/components/navbar/navb
     VehicleListComponent,
     UserVehicleComponent,
     ModalViewVehicleComponent,
-    ModalEditVehicleComponent,
+    ModalFormVehicleComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
 
     // Pipes
     PhoneMaskPipe,
-
 
 
   ],

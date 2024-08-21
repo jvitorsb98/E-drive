@@ -23,4 +23,10 @@ export class ModalViewVehicleComponent {
   closeModal() {
     this.dialogRef.close();
   }
+
+
+
+
+
+
 }

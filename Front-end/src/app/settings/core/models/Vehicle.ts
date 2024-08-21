@@ -1,5 +1,5 @@
+import { Autonomy } from './Autonomy';
 import { Category } from './Category';
-import { Autonomy } from "./Autonomy";
 import { Model } from "./Model";
 import { Propulsion } from "./Propulsion";
 import { VehicleType } from "./vehicle-type";
@@ -10,7 +10,7 @@ export class Vehicle {
   version!: string;
   model!: Model;
   category!: Category;
-  vehicleType!: VehicleType;
+  type!: VehicleType;
   propulsion!: Propulsion;
   autonomy!: Autonomy;
   activated!: boolean;

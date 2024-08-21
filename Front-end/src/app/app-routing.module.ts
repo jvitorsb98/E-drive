@@ -5,6 +5,7 @@ import { FooterComponent } from './settings/core/fragments/footer/footer.compone
 import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
+import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: 'footer', component: FooterComponent },
   { path: 'user-registration', component: UserRegistrationFormComponent},
   { path: 'login', component: UserLoginModalComponent},
-  { path: '', redirectTo: '/intro-page', pathMatch: 'full' }
+  { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
+  { path: 'carros', component: UserVehicleComponent}
 ];
 
 @NgModule({

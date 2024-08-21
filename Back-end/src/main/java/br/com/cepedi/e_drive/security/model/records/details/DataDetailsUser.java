@@ -6,7 +6,7 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 import java.time.LocalDate;
 import java.util.Set;
 
-public record DataDetailsUser(
+public record  DataDetailsUser(
         Long id,
         String email,
         String name,

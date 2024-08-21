@@ -1,5 +1,5 @@
 export class VehicleType{
   id!: number
-  name?: string;
+  name!: string;
   activated!: boolean;
 }
