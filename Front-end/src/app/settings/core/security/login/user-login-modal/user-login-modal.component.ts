@@ -38,6 +38,11 @@ export class UserLoginModalComponent {
     });
   }
 
+  goBack(){
+    // this.dialog.closeAll();
+    this.router.navigate(['/']);
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
       return;

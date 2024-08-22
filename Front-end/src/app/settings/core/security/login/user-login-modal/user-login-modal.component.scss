@@ -1,34 +1,84 @@
+.login-container {
+  width: 100vw !important;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
 
-.login-card {
+mat-card {
+  height: 100%;
   padding: 20px;
+}
+
+mat-card-content {
+  position: relative;
+  height: 100%;
 }
 
 mat-form-field {
   width: 100%;
+  margin-bottom: 10px;
 }
 
+mat-card-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+mat-card-field {
+  width: 100%;
+}
+
+
+
 button[type="submit"] {
-  background-color: #007bff;
- /* Cor azul do botão */
+  background-color: #19B6DD;
   color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 3px;
   cursor: pointer;
+  margin-top: 10px; /* Adiciona espaçamento superior ao botão */
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .forgot-password-link {
-  display: block;
-  text-align: right;
+  display: block; /* Garante que o link ocupe toda a largura */
+  text-align: left;
   cursor: pointer;
   text-decoration: none;
+  margin-top: 10px;
 }
 
-mat-card-actions{
-  justify-content: end;
+.icon-row {
+  width: 100%;
+  display: flex; /* Usa flexbox para alinhar os ícones */
+  justify-content: space-between; /* Distribui os ícones com espaço entre eles */
+  align-items: center;
+}
 
-  button{
-    margin-left: 10px;
+/* Estilos existentes otimizados */
+mat-card-actions {
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 10px;
+}
+.actions {
+  position: absolute;
+  width: 100%;
+  padding: 20px;
+  bottom: 0;
+  left: 0;
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    padding: 0;
+  }
+
+  .login-card {
+    height: 100vh;
   }
 }
-

@@ -6,6 +6,7 @@ import { UserLoginModalComponent } from '../../user-login-modal/user-login-modal
 import { AuthService } from '../../../services/auth/auth.service';
 import { IResetPasswordResponse } from '../../../../interface/inter-Login';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reset-password',
@@ -23,6 +24,7 @@ export class ResetPasswordComponent {
     private fb: FormBuilder,
     private modal: ModalService,
     private auth: AuthService,
+    private router: Router
   ){ }
 
   ngOnInit(): void {
@@ -36,19 +38,11 @@ export class ResetPasswordComponent {
     this.response = this.auth.resetPassword(this.resetPasswordForm.value.email);
     this.dialogRef.close();
     if(this.response){
-      this.openLoginModal(); // redirecionar para a troca de senha
+      this.router.navigate(['login']); // redirecionar para a troca de senha
     }
   }
 
   openLoginModal() {
-    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
-      if (result) {
-        todo://implementação resposta de login
-        console.log(result);
-      }else{
-        todo://implementação resposta  caso nao consiga realizar o login, ou o usuario cancela o processo de login
-        console.log(result);
-      }
-    });
+    this.router.navigate(['login']);
   }
 }
