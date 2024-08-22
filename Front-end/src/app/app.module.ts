@@ -29,6 +29,8 @@ import { EmailPatternValidatorDirective } from './settings/shared/directives/ema
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
+import { CommonModule } from '@angular/common';
+import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     UserVehicleComponent,
     ModalViewVehicleComponent,
     ModalFormVehicleComponent,
+    MapStationsComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
@@ -59,6 +62,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
     ReactiveFormsModule,
     FormsModule,
     AngularMaterialModule,
+    CommonModule
   ],
   providers: [
     provideAnimationsAsync()
