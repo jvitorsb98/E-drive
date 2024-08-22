@@ -1,22 +1,40 @@
+import { Vehicle } from './../../../../../core/models/vehicle';
+import { VehicleService } from './../../../../../core/services/vehicle/vehicle.service';
+import { UserVehicleService } from './../../../../../core/services/user/uservehicle/user-vehicle.service';
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Vehicle } from '../../../../../core/models/vehicle';
+import { UserVehicle } from '../../../../../core/models/user-vehicle';
 
 @Component({
   selector: 'app-modal-view-vehicle',
   templateUrl: './modal-view-vehicle.component.html',
-  styleUrl: './modal-view-vehicle.component.scss'
+  styleUrls: ['./modal-view-vehicle.component.scss']
 })
 export class ModalViewVehicleComponent {
 
-  userVehicle: Vehicle;
+  userVehicle: UserVehicle;
+  vehicle!: Vehicle; // Variável para armazenar os detalhes do veículo
 
   constructor(
     public dialogRef: MatDialogRef<ModalViewVehicleComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Vehicle,
+    private vehicleService: VehicleService,
+    @Inject(MAT_DIALOG_DATA) public data: { userVehicle: UserVehicle },
   ) {
-    this.userVehicle = data;
-    console.log('Data from modal:', this.userVehicle);
+    this.userVehicle = data.userVehicle;
+    this.loadVehicleDetails(this.userVehicle.vehicleId); // Carrega os detalhes do veículo
+  }
+
+  // Método para carregar os detalhes do veículo
+  loadVehicleDetails(vehicleId: number) {
+    this.vehicleService.getVehicleDetails(vehicleId).subscribe({
+      next: (vehicle: Vehicle) => {
+        this.vehicle = vehicle;
+        console.log("Detalhes do veículo:", this.vehicle);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar detalhes do veículo:', error);
+      }
+    });
   }
 
   closeModal() {

@@ -135,7 +135,7 @@ export class UserVehicleComponent {
   }
 
   // LOGICA DO MODAL
-  openModalViewVeicle(userVehicle: Vehicle) {
+  openModalViewVeicle(userVehicle: UserVehicle) {
     this.dialog.open(ModalViewVehicleComponent, {
       width: '600px',
       height: '530px',
