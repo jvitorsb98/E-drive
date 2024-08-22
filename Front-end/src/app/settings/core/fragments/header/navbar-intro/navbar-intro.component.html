@@ -1,5 +1,5 @@
 <header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-md navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" routerLink="/"><img class="ingenico-logo" src="../../../../assets/images/LogoIgenico.png" alt="ingenicoLogo"></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleMenu()">
@@ -12,10 +12,10 @@
             <a class="nav-link" mat-button routerLink="/intro-page" (click)="closeMenu()">Início</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" mat-button routerLink="/intro-page" fragment="servicos" (click)="closeMenu()">Serviços</a>
+            <a class="nav-link" mat-button routerLink="/intro-page" fragment="contato" (click)="closeMenu()">Contato</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" mat-button routerLink="/intro-page" fragment="contato" (click)="closeMenu()">Contato</a>
+            <a class="nav-link" mat-button routerLink="/intro-page" fragment="servicos" (click)="closeMenu()">Serviços</a>
           </li>
           <li class="nav-item">
             <a class="nav-link login" mat-button (click)="openLoginModal()"><mat-icon>account_circle</mat-icon> Login</a>

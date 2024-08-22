@@ -16,11 +16,7 @@ export class NavbarIntroComponent {
 
   openLoginModal() {
     this.closeMenu();
-    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
-      if (result) {
-        console.log(result);
-      }
-    });
+    this.modal.openModal(UserLoginModalComponent)
   }
 
   isMenuOpen = false;

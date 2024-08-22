@@ -28,11 +28,7 @@ export class UserLoginModalComponent {
 
   /* Chama o modal de-esquecimento de senha */
   modalResetPassword(){
-    this.modal.openModal(ResetPasswordComponent).subscribe(result => {
-      if (result) {
-        this.auth.resetPassword(result.email);
-      }
-    });
+    this.modal.openModal(ResetPasswordComponent)
   }
 
   ngOnInit(): void {

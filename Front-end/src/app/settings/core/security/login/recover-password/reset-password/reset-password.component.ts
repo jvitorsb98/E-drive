@@ -3,6 +3,9 @@ import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms'
 import { MatDialogRef } from '@angular/material/dialog';
 import { ModalService } from '../../../../services/modal/modal.service';
 import { UserLoginModalComponent } from '../../user-login-modal/user-login-modal.component';
+import { AuthService } from '../../../services/auth/auth.service';
+import { IResetPasswordResponse } from '../../../../interface/inter-Login';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-reset-password',
@@ -13,10 +16,13 @@ export class ResetPasswordComponent {
   resetPasswordForm!: FormGroup;
   emailControl!: FormControl;
 
+  response: Observable<IResetPasswordResponse> | undefined;
+
   constructor(
     public dialogRef: MatDialogRef<ResetPasswordComponent>,
     private fb: FormBuilder,
-    private modal: ModalService
+    private modal: ModalService,
+    private auth: AuthService,
   ){ }
 
   ngOnInit(): void {
@@ -27,8 +33,11 @@ export class ResetPasswordComponent {
   }
   resetPassword(){
     // Implemente a lógica de envio de e-mail para redefinição de senha
-    console.log(this.resetPasswordForm.value.email);
+    this.response = this.auth.resetPassword(this.resetPasswordForm.value.email);
     this.dialogRef.close();
+    if(this.response){
+      this.openLoginModal(); // redirecionar para a troca de senha
+    }
   }
 
   openLoginModal() {

@@ -5,7 +5,8 @@ import { ILoginRequest, IResetPasswordRequest, IResetPasswordResponse } from '..
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
-import * as jwt_decode from 'jwt-decode'; // Importe a biblioteca para decodificar o JWT
+// import * as jwt_decode from 'jwt-decode'; // Importe a biblioteca para decodificar o JWT
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -38,13 +39,12 @@ export class AuthService {
   }
 
   logout() {
-    this.isLoggedInSubject.next(false); // Atualizar o estado do usuário deslogado
-    todo://descomentar essa parte quando o back-end for implementado
-    // this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
-    // .pipe(
-    //   catchError(this.handleError)
-    // )
-    // .subscribe();
+    this.isLoggedInSubject.next(false);
+    this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
+    .pipe(
+      catchError(this.handleError)
+    )
+    .subscribe();
     localStorage.removeItem('token');
   }
 
@@ -55,7 +55,7 @@ export class AuthService {
     }
 
     try {
-      const decodedToken: any = (jwt_decode as any)(token);
+      const decodedToken: any = (jwtDecode as any)(token);
       const currentTime = Date.now() / 1000; // Tempo atual em segundos
       return decodedToken.exp > currentTime; // Verifica se o token ainda não expirou
     } catch (error) {
@@ -73,7 +73,8 @@ export class AuthService {
   }
 
   resetPassword(email: IResetPasswordRequest): Observable<IResetPasswordResponse> {
-    return this.http.post<IResetPasswordResponse>(this.apiUrl + '/reset-password', email);
+    return this.http.post<IResetPasswordResponse>(this.apiUrl + '/reset-password/request', email).pipe(
+      catchError(this.handleError)
+    )
   }
-
 }
