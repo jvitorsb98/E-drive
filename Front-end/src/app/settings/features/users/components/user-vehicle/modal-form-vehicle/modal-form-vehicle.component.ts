@@ -25,6 +25,7 @@ export class ModalFormVehicleComponent implements OnInit {
   userVehicleForm!: FormGroup;
   selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
+  editUser: boolean = false; // Variável para controlar a exibição do h1 do modal
 
   brands: { name: string; id: number }[] = [];
   models: { name: string; id: number }[] = [];
@@ -43,14 +44,10 @@ export class ModalFormVehicleComponent implements OnInit {
     private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
-  ) {
-    this.vehicle = data.vehicle;
-    this.userVehicle = data.userVehicle;
-    console.log('UserVehicle:', this.userVehicle);
-    console.log('Vehicle:', this.vehicle);
-  }
+  ) { }
 
   ngOnInit() {
+    this.initializeData();
     this.loadBrands();
     this.buildForm();
     this.setupAutocomplete();
@@ -58,26 +55,25 @@ export class ModalFormVehicleComponent implements OnInit {
 
   buildForm() {
     this.userVehicleForm = this.formBuilder.group({
-      version: [null, Validators.required],
-      brand: [null, Validators.required],
-      model: [null, Validators.required],
+      version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
+      brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
+      model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       mileagePerLiterRoad: [null],
       mileagePerLiterCity: [null],
       consumptionEnergetic: [null],
       autonomyElectricMode: [null]
     });
-    if (this.data && this.data.userVehicle) {
-      if (this.data && this.data.vehicle.model.brand.name) {
-        this.fillForm();
-      } else {
-        console.warn('Dados do veículo estão incompletos:', this.data);
-      }
+    if (this.data.userVehicle && this.data.vehicle) {
+      this.editUser = true;
+      this.fillForm();
+    } else {
+      console.warn('@Inject(MAT_DIALOG_DATA) public data Dados estão incompletos:', this.data);
     }
   }
 
   //Preenche o formulário com os dados do veículo para edição
   fillForm() {
-    if (this.data && this.data.vehicle.model.brand && this.data.userVehicle.userId) {
+    if (this.data.vehicle && this.data.vehicle.autonomy) {
       this.userVehicleForm.patchValue({
         version: this.data.vehicle.version,
         brand: this.data.vehicle.model.brand.name,
@@ -87,8 +83,9 @@ export class ModalFormVehicleComponent implements OnInit {
         consumptionEnergetic: this.data.vehicle.autonomy.consumptionEnergetic,
         autonomyElectricMode: this.data.vehicle.autonomy.autonomyElectricMode
       });
+      console.log('Formulário preenchido com:', this.userVehicleForm.value);
     } else {
-      console.warn('Dados do veículo não estão completos:', this.data);
+      console.warn('Dados do veículo ou autonomia não encontrados para preenchimento.');
     }
   }
 
@@ -311,6 +308,21 @@ export class ModalFormVehicleComponent implements OnInit {
         });
       }
     }
+  }
+
+  private initializeData() {
+    if (this.data) {
+      this.vehicle = this.data.vehicle || {} as Vehicle;
+      this.userVehicle = this.data.userVehicle || {} as UserVehicle;
+      console.log('@Inject(MAT_DIALOG_DATA) public data UserVehicle:', this.userVehicle);
+      console.log('@Inject(MAT_DIALOG_DATA) public data Vehicle:', this.vehicle);
+    } else {
+      console.warn('Nenhum dado foi injetado no modal.');
+    }
+  }
+
+  private isEditMode(): boolean {
+    return !!this.data.vehicle && !!this.data.userVehicle;
   }
 
   resetForm() {

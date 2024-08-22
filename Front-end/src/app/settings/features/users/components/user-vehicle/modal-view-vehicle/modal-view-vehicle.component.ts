@@ -17,9 +17,10 @@ export class ModalViewVehicleComponent {
   constructor(
     public dialogRef: MatDialogRef<ModalViewVehicleComponent>,
     private vehicleService: VehicleService,
-    @Inject(MAT_DIALOG_DATA) public data: { userVehicle: UserVehicle },
+    @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
   ) {
     this.userVehicle = data.userVehicle;
+    this.vehicle = data.vehicle;
     this.loadVehicleDetails(this.userVehicle.vehicleId); // Carrega os detalhes do veículo
   }
 

@@ -6,7 +6,8 @@
         <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
       </button>
 
-      <h1 class="titulo">Cadastrar Veículo</h1>
+      <h1 class="titulo" *ngIf="!editUser">Cadastrar Veículo</h1>
+      <h1 class="titulo" *ngIf="editUser">Editar Veículo</h1>
 
       <button class="btn">
         <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
@@ -23,7 +24,7 @@
             type="text" 
             matInput 
             formControlName="brand"
-            [value]="userVehicleForm.get('brand')?.value?.name || ''" 
+            [value]="userVehicleForm.get('brand')?.value?.name || ''"
             [matAutocomplete]="autoBrand"
             aria-describedby="Help">
             <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint>
@@ -64,7 +65,7 @@
             type="text" 
             matInput 
             formControlName="version"
-            [value]="userVehicleForm.get('version')?.value?.version || ''" 
+            [value]="userVehicleForm.get('version')?.value?.version || ''"
             [matAutocomplete]="autoVersion">
             <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>versão.</strong></mat-hint>
             <mat-autocomplete #autoVersion="matAutocomplete" (optionSelected)="onVersionSelected($event)">
