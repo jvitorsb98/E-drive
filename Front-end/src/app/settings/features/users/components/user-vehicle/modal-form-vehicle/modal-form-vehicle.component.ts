@@ -278,14 +278,18 @@ export class ModalFormVehicleComponent implements OnInit {
     if (this.data && this.data.userVehicle) {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
-      const dataRegisterAutonomy = {
+      const dataUpdateAutonomy = {
         mileagePerLiterRoad: Number(formData.mileagePerLiterRoad),
         mileagePerLiterCity: Number(formData.mileagePerLiterCity),
         consumptionEnergetic: Number(formData.consumptionEnergetic),
         autonomyElectricMode: Number(formData.autonomyElectricMode),
       };
 
-      this.userVehicleService.updateVehicleUser(this.data.userVehicle.userId, dataRegisterAutonomy, authToken).subscribe(
+      const updateData = {
+        dataUpdateAutonomy: dataUpdateAutonomy
+      };
+
+      this.userVehicleService.updateVehicleUser(this.data.userVehicle.id, updateData, authToken).subscribe(
         response => {
           console.log('Cadastro realizado com sucesso!', response);
           Swal.fire({
