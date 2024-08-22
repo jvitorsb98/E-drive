@@ -24,12 +24,12 @@ body {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  // box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
   text-align: center;
-  color: #00a1e0;
+  color: #19B6DD;
   font-size: 1.5rem;
   margin-bottom: 20px;
 }
@@ -45,7 +45,18 @@ h1 {
 .mat-label {
   color: #aaa;
 }
+.phone-group {
+  display: flex;
+  gap: 10px;
+}
 
+.country-code {
+  flex: 1;
+}
+
+.phone-number {
+  flex: 2;
+}
 /* Button group */
 .button-group {
   display: flex;
@@ -73,8 +84,9 @@ h1 {
 }
 
 .cancel-button {
-  background-color: red !important;
-  color: white !important;
+  // background-color: red !important;
+  background-color:  #d32f2f !important;
+  color: white !important;
 }
 
 /* Desktop-specific styles */

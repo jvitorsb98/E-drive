@@ -2,12 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-<<<<<<< HEAD
-import { User } from '../../models/User';
-=======
-import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { User } from '../../models/user';
->>>>>>> origin/develop
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +16,7 @@ export class UserService {
   }
 
   // Método para obter o usuário logado
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIiwiaXNzIjoiQVBJIFZvbGwubWVkIiwiaWQiOjEsImV4cCI6MTcyNDExOTYwNSwiZW1haWwiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIn0.avom28z_u-AZZCAojmb70Up6OwY0ODQbLIpsHpgn3Oc';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIiwiaXNzIjoiQVBJIFZvbGwubWVkIiwiaWQiOjEsImV4cCI6MTcyNDM0NjI1MiwiZW1haWwiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIn0.AOjTRZrNOXJ0S_9a0RRCDxodwQoF3q1BpWguWTL8Ubk';
 
     // Método para obter o usuário logado
     getAllUsers(): Observable<User[]> {
@@ -85,4 +80,20 @@ export class UserService {
         })
       );
   }
+
+  formatAndStoreUserData(countryCode: string, cellPhone: string): string {
+    countryCode = countryCode.replace(/^\+/, '');
+    const cleanedPhone = cellPhone.replace(/\D/g, '');
+
+    if (cleanedPhone.length === 11) {
+      const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
+
+      return cellPhoneWithCountryCode;
+    } else {
+      console.error('Número de telefone inválido.');
+      return '';
+    }
+  }
+
 }

@@ -5,4 +5,5 @@ export class User {
   cellPhone!: string;
   password!: string;
   birth: Date | null = null;
+  countryCode!: string; // Adiciona a propriedade countryCode
 }
