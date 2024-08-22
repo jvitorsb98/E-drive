@@ -20,7 +20,8 @@ export class UserVehicleService {
     this.userVehicleUrl = `${environment.apiUrl}/api/v1/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzAwMzM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.pWfF-VLmrAzlfAvbuChk-E2NGIrWEowpLpcip-zCISE';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzQzNzEyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9._dFkfS3sgNKWCK1ozb3cNzRsYyqOYKJM21GgkVKjwcM';
+
 
   getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
     const headers = new HttpHeaders({

@@ -220,61 +220,9 @@ export class ModalFormVehicleComponent implements OnInit {
 
   }
 
-  // submitForm() {
-  //   if (this.userVehicleForm.valid) {
-  //     const formData = this.userVehicleForm.value;
-  //     const dataRegisterAutonomy = {
-  //       mileagePerLiterRoad: formData.mileagePerLiterRoad,
-  //       mileagePerLiterCity: formData.mileagePerLiterCity,
-  //       consumptionEnergetic: formData.consumptionEnergetic,
-  //       autonomyElectricMode: formData.autonomyElectricMode,
-  //     };
-
-  //     const dataRegisterVehicleUser = {
-  //       vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
-  //       dataRegisterAutonomy: dataRegisterAutonomy,
-  //     };
-  //     console.log(dataRegisterVehicleUser)
-
-  //     const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mjc0ODAwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.rKhZS09niDJ3I-0Y93xKg8BR3gX2yBCcmnn8b7PwM48';
-  //     this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
-  //       response => {
-  //         console.log('Cadastro realizado com sucesso!', response);
-  //         Swal.fire({
-  //           title: 'Cadastro realizado com sucesso!',
-  //           icon: 'success',
-  //           text: 'O veículo foi cadastrado com sucesso.',
-  //           showConfirmButton: true,
-  //           confirmButtonColor: '#19B6DD',
-  //         }).then(() => {
-  //           this.closeModal();
-  //         });
-  //       },
-  //       error => {
-  //         console.error('Erro ao realizar cadastro:', error);
-  //         Swal.fire({
-  //           title: 'Erro!',
-  //           icon: 'error',
-  //           text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
-  //           showConfirmButton: true,
-  //           confirmButtonColor: '#19B6DD',
-  //         });
-  //       }
-  //     );
-  //   } else {
-  //     Swal.fire({
-  //       title: 'Formulário inválido!',
-  //       icon: 'warning',
-  //       text: 'Por favor, preencha todos os campos obrigatórios.',
-  //       showConfirmButton: true,
-  //       confirmButtonColor: '#19B6DD',
-  //     });
-  //   }
-  // }
-
   submitForm() {
 
-    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzAwMzM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.pWfF-VLmrAzlfAvbuChk-E2NGIrWEowpLpcip-zCISE';
+    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzQzNzEyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9._dFkfS3sgNKWCK1ozb3cNzRsYyqOYKJM21GgkVKjwcM';
     if (this.data && this.data.userVehicle) {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;

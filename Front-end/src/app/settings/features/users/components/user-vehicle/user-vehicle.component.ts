@@ -12,7 +12,6 @@ import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
 import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
-import { User } from '../../../../core/models/user';
 import { IVehicleWithUserVehicle } from '../../../../core/interface/vehicle-with-user-vehicle';
 
 
@@ -23,10 +22,8 @@ import { IVehicleWithUserVehicle } from '../../../../core/interface/vehicle-with
 })
 export class UserVehicleComponent {
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions'];
-  // dataSource = new MatTableDataSource<Vehicle>();
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
-  // userVehicleDetails: Vehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -49,35 +46,6 @@ export class UserVehicleComponent {
     this.dataSource.sort = this.sort;
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
-
-  // getListUserVehicles() {
-  //   this.userVehicleService.getAllUserVehicle().subscribe({
-  //     next: (response: IApiResponse<UserVehicle[]>) => {
-  //       console.log('Response from getAllUserVehicle:', response);
-
-  //       if (response && response.content && Array.isArray(response.content)) {
-  //         this.userVehicleList = response.content;
-
-  //         // Cria um array de observables para buscar detalhes dos veículos
-  //         const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
-  //           this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
-  //         );
-
-  //         // Usa forkJoin para esperar até que todas as requisições estejam completas
-  //         forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-  //           this.userVehicleDetails = vehicles.map(vehicle => this.formatVehicleData(vehicle));
-  //           this.dataSource.data = this.userVehicleDetails;
-  //           console.log(this.dataSource);
-  //         });
-  //       } else {
-  //         console.error('Expected an array in response.content but got:', response.content);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching userVehicles:', err);
-  //     }
-  //   });
-  // }
 
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
@@ -150,23 +118,6 @@ export class UserVehicleComponent {
       data: {}
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
-
-  // openModalEditUserVehicle(userVehicle: UserVehicle) {
-  //   this.dialog.open(ModalFormVehicleComponent, {
-  //     width: '600px',
-  //     height: '810px',
-  //     data: userVehicle,
-  //   }).afterClosed().subscribe(() => this.getListUserVehicles());
-  // }
-
-  // openModalEditUserVehicle(userVehicle: Vehicle) {
-
-  //   this.dialog.open(ModalFormVehicleComponent, {
-  //     width: '600px',
-  //     height: '810px',
-  //     data: userVehicle,
-  //   }).afterClosed().subscribe(() => this.getListUserVehicles());
-  // }
 
   openModalEditUserVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
