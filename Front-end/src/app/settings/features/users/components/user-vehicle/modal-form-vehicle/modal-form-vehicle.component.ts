@@ -11,6 +11,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
 import { UserVehicleService } from '../../../../../core/services/user/uservehicle/user-vehicle.service';
 import Swal from 'sweetalert2';
+import { UserVehicle } from '../../../../../core/models/user-vehicle';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -19,6 +20,8 @@ import Swal from 'sweetalert2';
 })
 export class ModalFormVehicleComponent implements OnInit {
 
+  userVehicle!: UserVehicle;
+  vehicle!: Vehicle
   userVehicleForm!: FormGroup;
   selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
@@ -39,11 +42,17 @@ export class ModalFormVehicleComponent implements OnInit {
     private userDataService: UserDataService,
     private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Vehicle,
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
+  ) {
+    this.vehicle = data.vehicle;
+    this.userVehicle = data.userVehicle;
+    console.log('UserVehicle:', this.userVehicle);
+    console.log('Vehicle:', this.vehicle);
+  }
 
   ngOnInit() {
     this.loadBrands();
+    this.buildForm();
     this.setupAutocomplete();
   }
 
@@ -57,24 +66,32 @@ export class ModalFormVehicleComponent implements OnInit {
       consumptionEnergetic: [null],
       autonomyElectricMode: [null]
     });
-
-    if (this.data && this.data.id) {
-      this.fillForm();
+    if (this.data && this.data.userVehicle) {
+      if (this.data && this.data.vehicle.model.brand.name) {
+        this.fillForm();
+      } else {
+        console.warn('Dados do veículo estão incompletos:', this.data);
+      }
     }
   }
 
   //Preenche o formulário com os dados do veículo para edição
   fillForm() {
-    this.userVehicleForm.patchValue({
-      version: this.data.version,
-      brand: this.data.model.brand.name,
-      model: this.data.model.name,
-      mileagePerLiterRoad: this.data.autonomy.mileagePerLiterRoad,
-      mileagePerLiterCity: this.data.autonomy.mileagePerLiterCity,
-      consumptionEnergetic: this.data.autonomy.consumptionEnergetic,
-      autonomyElectricMode: this.data.autonomy.autonomyElectricMode
-    });
+    if (this.data && this.data.vehicle.model.brand && this.data.userVehicle.userId) {
+      this.userVehicleForm.patchValue({
+        version: this.data.vehicle.version,
+        brand: this.data.vehicle.model.brand.name,
+        model: this.data.vehicle.model.name,
+        mileagePerLiterRoad: this.data.vehicle.autonomy.mileagePerLiterRoad,
+        mileagePerLiterCity: this.data.vehicle.autonomy.mileagePerLiterCity,
+        consumptionEnergetic: this.data.vehicle.autonomy.consumptionEnergetic,
+        autonomyElectricMode: this.data.vehicle.autonomy.autonomyElectricMode
+      });
+    } else {
+      console.warn('Dados do veículo não estão completos:', this.data);
+    }
   }
+
 
   loadBrands() {
     this.brandService.getAllBrands().subscribe(
@@ -203,30 +220,78 @@ export class ModalFormVehicleComponent implements OnInit {
 
   }
 
+  // submitForm() {
+  //   if (this.userVehicleForm.valid) {
+  //     const formData = this.userVehicleForm.value;
+  //     const dataRegisterAutonomy = {
+  //       mileagePerLiterRoad: formData.mileagePerLiterRoad,
+  //       mileagePerLiterCity: formData.mileagePerLiterCity,
+  //       consumptionEnergetic: formData.consumptionEnergetic,
+  //       autonomyElectricMode: formData.autonomyElectricMode,
+  //     };
+
+  //     const dataRegisterVehicleUser = {
+  //       vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
+  //       dataRegisterAutonomy: dataRegisterAutonomy,
+  //     };
+  //     console.log(dataRegisterVehicleUser)
+
+  //     const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mjc0ODAwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.rKhZS09niDJ3I-0Y93xKg8BR3gX2yBCcmnn8b7PwM48';
+  //     this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+  //       response => {
+  //         console.log('Cadastro realizado com sucesso!', response);
+  //         Swal.fire({
+  //           title: 'Cadastro realizado com sucesso!',
+  //           icon: 'success',
+  //           text: 'O veículo foi cadastrado com sucesso.',
+  //           showConfirmButton: true,
+  //           confirmButtonColor: '#19B6DD',
+  //         }).then(() => {
+  //           this.closeModal();
+  //         });
+  //       },
+  //       error => {
+  //         console.error('Erro ao realizar cadastro:', error);
+  //         Swal.fire({
+  //           title: 'Erro!',
+  //           icon: 'error',
+  //           text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
+  //           showConfirmButton: true,
+  //           confirmButtonColor: '#19B6DD',
+  //         });
+  //       }
+  //     );
+  //   } else {
+  //     Swal.fire({
+  //       title: 'Formulário inválido!',
+  //       icon: 'warning',
+  //       text: 'Por favor, preencha todos os campos obrigatórios.',
+  //       showConfirmButton: true,
+  //       confirmButtonColor: '#19B6DD',
+  //     });
+  //   }
+  // }
+
   submitForm() {
-    if (this.userVehicleForm.valid) {
+
+    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzAwMzM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.pWfF-VLmrAzlfAvbuChk-E2NGIrWEowpLpcip-zCISE';
+    if (this.data && this.data.userVehicle) {
+      console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
       const dataRegisterAutonomy = {
-        mileagePerLiterRoad: formData.mileagePerLiterRoad,
-        mileagePerLiterCity: formData.mileagePerLiterCity,
-        consumptionEnergetic: formData.consumptionEnergetic,
-        autonomyElectricMode: formData.autonomyElectricMode,
+        mileagePerLiterRoad: Number(formData.mileagePerLiterRoad),
+        mileagePerLiterCity: Number(formData.mileagePerLiterCity),
+        consumptionEnergetic: Number(formData.consumptionEnergetic),
+        autonomyElectricMode: Number(formData.autonomyElectricMode),
       };
 
-      const dataRegisterVehicleUser = {
-        vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
-        dataRegisterAutonomy: dataRegisterAutonomy,
-      };
-      console.log(dataRegisterVehicleUser)
-
-      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MjAxMjA1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.iGgOMfFOZb7bPzdpzkkmFNaRWJpGHEL7lHDr6ATribc';
-      this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+      this.userVehicleService.updateVehicleUser(this.data.userVehicle.userId, dataRegisterAutonomy, authToken).subscribe(
         response => {
           console.log('Cadastro realizado com sucesso!', response);
           Swal.fire({
-            title: 'Cadastro realizado com sucesso!',
+            title: 'Cadastro editado com sucesso!',
             icon: 'success',
-            text: 'O veículo foi cadastrado com sucesso.',
+            text: 'O veículo foi editado com sucesso.',
             showConfirmButton: true,
             confirmButtonColor: '#19B6DD',
           }).then(() => {
@@ -234,24 +299,65 @@ export class ModalFormVehicleComponent implements OnInit {
           });
         },
         error => {
-          console.error('Erro ao realizar cadastro:', error);
+          console.error('Erro ao realizar update:', error);
           Swal.fire({
             title: 'Erro!',
             icon: 'error',
-            text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
+            text: 'Houve um problema ao realizar o update. Tente novamente mais tarde.',
             showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
+            confirmButtonColor: 'red',
           });
         }
       );
+
     } else {
-      Swal.fire({
-        title: 'Formulário inválido!',
-        icon: 'warning',
-        text: 'Por favor, preencha todos os campos obrigatórios.',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      });
+      if (this.userVehicleForm.valid) {
+        const formData = this.userVehicleForm.value;
+        const dataRegisterAutonomy = {
+          mileagePerLiterRoad: formData.mileagePerLiterRoad,
+          mileagePerLiterCity: formData.mileagePerLiterCity,
+          consumptionEnergetic: formData.consumptionEnergetic,
+          autonomyElectricMode: formData.autonomyElectricMode,
+        };
+
+        const dataRegisterVehicleUser = {
+          vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
+          dataRegisterAutonomy: dataRegisterAutonomy,
+        };
+        console.log(dataRegisterVehicleUser)
+
+        this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+          response => {
+            console.log('Cadastro realizado com sucesso!', response);
+            Swal.fire({
+              title: 'Cadastro realizado com sucesso!',
+              icon: 'success',
+              text: 'O veículo foi cadastrado com sucesso.',
+              showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
+            }).then(() => {
+              this.closeModal();
+            });
+          },
+          error => {
+            console.error('Erro ao realizar cadastro:', error);
+            Swal.fire({
+              title: 'Erro!',
+              icon: 'error',
+              text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
+              showConfirmButton: true,
+            });
+          }
+        );
+
+      } else {
+        Swal.fire({
+          title: 'Formulário inválido!',
+          icon: 'warning',
+          text: 'Por favor, preencha todos os campos obrigatórios.',
+          showConfirmButton: true,
+        });
+      }
     }
   }
 

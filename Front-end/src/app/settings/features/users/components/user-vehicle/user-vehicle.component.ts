@@ -7,11 +7,14 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { Vehicle } from '../../../../core/models/vehicle';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
 import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
+import { User } from '../../../../core/models/user';
+import { IVehicleWithUserVehicle } from '../../../../core/interface/vehicle-with-user-vehicle';
+
 
 @Component({
   selector: 'app-user-vehicle',
@@ -20,9 +23,11 @@ import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehic
 })
 export class UserVehicleComponent {
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions'];
-  dataSource = new MatTableDataSource<Vehicle>();
+  // dataSource = new MatTableDataSource<Vehicle>();
+  dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
-  userVehicleDetails: Vehicle[] = [];
+  // userVehicleDetails: Vehicle[] = [];
+  userVehicleDetails: IVehicleWithUserVehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -45,6 +50,35 @@ export class UserVehicleComponent {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
+  // getListUserVehicles() {
+  //   this.userVehicleService.getAllUserVehicle().subscribe({
+  //     next: (response: IApiResponse<UserVehicle[]>) => {
+  //       console.log('Response from getAllUserVehicle:', response);
+
+  //       if (response && response.content && Array.isArray(response.content)) {
+  //         this.userVehicleList = response.content;
+
+  //         // Cria um array de observables para buscar detalhes dos veículos
+  //         const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
+  //           this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
+  //         );
+
+  //         // Usa forkJoin para esperar até que todas as requisições estejam completas
+  //         forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
+  //           this.userVehicleDetails = vehicles.map(vehicle => this.formatVehicleData(vehicle));
+  //           this.dataSource.data = this.userVehicleDetails;
+  //           console.log(this.dataSource);
+  //         });
+  //       } else {
+  //         console.error('Expected an array in response.content but got:', response.content);
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Error fetching userVehicles:', err);
+  //     }
+  //   });
+  // }
+
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
@@ -55,12 +89,21 @@ export class UserVehicleComponent {
 
           // Cria um array de observables para buscar detalhes dos veículos
           const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
-            this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
+            this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+              map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+            )
           );
 
           // Usa forkJoin para esperar até que todas as requisições estejam completas
-          forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-            this.userVehicleDetails = vehicles.map(vehicle => this.formatVehicleData(vehicle));
+          forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+            // Atualiza os dados com veículo e informações de UserVehicle
+            this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
+              return {
+                ...vehicle,
+                userVehicle // Inclui o UserVehicle no veículo
+              };
+            });
+
             this.dataSource.data = this.userVehicleDetails;
             console.log(this.dataSource);
           });
@@ -108,11 +151,31 @@ export class UserVehicleComponent {
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
-  openModalEditUserVehicle(userVehicle: Vehicle) {
+  // openModalEditUserVehicle(userVehicle: UserVehicle) {
+  //   this.dialog.open(ModalFormVehicleComponent, {
+  //     width: '600px',
+  //     height: '810px',
+  //     data: userVehicle,
+  //   }).afterClosed().subscribe(() => this.getListUserVehicles());
+  // }
+
+  // openModalEditUserVehicle(userVehicle: Vehicle) {
+
+  //   this.dialog.open(ModalFormVehicleComponent, {
+  //     width: '600px',
+  //     height: '810px',
+  //     data: userVehicle,
+  //   }).afterClosed().subscribe(() => this.getListUserVehicles());
+  // }
+
+  openModalEditUserVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '600px',
       height: '810px',
-      data: userVehicle
+      data: {
+        vehicle: userVehicleWithDetails,
+        userVehicle: userVehicleWithDetails.userVehicle
+      }
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
