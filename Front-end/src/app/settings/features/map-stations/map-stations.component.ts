@@ -1,11 +1,34 @@
-import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 
+
+
+/**
+ * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
+ * Utiliza a API do Google Maps para localizar e exibir marcadores para estações de carregamento próximas.
+ *
+ * **Passo a passo de chamada de métodos:**
+ * 1. **ngAfterViewInit**: Este método é chamado após a visualização do componente ser inicializada. Ele carrega o script do Google Maps e, uma vez carregado, chama `initMap()` para configurar o mapa.
+ * 2. **loadGoogleMapsScript**: Carrega dinamicamente o script da API do Google Maps se ainda não estiver carregado.
+ * 3. **initMap**: Inicializa o mapa com opções específicas e configura a localização do usuário.
+ * 4. **getUserLocation**: Obtém a localização do usuário e centraliza o mapa nessa localização. Em seguida, chama `searchNearbyChargingStations()` para buscar estações de carregamento próximas.
+ * 5. **searchNearbyChargingStations**: Cria uma instância do serviço de Places e chama `performTextSearch()` para encontrar estações de carregamento próximas.
+ * 6. **performTextSearch**: Realiza uma busca de texto para encontrar estações de carregamento elétrico e, para cada estação encontrada, chama `createMarkerForChargingStation()` para criar um marcador no mapa.
+ * 7. **createMarkerForChargingStation**: Cria um marcador para uma estação de carregamento e adiciona ao mapa. Adiciona um listener de clique para exibir o modal com informações da estação.
+ * 8. **showModal**: Exibe o modal com informações sobre a estação de carregamento. Calcula a distância entre a localização do usuário e a estação de carregamento e atualiza o estado do modal.
+ * 9. **closeModal**: Fecha o modal principal.
+ * 10. **showDetailsModal**: Exibe o modal de detalhes com informações adicionais sobre a estação de carregamento.
+ * 11. **closeDetailsModal**: Fecha o modal de detalhes.
+ * 12. **handleLocationError**: Lida com erros de localização se a geolocalização do navegador falhar.
+ * 13. **calculateRouteDistance**: Calcula a distância entre a localização do usuário e a estação de carregamento e exibe essa distância no modal. Usa armazenamento de sessão para cache de distâncias.
+ */
 @Component({
   selector: 'app-map-stations',
   templateUrl: './map-stations.component.html',
   styleUrls: ['./map-stations.component.scss']
 })
 export class MapStationsComponent implements AfterViewInit {
+  // Referências para elementos do DOM para o mapa e modais
   @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
   @ViewChild('myModal', { static: false }) myModal!: ElementRef;
   @ViewChild('detailsModal', { static: false }) detailsModal!: ElementRef;
@@ -14,19 +37,25 @@ export class MapStationsComponent implements AfterViewInit {
   markers: google.maps.Marker[] = [];
   userLocation: google.maps.LatLng | null = null;
   currentPlace: google.maps.places.PlaceResult | null = null;
-  openNow :any = false;
+  openNow: any = false; // Status de abertura da estação
 
-  isModalOpen = false; // Inicialmente fechado
-  isDetailsModalOpen = false;
-  isClosed = false;
-  modalTitle = '';
-  modalDistance = '';
-  detailsModalTitle = '';
-  detailsModalAddress = '';
-  detailsModalPhone = '';
-  detailsModalRating = '';
-  detailsModalOpenStatus = '';
+  isModalOpen = false; // Estado do modal principal
+  isDetailsModalOpen = false; // Estado do modal de detalhes
+  modalTitle = ''; // Título do modal principal
+  modalDistance = ''; // Distância da estação ao usuário
+  detailsModalTitle = ''; // Título do modal de detalhes
+  detailsModalAddress: string | null = null; // Endereço da estação
+  detailsModalPhone: string | null = null; // Telefone da estação
+  detailsModalRating: string | null = null; // Avaliação da estação
+  detailsModalOpenStatus: string | null = null; // Status de abertura da estação
 
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
+    /**
+   * Método chamado após a visualização do componente ser inicializada.
+   * Carrega o script do Google Maps e inicializa o mapa.
+   */
   ngAfterViewInit() {
     this.loadGoogleMapsScript()
       .then(() => {
@@ -36,7 +65,9 @@ export class MapStationsComponent implements AfterViewInit {
   }
   
 
-
+  /**
+   * Inicializa o mapa do Google Maps com opções específicas.
+   */
   initMap() {
     const mapOptions: google.maps.MapOptions = {
       center: { lat: -21.780, lng: -47.534 }, // Coordenadas de exemplo
@@ -98,6 +129,10 @@ export class MapStationsComponent implements AfterViewInit {
     this.map.addListener('idle', () => this.searchNearbyChargingStations());
   }
 
+  /**
+   * Obtém a localização do usuário e centra o mapa nessa localização.
+   * Busca estações de carregamento próximas após obter a localização.
+   */
   getUserLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -114,7 +149,10 @@ export class MapStationsComponent implements AfterViewInit {
   }
 
   
-
+  /**
+   * Carrega o script do Google Maps se ainda não estiver carregado.
+   * @returns Promise que resolve quando o script é carregado.
+   */
   async loadGoogleMapsScript(): Promise<void> {
     if (window['google'] && window['google'].maps) {
       // Google Maps já carregado
@@ -123,7 +161,7 @@ export class MapStationsComponent implements AfterViewInit {
   
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBttstn5kDru-LuCZ22fiWR9qTFP6lzk8A&libraries=places';
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places`;
       script.async = true;
       script.defer = true;
       script.onload = () => resolve();
@@ -132,11 +170,19 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
+
+  /**
+   * Busca estações de carregamento próximas à localização atual do mapa.
+   */
   searchNearbyChargingStations() {
     const service = new google.maps.places.PlacesService(this.map);
     this.performTextSearch(service);
   }
 
+  /**
+   * Realiza uma busca de texto para encontrar estações de carregamento elétrico.
+   * @param service Serviço de Places do Google Maps.
+   */
   performTextSearch(service: google.maps.places.PlacesService) {
     const location = this.map.getCenter();
     const query = 'estação de carregamento elétrico';
@@ -158,6 +204,10 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
+
+  /**
+   * Remove todos os marcadores do mapa.
+   */
   clearMarkers() {
     this.markers.forEach(marker => {
       marker.setMap(null);
@@ -165,6 +215,11 @@ export class MapStationsComponent implements AfterViewInit {
     this.markers = [];
   }
 
+
+  /**
+   * Cria um marcador para uma estação de carregamento e adiciona ao mapa.
+   * @param place Informações sobre a estação de carregamento.
+   */
   createMarkerForChargingStation(place: google.maps.places.PlaceResult) {
     if (!place.geometry || !place.geometry.location) {
       console.warn('Place geometry or location is undefined:', place);
@@ -191,6 +246,12 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
+
+
+  /**
+   * Exibe o modal com informações sobre a estação de carregamento.
+   * @param place Informações sobre a estação de carregamento.
+   */
   showModal(place: google.maps.places.PlaceResult) {
     console.log(place)
     this.modalTitle = place.name || 'Estação de carregamento';
@@ -202,53 +263,93 @@ export class MapStationsComponent implements AfterViewInit {
     }
   
     this.isModalOpen = true; // Defina a variável para abrir o modal
-    console.log(this.isModalOpen)
     this.openNow = place.opening_hours; // Defina a variável de abertura
+    this.cdr.detectChanges(); // Força a verificação de mudanças
+    console.log(this.isModalOpen)
   }
   
+
+  /**
+   * Fecha o modal principal.
+   */
   closeModal() {
     this.isModalOpen = false; // Defina a variável para fechar o modal
+    this.cdr.detectChanges(); // Força a verificação de mudanças
   }
   
+
+  /**
+   * Exibe o modal de detalhes com informações adicionais sobre a estação de carregamento.
+   */
   showDetailsModal() {
     if (this.currentPlace) {
       this.detailsModalTitle = this.currentPlace.name || 'Detalhes do Posto';
-      this.detailsModalAddress = "Endereço: " + (this.currentPlace.vicinity || "Não disponível");
-      this.detailsModalPhone = "Telefone: " + (this.currentPlace.formatted_phone_number || "Não disponível");
-      this.detailsModalRating = "Avaliação: " + (this.currentPlace.rating ? this.currentPlace.rating + " estrelas" : "Não disponível");
+      this.detailsModalAddress = this.currentPlace.vicinity ? `Endereço : ${this.currentPlace.vicinity}` : null;
+      this.detailsModalPhone =  this.currentPlace.formatted_phone_number ? `Telefone : ${this.currentPlace.formatted_phone_number}` : null;
+      this.detailsModalRating = this.currentPlace.rating ? `Avaliação : ${this.currentPlace.rating} estrelas` : null;
       this.detailsModalOpenStatus = this.currentPlace.opening_hours ? "Aberto agora" : "Fechado agora";
     
-      this.isDetailsModalOpen = true; // Abra o modal de detalhes
-      this.openNow = this.currentPlace.opening_hours; // Defina a variável de abertura
+      this.isDetailsModalOpen = true;
+      this.cdr.detectChanges();
     } else {
       console.warn('currentPlace is null, cannot show details.');
     }
   }
   
+
+  /**
+   * Fecha o modal de detalhes.
+   */
   closeDetailsModal() {
     this.isDetailsModalOpen = false; // Feche o modal de detalhes
+    this.cdr.detectChanges();
   }
 
 
-
+  /**
+   * Lida com erros de localização se a geolocalização do navegador falhar.
+   * @param browserHasGeolocation Indica se o navegador suporta geolocalização.
+   * @param pos Coordenadas da localização padrão para centralizar o mapa.
+   */
   handleLocationError(browserHasGeolocation: boolean, pos: google.maps.LatLng) {
     // Implementar lógica de erro
   }
 
+
+
+  /**
+   * Calcula a distância entre a localização do usuário e a estação de carregamento.
+   * @param origin Localização do usuário.
+   * @param destination Localização da estação de carregamento.
+   */
   calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng) {
     const directionsService = new google.maps.DirectionsService();
-
+  
+    // Verificar se a rota já foi calculada e armazenada
+    const cachedDistance = sessionStorage.getItem(`route_${startLocation}_${destination}`);
+    if (cachedDistance) {
+      this.modalDistance = cachedDistance;
+      this.cdr.detectChanges();
+      return;
+    }
+  
     directionsService.route({
       origin: startLocation,
       destination: destination,
       travelMode: google.maps.TravelMode.DRIVING
-    }, (response, status) => {
-      if (status === google.maps.DirectionsStatus.OK) {
-        this.modalDistance = "Distância: " + response!.routes[0].legs[0].distance!.text;
-      } else {
-        console.error('Erro ao calcular a rota:', status);
-        this.modalDistance = "Erro ao calcular a distância.";
-      }
+    }).then(response => {
+      const distanceText = "Distância: " + response.routes[0].legs[0].distance!.text;
+      this.modalDistance = distanceText;
+      
+      // Armazenar a rota calculada para uso futuro
+      sessionStorage.setItem(`route_${startLocation}_${destination}`, distanceText);
+      
+      this.cdr.detectChanges();
+    }).catch(error => {
+      console.error('Erro ao calcular a rota:', error);
+      this.modalDistance = "Erro ao calcular a distância.";
+      this.cdr.detectChanges();
     });
   }
+  
 }

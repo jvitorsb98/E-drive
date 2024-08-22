@@ -1,0 +1,52 @@
+
+/* Details Modal Styles */
+.detailsModal .modal-content {
+    padding: 20px;
+    max-width: 400px; /* Max width for details modal */
+}
+
+/* Details Modal Visibility */
+.modal-show-details {
+    display: block; /* Make details modal visible */
+}
+
+/* Details Modal Title */
+.detailsTitle {
+    font-size: 1em; /* Title font size */
+    font-weight: bold; /* Bold title */
+    margin-bottom: 10px; /* Space below title */
+    text-align: center;
+}
+
+/* Details Modal Body */
+.detailsBody p {
+    margin: 5px 0; /* Space above and below paragraphs */
+    font-size: 1em; /* Font size for details */
+    color: #333; /* Text color for details */
+}
+
+/* Close Button for Details Modal */
+.close-details {
+    cursor: pointer; /* Pointer cursor */
+    font-size: 1.5em; /* Close icon font size */
+    color: #333; /* Close icon color */
+}
+
+/* Close Button Styles */
+.close, .close-details {
+    position: absolute; /* Absolute positioning */
+    top: 5px; /* Distance from top */
+    left: 5px; /* Distance from left */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 1.5em; /* Close icon font size */
+    transition: color 0.3s; /* Smooth color transition */
+}
+
+/* Close Button Colors */
+.close-open {
+    color: #19B6DD; /* Color when modal is open */
+}
+
+.close-closed {
+    color: #DD4B39; /* Color when modal is closed */
+}

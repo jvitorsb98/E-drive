@@ -1,125 +1,13 @@
+@import './scss/map-stations-map.scss';
+@import './scss/map-stations.modal.scss';
+@import './scss/map-stations.details-modal.scss';
+
+
+/* Global Styles */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
 }
 
-#map {
-    height: 100%;
-    width: 100%;
-    background: #ddd;
-}
 
-/* Modal container */
-.modal {
-    display: none; /* Inicialmente oculto */
-    position: fixed; /* Fica fixo na tela */
-    top: 50%; /* Centraliza verticalmente */
-    left: 50%; /* Centraliza horizontalmente */
-    transform: translate(-50%, -50%); /* Ajusta a posição para centralização */
-    width: 90vw; /* Largura responsiva */
-    max-width: 240px; /* Largura máxima para desktop */
-    background-color: white; /* Cor de fundo branca */
-    border-radius: 8px; /* Cantos arredondados */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra leve */
-    border-top: 4px solid #19B6DD; /* Borda superior azul */
-    border-bottom: 4px solid #19B6DD; /* Borda inferior azul */
-    overflow: hidden; /* Oculta conteúdo que excede os limites */
-    padding: 10px; /* Espaçamento interno */
-    box-sizing: border-box; /* Inclui a borda no cálculo do tamanho */
-    align-items: center;
-}
-
-/* Modal visível */
-.modal-show {
-    display: block; /* Torna o modal visível */
-}
-
-/* Cabeçalho do modal */
-.modal-header {
-    font-size: 1.2em; /* Tamanho da fonte do título */
-    font-weight: bold; /* Negrito */
-    margin-bottom: 10px; /* Espaço abaixo do título */
-    text-align: center; /* Centraliza o título */
-}
-
-/* Corpo do modal */
-.modal-body {
-    font-size: 0.9em; /* Tamanho da fonte do corpo */
-    margin-bottom: 10px; /* Espaço abaixo do corpo */
-    text-align: center; /* Centraliza o texto do corpo */
-}
-
-.modalDistance {
-    text-align: center;
-}
-
-/* Botões do modal */
-.modal-buttons {
-    display: flex; /* Layout flexível para os botões */
-    flex-direction: column; /* Alinha os botões verticalmente */
-    gap: 10px; /* Espaçamento entre os botões */
-    margin-top: 10px; /* Espaço acima dos botões */
-}
-
-/* Botão principal */
-.button {
-    background-color: #19B6DD; /* Cor de fundo dos botões */
-    color: white; /* Cor do texto dos botões */
-    border: none; /* Sem borda */
-    border-radius: 4px; /* Cantos arredondados */
-    padding: 10px 15px; /* Aumentado para um tamanho maior */
-    cursor: pointer; /* Cursor de mãozinha */
-    font-size: 1em; /* Aumentado para um tamanho de fonte maior */
-    transition: background-color 0.3s; /* Transição suave para mudança de cor */
-    width: 100%; /* Botão ocupa toda a largura disponível */
-    display: flex; /* Usar flexbox para alinhar ícone e texto */
-    align-items: center; /* Centraliza verticalmente o conteúdo */
-    justify-content: center; /* Centraliza horizontalmente o conteúdo */
-}
-
-/* Botão ao passar o mouse */
-.button:hover {
-    background-color: #138AB0; /* Cor de fundo ao passar o mouse */
-}
-
-/* Estilo de botão secundário */
-.button-secondary {
-    background-color: #f5f5f5; /* Cor de fundo dos botões secundários */
-    color: #333; /* Cor do texto dos botões secundários */
-}
-
-.button-secondary:hover {
-    background-color: #e0e0e0; /* Cor de fundo do botão secundário no hover */
-    color: #333; /* Mantém o texto da mesma cor no hover */
-}
-
-.modal-closed {
-    border-radius: 8px; /* Cantos arredondados */
-    border-top: 4px solid #DD4B39; /* Borda superior vermelha para postos fechados */
-    border-bottom: 4px solid #DD4B39; /* Borda inferior vermelha para postos fechados */
-}
-
-.button-closed {
-    background-color: #DD4B39; /* Cor de fundo vermelha para botões de postos fechados */
-    color: white; /* Cor do texto do botão */
-    border: none;
-    border-radius: 4px;
-    padding: 10px 15px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s; /* Transição suave para mudança de cor */
-    width: 100%; /* Botão ocupa toda a largura disponível */
-    display: flex; /* Usar flexbox para alinhar ícone e texto */
-    align-items: center; /* Centraliza verticalmente o conteúdo */
-    justify-content: center; /* Centraliza horizontalmente o conteúdo */
-}
-
-.button-closed:hover {
-    background-color: #630e05; /* Cor de fundo ao passar o mouse */
-}
-
-.button-secondary- {
-    background-color: #f5f5f5; /* Cor de fundo dos botões secundários */
-    color: #333; /* Cor do texto dos botões secundários */
-}
