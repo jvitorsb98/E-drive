@@ -31,6 +31,8 @@ import { EmailPatternValidatorDirective } from './settings/shared/directives/ema
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
+import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
+
 import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
 
 
@@ -58,6 +60,8 @@ import { NavbarComponent } from './settings/features/home/components/navbar/navb
 
     // Pipes
     PhoneMaskPipe,
+      UserUpdateComponent,
+
 
 
   ],

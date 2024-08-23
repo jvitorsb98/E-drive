@@ -11,7 +11,7 @@ public record  DataDetailsUser(
         String email,
         String name,
         LocalDate birth, // Incluindo o campo de data de nascimento
-        String cellphone, // Incluindo o campo de telefone celular
+        String cellPhone, // Incluindo o campo de telefone celular
         Boolean activated, // Incluindo o campo de ativação
         Set<Role> roles // Incluindo as roles do usuário
 ) {

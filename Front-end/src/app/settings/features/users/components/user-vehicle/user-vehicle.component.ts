@@ -5,13 +5,18 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
+<<<<<<< HEAD
 import { Vehicle } from '../../../../core/models/Vehicle';
+=======
+
+>>>>>>> front-features/dados-pessoais
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { forkJoin } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
 import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
+import { Vehicle } from '../../../../core/models/vehicle';
 
 @Component({
   selector: 'app-user-vehicle',

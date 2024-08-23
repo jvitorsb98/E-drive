@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
   { path:'deshboard', component: DeshboardComponent},
   { path: 'footer', component: FooterComponent },
+  { path: 'login', component: UserLoginModalComponent},
   { path: 'user-registration', component: UserRegistrationFormComponent},
   { path: 'login', component: UserLoginModalComponent},
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },

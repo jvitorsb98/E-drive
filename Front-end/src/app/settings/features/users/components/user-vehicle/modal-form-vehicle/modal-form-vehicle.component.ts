@@ -1,7 +1,7 @@
 import { ModelService } from './../../../../../core/services/model/model.service';
 import { BrandService } from './../../../../../core/services/brand/brand.service';
 import { VehicleService } from './../../../../../core/services/vehicle/vehicle.service';
-import { Vehicle } from '../../../../../core/models/Vehicle';
+import { Vehicle } from '../../../../../core/models/vehicle';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -20,7 +20,7 @@ import Swal from 'sweetalert2';
 export class ModalFormVehicleComponent implements OnInit {
 
   userVehicleForm: FormGroup;
-  selectedVehicle: Vehicle | null = null; 
+  selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
 
   brands: { name: string; id: number }[] = [];
