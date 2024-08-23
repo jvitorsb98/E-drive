@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ModalService } from '../../../../services/modal/modal.service';
-import { UserLoginModalComponent } from '../../user-login-modal/user-login-modal.component';
 import { AuthService } from '../../../services/auth/auth.service';
 import { IResetPasswordResponse } from '../../../../interface/inter-Login';
 import { Observable } from 'rxjs';
@@ -35,10 +34,18 @@ export class ResetPasswordComponent {
   }
   resetPassword(){
     // Implemente a lógica de envio de e-mail para redefinição de senha
-    this.response = this.auth.resetPassword(this.resetPasswordForm.value.email);
+    // melhorar logica, verificar se o formulário foi preenchido corretamente
+    this.response = this.auth.resetPasswordRequest(this.resetPasswordForm.value.email);
     this.dialogRef.close();
     if(this.response){
-      this.router.navigate(['login']); // redirecionar para a troca de senha
+      this.router.navigate(['reset-password'], {
+        queryParams: {
+          title: 'Redefinir sua senha',
+          subtitle: 'Atualize sua senha para aumentar a segurança da sua conta.',
+          btnText: 'Salvar nova senha',
+          isPasswordChange: true
+        }
+      }); // redirecionar para a troca de senha
     }
   }
 

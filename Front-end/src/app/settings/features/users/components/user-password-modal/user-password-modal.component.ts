@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, Input, OnInit, Renderer2 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../../../../core/services/user/user.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -6,10 +6,11 @@ import Swal from 'sweetalert2';
 import { passwordMatchValidator } from '../../../../shared/validators/confirm-password.validators';
 import { PasswordFieldValidator } from '../../../../shared/validators/password-field.validator';
 import { User } from '../../../../core/models/User';
-import { NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UserLoginModalComponent } from '../../../../core/security/login/user-login-modal/user-login-modal.component';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 import { filter, take } from 'rxjs';
+import { AuthService } from '../../../../core/security/services/auth/auth.service';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -17,13 +18,19 @@ import { filter, take } from 'rxjs';
   styleUrl: './user-password-modal.component.scss'
 })
 export class UserPasswordModalComponent implements OnInit {
+  @Input() title: string = 'Criar sua senha'; // valores padrão
+  @Input() subtitle: string = 'Escolha uma senha forte para proteger sua conta.'; // valores padrão
+  @Input() btnText: string = 'Finalizar cadastro'; // valores padrão
+  @Input() isPasswordChange: boolean = false;
 
   userPassword!: FormGroup;
 
   constructor(
     private userService: UserService,
     private modalService: ModalService,
+    private auth: AuthService,
     private router: Router,
+    private routerActivator: ActivatedRoute,
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
@@ -34,6 +41,16 @@ export class UserPasswordModalComponent implements OnInit {
   ngOnInit() {
     this.buildForm();
     PasswordFieldValidator.initializePasswordField(this.renderer, this.el);
+
+    // Obtem os valores passados na rota
+    this.routerActivator.queryParams.subscribe(
+      (params) => {
+        this.title = params['title'] || this.title; // Usa o valor passado ou o valor padrão
+        this.subtitle = params['subtitle'] || this.subtitle;
+        this.btnText = params['btnText'] || this.btnText;
+        this.isPasswordChange = params['isPasswordChange'] === 'true'; // conversão de string para boolean
+      }
+    )
   }
 
   // Cria e inicializa o formulário com validação de senha e confirmação de senha.
@@ -45,7 +62,17 @@ export class UserPasswordModalComponent implements OnInit {
     }, { validators: passwordMatchValidator });
   }
 
+  // função para direcionar se é para trocar a senha ou criar um usuário
   saveUser(): void {
+    if (this.isPasswordChange){
+      this.changePassword();
+    }else{
+      this.createUser();
+    }
+  }
+
+  // Função para criar um usuário
+  createUser() {
     if (this.userPassword.valid) {
       this.userData.password = this.userPassword.value.password;
 
@@ -87,6 +114,41 @@ export class UserPasswordModalComponent implements OnInit {
           });
         }
       });
+    }
+  }
+
+  // função para troca de senha
+  changePassword(): void {
+    if (this.userPassword.valid) {
+      const token = this.auth.getTokenReset()
+      if (token) {
+        this.auth.resetPassword(token, this.userPassword.value.password).subscribe({
+          next: (response) => {
+            console.log('Senha alterada com sucesso', response); todo://remover depois
+            Swal.fire({
+              title: 'Senha alterada com sucesso!',
+              icon: 'success',
+              text: `Sua senha foi alterada com sucesso. `,
+              showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                this.closeModal();
+                this.router.navigate(['/login']);
+              }
+            })
+          },
+          error: (e) => {
+            Swal.fire({
+              title: 'Erro!',
+              icon: 'error',
+              text: `Houve um problema ao alterar sua senha. Tente novamente mais tarde.`,
+              showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
+            });
+          }
+        });
+      }
     }
   }
 
