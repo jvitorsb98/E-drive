@@ -4,10 +4,6 @@ import { environment } from '../../../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { UserVehicle } from '../../../models/user-vehicle';
 import { IApiResponse } from '../../../interface/api-response';
-import { User } from '../../../models/user';
-import { Vehicle } from '../../../models/vehicle';
-import { Autonomy } from '../../../models/autonomy';
-import { FormGroup } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +16,7 @@ export class UserVehicleService {
     this.userVehicleUrl = `${environment.apiUrl}/api/v1/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzQzNzEyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9._dFkfS3sgNKWCK1ozb3cNzRsYyqOYKJM21GgkVKjwcM';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mzg5MjI1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.da4bItRVxkavZYWjxxRrweYT508pZwmCIAdvrSd1JSs';
 
 
   getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
@@ -59,5 +55,14 @@ export class UserVehicleService {
           return throwError(() => e);
         })
       );
+  }
+
+  deleteUserVehicle(id: number): Observable<void> {
+    const authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzYxNzkwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.VT1JVBbn8wxHdOryKY46nEEqaq07gjXn8kUjmnoxixw';
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.delete<void>(`${this.userVehicleUrl}/${id}`, { headers });
   }
 }

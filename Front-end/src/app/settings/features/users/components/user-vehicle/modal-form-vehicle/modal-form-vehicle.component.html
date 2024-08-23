@@ -34,6 +34,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+            <mat-error *ngIf="userVehicleForm.get('brand')?.hasError('required') && userVehicleForm.get('brand')?.touched">
+             <strong>Marca </strong> é obrigatória
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -54,6 +57,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+            <mat-error *ngIf="userVehicleForm.get('model')?.hasError('required') && userVehicleForm.get('model')?.touched">
+             <strong>Modelo</strong> é obrigatório
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -74,6 +80,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+            <mat-error *ngIf="userVehicleForm.get('version')?.hasError('required') && userVehicleForm.get('version')?.touched">
+             <strong>Versão</strong> é obrigatória
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -87,10 +96,16 @@
                 type="text" 
                 matInput 
                 formControlName="mileagePerLiterRoad" 
+                [mask]="'000'"
                 aria-describedby="Help">
-                <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em
-                    estrada.</strong></mat-hint>
+                <span matSuffix class="custom-suffix">Km/l e</span>
+                <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
+                 <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
+              <div *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('pattern') && userVehicleForm.get('mileagePerLiterRoad')?.dirty">
+                <mat-error class="mat-error-codigo-text">O valor deve ser um <strong>número</strong> com no máximo uma casa <strong>decimal (ex.: 5.0, 12.5)</strong></mat-error>
+              </div>
             </div>
 
             <div class="col-12 col-md-6 mb-2">
@@ -99,10 +114,17 @@
                 <input 
                 type="text" 
                 matInput 
-                formControlName="mileagePerLiterCity" 
+                formControlName="mileagePerLiterCity"
+                [mask]="'00.0'"
                 aria-describedby="Help">
+                <span matSuffix class="custom-suffix">Km/l c</span>
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em cidade.</strong></mat-hint>
+                <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
+              <div *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('pattern') && userVehicleForm.get('mileagePerLiterCity')?.dirty">
+                <mat-error class="mat-error-codigo-text">Insira um <strong>número</strong> com até uma casa <strong>decimal (ex.: 5.0, 12.5).</strong></mat-error>
+              </div>
             </div>
 
             <div class="col-12 col-md-6 mb-2">
@@ -112,9 +134,16 @@
                 type="text" 
                 matInput 
                 formControlName="consumptionEnergetic" 
+                [mask]="'0.00'"
                 aria-describedby="Help">
+                <span matSuffix class="custom-suffix">MJ/km</span>
                 <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
+                <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('consumptionEnergetic')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
+              <div *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('pattern') && userVehicleForm.get('autonomyElectricMode')?.dirty">
+                <mat-error class="mat-error-codigo-text">Insira um número com até duas casas <strong>decimais (ex.: 5.00, 12.34).</strong></mat-error>
+              </div>
             </div>
 
             <div class="col-12 col-md-6 mb-2">
@@ -123,23 +152,30 @@
                 <input 
                 type="text" 
                 matInput 
-                formControlName="autonomyElectricMode" 
+                formControlName="autonomyElectricMode"
+                [mask]="'000'" 
                 aria-describedby="Help">
+                <span matSuffix class="custom-suffix">km</span>
                 <mat-hint id="Help" class="mat-hint-text">Autonomia em<strong> modo elétrico</strong></mat-hint>
+                <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
+              <div *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('pattern') && userVehicleForm.get('autonomyElectricMode')?.dirty">
+                <mat-error class="mat-error-codigo-text">Insira um número inteiro com até <strong>três dígitos</strong>.</mat-error>
+              </div>
             </div>
           </div>
 
           <!-- Mensagem de alerta -->
           <div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
-            Nem todos os dados de autonomia foram fornecidos pelo INMETRO. Eles podem ser inseridos, mas não é
+            Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Eles podem ser inseridos, mas não é
             aconselhável, pois isso pode impactar nos cálculos de rotas.
           </div>
         </div>
       </div>
       <div class="buttons-container">
         <button class="btn pulse-animation w-100 mb-3" type="button" (click)="resetForm()">Redefinir</button>
-        <button class="btn pulse-animation w-100 mb-2" type="button" (click)="submitForm()">Finalizar cadastro</button>
+        <button class="btn pulse-animation w-100 mb-2" type="button" (click)="submitForm()" [disabled]="!userVehicleForm.valid">Finalizar cadastro</button>
       </div>
     </form>
   </div>

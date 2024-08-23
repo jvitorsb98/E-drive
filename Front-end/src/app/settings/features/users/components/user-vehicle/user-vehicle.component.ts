@@ -7,12 +7,13 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { Vehicle } from '../../../../core/models/vehicle';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { forkJoin, map } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
 import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
 import { IVehicleWithUserVehicle } from '../../../../core/interface/vehicle-with-user-vehicle';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -83,6 +84,39 @@ export class UserVehicleComponent {
         console.error('Error fetching userVehicles:', err);
       }
     });
+  }
+
+  deleteUserVehicle(userVehicle: UserVehicle) {
+    console.log('Deletando veículo:', userVehicle.id);
+    this.userVehicleService.deleteUserVehicle(userVehicle.id).pipe(
+      catchError(error => {
+        Swal.fire({
+          title: 'Erro!',
+          icon: 'error',
+          text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
+          showConfirmButton: true,
+          confirmButtonColor: 'red',
+        });
+        // Retorna um observable nulo para continuar a execução mesmo após o erro
+        return of(null);
+      })
+    ).subscribe(
+      (response: void | null) => {
+        if (response === null) {
+          Swal.fire({
+            title: 'Sucesso!',
+            icon: 'success',
+            text: 'O veículo foi deletado com sucesso!',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          }).then((result) => {
+            if (result.isConfirmed || result.isDismissed) {
+              this.getListUserVehicles();
+            }
+          });
+        }
+      }
+    );
   }
 
   formatVehicleData(vehicle: Vehicle): Vehicle {

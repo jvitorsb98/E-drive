@@ -155,3 +155,18 @@ button[type="button"] {
     top: calc(100% + 4px);
   }
 }
+
+.custom-form-field {
+  position: relative;
+}
+
+.custom-suffix {
+  position: absolute;
+  right: 10px; 
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px; 
+  color: #19B6DD;
+  pointer-events: none; 
+  white-space: nowrap; 
+}

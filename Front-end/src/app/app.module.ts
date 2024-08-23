@@ -47,7 +47,6 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 
     // Diretivas
     EmailPatternValidatorDirective,
-
     // Pipes
     PhoneMaskPipe,
   ],

@@ -5,7 +5,7 @@ import { Vehicle } from '../../../../../core/models/vehicle';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
@@ -58,10 +58,10 @@ export class ModalFormVehicleComponent implements OnInit {
       version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
-      mileagePerLiterRoad: [null],
-      mileagePerLiterCity: [null],
-      consumptionEnergetic: [null],
-      autonomyElectricMode: [null]
+      mileagePerLiterRoad: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
+      mileagePerLiterCity: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
+      consumptionEnergetic: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
+      autonomyElectricMode: [null, [Validators.required, Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
     });
     if (this.data.userVehicle && this.data.vehicle) {
       this.editUser = true;
@@ -90,21 +90,57 @@ export class ModalFormVehicleComponent implements OnInit {
   }
 
 
+  // loadBrands() {
+  //   this.brandService.getAllBrands().subscribe(
+  //     (response: any) => {
+  //       this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+  //       this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+  //     },
+  //     (error) => {
+  //       console.error('Erro ao carregar as marcas', error);
+  //     }
+  //   );
+  // }
+
   loadBrands() {
-    this.brandService.getAllBrands().subscribe(
-      (response: any) => {
+    this.brandService.getAllBrands().subscribe({
+      next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar as marcas', error);
       }
-    );
+    });
   }
 
+
+  // loadModels(brandId: number) {
+  //   this.modelService.getModelsByBrandId(brandId).subscribe(
+  //     (response: any) => {
+  //       const models = response.content || [];
+  //       console.log('Models loaded:', response);
+
+  //       if (Array.isArray(models)) {
+  //         this.models = models.map(model => ({
+  //           name: this.userDataService.capitalizeWords(model.name),
+  //           id: model.id,
+  //           brandId: model.brand.id
+  //         }));
+  //         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+  //       } else {
+  //         console.error('Expected an array but got:', models);
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Erro ao carregar os modelos', error);
+  //     }
+  //   );
+  // }
+
   loadModels(brandId: number) {
-    this.modelService.getModelsByBrandId(brandId).subscribe(
-      (response: any) => {
+    this.modelService.getModelsByBrandId(brandId).subscribe({
+      next: (response: any) => {
         const models = response.content || [];
         console.log('Models loaded:', response);
 
@@ -119,15 +155,38 @@ export class ModalFormVehicleComponent implements OnInit {
           console.error('Expected an array but got:', models);
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar os modelos', error);
       }
-    );
+    });
   }
 
+
+  // loadVehiclesByModel(modelId: number) {
+  //   this.vehicleService.getVehiclesByModel(modelId).subscribe(
+  //     (response: any) => {
+  //       const vehicles = response.content || [];
+
+  //       if (Array.isArray(vehicles)) {
+  //         this.vehicles = vehicles.map(vehicle => ({
+  //           ...vehicle,
+  //           version: this.userDataService.capitalizeWords(vehicle.version),
+  //         }));
+
+  //         this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
+  //       } else {
+  //         console.error('Expected an array but got:', vehicles);
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Erro ao carregar os veículos', error);
+  //     }
+  //   );
+  // }
+
   loadVehiclesByModel(modelId: number) {
-    this.vehicleService.getVehiclesByModel(modelId).subscribe(
-      (response: any) => {
+    this.vehicleService.getVehiclesByModel(modelId).subscribe({
+      next: (response: any) => {
         const vehicles = response.content || [];
 
         if (Array.isArray(vehicles)) {
@@ -141,11 +200,12 @@ export class ModalFormVehicleComponent implements OnInit {
           console.error('Expected an array but got:', vehicles);
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar os veículos', error);
       }
-    );
+    });
   }
+
 
   setupAutocomplete() {
     this.filteredBrands = this.userVehicleForm.get('brand')!.valueChanges.pipe(
@@ -219,7 +279,7 @@ export class ModalFormVehicleComponent implements OnInit {
 
   submitForm() {
 
-    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzQzNzEyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9._dFkfS3sgNKWCK1ozb3cNzRsYyqOYKJM21GgkVKjwcM';
+    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mzg5MjI1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.da4bItRVxkavZYWjxxRrweYT508pZwmCIAdvrSd1JSs';
     if (this.data && this.data.userVehicle) {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
@@ -295,6 +355,7 @@ export class ModalFormVehicleComponent implements OnInit {
               icon: 'error',
               text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
               showConfirmButton: true,
+              confirmButtonColor: 'red'
             });
           }
         );
@@ -305,6 +366,7 @@ export class ModalFormVehicleComponent implements OnInit {
           icon: 'warning',
           text: 'Por favor, preencha todos os campos obrigatórios.',
           showConfirmButton: true,
+          confirmButtonColor: '#FFA726'
         });
       }
     }

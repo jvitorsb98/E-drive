@@ -21,7 +21,7 @@ export class VehicleService {
     // return of(this.vehicle);
   }
 
-  private authToken: string =  'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzQzNzEyLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9._dFkfS3sgNKWCK1ozb3cNzRsYyqOYKJM21GgkVKjwcM';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mzg5MjI1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.da4bItRVxkavZYWjxxRrweYT508pZwmCIAdvrSd1JSs';
 
 
   getVehicleDetails(id: number): Observable<Vehicle> {
