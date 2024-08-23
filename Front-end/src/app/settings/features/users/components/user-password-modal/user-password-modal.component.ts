@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { passwordMatchValidator } from '../../../../shared/validators/confirm-password.validators';
 import { PasswordFieldValidator } from '../../../../shared/validators/password-field.validator';
-import { User } from '../../../../core/models/User';
+import { User } from '../../../../core/models/user';
 import { NavigationEnd, Router } from '@angular/router';
 import { UserLoginModalComponent } from '../../../../core/security/login/user-login-modal/user-login-modal.component';
 import { ModalService } from '../../../../core/services/modal/modal.service';

@@ -6,7 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
-import { GoogleMapsModule } from '@angular/google-maps';
 
 // Providers
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -20,7 +19,6 @@ import { FooterComponent } from './settings/core/fragments/footer/footer.compone
 import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
-import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
@@ -31,12 +29,11 @@ import { EmailPatternValidatorDirective } from './settings/shared/directives/ema
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
+import { CommonModule } from '@angular/common';
+import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
 import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
-
+import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
-
-
-
 
 @NgModule({
   declarations: [
@@ -48,22 +45,20 @@ import { NavbarComponent } from './settings/features/home/components/navbar/navb
     NavbarIntroComponent,
     UserLoginModalComponent,
     ResetPasswordComponent,
-    DeshboardComponent,
-    NavbarComponent,
     VehicleListComponent,
     UserVehicleComponent,
     ModalViewVehicleComponent,
     ModalFormVehicleComponent,
+    MapStationsComponent,
+    UserUpdateComponent,
+    NavbarComponent,
+    DeshboardComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
 
     // Pipes
     PhoneMaskPipe,
-      UserUpdateComponent,
-
-
-
   ],
   imports: [
     BrowserModule,
@@ -73,7 +68,7 @@ import { NavbarComponent } from './settings/features/home/components/navbar/navb
     ReactiveFormsModule,
     FormsModule,
     AngularMaterialModule,
-    GoogleMapsModule
+    CommonModule
   ],
   providers: [
     provideAnimationsAsync()

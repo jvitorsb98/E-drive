@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { MatMenu } from '@angular/material/menu';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
 import { Router } from '@angular/router';
 

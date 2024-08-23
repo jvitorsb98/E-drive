@@ -2,12 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-<<<<<<< HEAD
-import { catchError, map, Observable, of, throwError } from 'rxjs';
-import { User } from '../../models/User';
-=======
 import { User } from '../../models/user';
->>>>>>> front-features/dados-pessoais
 
 @Injectable({
   providedIn: 'root'

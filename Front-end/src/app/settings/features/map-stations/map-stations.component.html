@@ -1,0 +1,55 @@
+<!-- Container do Mapa -->
+<div #mapContainer id="map"></div>
+
+<!-- Modal Principal -->
+<div id="myModal" class="modal" 
+  [ngClass]="{
+  'modal-closed': !openNow,
+  'modal-show': isModalOpen
+}">
+  <div class="modal-content">
+    <!-- Botão para fechar o modal -->
+    <span class="close" [ngClass]="{'close-open': openNow, 'close-closed': !openNow}" (click)="closeModal()">&times;</span>
+    <!-- Título do modal -->
+    <h2 id="modalTitle" class="modal-header">{{ modalTitle }}</h2>
+    <!-- Distância calculada -->
+    <p id="modalDistance" class="modalDistance">{{ modalDistance }}</p>
+ 
+    <!-- Botões no modal -->
+    <div class="modal-buttons">
+      <!-- Botão para traçar a rota -->
+      <button id="routeButton" class="button" [ngClass]="{'button-closed': !openNow}">
+        <img src="../../../../assets/images/rota.svg" alt="Ícone de Rota" style="width: 20px; height: 20px; margin-right: 5px;">
+        Traçar Rota
+      </button>
+      <!-- Botão para mostrar detalhes -->
+      <button id="detailsButton" class="button button-secondary" (click)="showDetailsModal()">
+        Mostrar Detalhes
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para detalhes do posto -->
+<div id="detailsModal" class="modal detailsModal" [ngClass]="{
+  'modal-show-details': isDetailsModalOpen,
+  'modal-closed': !openNow
+  }">
+  <div class="modal-content">
+    <!-- Botão para fechar o modal de detalhes -->
+    <span class="close-details" [ngClass]="{'close-open': openNow, 'close-closed': !openNow}" (click)="closeDetailsModal()">&times;</span>
+    <!-- Título do modal de detalhes -->
+    <h2 id="detailsModalTitle" class="detailsTitle">{{ detailsModalTitle }}</h2>
+    <!-- Corpo do modal de detalhes -->
+    <div class="detailsBody">
+      <!-- Endereço do posto -->
+      <p id="detailsModalAddress" *ngIf="detailsModalAddress">{{ detailsModalAddress }}</p>
+      <!-- Telefone do posto -->
+      <p id="detailsModalPhone" *ngIf="detailsModalPhone">{{ detailsModalPhone }}</p>
+      <!-- Avaliação do posto -->
+      <p id="detailsModalRating" *ngIf="detailsModalRating">{{ detailsModalRating }}</p>
+      <!-- Status de abertura do posto -->
+      <p id="detailsModalOpenStatus" *ngIf="detailsModalOpenStatus" style="text-align: center;">{{ detailsModalOpenStatus }}</p>
+    </div>
+  </div>
+</div>
