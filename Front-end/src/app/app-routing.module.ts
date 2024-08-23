@@ -6,16 +6,16 @@ import { UserRegistrationFormComponent } from './settings/features/users/compone
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
+import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
   { path:'deshboard', component: DeshboardComponent},
-  { path: 'footer', component: FooterComponent },
   { path: 'login', component: UserLoginModalComponent},
   { path: 'user-registration', component: UserRegistrationFormComponent},
-  { path: 'login', component: UserLoginModalComponent},
+  { path: 'carros', component: UserVehicleComponent},
+  { path: 'reset-password', component: UserPasswordModalComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
-  { path: 'carros', component: UserVehicleComponent}
 ];
 
 @NgModule({
