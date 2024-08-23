@@ -1,8 +1,6 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 
-
-
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
  * Utiliza a API do Google Maps para localizar e exibir marcadores para estações de carregamento próximas.

@@ -108,7 +108,7 @@ public class AuthController {
         String token = tokenService.generateTokenRecoverPassword(user);
 
         try {
-            emailService.sendResetPasswordEmail(user.getName(), dataResetPassword.email(), token);
+            emailService.sendResetPasswordEmailAsync(user.getName(), dataResetPassword.email(), token);
             String responseMessage = "A password reset email has been sent to " + dataResetPassword.email();
             return ResponseEntity.ok(responseMessage);
         } catch (MessagingException e) {
