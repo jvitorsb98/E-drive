@@ -86,10 +86,10 @@ export class UserVehicleComponent {
     });
   }
 
-  deleteUserVehicle(userVehicle: UserVehicle) {
-    console.log('Deletando veículo:', userVehicle.id);
-    this.userVehicleService.deleteUserVehicle(userVehicle.id).pipe(
-      catchError(error => {
+  deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
+    console.log('Deletando veículo:', vehicleData);
+    this.userVehicleService.deleteUserVehicle(vehicleData.userVehicle.id).pipe(
+      catchError(() => {
         Swal.fire({
           title: 'Erro!',
           icon: 'error',
@@ -97,26 +97,21 @@ export class UserVehicleComponent {
           showConfirmButton: true,
           confirmButtonColor: 'red',
         });
-        // Retorna um observable nulo para continuar a execução mesmo após o erro
-        return of(null);
+        return of(null); // Continua a sequência de observáveis com um valor nulo
       })
-    ).subscribe(
-      (response: void | null) => {
-        if (response === null) {
-          Swal.fire({
-            title: 'Sucesso!',
-            icon: 'success',
-            text: 'O veículo foi deletado com sucesso!',
-            showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
-          }).then((result) => {
-            if (result.isConfirmed || result.isDismissed) {
-              this.getListUserVehicles();
-            }
-          });
+    ).subscribe(() => {  // Omiti o parâmetro `response` porque o backend esta retornando null
+      Swal.fire({
+        title: 'Sucesso!',
+        icon: 'success',
+        text: 'O veículo foi deletado com sucesso!',
+        showConfirmButton: true,
+        confirmButtonColor: '#19B6DD',
+      }).then((result) => {
+        if (result.isConfirmed || result.isDismissed) {
+          this.getListUserVehicles();
         }
-      }
-    );
+      });
+    });
   }
 
   formatVehicleData(vehicle: Vehicle): Vehicle {

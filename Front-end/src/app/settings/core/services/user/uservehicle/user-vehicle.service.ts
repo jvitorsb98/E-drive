@@ -16,7 +16,7 @@ export class UserVehicleService {
     this.userVehicleUrl = `${environment.apiUrl}/api/v1/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mzg5MjI1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.da4bItRVxkavZYWjxxRrweYT508pZwmCIAdvrSd1JSs';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
 
 
   getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
@@ -58,9 +58,8 @@ export class UserVehicleService {
   }
 
   deleteUserVehicle(id: number): Observable<void> {
-    const authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MzYxNzkwLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.VT1JVBbn8wxHdOryKY46nEEqaq07gjXn8kUjmnoxixw';
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`,
+      'Authorization': `Bearer ${this.authToken}`,
       'Content-Type': 'application/json'
     });
     return this.http.delete<void>(`${this.userVehicleUrl}/${id}`, { headers });

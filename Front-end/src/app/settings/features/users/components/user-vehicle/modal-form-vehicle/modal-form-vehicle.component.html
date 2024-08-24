@@ -96,14 +96,15 @@
                 type="text" 
                 matInput 
                 formControlName="mileagePerLiterRoad" 
-                [mask]="'000'"
+                appDynamicMask
                 aria-describedby="Help">
-                <span matSuffix class="custom-suffix">Km/l e</span>
+                <mat-icon matSuffix class="custom-icon">local_gas_station</mat-icon> 
+                <!-- <span matSuffix class="custom-suffix">Km/l e</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
                  <!-- Mensagens de erro -->
                 <mat-error *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
-              <div *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('pattern') && userVehicleForm.get('mileagePerLiterRoad')?.dirty">
+              <div *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('pattern') && !userVehicleForm.get('mileagePerLiterRoad')?.hasError('appDynamicMask') && userVehicleForm.get('mileagePerLiterRoad')?.dirty">
                 <mat-error class="mat-error-codigo-text">O valor deve ser um <strong>número</strong> com no máximo uma casa <strong>decimal (ex.: 5.0, 12.5)</strong></mat-error>
               </div>
             </div>
@@ -117,7 +118,8 @@
                 formControlName="mileagePerLiterCity"
                 [mask]="'00.0'"
                 aria-describedby="Help">
-                <span matSuffix class="custom-suffix">Km/l c</span>
+                <mat-icon matSuffix class="custom-icon">local_gas_station</mat-icon>
+                <!-- <span matSuffix class="custom-suffix">Km/l c</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em cidade.</strong></mat-hint>
                 <!-- Mensagens de erro -->
                 <mat-error *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
@@ -136,7 +138,8 @@
                 formControlName="consumptionEnergetic" 
                 [mask]="'0.00'"
                 aria-describedby="Help">
-                <span matSuffix class="custom-suffix">MJ/km</span>
+                <mat-icon matSuffix class="custom-icon">electrical_services</mat-icon>
+                <!-- <span matSuffix class="custom-suffix">MJ/km</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
                 <!-- Mensagens de erro -->
                 <mat-error *ngIf="userVehicleForm.get('consumptionEnergetic')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
@@ -155,7 +158,8 @@
                 formControlName="autonomyElectricMode"
                 [mask]="'000'" 
                 aria-describedby="Help">
-                <span matSuffix class="custom-suffix">km</span>
+                <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
+                <!-- <span matSuffix class="custom-suffix">km</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Autonomia em<strong> modo elétrico</strong></mat-hint>
                 <!-- Mensagens de erro -->
                 <mat-error *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>

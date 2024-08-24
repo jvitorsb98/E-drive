@@ -150,10 +150,10 @@ button[type="button"] {
   cursor: pointer;
 }
 
-@media (max-width: 350px) {
-  .mat-autocomplete-panel {
-    top: calc(100% + 4px);
-  }
+.custom-icon {
+  color: #19B6DD;
+  font-size: 24px;
+  margin-right: 8px;
 }
 
 .custom-form-field {
@@ -162,11 +162,17 @@ button[type="button"] {
 
 .custom-suffix {
   position: absolute;
-  right: 10px; 
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 12px; 
+  font-size: 12px;
   color: #19B6DD;
-  pointer-events: none; 
-  white-space: nowrap; 
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 350px) {
+  .mat-autocomplete-panel {
+    top: calc(100% + 4px);
+  }
 }

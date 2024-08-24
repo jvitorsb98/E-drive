@@ -5,7 +5,7 @@ import { Vehicle } from '../../../../../core/models/vehicle';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
@@ -58,7 +58,7 @@ export class ModalFormVehicleComponent implements OnInit {
       version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
-      mileagePerLiterRoad: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
+      mileagePerLiterRoad: [null, [Validators.required, Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
       mileagePerLiterCity: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
       consumptionEnergetic: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
       autonomyElectricMode: [null, [Validators.required, Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
@@ -78,29 +78,16 @@ export class ModalFormVehicleComponent implements OnInit {
         version: this.data.vehicle.version,
         brand: this.data.vehicle.model.brand.name,
         model: this.data.vehicle.model.name,
-        mileagePerLiterRoad: this.data.vehicle.autonomy.mileagePerLiterRoad,
-        mileagePerLiterCity: this.data.vehicle.autonomy.mileagePerLiterCity,
-        consumptionEnergetic: this.data.vehicle.autonomy.consumptionEnergetic,
-        autonomyElectricMode: this.data.vehicle.autonomy.autonomyElectricMode
+        mileagePerLiterRoad: this.data.userVehicle.mileagePerLiterRoad,
+        mileagePerLiterCity: this.data.userVehicle.mileagePerLiterCity,
+        consumptionEnergetic: this.data.userVehicle.consumptionEnergetic,
+        autonomyElectricMode: this.data.userVehicle.autonomyElectricMode
       });
       console.log('Formulário preenchido com:', this.userVehicleForm.value);
     } else {
       console.warn('Dados do veículo ou autonomia não encontrados para preenchimento.');
     }
   }
-
-
-  // loadBrands() {
-  //   this.brandService.getAllBrands().subscribe(
-  //     (response: any) => {
-  //       this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
-  //       this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
-  //     },
-  //     (error) => {
-  //       console.error('Erro ao carregar as marcas', error);
-  //     }
-  //   );
-  // }
 
   loadBrands() {
     this.brandService.getAllBrands().subscribe({
@@ -113,30 +100,6 @@ export class ModalFormVehicleComponent implements OnInit {
       }
     });
   }
-
-
-  // loadModels(brandId: number) {
-  //   this.modelService.getModelsByBrandId(brandId).subscribe(
-  //     (response: any) => {
-  //       const models = response.content || [];
-  //       console.log('Models loaded:', response);
-
-  //       if (Array.isArray(models)) {
-  //         this.models = models.map(model => ({
-  //           name: this.userDataService.capitalizeWords(model.name),
-  //           id: model.id,
-  //           brandId: model.brand.id
-  //         }));
-  //         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
-  //       } else {
-  //         console.error('Expected an array but got:', models);
-  //       }
-  //     },
-  //     (error) => {
-  //       console.error('Erro ao carregar os modelos', error);
-  //     }
-  //   );
-  // }
 
   loadModels(brandId: number) {
     this.modelService.getModelsByBrandId(brandId).subscribe({
@@ -161,29 +124,6 @@ export class ModalFormVehicleComponent implements OnInit {
     });
   }
 
-
-  // loadVehiclesByModel(modelId: number) {
-  //   this.vehicleService.getVehiclesByModel(modelId).subscribe(
-  //     (response: any) => {
-  //       const vehicles = response.content || [];
-
-  //       if (Array.isArray(vehicles)) {
-  //         this.vehicles = vehicles.map(vehicle => ({
-  //           ...vehicle,
-  //           version: this.userDataService.capitalizeWords(vehicle.version),
-  //         }));
-
-  //         this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
-  //       } else {
-  //         console.error('Expected an array but got:', vehicles);
-  //       }
-  //     },
-  //     (error) => {
-  //       console.error('Erro ao carregar os veículos', error);
-  //     }
-  //   );
-  // }
-
   loadVehiclesByModel(modelId: number) {
     this.vehicleService.getVehiclesByModel(modelId).subscribe({
       next: (response: any) => {
@@ -205,7 +145,6 @@ export class ModalFormVehicleComponent implements OnInit {
       }
     });
   }
-
 
   setupAutocomplete() {
     this.filteredBrands = this.userVehicleForm.get('brand')!.valueChanges.pipe(
@@ -279,7 +218,7 @@ export class ModalFormVehicleComponent implements OnInit {
 
   submitForm() {
 
-    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0Mzg5MjI1LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.da4bItRVxkavZYWjxxRrweYT508pZwmCIAdvrSd1JSs';
+    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
     if (this.data && this.data.userVehicle) {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
