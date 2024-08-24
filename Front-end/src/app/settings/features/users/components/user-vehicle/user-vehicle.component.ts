@@ -5,13 +5,16 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
+import { Vehicle } from '../../../../core/models/vehicle';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { IApiResponse } from '../../../../core/interface/api-response';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalViewVehicleComponent } from './modal-view-vehicle/modal-view-vehicle.component';
 import { ModalFormVehicleComponent } from './modal-form-vehicle/modal-form-vehicle.component';
-import { Vehicle } from '../../../../core/models/vehicle';
+import { IVehicleWithUserVehicle } from '../../../../core/interface/vehicle-with-user-vehicle';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-user-vehicle',
@@ -20,9 +23,9 @@ import { Vehicle } from '../../../../core/models/vehicle';
 })
 export class UserVehicleComponent {
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions'];
-  dataSource = new MatTableDataSource<Vehicle>();
+  dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
-  userVehicleDetails: Vehicle[] = [];
+  userVehicleDetails: IVehicleWithUserVehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -45,35 +48,6 @@ export class UserVehicleComponent {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
-  // getListUserVehicles() {
-  //   this.userVehicleService.getAllUserVehicle().subscribe({
-  //     next: (response: any) => {
-  //       console.log('Response from getAllUserVehicle:', response);
-
-  //       if (response && Array.isArray(response.content)) {
-  //         this.userVehicleList = response.content;
-
-  //         // Cria um array de observables para buscar detalhes dos veículos
-  //         const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
-  //           this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
-  //         );
-
-  //         // Usa forkJoin para esperar até que todas as requisições estejam completas
-  //         forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-  //           this.userVehicleDetails = vehicles;
-  //           this.dataSource.data = this.userVehicleDetails;
-  //           console.log(this.dataSource)
-  //         });
-  //       } else {
-  //         console.error('Expected an array in response.content but got:', response.content);
-  //       }
-  //     },
-  //     error: (err) => {
-  //       console.error('Error fetching userVehicles:', err);
-  //     }
-  //   });
-  // }
-
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
@@ -84,12 +58,21 @@ export class UserVehicleComponent {
 
           // Cria um array de observables para buscar detalhes dos veículos
           const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
-            this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
+            this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+              map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+            )
           );
 
           // Usa forkJoin para esperar até que todas as requisições estejam completas
-          forkJoin(vehicleDetailsObservables).subscribe((vehicles: Vehicle[]) => {
-            this.userVehicleDetails = vehicles.map(vehicle => this.formatVehicleData(vehicle));
+          forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+            // Atualiza os dados com veículo e informações de UserVehicle
+            this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
+              return {
+                ...vehicle,
+                userVehicle // Inclui o UserVehicle no veículo
+              };
+            });
+
             this.dataSource.data = this.userVehicleDetails;
             console.log(this.dataSource);
           });
@@ -100,6 +83,34 @@ export class UserVehicleComponent {
       error: (err) => {
         console.error('Error fetching userVehicles:', err);
       }
+    });
+  }
+
+  deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
+    console.log('Deletando veículo:', vehicleData);
+    this.userVehicleService.deleteUserVehicle(vehicleData.userVehicle.id).pipe(
+      catchError(() => {
+        Swal.fire({
+          title: 'Erro!',
+          icon: 'error',
+          text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
+          showConfirmButton: true,
+          confirmButtonColor: 'red',
+        });
+        return of(null); // Continua a sequência de observáveis com um valor nulo
+      })
+    ).subscribe(() => {  // Omiti o parâmetro `response` porque o backend esta retornando null
+      Swal.fire({
+        title: 'Sucesso!',
+        icon: 'success',
+        text: 'O veículo foi deletado com sucesso!',
+        showConfirmButton: true,
+        confirmButtonColor: '#19B6DD',
+      }).then((result) => {
+        if (result.isConfirmed || result.isDismissed) {
+          this.getListUserVehicles();
+        }
+      });
     });
   }
 
@@ -121,11 +132,14 @@ export class UserVehicleComponent {
   }
 
   // LOGICA DO MODAL
-  openModalViewVeicle(userVehicle: Vehicle) {
+  openModalViewVeicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalViewVehicleComponent, {
       width: '600px',
-      height: '510px',
-      data: userVehicle
+      height: '530px',
+      data: {
+        vehicle: userVehicleWithDetails,
+        userVehicle: userVehicleWithDetails.userVehicle
+      }
     });
   }
 
@@ -137,7 +151,15 @@ export class UserVehicleComponent {
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
-
-
+  openModalEditUserVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
+    this.dialog.open(ModalFormVehicleComponent, {
+      width: '600px',
+      height: '810px',
+      data: {
+        vehicle: userVehicleWithDetails,
+        userVehicle: userVehicleWithDetails.userVehicle
+      }
+    }).afterClosed().subscribe(() => this.getListUserVehicles());
+  }
 
 }

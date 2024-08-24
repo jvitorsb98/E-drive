@@ -26,6 +26,7 @@ import { ModalFormVehicleComponent } from './settings/features/users/components/
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
+import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.directive';
 
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
@@ -56,6 +57,7 @@ import { NavbarComponent } from './settings/features/home/components/navbar/navb
 
     // Diretivas
     EmailPatternValidatorDirective,
+    DynamicMaskDirective,
 
     // Pipes
     PhoneMaskPipe,

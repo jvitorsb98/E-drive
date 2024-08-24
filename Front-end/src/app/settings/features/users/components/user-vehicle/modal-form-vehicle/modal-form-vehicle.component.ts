@@ -2,15 +2,16 @@ import { ModelService } from './../../../../../core/services/model/model.service
 import { BrandService } from './../../../../../core/services/brand/brand.service';
 import { VehicleService } from './../../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../../core/models/vehicle';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
 import { UserVehicleService } from '../../../../../core/services/user/uservehicle/user-vehicle.service';
 import Swal from 'sweetalert2';
+import { UserVehicle } from '../../../../../core/models/user-vehicle';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -19,9 +20,12 @@ import Swal from 'sweetalert2';
 })
 export class ModalFormVehicleComponent implements OnInit {
 
-  userVehicleForm: FormGroup;
+  userVehicle!: UserVehicle;
+  vehicle!: Vehicle
+  userVehicleForm!: FormGroup;
   selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
+  editUser: boolean = false; // Variável para controlar a exibição do h1 do modal
 
   brands: { name: string; id: number }[] = [];
   models: { name: string; id: number }[] = [];
@@ -39,38 +43,67 @@ export class ModalFormVehicleComponent implements OnInit {
     private userDataService: UserDataService,
     private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
-  ) {
-    this.userVehicleForm = this.formBuilder.group({
-      version: [null, Validators.required],
-      brand: [null, Validators.required],
-      model: [null, Validators.required],
-      mileagePerLiterRoad: [null],
-      mileagePerLiterCity: [null],
-      consumptionEnergetic: [null],
-      autonomyElectricMode: [null]
-    });
-  }
+    @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
+  ) { }
 
   ngOnInit() {
+    this.initializeData();
     this.loadBrands();
+    this.buildForm();
     this.setupAutocomplete();
   }
 
+  buildForm() {
+    this.userVehicleForm = this.formBuilder.group({
+      version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
+      brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
+      model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
+      mileagePerLiterRoad: [null, [Validators.required, Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
+      mileagePerLiterCity: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
+      consumptionEnergetic: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
+      autonomyElectricMode: [null, [Validators.required, Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
+    });
+    if (this.data.userVehicle && this.data.vehicle) {
+      this.editUser = true;
+      this.fillForm();
+    } else {
+      console.warn('@Inject(MAT_DIALOG_DATA) public data Dados estão incompletos:', this.data);
+    }
+  }
+
+  //Preenche o formulário com os dados do veículo para edição
+  fillForm() {
+    if (this.data.vehicle && this.data.vehicle.autonomy) {
+      this.userVehicleForm.patchValue({
+        version: this.data.vehicle.version,
+        brand: this.data.vehicle.model.brand.name,
+        model: this.data.vehicle.model.name,
+        mileagePerLiterRoad: this.data.userVehicle.mileagePerLiterRoad,
+        mileagePerLiterCity: this.data.userVehicle.mileagePerLiterCity,
+        consumptionEnergetic: this.data.userVehicle.consumptionEnergetic,
+        autonomyElectricMode: this.data.userVehicle.autonomyElectricMode
+      });
+      console.log('Formulário preenchido com:', this.userVehicleForm.value);
+    } else {
+      console.warn('Dados do veículo ou autonomia não encontrados para preenchimento.');
+    }
+  }
+
   loadBrands() {
-    this.brandService.getAllBrands().subscribe(
-      (response: any) => {
+    this.brandService.getAllBrands().subscribe({
+      next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar as marcas', error);
       }
-    );
+    });
   }
 
   loadModels(brandId: number) {
-    this.modelService.getModelsByBrandId(brandId).subscribe(
-      (response: any) => {
+    this.modelService.getModelsByBrandId(brandId).subscribe({
+      next: (response: any) => {
         const models = response.content || [];
         console.log('Models loaded:', response);
 
@@ -85,15 +118,15 @@ export class ModalFormVehicleComponent implements OnInit {
           console.error('Expected an array but got:', models);
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar os modelos', error);
       }
-    );
+    });
   }
 
   loadVehiclesByModel(modelId: number) {
-    this.vehicleService.getVehiclesByModel(modelId).subscribe(
-      (response: any) => {
+    this.vehicleService.getVehiclesByModel(modelId).subscribe({
+      next: (response: any) => {
         const vehicles = response.content || [];
 
         if (Array.isArray(vehicles)) {
@@ -107,10 +140,10 @@ export class ModalFormVehicleComponent implements OnInit {
           console.error('Expected an array but got:', vehicles);
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Erro ao carregar os veículos', error);
       }
-    );
+    });
   }
 
   setupAutocomplete() {
@@ -144,10 +177,6 @@ export class ModalFormVehicleComponent implements OnInit {
     return array.filter(item => item[field]?.toLowerCase().includes(filterValue));
   }
 
-  closeModal() {
-    this.dialogRef.close();
-  }
-
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value;
     this.userVehicleForm.get('brand')?.setValue(selectedBrand.name);
@@ -169,7 +198,7 @@ export class ModalFormVehicleComponent implements OnInit {
   onVersionSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedVehicle = event.option.value as Vehicle;
     this.selectedVehicle = selectedVehicle;
-    if(selectedVehicle.id){
+    if (selectedVehicle.id) {
       this.userVehicleForm.get('version')?.setValue(selectedVehicle.version);
       this.userVehicleForm.get('mileagePerLiterRoad')?.setValue(selectedVehicle.autonomy.mileagePerLiterRoad);
       this.userVehicleForm.get('mileagePerLiterCity')?.setValue(selectedVehicle.autonomy.mileagePerLiterCity);
@@ -188,31 +217,29 @@ export class ModalFormVehicleComponent implements OnInit {
   }
 
   submitForm() {
-    if (this.userVehicleForm.valid) {
+
+    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
+    if (this.data && this.data.userVehicle) {
+      console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
-      const dataRegisterAutonomy = {
-        mileagePerLiterRoad: formData.mileagePerLiterRoad,
-        mileagePerLiterCity: formData.mileagePerLiterCity,
-        consumptionEnergetic: formData.consumptionEnergetic,
-        autonomyElectricMode: formData.autonomyElectricMode,
+      const dataUpdateAutonomy = {
+        mileagePerLiterRoad: Number(formData.mileagePerLiterRoad),
+        mileagePerLiterCity: Number(formData.mileagePerLiterCity),
+        consumptionEnergetic: Number(formData.consumptionEnergetic),
+        autonomyElectricMode: Number(formData.autonomyElectricMode),
       };
 
-
-
-      const dataRegisterVehicleUser = {
-        vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
-        dataRegisterAutonomy: dataRegisterAutonomy,
+      const updateData = {
+        dataUpdateAutonomy: dataUpdateAutonomy
       };
-      console.log(dataRegisterVehicleUser)
 
-      const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTAxMzk4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.DmpcZfLIXbvcVg8g5QOSHS7-oG7TLq9kapiXJDf-REM';
-      this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+      this.userVehicleService.updateVehicleUser(this.data.userVehicle.id, updateData, authToken).subscribe(
         response => {
           console.log('Cadastro realizado com sucesso!', response);
           Swal.fire({
-            title: 'Cadastro realizado com sucesso!',
+            title: 'Cadastro editado com sucesso!',
             icon: 'success',
-            text: 'O veículo foi cadastrado com sucesso.',
+            text: 'O veículo foi editado com sucesso.',
             showConfirmButton: true,
             confirmButtonColor: '#19B6DD',
           }).then(() => {
@@ -220,31 +247,92 @@ export class ModalFormVehicleComponent implements OnInit {
           });
         },
         error => {
-          console.error('Erro ao realizar cadastro:', error);
+          console.error('Erro ao realizar update:', error);
           Swal.fire({
             title: 'Erro!',
             icon: 'error',
-            text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
+            text: 'Houve um problema ao realizar o update. Tente novamente mais tarde.',
             showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
+            confirmButtonColor: 'red',
           });
         }
       );
+
     } else {
-      Swal.fire({
-        title: 'Formulário inválido!',
-        icon: 'warning',
-        text: 'Por favor, preencha todos os campos obrigatórios.',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      });
+      if (this.userVehicleForm.valid) {
+        const formData = this.userVehicleForm.value;
+        const dataRegisterAutonomy = {
+          mileagePerLiterRoad: formData.mileagePerLiterRoad,
+          mileagePerLiterCity: formData.mileagePerLiterCity,
+          consumptionEnergetic: formData.consumptionEnergetic,
+          autonomyElectricMode: formData.autonomyElectricMode,
+        };
+
+        const dataRegisterVehicleUser = {
+          vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
+          dataRegisterAutonomy: dataRegisterAutonomy,
+        };
+        console.log(dataRegisterVehicleUser)
+
+        this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+          response => {
+            console.log('Cadastro realizado com sucesso!', response);
+            Swal.fire({
+              title: 'Cadastro realizado com sucesso!',
+              icon: 'success',
+              text: 'O veículo foi cadastrado com sucesso.',
+              showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
+            }).then(() => {
+              this.closeModal();
+            });
+          },
+          error => {
+            console.error('Erro ao realizar cadastro:', error);
+            Swal.fire({
+              title: 'Erro!',
+              icon: 'error',
+              text: 'Houve um problema ao realizar o cadastro. Tente novamente mais tarde.',
+              showConfirmButton: true,
+              confirmButtonColor: 'red'
+            });
+          }
+        );
+
+      } else {
+        Swal.fire({
+          title: 'Formulário inválido!',
+          icon: 'warning',
+          text: 'Por favor, preencha todos os campos obrigatórios.',
+          showConfirmButton: true,
+          confirmButtonColor: '#FFA726'
+        });
+      }
     }
   }
+
+  private initializeData() {
+    if (this.data) {
+      this.vehicle = this.data.vehicle || {} as Vehicle;
+      this.userVehicle = this.data.userVehicle || {} as UserVehicle;
+      console.log('@Inject(MAT_DIALOG_DATA) public data UserVehicle:', this.userVehicle);
+      console.log('@Inject(MAT_DIALOG_DATA) public data Vehicle:', this.vehicle);
+    } else {
+      console.warn('Nenhum dado foi injetado no modal.');
+    }
+  }
+
+  private isEditMode(): boolean {
+    return !!this.data.vehicle && !!this.data.userVehicle;
+  }
+
   resetForm() {
     this.userVehicleForm.reset();
     this.isAutonomyDataMissing = false;
   }
 
-
+  closeModal() {
+    this.dialogRef.close();
+  }
 
 }
