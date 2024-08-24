@@ -43,10 +43,10 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatNavList,
     MatMenu,
     MatMenuModule,
-    NgxMaskDirective,
     MatSortModule,
     MatPaginatorModule,
     MatTooltipModule,
+    NgxMaskDirective,
   ],
   exports: [
     MatCardModule,
@@ -69,13 +69,15 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatNavList,
     MatMenu,
     MatMenuModule,
+    MatSortModule,
     MatPaginatorModule,
+    MatTooltipModule,
     NgxMaskDirective,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
     provideNgxMask(),
-    provideNativeDateAdapter()
+    provideNativeDateAdapter(),
   ],
 })
 export class AngularMaterialModule { }
