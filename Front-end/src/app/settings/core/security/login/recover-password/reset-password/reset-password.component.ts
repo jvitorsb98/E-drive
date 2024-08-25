@@ -50,6 +50,6 @@ export class ResetPasswordComponent {
   }
 
   openLoginModal() {
-    this.router.navigate(['login']);
+    this.dialogRef.close();
   }
 }

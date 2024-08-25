@@ -1,19 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
-import { FooterComponent } from './settings/core/fragments/footer/footer.component';
 import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
+import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
   { path:'deshboard', component: DeshboardComponent},
   { path: 'login', component: UserLoginModalComponent},
   { path: 'user-registration', component: UserRegistrationFormComponent},
-  { path: 'carros', component: UserVehicleComponent},
+  { path: 'meus-carros', component: UserVehicleComponent},
+  { path: 'meus-Dados', component: UserUpdateComponent},
   { path: 'reset-password', component: UserPasswordModalComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];
