@@ -1,14 +1,19 @@
 <div class="container-fluid pt-3">
-  <div class="row align-items-center">
-    <div class="col-auto">
-      <button (click)="closeModal()" class="btn">
+  <div class="col-12">
+
+    <div class="header-container">
+      <button routerLink="/intro-page" class="btn">
         <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
       </button>
+
+      <h1 class="titulo" *ngIf="!editUser">Cadastrar Veículo</h1>
+      <h1 class="titulo" *ngIf="editUser">Editar Veículo</h1>
+
+      <button class="btn">
+        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+      </button>
     </div>
-    <div class="col">
-      <h1 class="titulo">Cadastrar Veículo</h1>
-    </div>
-  
+
     <form [formGroup]="userVehicleForm">
       <div class="content">
         <!-- Campo para selecionar a marca -->
@@ -16,11 +21,12 @@
           <mat-form-field class="custom-select">
             <mat-label>Marca do veículo:</mat-label>
             <input 
-              type="text" 
-              matInput 
-              formControlName="brand" 
-              [value]="userVehicleForm.get('brand')?.value?.name || ''" 
-              [matAutocomplete]="autoBrand">
+            type="text" 
+            matInput 
+            formControlName="brand"
+            [value]="userVehicleForm.get('brand')?.value?.name || ''"
+            [matAutocomplete]="autoBrand"
+            aria-describedby="Help">
             <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint>
             <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
               <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
@@ -28,6 +34,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+            <mat-error *ngIf="userVehicleForm.get('brand')?.hasError('required') && userVehicleForm.get('brand')?.touched">
+             <strong>Marca </strong> é obrigatória
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -36,11 +45,11 @@
           <mat-form-field class="custom-select">
             <mat-label>Modelo do veículo:</mat-label>
             <input 
-              type="text" 
-              matInput 
-              formControlName="model" 
-              [value]="userVehicleForm.get('model')?.value?.name || ''" 
-              [matAutocomplete]="autoModel">
+            type="text" 
+            matInput 
+            formControlName="model"
+            [value]="userVehicleForm.get('model')?.value?.name || ''"
+            [matAutocomplete]="autoModel">
             <mat-hint id="Help" class="mat-hint-text">Selecione o <strong>modelo.</strong></mat-hint>
             <mat-autocomplete #autoModel="matAutocomplete" (optionSelected)="onModelSelected($event)">
               <mat-option *ngFor="let model of filteredModels | async" [value]="model">
@@ -48,6 +57,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+            <mat-error *ngIf="userVehicleForm.get('model')?.hasError('required') && userVehicleForm.get('model')?.touched">
+             <strong>Modelo</strong> é obrigatório
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -56,11 +68,11 @@
           <mat-form-field class="custom-select">
             <mat-label>Versão do veículo:</mat-label>
             <input 
-              type="text" 
-              matInput 
-              formControlName="version" 
-              [value]="userVehicleForm.get('version')?.value?.version || ''" 
-              [matAutocomplete]="autoVersion">
+            type="text" 
+            matInput 
+            formControlName="version"
+            [value]="userVehicleForm.get('version')?.value?.version || ''"
+            [matAutocomplete]="autoVersion">
             <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>versão.</strong></mat-hint>
             <mat-autocomplete #autoVersion="matAutocomplete" (optionSelected)="onVersionSelected($event)">
               <mat-option *ngFor="let vehicle of filteredVersions | async" [value]="vehicle">
@@ -68,6 +80,9 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+            <mat-error *ngIf="userVehicleForm.get('version')?.hasError('required') && userVehicleForm.get('version')?.touched">
+             <strong>Versão</strong> é obrigatória
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -78,62 +93,93 @@
               <mat-form-field class="custom-select w-100">
                 <mat-label>Estrada:</mat-label>
                 <input 
-                  type="text"
-                  matInput 
-                  formControlName="mileagePerLiterRoad" 
-                  aria-describedby="Help">
+                type="text" 
+                matInput 
+                formControlName="mileagePerLiterRoad" 
+                appDynamicMask
+                aria-describedby="Help">
+                <mat-icon matSuffix class="custom-icon">local_gas_station</mat-icon> 
+                <!-- <span matSuffix class="custom-suffix">Km/l e</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
+                 <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
+              <div *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('pattern') && !userVehicleForm.get('mileagePerLiterRoad')?.hasError('appDynamicMask') && userVehicleForm.get('mileagePerLiterRoad')?.dirty">
+                <mat-error class="mat-error-codigo-text">O valor deve ser um <strong>número</strong> com no máximo uma casa <strong>decimal (ex.: 5.0, 12.5)</strong></mat-error>
+              </div>
             </div>
-    
+
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Cidade:</mat-label>
                 <input 
-                  type="text"
-                  matInput 
-                  formControlName="mileagePerLiterCity" 
-                  aria-describedby="Help">
+                type="text" 
+                matInput 
+                formControlName="mileagePerLiterCity"
+                [mask]="'00.0'"
+                aria-describedby="Help">
+                <mat-icon matSuffix class="custom-icon">local_gas_station</mat-icon>
+                <!-- <span matSuffix class="custom-suffix">Km/l c</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em cidade.</strong></mat-hint>
+                <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
+              <div *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('pattern') && userVehicleForm.get('mileagePerLiterCity')?.dirty">
+                <mat-error class="mat-error-codigo-text">Insira um <strong>número</strong> com até uma casa <strong>decimal (ex.: 5.0, 12.5).</strong></mat-error>
+              </div>
             </div>
-    
+
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Consumo:</mat-label>
                 <input 
-                  type="text"
-                  matInput 
-                  formControlName="consumptionEnergetic" 
-                  aria-describedby="Help">
+                type="text" 
+                matInput 
+                formControlName="consumptionEnergetic" 
+                [mask]="'0.00'"
+                aria-describedby="Help">
+                <mat-icon matSuffix class="custom-icon">electrical_services</mat-icon>
+                <!-- <span matSuffix class="custom-suffix">MJ/km</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
+                <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('consumptionEnergetic')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
-            </div> 
-    
+              <div *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('pattern') && userVehicleForm.get('autonomyElectricMode')?.dirty">
+                <mat-error class="mat-error-codigo-text">Insira um número com até duas casas <strong>decimais (ex.: 5.00, 12.34).</strong></mat-error>
+              </div>
+            </div>
+
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Autonomia:</mat-label>
                 <input 
-                  type="text"
-                  matInput 
-                  formControlName="autonomyElectricMode" 
-                  aria-describedby="Help">
-                <mat-hint id="Help" class="mat-hint-text">Autonomia <strong>em modo elétrico</strong></mat-hint>
+                type="text" 
+                matInput 
+                formControlName="autonomyElectricMode"
+                [mask]="'000'" 
+                aria-describedby="Help">
+                <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
+                <!-- <span matSuffix class="custom-suffix">km</span> -->
+                <mat-hint id="Help" class="mat-hint-text">Autonomia em<strong> modo elétrico</strong></mat-hint>
+                <!-- Mensagens de erro -->
+                <mat-error *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
-            </div> 
+              <div *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('pattern') && userVehicleForm.get('autonomyElectricMode')?.dirty">
+                <mat-error class="mat-error-codigo-text">Insira um número inteiro com até <strong>três dígitos</strong>.</mat-error>
+              </div>
+            </div>
           </div>
-          
+
           <!-- Mensagem de alerta -->
           <div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
-            Nem todos os dados de autonomia foram fornecidos pelo INMETRO. Eles podem ser inseridos, mas não é aconselhável, pois isso pode impactar nos cálculos de rotas.
+            Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Eles podem ser inseridos, mas não é
+            aconselhável, pois isso pode impactar nos cálculos de rotas.
           </div>
         </div>
-
       </div>
-
       <div class="buttons-container">
         <button class="btn pulse-animation w-100 mb-3" type="button" (click)="resetForm()">Redefinir</button>
-        <button class="btn pulse-animation w-100 mb-2" type="button" (click)="submitForm()">Finalizar cadastro</button>
+        <button class="btn pulse-animation w-100 mb-2" type="button" (click)="submitForm()" [disabled]="!userVehicleForm.valid">Finalizar cadastro</button>
       </div>
     </form>
   </div>

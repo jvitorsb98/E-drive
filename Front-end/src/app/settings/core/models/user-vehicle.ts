@@ -5,6 +5,6 @@ export class UserVehicle {
   mileagePerLiterRoad!: number;
   mileagePerLiterCity!: number;
   consumptionEnergetic!: number;
-  autonomyElectricModel!: number;
+  autonomyElectricMode!: number;
   activated!: boolean;
 }

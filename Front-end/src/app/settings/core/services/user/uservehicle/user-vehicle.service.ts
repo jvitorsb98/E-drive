@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
 import { UserVehicle } from '../../../models/user-vehicle';
 import { IApiResponse } from '../../../interface/api-response';
 
@@ -16,17 +16,8 @@ export class UserVehicleService {
     this.userVehicleUrl = `${environment.apiUrl}/api/v1/vehicle-users`;
   }
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MDc1Nzg2LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.tjKgmxBD5RUu55uIh0lifoEwlXhKrHTqXyB3RtynnwA';
+  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
 
-
-  // Método para obter todos os veículos do usuário
-  // getAllUserVehicle(): Observable<UserVehicle[]> {
-  //   const headers = new HttpHeaders({
-  //     'Authorization': `Bearer ${this.authToken}`
-  //   });
-
-  //   return this.http.get<UserVehicle[]>(this.userVehicleUrl, { headers });
-  // }
 
   getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
     const headers = new HttpHeaders({
@@ -45,4 +36,32 @@ export class UserVehicleService {
     return this.http.post(this.userVehicleUrl, dataRegisterVehicleUser, { headers });
   }
 
+  updateVehicleUser(id: number, dataRegisterAutonomy: any, authToken: string): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${authToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    console.log('dataRegisterAutonomy:', dataRegisterAutonomy);
+
+    return this.http.put(`${this.userVehicleUrl}/${id}`, dataRegisterAutonomy, { headers })
+      .pipe(
+        map(response => {
+          console.log('Usuário atualizado com sucesso:', response);
+          return response;
+        }),
+        catchError(e => {
+          console.error('Erro ao atualizar usuário:', e.error ? e.error : e.message);
+          return throwError(() => e);
+        })
+      );
+  }
+
+  deleteUserVehicle(id: number): Observable<void> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.delete<void>(`${this.userVehicleUrl}/${id}`, { headers });
+  }
 }
