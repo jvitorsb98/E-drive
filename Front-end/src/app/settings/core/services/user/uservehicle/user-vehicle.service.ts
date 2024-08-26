@@ -4,6 +4,7 @@ import { environment } from '../../../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { UserVehicle } from '../../../models/user-vehicle';
 import { IApiResponse } from '../../../interface/api-response';
+import { AuthService } from '../../../security/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,34 +12,34 @@ import { IApiResponse } from '../../../interface/api-response';
 export class UserVehicleService {
 
   private userVehicleUrl!: string;
+  private authToken: string | null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.userVehicleUrl = `${environment.apiUrl}/api/v1/vehicle-users`;
+
+    this.authToken = this.authService.getToken();
   }
-
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
-
 
   getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}`
     });
 
-    return this.http.get<IApiResponse<UserVehicle[]>>(this.userVehicleUrl, { headers });
+    return this.http.get<IApiResponse<UserVehicle[]>>(`${this.userVehicleUrl}/user`, { headers });
   }
 
-  registerVehicleUser(dataRegisterVehicleUser: any, authToken: string): Observable<any> {
+  registerVehicleUser(dataRegisterVehicleUser: any): Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`,
+      'Authorization': `Bearer ${this.authToken}`,
       'Content-Type': 'application/json'
     });
 
     return this.http.post(this.userVehicleUrl, dataRegisterVehicleUser, { headers });
   }
 
-  updateVehicleUser(id: number, dataRegisterAutonomy: any, authToken: string): Observable<any> {
+  updateVehicleUser(id: number, dataRegisterAutonomy: any): Observable<any> {
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${authToken}`,
+      'Authorization': `Bearer ${this.authToken}`,
       'Content-Type': 'application/json'
     });
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { AuthService } from '../../security/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,12 @@ import { environment } from '../../../../../environments/environment';
 export class VersionService {
   private baseUrl = 'your-api-url'; // Replace with your actual API URL
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
+  private authToken: string | null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.baseUrl = `${environment.apiUrl}`;
+
+    this.authToken = this.authService.getToken();
   }
   getVersionsByModelId(modelId: number): Observable<string[]> {
     return this.http.get<string[]>(`${this.baseUrl}/vehicle/model/${modelId}`);

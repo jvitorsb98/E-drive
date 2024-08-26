@@ -217,8 +217,6 @@ export class ModalFormVehicleComponent implements OnInit {
   }
 
   submitForm() {
-
-    const authToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
     if (this.data && this.data.userVehicle) {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
@@ -233,7 +231,7 @@ export class ModalFormVehicleComponent implements OnInit {
         dataUpdateAutonomy: dataUpdateAutonomy
       };
 
-      this.userVehicleService.updateVehicleUser(this.data.userVehicle.id, updateData, authToken).subscribe(
+      this.userVehicleService.updateVehicleUser(this.data.userVehicle.id, updateData).subscribe(
         response => {
           console.log('Cadastro realizado com sucesso!', response);
           Swal.fire({
@@ -274,7 +272,7 @@ export class ModalFormVehicleComponent implements OnInit {
         };
         console.log(dataRegisterVehicleUser)
 
-        this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser, authToken).subscribe(
+        this.userVehicleService.registerVehicleUser(dataRegisterVehicleUser).subscribe(
           response => {
             console.log('Cadastro realizado com sucesso!', response);
             Swal.fire({

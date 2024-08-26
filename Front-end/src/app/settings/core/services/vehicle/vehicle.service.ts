@@ -14,9 +14,9 @@ export class VehicleService {
   private vehicleUrl!: string;
   private authToken: string | null;
 
-  constructor(private http: HttpClient, private auth: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.vehicleUrl = `${environment.apiUrl}`;
-    this.authToken = this.auth.getToken();
+    this.authToken = this.authService.getToken();
   }
 
   // Método para obter todos os veiculos reais
@@ -24,8 +24,6 @@ export class VehicleService {
     return this.http.get<Vehicle[]>(this.vehicleUrl);
     // return of(this.vehicle);
   }
-
-  // private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0MTAxMzk4LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.DmpcZfLIXbvcVg8g5QOSHS7-oG7TLq9kapiXJDf-REM';
 
   getVehicleDetails(id: number): Observable<Vehicle> {
     const headers = new HttpHeaders({

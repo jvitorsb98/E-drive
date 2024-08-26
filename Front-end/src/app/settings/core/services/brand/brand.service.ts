@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Brand } from '../../models/brand';
+import { AuthService } from '../../security/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,13 @@ export class BrandService {
 
   private brandUrl: string;
 
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJpc3MiOiJBUEkgVm9sbC5tZWQiLCJpZCI6MSwiZXhwIjoxNzI0NDYzMDM0LCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSJ9.sAH_18Ugjbio3Qujq4ec3DYPxLm7H_7a73Vt4sdbzZU';
+  private authToken: string | null;
 
 
-  constructor(private http: HttpClient) {
-    this.brandUrl = `${environment.apiUrl}/api/v1/brands`; 
+  constructor(private http: HttpClient, private authService: AuthService) {
+    this.brandUrl = `${environment.apiUrl}/api/v1/brands`;
+
+    this.authToken = this.authService.getToken();
   }
 
   // Método para obter todas as marcas

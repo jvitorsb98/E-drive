@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { User } from '../../models/user';
+import { AuthService } from '../../security/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,16 @@ import { User } from '../../models/user';
 export class UserService {
 
   private usersUrl: string;
+  private authToken: string | null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.usersUrl = `${environment.apiUrl}/auth`;
+
+    this.authToken = this.authService.getToken();
   }
 
   // Método para obter o usuário logado
-  private authToken: string = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIiwiaXNzIjoiQVBJIFZvbGwubWVkIiwiaWQiOjEsImV4cCI6MTcyNDM0NjI1MiwiZW1haWwiOiJkYW5pbG8udWJhQGhvdG1haWwuY29tIn0.AOjTRZrNOXJ0S_9a0RRCDxodwQoF3q1BpWguWTL8Ubk';
+
 
     // Método para obter o usuário logado
     getAllUsers(): Observable<User[]> {
@@ -24,6 +28,7 @@ export class UserService {
         'Authorization': `Bearer ${this.authToken}`
       });
 
+      todo:// trocar por um interceptor para adicionar o token ao cabecalho
       return this.http.get<User[]>(`${this.usersUrl}/user/me`, { headers });
     }
 
@@ -55,7 +60,7 @@ export class UserService {
 
   // Método para verificar se o email já existe
   checkEmailExists(email: string): Observable<boolean> {
-    return this.http.get<boolean>(`${this.usersUrl}/user/update`, {
+    return this.http.get<boolean>(`${this.usersUrl}/user/exists`, {
       params: new HttpParams().set('email', email)
     }).pipe(
       catchError(e => {

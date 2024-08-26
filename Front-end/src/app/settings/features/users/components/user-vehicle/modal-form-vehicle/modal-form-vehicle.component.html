@@ -2,7 +2,7 @@
   <div class="col-12">
 
     <div class="header-container">
-      <button routerLink="/intro-page" class="btn">
+      <button (click)="closeModal()" class="btn">
         <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
       </button>
 
@@ -20,9 +20,9 @@
         <div class="col-12 col-md-6 mb-2 w-100">
           <mat-form-field class="custom-select">
             <mat-label>Marca do veículo:</mat-label>
-            <input 
-            type="text" 
-            matInput 
+            <input
+            type="text"
+            matInput
             formControlName="brand"
             [value]="userVehicleForm.get('brand')?.value?.name || ''"
             [matAutocomplete]="autoBrand"
@@ -44,9 +44,9 @@
         <div class="col-12 col-md-6 mb-2 w-100" [ngClass]="{'hidden': !userVehicleForm.get('brand')?.value}">
           <mat-form-field class="custom-select">
             <mat-label>Modelo do veículo:</mat-label>
-            <input 
-            type="text" 
-            matInput 
+            <input
+            type="text"
+            matInput
             formControlName="model"
             [value]="userVehicleForm.get('model')?.value?.name || ''"
             [matAutocomplete]="autoModel">
@@ -67,9 +67,9 @@
         <div class="col-12 col-md-6 mb-2 w-100" [ngClass]="{'hidden': !userVehicleForm.get('model')?.value}">
           <mat-form-field class="custom-select">
             <mat-label>Versão do veículo:</mat-label>
-            <input 
-            type="text" 
-            matInput 
+            <input
+            type="text"
+            matInput
             formControlName="version"
             [value]="userVehicleForm.get('version')?.value?.version || ''"
             [matAutocomplete]="autoVersion">
@@ -92,13 +92,13 @@
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Estrada:</mat-label>
-                <input 
-                type="text" 
-                matInput 
-                formControlName="mileagePerLiterRoad" 
+                <input
+                type="text"
+                matInput
+                formControlName="mileagePerLiterRoad"
                 appDynamicMask
                 aria-describedby="Help">
-                <mat-icon matSuffix class="custom-icon">local_gas_station</mat-icon> 
+                <mat-icon matSuffix class="custom-icon">local_gas_station</mat-icon>
                 <!-- <span matSuffix class="custom-suffix">Km/l e</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
                  <!-- Mensagens de erro -->
@@ -112,9 +112,9 @@
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Cidade:</mat-label>
-                <input 
-                type="text" 
-                matInput 
+                <input
+                type="text"
+                matInput
                 formControlName="mileagePerLiterCity"
                 [mask]="'00.0'"
                 aria-describedby="Help">
@@ -132,10 +132,10 @@
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Consumo:</mat-label>
-                <input 
-                type="text" 
-                matInput 
-                formControlName="consumptionEnergetic" 
+                <input
+                type="text"
+                matInput
+                formControlName="consumptionEnergetic"
                 [mask]="'0.00'"
                 aria-describedby="Help">
                 <mat-icon matSuffix class="custom-icon">electrical_services</mat-icon>
@@ -152,11 +152,11 @@
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Autonomia:</mat-label>
-                <input 
-                type="text" 
-                matInput 
+                <input
+                type="text"
+                matInput
                 formControlName="autonomyElectricMode"
-                [mask]="'000'" 
+                [mask]="'000'"
                 aria-describedby="Help">
                 <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
                 <!-- <span matSuffix class="custom-suffix">km</span> -->
