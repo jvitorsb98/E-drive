@@ -13,7 +13,7 @@
         <div class="col-md-12" class="form-floating mb-3">
           <mat-card>
             <mat-form-field>
-              <mat-label>Nome completo:</mat-label>
+              <mat-label class="custom-label">Nome completo:</mat-label>
               <input 
               type="text" 
               name="name" 
@@ -41,7 +41,7 @@
         <div class="col-md-12" class="form-floating mb-3">
           <mat-card>
             <mat-form-field>
-              <mat-label>Email:</mat-label>
+              <mat-label class="custom-label">Email:</mat-label>
               <input 
               type="text" 
               name="email" 
@@ -69,7 +69,7 @@
         <div class="col-md-12" class="form-floating mb-3">
           <mat-card>
             <mat-form-field>
-              <mat-label>Data de nascimento:</mat-label>
+              <mat-label class="custom-label">Data de nascimento:</mat-label>
               <input 
               matInput 
               [matDatepicker]="picker" 
@@ -81,7 +81,7 @@
               required 
               aria-describedby="Help" />
               <mat-hint id="Help" class="mat-hint-text">É para sua segurança. Por isso pedimos sua <strong>data</strong></mat-hint>
-              <mat-datepicker-toggle matIconSuffix class="custom-icon" [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker-toggle matIconSuffix class="custom-icon-data" [for]="picker"></mat-datepicker-toggle>
               <mat-datepicker #picker>
                 <mat-datepicker-actions>
                   <button mat-button matDateRangePickerCancel class="cancel-button">Cancelar</button>
@@ -97,7 +97,7 @@
           <mat-card>
             <div class="form-container">
               <mat-form-field class="custom-select">
-                <mat-label>Código do país:</mat-label>
+                <mat-label class="custom-label">Código do país:</mat-label>
                 <input 
                 type="text" 
                 matInput 
@@ -122,7 +122,7 @@
 
               </mat-form-field>
               <mat-form-field appearance="fill" class="custom-input">
-                <mat-label>Telefone celular:</mat-label>
+                <mat-label class="custom-label">Telefone celular:</mat-label>
                 <input 
                 type="text" 
                 matInput 
@@ -131,7 +131,7 @@
                 formControlName="cellPhone" 
                 required 
                 aria-describedby="Help" />
-                <mat-icon matSuffix class="custom-icon">phone</mat-icon>
+                <mat-icon matSuffix class="custom-icon-cellfone">phone</mat-icon>
                 <mat-hint [ngStyle]="{'white-space': 'nowrap'}" id="Help" class="mat-hint-cellPhone-text">Preencha apenas os <strong>números.</strong></mat-hint>
                 
                 <mat-error class="mat-hint-cellPhone-text" [ngStyle]="{'white-space': 'nowrap'}"
