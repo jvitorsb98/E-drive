@@ -23,6 +23,11 @@ import { VehicleListComponent } from './settings/features/vehicles/components/ve
 import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
 import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
 import { ModalFormVehicleComponent } from './settings/features/users/components/user-vehicle/modal-form-vehicle/modal-form-vehicle.component';
+import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
+import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
+import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
+import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
+import { UiButtonComponent } from './settings/shared/components/ui-button/ui-button.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -31,10 +36,6 @@ import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
-import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
-import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
-import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
-import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { NavbarComponent } from './settings/features/home/components/navbar/navb
     UserUpdateComponent,
     NavbarComponent,
     DeshboardComponent,
+    UiButtonComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,

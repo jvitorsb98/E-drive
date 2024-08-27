@@ -1,0 +1,100 @@
+:host {
+  button {
+    border: 0px;
+    height: 35px;
+    width: 120px;
+    border-radius: 6px;
+  }
+}
+
+button[type="vivid-sky-blue"] {
+  background-color: #19B6DD;
+  color: #FFF;
+  width: 100%;
+
+  &:hover {
+    background-color: #32aecd;
+    box-shadow: 0px 0px 5px 3px #6d6e6e;
+  }
+
+  &[disabled] {
+    background-color: #444444;
+    color: white;
+    border: 1px solid #444444;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  // Animação do botão de continuar 
+  &.pulse-animation {
+    animation: pulse 1s infinite;
+  }
+
+  &.pulse-animation:hover {
+    animation: none;
+  }
+}
+
+.btn i {
+  width: 30px;
+  font-size: 1.2rem;
+  margin-left: -50px;
+  color: #000;
+  transition: 0.3s linear all;
+  display: inline-block;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+
+  &:hover {
+    transform: translateX(10px);
+    color: #19B6DD;
+  }
+}
+
+button[type="solid-primary"] {
+  background: green;
+  border: 0px;
+  color: white;
+  transition: 600ms;
+
+  &:hover {
+    background: #3f6031;
+  }
+}
+
+button[type="outline-primary"] {
+  background: blue;
+  border: 0px;
+  color: white;
+  transition: 600ms;
+
+  &:hover {
+    background: #3f3f60;
+  }
+}
+
+button[type="outline-secondary"] {
+  background: red;
+  border: 0px;
+  color: white;
+  transition: 600ms;
+
+  &:hover {
+    background: #f6dbdb;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.02);
+  }
+
+  50% {
+    transform: scale(1);
+  }
+}
