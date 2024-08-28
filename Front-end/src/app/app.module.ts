@@ -20,14 +20,14 @@ import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-in
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
-import { UserVehicleComponent } from './settings/features/users/components/user-vehicle/user-vehicle.component';
-import { ModalViewVehicleComponent } from './settings/features/users/components/user-vehicle/modal-view-vehicle/modal-view-vehicle.component';
-import { ModalFormVehicleComponent } from './settings/features/users/components/user-vehicle/modal-form-vehicle/modal-form-vehicle.component';
 import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
 import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
 import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
 import { UiButtonComponent } from './settings/shared/components/ui-button/ui-button.component';
+import { UserVehicleListComponent } from './settings/features/user-vehicle/components/user-vehicle-list/user-vehicle-list.component';
+import { ModalDetailsVehicleComponent } from './settings/features/user-vehicle/components/modal-details-vehicle/modal-details-vehicle.component';
+import { ModalFormVehicleComponent } from './settings/features/user-vehicle/components/modal-form-vehicle/modal-form-vehicle.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -48,14 +48,14 @@ import { CommonModule } from '@angular/common';
     UserLoginModalComponent,
     ResetPasswordComponent,
     VehicleListComponent,
-    UserVehicleComponent,
-    ModalViewVehicleComponent,
     ModalFormVehicleComponent,
     MapStationsComponent,
     UserUpdateComponent,
     NavbarComponent,
     DeshboardComponent,
     UiButtonComponent,
+    ModalDetailsVehicleComponent,
+    UserVehicleListComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
