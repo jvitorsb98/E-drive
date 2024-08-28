@@ -1,0 +1,88 @@
+<div class="container">
+  <mat-card class="address-card">
+    <div class="icon-row">
+      <button mat-icon-button aria-label="Back" routerLink="/list-My-addresses">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <button mat-icon-button (click)="openFAQModal()">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+    </div>
+    <mat-card-content>
+      <mat-card-title>{{title}}</mat-card-title>
+      <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
+        <mat-grid-list cols="1" rowHeight="9vh">
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>CEP</mat-label>
+              <input matInput formControlName="postalCode" (blur)="searchPostalCode()">
+              <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>País</mat-label>
+              <input matInput formControlName="country">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>Estado</mat-label>
+              <input matInput formControlName="state">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>Cidade</mat-label>
+              <input matInput formControlName="city">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>Bairro</mat-label>
+              <input matInput formControlName="district">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>Logradouro</mat-label>
+              <input matInput formControlName="street">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>Número</mat-label>
+              <input matInput formControlName="number">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+            <mat-form-field>
+              <mat-label>Complemento</mat-label>
+              <input matInput formControlName="complement">
+            </mat-form-field>
+          </mat-grid-tile>
+
+          <mat-grid-tile>
+              <mat-checkbox formControlName="hasChargingStation" [labelPosition]="labelPosition">Possui ponto de recarga para veículo elétrico?</mat-checkbox>
+          </mat-grid-tile>
+
+        </mat-grid-list>
+
+        <mat-card-actions>
+          <button mat-raised-button class="btn-primary" [disabled]="!addressForm.valid" type="submit">Salvar</button>
+        </mat-card-actions>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <ng-template #loading>
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+  </ng-template>
+</div>

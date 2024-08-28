@@ -1,0 +1,12 @@
+<div class="faq-popup">
+  <h2 mat-dialog-title>Perguntas Frequentes</h2>
+  <mat-dialog-content>
+    <div *ngFor="let faq of faqs">
+      <h3>{{ faq.question }}</h3>
+      <p>{{ faq.answer }}</p>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Fechar</button>
+  </mat-dialog-actions>
+</div>
