@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
-import { ILoginRequest, IResetPasswordRequest, IResetPasswordResponse } from '../../../interface/inter-Login';
+import { ILoginRequest, IResetPasswordRequest, IResetPasswordResponse } from '../../../models/inter-Login';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
@@ -26,24 +26,24 @@ export class AuthService {
     // rever essa logica
     todo: //console.log(crede ntial); remover
     return this.http.post(this.apiUrl + '/login', credential)
-    .pipe(
-      tap((response: any) => {
-        localStorage.setItem('token', response.token);
-        this.isLoggedInSubject.next(true); // Atualizar o estado do usuário logado
-      }),
-      catchError(
-        this.handleError
-      )
-    );
+      .pipe(
+        tap((response: any) => {
+          localStorage.setItem('token', response.token);
+          this.isLoggedInSubject.next(true); // Atualizar o estado do usuário logado
+        }),
+        catchError(
+          this.handleError
+        )
+      );
   }
 
   logout() {
     this.isLoggedInSubject.next(false);
     this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
-    .pipe(
-      catchError(this.handleError)
-    )
-    .subscribe();
+      .pipe(
+        catchError(this.handleError)
+      )
+      .subscribe();
     localStorage.removeItem('token');
   }
 
@@ -71,7 +71,7 @@ export class AuthService {
     return localStorage.getItem('token-reset-password');
   }
 
-  handleError(error: any){
+  handleError(error: any) {
     return throwError(() => new Error(error || 'Server Error'));
   }
 

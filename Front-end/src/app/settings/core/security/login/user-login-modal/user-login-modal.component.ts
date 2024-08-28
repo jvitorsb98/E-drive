@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms'
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
-import { ILoginRequest } from '../../../interface/inter-Login';
+import { ILoginRequest } from '../../../models/inter-Login';
 import { ResetPasswordComponent } from '../recover-password/reset-password/reset-password.component';
 import { Router } from '@angular/router';
 
@@ -24,10 +24,10 @@ export class UserLoginModalComponent {
     private modal: ModalService,
     private auth: AuthService,
     private router: Router
-  ){}
+  ) { }
 
   /* Chama o modal de-esquecimento de senha */
-  modalResetPassword(){
+  modalResetPassword() {
     this.modal.openModal(ResetPasswordComponent)
   }
 
@@ -38,7 +38,7 @@ export class UserLoginModalComponent {
     });
   }
 
-  goBack(){
+  goBack() {
     // this.dialog.closeAll();
     this.router.navigate(['/']);
   }

@@ -23,7 +23,7 @@ export class UserRegistrationFormComponent {
   phoneType: string = 'MOBILE';
   countries: any[] = [];
   filteredCountries!: Observable<any[]>; // Utilizado para filtrar países
-  user: User = new User();
+  user!: User;
   users: User[] = [];
   minDate: Date | null = null;
   maxDate: Date | null = null;

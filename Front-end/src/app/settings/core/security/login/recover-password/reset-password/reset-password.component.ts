@@ -3,7 +3,7 @@ import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms'
 import { MatDialogRef } from '@angular/material/dialog';
 import { ModalService } from '../../../../services/modal/modal.service';
 import { AuthService } from '../../../services/auth/auth.service';
-import { IResetPasswordResponse } from '../../../../interface/inter-Login';
+import { IResetPasswordResponse } from '../../../../models/inter-Login';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -24,7 +24,7 @@ export class ResetPasswordComponent {
     private modal: ModalService,
     private auth: AuthService,
     private router: Router
-  ){ }
+  ) { }
 
   ngOnInit(): void {
     this.emailControl = new FormControl('', [Validators.required, Validators.email]);
@@ -32,12 +32,12 @@ export class ResetPasswordComponent {
       email: this.emailControl
     });
   }
-  resetPassword(){
+  resetPassword() {
     // Implemente a lógica de envio de e-mail para redefinição de senha
     // melhorar logica, verificar se o formulário foi preenchido corretamente
     this.response = this.auth.resetPasswordRequest(this.resetPasswordForm.value.email);
     this.dialogRef.close();
-    if(this.response){
+    if (this.response) {
       this.router.navigate(['reset-password'], {
         queryParams: {
           title: 'Redefinir sua senha',
