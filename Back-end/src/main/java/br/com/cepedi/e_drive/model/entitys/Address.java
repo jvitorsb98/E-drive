@@ -49,10 +49,14 @@ public class Address {
     @Column(name = "plugin", nullable = false)
     private Boolean plugin;
 
+    @Column(name = "complement")
+    private String complement;
+
     @Column(name = "activated", nullable = false)
     private Boolean activated;
 
     public Address(DataRegisterAddress dataRegisterAddress, User user) {
+        System.out.println("USER" + user.getId());
         this.country = dataRegisterAddress.country();
         this.zipCode = dataRegisterAddress.zipCode();
         this.state = dataRegisterAddress.state();
@@ -60,6 +64,7 @@ public class Address {
         this.neighborhood = dataRegisterAddress.neighborhood();
         this.number = dataRegisterAddress.number();
         this.street = dataRegisterAddress.street();
+        this.complement = dataRegisterAddress.complement();
         this.user = user;
         this.plugin = dataRegisterAddress.plugin() != null ? dataRegisterAddress.plugin() : false;
         this.activated = true;

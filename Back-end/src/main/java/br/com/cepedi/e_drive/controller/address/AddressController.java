@@ -22,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -57,10 +59,12 @@ public class AddressController {
     public ResponseEntity<DataAddressDetails> register(
             @Parameter(description = "Data required to register a new address", required = true)
             @Valid @RequestBody DataRegisterAddress data,
-            UriComponentsBuilder uriBuilder
+            UriComponentsBuilder uriBuilder,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         LOGGER.info("Registering a new address");
-        DataAddressDetails addressDetails = addressService.register(data);
+        String email = userDetails.getUsername();
+        DataAddressDetails addressDetails = addressService.register(data,email);
         URI uri = uriBuilder.path("/api/v1/address/{id}").buildAndExpand(addressDetails.id()).toUri();
         LOGGER.info("Address registered successfully");
         return ResponseEntity.created(uri).body(addressDetails);
@@ -89,7 +93,7 @@ public class AddressController {
         return new ResponseEntity<>(addressDetails, HttpStatus.OK);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/user")
     @Operation(summary = "Get addresses by User ID", method = "GET", description = "Retrieves a list of addresses associated with a specific user ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Addresses retrieved successfully",
@@ -104,12 +108,13 @@ public class AddressController {
     })
     public ResponseEntity<Page<DataAddressDetails>> getByUserId(
             @Parameter(description = "ID of the user whose addresses are to be retrieved", required = true)
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"city"}) Pageable pageable
     ) {
-        LOGGER.info("Retrieving addresses for user with id: {}", userId);
-        Page<DataAddressDetails> addresses = addressService.getByUserId(userId, pageable);
+        String email = userDetails.getUsername();
+        LOGGER.info("Retrieving addresses for user with email: {}", email);
+        Page<DataAddressDetails> addresses = addressService.getByUserId(email, pageable);
         LOGGER.info("Addresses retrieved successfully");
         return new ResponseEntity<>(addresses, HttpStatus.OK);
     }

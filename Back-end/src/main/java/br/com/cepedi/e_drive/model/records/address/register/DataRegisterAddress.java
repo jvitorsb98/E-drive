@@ -25,8 +25,7 @@ public record DataRegisterAddress(
         @NotNull(message = "Street cannot be null.")
         String street,
 
-        @NotNull(message = "User ID cannot be null.")
-        Long userId,
+        String complement,
 
         Boolean plugin
 

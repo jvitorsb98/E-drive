@@ -27,8 +27,6 @@ public class AddressService {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private List<ValidationRegisterAddress> validationRegisterAddressList;
 
     @Autowired
     private List<ValidationUpdateAddress> validationUpdateAddressList;
@@ -36,9 +34,8 @@ public class AddressService {
     @Autowired
     private List<ValidationDisabledAddress> validationDisabledAddressList;
 
-    public DataAddressDetails register(DataRegisterAddress data) {
-        validationRegisterAddressList.forEach(v -> v.validate(data));
-        User user = userRepository.getReferenceById(data.userId());
+    public DataAddressDetails register(DataRegisterAddress data, String email) {
+        User user = userRepository.findByEmail(email);
         Address address = new Address(data,user);
         address = addressRepository.save(address);
         return new DataAddressDetails(address);
@@ -48,8 +45,9 @@ public class AddressService {
         return addressRepository.findAll(pageable).map(DataAddressDetails::new);
     }
 
-    public Page<DataAddressDetails> getByUserId(Long userId, Pageable pageable) {
-        return addressRepository.findByUserIdAndActivated(userId ,pageable)
+    public Page<DataAddressDetails> getByUserId(String email, Pageable pageable) {
+        User user = userRepository.findByEmail(email);
+        return addressRepository.findByUserIdAndActivated(user.getId() ,pageable)
                 .map(DataAddressDetails::new);
     }
 

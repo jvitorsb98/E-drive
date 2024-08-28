@@ -13,6 +13,8 @@ public record DataAddressDetails(
         String street,
         Long userId,
         Boolean plugin,
+
+        String complement,
         Boolean activated
 ) {
     public DataAddressDetails(Address address) {
@@ -27,6 +29,7 @@ public record DataAddressDetails(
                 address.getStreet(),
                 address.getUser().getId(),
                 address.getPlugin(),
+                address.getComplement(),
                 address.getActivated()
         );
     }
