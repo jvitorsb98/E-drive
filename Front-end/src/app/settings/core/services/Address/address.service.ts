@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../security/services/auth/auth.service';
-import { IAddress } from '../../interface/inter-Address';
+import { IAddress } from '../../models/inter-Address';
 import { catchError, Observable, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
