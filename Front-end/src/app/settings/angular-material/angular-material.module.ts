@@ -17,6 +17,9 @@ import { MatMenu, MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule, MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatGridListModule } from '@angular/material/grid-list';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -24,6 +27,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 @NgModule({
   imports: [
     MatCardModule,
+    MatGridListModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -46,10 +50,14 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatSortModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatProgressSpinner,
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
     NgxMaskDirective,
   ],
   exports: [
     MatCardModule,
+    MatGridListModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
@@ -72,6 +80,9 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatSortModule,
     MatPaginatorModule,
     MatTooltipModule,
+    MatProgressSpinner,
+    MatProgressSpinnerModule,
+    MatCheckboxModule,
     NgxMaskDirective,
   ],
   providers: [

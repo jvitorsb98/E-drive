@@ -22,7 +22,7 @@ import { ResetPasswordComponent } from './settings/core/security/login/recover-p
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
 import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
 import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
-import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
+import { DashboardComponent } from './settings/features/home/components/dashboard/dashboard.component';
 import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
 import { UiButtonComponent } from './settings/shared/components/ui-button/ui-button.component';
 import { UserVehicleListComponent } from './settings/features/user-vehicle/components/user-vehicle-list/user-vehicle-list.component';
@@ -36,6 +36,8 @@ import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
+import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
+import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +54,7 @@ import { CommonModule } from '@angular/common';
     MapStationsComponent,
     UserUpdateComponent,
     NavbarComponent,
-    DeshboardComponent,
+    DashboardComponent,
     UiButtonComponent,
     ModalDetailsVehicleComponent,
     UserVehicleListComponent,
@@ -63,6 +65,8 @@ import { CommonModule } from '@angular/common';
 
     // Pipes
     PhoneMaskPipe,
+      MyAddressesComponent,
+      FaqPopupComponent,
   ],
   imports: [
     BrowserModule,
