@@ -6,6 +6,7 @@ import { AuthService } from '../../../../core/security/services/auth/auth.servic
 import { ILoginRequest } from '../../../interface/inter-Login';
 import { ResetPasswordComponent } from '../recover-password/reset-password/reset-password.component';
 import { Router } from '@angular/router';
+import { FaqPopupComponent } from '../../../fragments/FAQ/faq-popup/faq-popup.component';
 
 @Component({
   selector: 'app-user-login-modal',
@@ -34,7 +35,7 @@ export class UserLoginModalComponent {
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6)])
+      password: new FormControl('', [Validators.required, Validators.minLength(8)])
     });
   }
 
@@ -71,4 +72,34 @@ export class UserLoginModalComponent {
       }
     });
   }
+
+  openFAQModal() {
+    this.dialog.open(FaqPopupComponent, {
+        data: {
+            faqs: [
+                {
+                    question: 'Como faço para redefinir minha senha?',
+                    answer: 'Para redefinir sua senha, clique no link "Esqueceu a senha?".'
+                },
+                {
+                    question: 'Ainda não tenho uma conta, como faço para me cadastrar?',
+                    answer: 'Para se cadastrar, clique no botão "Cadastre-se".'
+                },
+                {
+                    question: 'Quais são os requisitos para a senha?',
+                    answer: 'A senha deve ter pelo menos 6 caracteres.'
+                },
+                {
+                    question: 'Preciso confirmar meu e-mail após o cadastro?',
+                    answer: 'Essa informação não está disponível na página. Consulte a documentação ou entre em contato com o suporte para mais detalhes.'
+                },
+                {
+                    question: 'O que acontece se eu digitar meu e-mail ou senha incorretamente?',
+                    answer: 'A página exibirá mensagens de erro indicando se o e-mail é inválido ou se a senha está incorreta. Verifique suas credenciais e tente novamente.'
+                }
+            ]
+        }
+    }
+    );
+}
 }
