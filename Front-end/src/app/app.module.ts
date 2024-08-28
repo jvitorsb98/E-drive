@@ -28,6 +28,9 @@ import { UserUpdateComponent } from './settings/features/users/components/user-u
 import { DeshboardComponent } from './settings/features/home/components/deshboard/deshboard.component';
 import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
 import { UiButtonComponent } from './settings/shared/components/ui-button/ui-button.component';
+import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
+import { ModalDetailsBrandComponent } from './settings/features/brand/components/modal-details-brand/modal-details-brand.component';
+import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -56,6 +59,9 @@ import { CommonModule } from '@angular/common';
     NavbarComponent,
     DeshboardComponent,
     UiButtonComponent,
+    ModalFormBrandComponent,
+    ModalDetailsBrandComponent,
+    BrandViewComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
