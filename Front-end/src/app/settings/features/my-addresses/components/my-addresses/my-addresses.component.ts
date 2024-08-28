@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
+import { AddressService } from '../../../../core/services/Address/address.service';
 
 @Component({
   selector: 'app-my-addresses',
@@ -16,7 +17,7 @@ export class MyAddressesComponent implements
 
   @Input() addressData: any = null; // Para reutilização em updates
   @Input() title: string = 'Registrar endereço'; // Para reutilização em updates
-  
+
   addressForm: FormGroup;
   isLoading: boolean = false;
   labelPosition: "before" | "after" = "before";
@@ -25,7 +26,8 @@ export class MyAddressesComponent implements
     private fb: FormBuilder,
     private http: HttpClient,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private adderessService: AddressService
   ) {
     this.addressForm = this.fb.group({
       country: [{ value: 'Brasil', disabled: true }, Validators.required],
@@ -89,6 +91,7 @@ export class MyAddressesComponent implements
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
       console.log(this.addressForm.value);
+      this.adderessService.createAddress(this.addressForm.value)
     }
   }
 
