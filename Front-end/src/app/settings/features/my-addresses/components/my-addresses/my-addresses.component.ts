@@ -15,7 +15,8 @@ export class MyAddressesComponent implements
   OnInit {
 
   @Input() addressData: any = null; // Para reutilização em updates
-  @Input() title: string = 'Endereço'; // Para reutilização em updates
+  @Input() title: string = 'Registrar endereço'; // Para reutilização em updates
+  
   addressForm: FormGroup;
   isLoading: boolean = false;
   labelPosition: "before" | "after" = "before";
@@ -28,7 +29,7 @@ export class MyAddressesComponent implements
   ) {
     this.addressForm = this.fb.group({
       country: [{ value: 'Brasil', disabled: true }, Validators.required],
-      postalCode: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
+      postalCode: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
       state: [{ value: '', disabled: true }, Validators.required],
       city: [{ value: '', disabled: true }, Validators.required],
       district: ['', Validators.required],
@@ -50,6 +51,9 @@ export class MyAddressesComponent implements
     let postalCode = this.addressForm.get('postalCode')?.value;
 
     if (postalCode && postalCode.length === 8) {
+
+      postalCode = postalCode.replace(/\D/g, ''); // Remove tudo o que não é número
+
       this.http.get(`https://viacep.com.br/ws/${postalCode}/json/`)
         .subscribe(
           (data: any) => {
@@ -74,6 +78,21 @@ export class MyAddressesComponent implements
   }
 
   onSubmit() {
+    if(this.addressData){
+      this.update();
+    }else{
+      this.create();
+    }
+
+  }
+  create() {
+    if (this.addressForm.valid) {
+      // Lógica para salvar ou atualizar o endereço
+      console.log(this.addressForm.value);
+    }
+  }
+
+  update(){
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
       console.log(this.addressForm.value);
