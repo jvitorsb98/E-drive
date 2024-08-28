@@ -1,5 +1,6 @@
 package br.com.cepedi.e_drive.model.records.address.register;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 
 public record DataRegisterAddress(
@@ -27,6 +28,7 @@ public record DataRegisterAddress(
 
         String complement,
 
+        @JsonProperty("hasChargingStation")
         Boolean plugin
 
 

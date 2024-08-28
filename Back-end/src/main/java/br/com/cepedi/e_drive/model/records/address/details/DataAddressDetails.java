@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.model.records.address.details;
 
 import br.com.cepedi.e_drive.model.entitys.Address;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record DataAddressDetails(
         Long id,
@@ -12,8 +13,7 @@ public record DataAddressDetails(
         Integer number,
         String street,
         Long userId,
-        Boolean plugin,
-
+        Boolean hasChargingStation,
         String complement,
         Boolean activated
 ) {
