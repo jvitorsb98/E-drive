@@ -13,6 +13,7 @@ import { Vehicle } from '../../../../core/models/vehicle';
 import Swal from 'sweetalert2';
 import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-details-vehicle.component';
 
 @Component({
   selector: 'app-user-vehicle-list',
@@ -131,7 +132,7 @@ export class UserVehicleListComponent {
 
   // LOGICA DO MODAL
   openModalViewVeicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
-    this.dialog.open(ModalFormVehicleComponent, {
+    this.dialog.open(ModalDetailsVehicleComponent, {
       width: '600px',
       height: '530px',
       data: {
