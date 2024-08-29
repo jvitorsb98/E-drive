@@ -16,7 +16,7 @@
           <mat-grid-tile>
             <mat-form-field>
               <mat-label>CEP</mat-label>
-              <input matInput formControlName="postalCode" (blur)="searchPostalCode()">
+              <input matInput formControlName="zipCode" (blur)="searchPostalCode()">
               <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
             </mat-form-field>
           </mat-grid-tile>
@@ -45,7 +45,7 @@
           <mat-grid-tile>
             <mat-form-field>
               <mat-label>Bairro</mat-label>
-              <input matInput formControlName="district">
+              <input matInput formControlName="neighborhood">
             </mat-form-field>
           </mat-grid-tile>
 

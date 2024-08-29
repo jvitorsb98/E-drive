@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../security/services/auth/auth.service';
-import { IAddress } from '../../models/inter-Address';
-import { catchError, Observable, throwError } from 'rxjs';
+import { IAddressRequest, IAddressResponse } from '../../models/inter-Address';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
@@ -11,29 +11,37 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AddressService {
 
- private baseUrl = 'your-api-url'; // Replace with your actual API URL
+  private baseUrl = 'your-api-url'; // Replace with your actual API URL
 
   private authToken: string | null;
 
-  constructor(private http: HttpClient, private authService: AuthService, private snackBar: MatSnackBar) {
-    this.baseUrl = `${environment.apiUrl}/api/v1/addresses`;
+  private headers!: HttpHeaders;
 
-    this.authToken = this.authService.getToken();
+  getAddresses(): Observable<IAddressResponse[]> {
+    return this.http.get<IAddressResponse[]>(this.baseUrl);
   }
 
-  createAddress(address: IAddress): void {
-    this.http.post(this.baseUrl, address)
-      .subscribe(
-        {
-          next: () => {
-            this.snackBar.open('Endereço criado com sucesso', 'Fechar', { duration: 5000 });
-            console.log('Endereço criado com sucesso');
-          },
-          error: (error) => {
-            this.handleError('Erro ao criar endereço', error);
-          }
-        }
-      )
+  constructor(private http: HttpClient, private authService: AuthService, private snackBar: MatSnackBar) {
+    this.baseUrl = `http://localhost:8080/api/v1/address`;
+
+    this.authToken = this.authService.getToken();
+
+    this.headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}`,
+      'Content-Type': 'application/json'
+    });
+  }
+
+  createAddress(address: IAddressRequest): Observable<any> {
+    // retornar a resposta do servidor para o componente pai
+    // console.log("Token: ",this.authToken);
+    // console.log("Endereço: ", address);
+    return this.http.post(this.baseUrl, address, { headers: this.headers })
+    .pipe(
+      catchError((error) => {
+        return this.handleError(error);
+      })
+    )
   }
 
   updateAddress(id: number, address: any): void {
@@ -45,14 +53,34 @@ export class AddressService {
             console.log('Endereço atualizado com sucesso');
           },
           error: (error) => {
-            this.handleError('Erro ao atualizar endereço', error);
+            this.handleError(error);
           }
         }
       )
   }
 
-  private handleError(message: string, error: any) {
-    console.error(error);
-    this.snackBar.open(message, 'Fechar', { duration: 5000 });
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Ocorreu um erro. Por favor, tente novamente mais tarde.';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Erro: ${error.error.message}`;
+    } else {
+      console.error(
+        `Backend retornou o código ${error.status}, ` +
+        `corpo da mensagem: ${error.error}`
+      );
+      if (error.status === 400) {
+        errorMessage = 'Dados inválidos. Verifique os campos e tente novamente.';
+      } else if (error.status === 401) {
+        errorMessage = 'Não autorizado. Faça login e tente novamente.';
+      } else if (error.status === 403) {
+        errorMessage = 'Acesso proibido. Você não tem permissão para realizar esta ação.';
+      } else if (error.status === 404) {
+        errorMessage = 'Endereço não encontrado.';
+      }
+    }
+    this.snackBar.open(errorMessage, 'Fechar', {
+      duration: 5000,
+    });
+    return throwError(errorMessage);
   }
 }
