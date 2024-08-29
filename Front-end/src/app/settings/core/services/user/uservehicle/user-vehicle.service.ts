@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { UserVehicle } from '../../../models/user-vehicle';
-import { IApiResponse } from '../../../interface/api-response';
+import { IApiResponse } from '../../../models/api-response';
 import { AuthService } from '../../../security/services/auth/auth.service';
 
 @Injectable({

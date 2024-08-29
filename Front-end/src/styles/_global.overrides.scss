@@ -1,3 +1,4 @@
+@import '_variables.scss';
 // Importando o tema do Angular Material
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
@@ -5,3 +6,10 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
 .bkg-degrad-primary {
   background: linear-gradient(to right, #19B6DD, #0D6277);
 }
+
+.btn-primary {
+  width: 100%;
+  background-color: #19B6DD !important;
+  font-weight: bold;
+}
+

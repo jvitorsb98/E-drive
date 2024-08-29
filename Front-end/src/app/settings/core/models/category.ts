@@ -1,5 +1,5 @@
-export class Category{
-  id!: number
-  name!: string;
-  activated!: boolean;
+export interface Category{
+  id: number
+  name: string;
+  activated: boolean;
 }

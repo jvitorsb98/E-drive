@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { IVehicleWithUserVehicle } from '../../../../core/interface/vehicle-with-user-vehicle';
+import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
 import { MatTableDataSource } from '@angular/material/table';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { MatPaginator } from '@angular/material/paginator';
@@ -8,7 +8,7 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 import { MatDialog } from '@angular/material/dialog';
-import { IApiResponse } from '../../../../core/interface/api-response';
+import { IApiResponse } from '../../../../core/models/api-response';
 import { Vehicle } from '../../../../core/models/vehicle';
 import Swal from 'sweetalert2';
 import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
