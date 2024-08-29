@@ -14,6 +14,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Serviço para gerenciamento das operações relacionadas a marcas.
+ * Fornece métodos para registrar, atualizar, recuperar e listar marcas,
+ * além de operações específicas como desativar marcas.
+ */
 @Service
 public class BrandService {
 
@@ -23,44 +28,76 @@ public class BrandService {
     @Autowired
     private List<ValidationBrandUpdate> brandValidationUpdateList;
 
-
-
     @Autowired
     private List<BrandValidatorDisabled> brandValidatorDisabledList;
 
+    /**
+     * Registra uma nova marca com base nos dados fornecidos.
+     *
+     * @param data Dados da nova marca a ser registrada.
+     * @return Detalhes da marca registrada.
+     */
     public DataBrandDetails register(DataRegisterBrand data) {
         Brand brand = new Brand(data);
         brand = brandRepository.save(brand);
         return new DataBrandDetails(brand);
     }
 
+    /**
+     * Atualiza os dados de uma marca existente com base no ID fornecido.
+     *
+     * @param data Dados atualizados da marca.
+     * @param id ID da marca a ser atualizada.
+     * @return Detalhes da marca atualizada.
+     */
     public DataBrandDetails update(DataUpdateBrand data, Long id) {
         brandValidationUpdateList.forEach(v -> v.validation(id));
-        Brand brand= brandRepository.getReferenceById(id);
+        Brand brand = brandRepository.getReferenceById(id);
         brand.updateDataBrand(data);
         return new DataBrandDetails(brand);
     }
 
+    /**
+     * Recupera os detalhes de uma marca com base no ID fornecido.
+     *
+     * @param id ID da marca a ser recuperada.
+     * @return Detalhes da marca encontrada.
+     * @throws RuntimeException se a marca não for encontrada.
+     */
     public DataBrandDetails getById(Long id) {
-        Brand brand = brandRepository.findById(id).orElseThrow(() -> new RuntimeException("Brand not found"));
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Brand not found"));
         return new DataBrandDetails(brand);
     }
 
+    /**
+     * Lista todas as marcas com paginação.
+     *
+     * @param pageable Parâmetros de paginação.
+     * @return Página contendo os detalhes das marcas.
+     */
     public Page<DataBrandDetails> listAll(Pageable pageable) {
         return brandRepository.findAll(pageable).map(DataBrandDetails::new);
     }
 
-
-
+    /**
+     * Lista todas as marcas ativadas com paginação.
+     *
+     * @param pageable Parâmetros de paginação.
+     * @return Página contendo os detalhes das marcas ativadas.
+     */
     public Page<DataBrandDetails> listAllActivated(Pageable pageable) {
         return brandRepository.findAllByActivatedTrue(pageable).map(DataBrandDetails::new);
     }
 
+    /**
+     * Desativa uma marca com base no ID fornecido.
+     *
+     * @param id ID da marca a ser desativada.
+     */
     public void disabled(Long id) {
         brandValidatorDisabledList.forEach(v -> v.validation(id));
         Brand brand = brandRepository.getReferenceById(id);
         brand.deactivated();
     }
-
-
 }

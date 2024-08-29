@@ -6,17 +6,28 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Classe responsável pela validação se uma marca já está desativada antes de realizar a operação de desativação.
+ * Implementa a interface {@link BrandValidatorDisabled}.
+ */
 @Component
-public class ValidationBrandAlreadyDisabledForDisabled implements BrandValidatorDisabled{
+public class ValidationBrandAlreadyDisabledForDisabled implements BrandValidatorDisabled {
 
     @Autowired
     private BrandRepository brandRepository;
 
+    /**
+     * Valida se a marca com o ID fornecido já está desativada.
+     * Se a marca já estiver desativada, lança uma {@link ValidationException}.
+     *
+     * @param id O ID da marca a ser validada.
+     * @throws ValidationException se a marca já estiver desativada.
+     */
     @Override
     public void validation(Long id) {
-        if(brandRepository.existsById(id)){
+        if (brandRepository.existsById(id)) {
             Brand brand = brandRepository.getReferenceById(id);
-            if(!brand.getActivated()){
+            if (!brand.getActivated()) {
                 throw new ValidationException("The brand is already disabled");
             }
         }
