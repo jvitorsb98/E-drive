@@ -28,6 +28,11 @@ import { UiButtonComponent } from './settings/shared/components/ui-button/ui-but
 import { UserVehicleListComponent } from './settings/features/user-vehicle/components/user-vehicle-list/user-vehicle-list.component';
 import { ModalDetailsVehicleComponent } from './settings/features/user-vehicle/components/modal-details-vehicle/modal-details-vehicle.component';
 import { ModalFormVehicleComponent } from './settings/features/user-vehicle/components/modal-form-vehicle/modal-form-vehicle.component';
+import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
+import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
+import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
+import { ModalDetailsBrandComponent } from './settings/features/brand/components/modal-details-brand/modal-details-brand.component';
+import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -36,8 +41,6 @@ import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
-import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
-import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +61,11 @@ import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-p
     UiButtonComponent,
     ModalDetailsVehicleComponent,
     UserVehicleListComponent,
+    BrandViewComponent,
+    ModalDetailsBrandComponent,
+    ModalFormBrandComponent,
+    MyAddressesComponent,
+    FaqPopupComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
@@ -65,8 +73,6 @@ import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-p
 
     // Pipes
     PhoneMaskPipe,
-      MyAddressesComponent,
-      FaqPopupComponent,
   ],
   imports: [
     BrowserModule,

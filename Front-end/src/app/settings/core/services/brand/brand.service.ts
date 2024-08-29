@@ -4,6 +4,7 @@ import { environment } from '../../../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Brand } from '../../models/brand';
 import { AuthService } from '../../security/services/auth/auth.service';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +23,8 @@ export class BrandService {
   }
 
   // Método para obter todas as marcas
-  getAllBrands(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.brandUrl);
+  getAllBrands(): Observable<PaginatedResponse<Brand>> {
+    return this.http.get<PaginatedResponse<Brand>>(this.brandUrl);
   }
 
   // Método para obter detalhes de uma marca específica
@@ -33,5 +34,13 @@ export class BrandService {
     });
 
     return this.http.get<Brand>(`${this.brandUrl}/${id}`, { headers });
+  }
+
+  deleteBrand(id: number): Observable<void> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}`,
+      'Content-Type': 'application/json'
+    });
+    return this.http.delete<void>(`${this.brandUrl}/${id}`, { headers });
   }
 }
