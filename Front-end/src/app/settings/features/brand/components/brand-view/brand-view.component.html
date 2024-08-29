@@ -4,20 +4,16 @@
       <div class="row">
 
         <div class="header-container">
-          <button routerLink="/deshboard" class="btn">
-            <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
-          </button>
+          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-arrow-left'" class="btn"></app-ui-button>
 
-          <h1 class="titulo">Meus Veículos</h1>
+          <h1 class="titulo">Marcas dos Veículos</h1>
 
-          <button class="btn">
-            <img class="filtro" src="../../../../../../assets/images/filtro-list-vehicle.svg" alt="Filto">
-          </button>
+          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-sliders'" class="btn"></app-ui-button>
         </div>
 
         <div class="custom-filter">
           <mat-form-field>
-            <mat-label>Busca por versão</mat-label>
+            <mat-label>Busca por marca</mat-label>
             <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
           </mat-form-field>
         </div>
@@ -25,23 +21,24 @@
         <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
           <ng-container matColumnDef="icon">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <!-- <mat-icon matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">verified</mat-icon> -->
+
               <mat-icon
-                matTooltip="Estes ícones representam cada carro listado abaixo. Clique para ver detalhes de cada um.">directions_car
-              </mat-icon>
+                matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">emoji_flags</mat-icon>
             </th>
 
-            <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <mat-icon class="icone-carro"
-               matTooltipClass="multi-line-tooltip"> directions_car
+            <td class="td-table" mat-cell *matCellDef="let brand">
+              <mat-icon class="icone-emoji-flags" [matTooltip]="'ID: ' + brand.id + ' | Ativado: ' + brand.activated"
+                matTooltipClass="multi-line-tooltip"> emoji_flags
               </mat-icon>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="id">
+          <!-- <ng-container matColumnDef="id">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>ID</strong></th>
             <td class="td-table" mat-cell *matCellDef="let brand"><strong>{{brand.id}}</strong>
             </td>
-          </ng-container>
+          </ng-container> -->
 
           <ng-container matColumnDef="name">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
@@ -70,7 +67,8 @@
         <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15]"
           aria-label="Selecione veículos por página"></mat-paginator>
 
-        <button class="btn pulse-animation" type="button" (click)="openModalAddBrand()">Novo Veículo</button>
+        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (click)="openModalAddBrand()"
+          text="Nova marca"></app-ui-button>
       </div>
     </div>
   </div>

@@ -17,7 +17,7 @@ import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
   styleUrl: './brand-view.component.scss'
 })
 export class BrandViewComponent {
-  displayedColumns: string[] = ['icon', 'id', 'name', 'actions'];
+  displayedColumns: string[] = ['icon', 'name', 'actions'];
   dataSource = new MatTableDataSource<Brand>();
   brandList: Brand[] = [];
 
