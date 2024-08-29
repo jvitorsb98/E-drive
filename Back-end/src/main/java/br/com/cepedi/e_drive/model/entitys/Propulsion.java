@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.model.entitys;
 
-import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
 import br.com.cepedi.e_drive.model.records.propulsion.input.DataRegisterPropulsion;
 import br.com.cepedi.e_drive.model.records.propulsion.update.DataUpdatePropulsion;
 import jakarta.persistence.*;

@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.model.entitys;
 
-import java.util.List;
 import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
 import br.com.cepedi.e_drive.model.records.brand.input.DataUpdateBrand;
 import jakarta.persistence.*;

@@ -1,12 +1,13 @@
 package br.com.cepedi.e_drive.model.entitys;
 
-import java.math.BigDecimal;
 import br.com.cepedi.e_drive.model.records.autonomy.register.DataRegisterAutonomy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 /**
  * Representa a autonomia de um veículo no sistema. Esta entidade é mapeada para a tabela "autonomy" no banco de dados.

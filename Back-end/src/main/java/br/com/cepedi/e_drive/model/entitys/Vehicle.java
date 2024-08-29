@@ -2,7 +2,6 @@ package br.com.cepedi.e_drive.model.entitys;
 
 import br.com.cepedi.e_drive.model.records.vehicle.update.DataUpdateVehicle;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
