@@ -7,7 +7,6 @@ import { BrandService } from '../../../../core/services/brand/brand.service';
 import { MatDialog } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
-import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
 import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
 import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
 
@@ -24,7 +23,10 @@ export class BrandViewComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private brandService: BrandService, private dialog: MatDialog) {
+  constructor(
+    private brandService: BrandService,
+    private dialog: MatDialog
+  ) {
     this.dataSource = new MatTableDataSource(this.brandList);
   }
 
@@ -45,6 +47,7 @@ export class BrandViewComponent {
 
         // Extrai o array de marcas do campo 'content'
         this.brandList = response.content;
+        console.log("brandList:", this.brandList);
 
         if (Array.isArray(this.brandList)) {
           this.dataSource = new MatTableDataSource(this.brandList);
@@ -99,7 +102,7 @@ export class BrandViewComponent {
 
   // LOGICA DO MODAL
   openModalViewBrand(brand: Brand) {
-    this.dialog.open(ModalDetailsBrandComponent, {
+    this.dialog.open(BrandViewComponent, {
       width: '600px',
       height: '530px',
       data: brand
@@ -108,16 +111,18 @@ export class BrandViewComponent {
 
   openModalAddBrand() {
     this.dialog.open(ModalFormBrandComponent, {
-      width: '600px',
-      height: '810px',
+      width: '500px',
+      height: '210px',
     }).afterClosed().subscribe(() => this.getListBrands());
   }
 
-  openModalEditBrand(brand: Brand) {
+  openModalEditBrand(brandList: Brand) {
+    console.log('Objeto Brand enviado ao modal:', brandList);
     this.dialog.open(ModalFormBrandComponent, {
-      width: '600px',
-      height: '810px',
-      data: brand
+      width: '500px',
+      height: '210px',
+      data: brandList
     }).afterClosed().subscribe(() => this.getListBrands()); // Atualiza a lista de veículos após fechar o modal
   }
+  
 }

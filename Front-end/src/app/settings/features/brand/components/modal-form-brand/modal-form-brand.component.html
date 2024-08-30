@@ -1,1 +1,50 @@
-<p>modal-form-brand works!</p>
+<div class="container-fluid pt-3">
+  <div class="col-12">
+
+    <div class="header-container">
+      <button (click)="closeModal()" class="btn">
+        <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
+      </button>
+
+      <h1 class="titulo" *ngIf="!editBrand">Cadastrar Marca</h1>
+      <h1 class="titulo" *ngIf="editBrand">Editar Marca</h1>
+
+      <button class="btn">
+        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+      </button>
+    </div>
+
+    <form [formGroup]="brandForm">
+      <div class="content">
+        
+          <div class="row">
+            <div class="col-12 col-md-6 mb-2">
+              <mat-card>
+                <mat-form-field>
+                  <mat-label class="custom-label">Marca</mat-label>
+                  <input 
+                  type="text" 
+                  name="name" 
+                  matInput 
+                  formControlName="name" 
+                  required 
+                  aria-describedby="Help" />
+                  <mat-hint id="Help" class="mat-hint-text">Informe o nome da <strong>marca.</strong></mat-hint>
+                  <mat-error class="mat-error-text" 
+                  *ngIf="brandForm.get('name')?.hasError('required') 
+                  && brandForm.get('name')?.touched" class="mat-error-text">O <strong>Nome</strong> é obrigatório.</mat-error>
+                </mat-form-field>
+                <div *ngIf="brandForm.get('name')?.hasError('minlength') && brandForm.get('name')?.dirty">
+                  <mat-error class="mat-error-text-minlength">O <strong>Nome</strong> deve ter pelo menos {{
+                  brandForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+                </div>
+              </mat-card>
+            </div>
+        </div>
+      </div>
+      <div class="buttons-container">
+        <button class="btn pulse-animation w-100 mb-2" type="button" [disabled]="!brandForm.valid" (click)="submitForm()">Finalizar cadastro</button>
+      </div>
+    </form>
+  </div>
+</div>

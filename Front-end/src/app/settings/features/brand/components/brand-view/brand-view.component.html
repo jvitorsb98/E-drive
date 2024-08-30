@@ -8,7 +8,7 @@
 
           <h1 class="titulo">Marcas dos Veículos</h1>
 
-          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-sliders'" class="btn"></app-ui-button>
+          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-sliders'"></app-ui-button>
         </div>
 
         <div class="custom-filter">
@@ -48,10 +48,10 @@
           <!-- Actions Column -->
           <ng-container matColumnDef="actions">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <mat-icon class="icone-table" (click)="openModalViewBrand(userVehicle)">visibility</mat-icon>
-              <mat-icon class="icone-table" (click)="openModalEditBrand(userVehicle)">edit</mat-icon>
-              <mat-icon class="icone-table" (click)="deleteBrand(userVehicle)">delete</mat-icon>
+            <td class="td-table" mat-cell *matCellDef="let brand">
+              <mat-icon class="icone-table" (click)="openModalViewBrand(brand)">visibility</mat-icon>
+              <mat-icon class="icone-table" (click)="openModalEditBrand(brand)">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="deleteBrand(brand)">delete</mat-icon>
             </td>
           </ng-container>
 
@@ -64,7 +64,7 @@
           </tr>
         </table>
 
-        <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15]"
+        <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30]"
           aria-label="Selecione veículos por página"></mat-paginator>
 
         <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (click)="openModalAddBrand()"
