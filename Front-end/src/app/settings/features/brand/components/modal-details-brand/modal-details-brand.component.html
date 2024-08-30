@@ -1,1 +1,21 @@
-<p>modal-details-brand works!</p>
+<div class="container-fluid p-3">
+  <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+  <h1 class="titulo">Detalhes da marca</h1>
+  <h2 class="subtitulo">Tenha uma visão mais detalhada da marca</h2>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <h4 class="titulo-informacao">ID</h4>
+      <p class="informacao">{{ brand.id }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Nome da Marca</h4>
+      <p class="informacao">{{ brand.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Status</h4>
+      <p class="informacao">{{ brand.activated ? 'Ativado' : 'Desativado' }}</p>
+    </div>
+  </div>
+</div>

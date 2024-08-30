@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
 import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
 import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
+import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
 
 @Component({
   selector: 'app-brand-view',
@@ -102,9 +103,9 @@ export class BrandViewComponent {
 
   // LOGICA DO MODAL
   openModalViewBrand(brand: Brand) {
-    this.dialog.open(BrandViewComponent, {
-      width: '600px',
-      height: '530px',
+    this.dialog.open(ModalDetailsBrandComponent, {
+      width: '300px',
+      height: '230px',
       data: brand
     });
   }
@@ -124,5 +125,5 @@ export class BrandViewComponent {
       data: brandList
     }).afterClosed().subscribe(() => this.getListBrands()); // Atualiza a lista de veículos após fechar o modal
   }
-  
+
 }
