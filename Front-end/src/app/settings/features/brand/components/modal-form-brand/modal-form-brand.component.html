@@ -1,17 +1,14 @@
 <div class="container-fluid pt-3">
   <div class="col-12">
 
-    <div class="header-container">
-      <button (click)="closeModal()" class="btn">
-        <img class="seta-voltar" src="../../../../../../assets/images/voltar.svg" alt="Seta de Volta">
-      </button>
-
-      <h1 class="titulo" *ngIf="!editBrand">Cadastrar Marca</h1>
-      <h1 class="titulo" *ngIf="editBrand">Editar Marca</h1>
-
-      <button class="btn">
-        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
-      </button>
+    <div class="row">
+      <!-- Container para os botões e título -->
+      <div class="col-12 header-container">
+        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()"><mat-icon>arrow_back</mat-icon></button>
+        <h1 class="titulo" *ngIf="!editBrand">Cadastrar Marca</h1>
+        <h1 class="titulo" *ngIf="editBrand">Editar Marca</h1>
+        <button class="icon" mat-icon-button (click)="openFAQModal()"><mat-icon>help_outline</mat-icon></button>
+      </div>
     </div>
 
     <form [formGroup]="brandForm">
@@ -43,7 +40,7 @@
         </div>
       </div>
       <div class="buttons-container">
-        <button class="btn pulse-animation w-100 mb-2" type="button" [disabled]="!brandForm.valid" (click)="submitForm()">Finalizar cadastro</button>
+        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!brandForm.valid" (click)="submitForm()" text="Finalizar cadastro"></app-ui-button>
       </div>
     </form>
   </div>

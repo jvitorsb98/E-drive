@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { BrandService } from '../../../../core/services/brand/brand.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { Brand } from '../../../../core/models/brand';
 import { catchError, of } from 'rxjs';
+import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
 
 @Component({
   selector: 'app-modal-form-brand',
@@ -18,6 +19,7 @@ export class ModalFormBrandComponent {
   constructor(
     private brandService: BrandService,
     private formBuilder: FormBuilder,
+    private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormBrandComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Brand
   ) { }
@@ -93,5 +95,43 @@ export class ModalFormBrandComponent {
 
   closeModal() {
     this.dialogRef.close();
+  }
+
+  openFAQModal() {
+    this.dialog.open(FaqPopupComponent, {
+      data: {
+        faqs: [
+          {
+            question: 'O que é o CEP?',
+            answer: 'O CEP (Código de Endereçamento Postal) é um código numérico utilizado pelos Correios para identificar os logradouros no Brasil. Ele é essencial para que suas correspondências e encomendas sejam entregues corretamente.',
+          },
+          {
+            question: 'Por que preciso preencher o CEP?',
+            answer: 'Ao preencher o CEP, o sistema busca automaticamente as informações de endereço relacionadas, como estado, cidade, bairro e logradouro, agilizando o preenchimento do formulário e reduzindo a chance de erros.',
+          },
+          {
+            question: 'O que acontece se eu digitar um CEP inválido?',
+            answer: 'Se você digitar um CEP inválido ou inexistente, uma mensagem de erro será exibida e os campos de endereço não serão preenchidos automaticamente. Verifique se o CEP está correto e tente novamente.',
+          },
+          {
+            question: 'Posso preencher os campos de endereço manualmente?',
+            answer: 'Sim, você pode preencher os campos de endereço manualmente, caso prefira ou se o CEP não estiver disponível. No entanto, recomendamos utilizar a busca automática pelo CEP para garantir a precisão das informações.',
+          },
+          {
+            question: 'O que significa o campo "Complemento"?',
+            answer: 'O campo "Complemento" é opcional e serve para adicionar informações adicionais sobre o endereço, como número do apartamento, bloco, ponto de referência, etc. Utilize-o para tornar o endereço mais preciso e facilitar a entrega.',
+          },
+          {
+            question: 'Por que alguns campos estão desabilitados?',
+            answer: 'Alguns campos, como Estado, Cidade, Bairro e Logradouro, podem ser desabilitados após a busca pelo CEP. Isso ocorre porque o sistema preenche automaticamente esses campos com as informações obtidas da API de CEP, garantindo a consistência dos dados. Você pode editar esses campos manualmente, se necessário.',
+          },
+          {
+            question: 'O que acontece quando eu clico em "Salvar"?',
+            answer: 'Ao clicar em "Salvar", as informações do formulário serão enviadas para o sistema para serem processadas. O sistema pode utilizar essas informações para cadastrar um novo endereço, atualizar um endereço existente ou realizar outras ações, dependendo do contexto da aplicação.',
+          }
+        ]
+      }
+    }
+    );
   }
 }
