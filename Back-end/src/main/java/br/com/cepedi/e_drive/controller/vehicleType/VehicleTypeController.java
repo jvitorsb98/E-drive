@@ -10,12 +10,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,13 +27,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
+/**
+ * Controlador para gerenciar operações relacionadas aos tipos de veículos.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, desativar, ativar e recuperar tipos de veículos.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/vehicleTypes")
 @SecurityRequirement(name = "bearer-key")
-@Tag(name = "VehicleType", description = "VehicleType messages")
+@Tag(name = "VehicleType", description = "VehicleType management")
 public class VehicleTypeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VehicleTypeController.class);
@@ -41,6 +44,16 @@ public class VehicleTypeController {
     @Autowired
     private VehicleTypeService vehicleTypeService;
 
+    /**
+     * Registra um novo tipo de veículo.
+     * <p>
+     * Valida os dados fornecidos, registra o novo tipo de veículo e retorna os detalhes do tipo de veículo registrado.
+     * </p>
+     *
+     * @param data Dados necessários para registrar um novo tipo de veículo.
+     * @param uriBuilder Builder para construir o URI do novo tipo de veículo.
+     * @return Resposta com os detalhes do tipo de veículo registrado e o URI do recurso.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Vehicle Type", method = "POST")
@@ -69,6 +82,15 @@ public class VehicleTypeController {
         return ResponseEntity.created(uri).body(vehicleTypeDetails);
     }
 
+    /**
+     * Recupera um tipo de veículo pelo ID.
+     * <p>
+     * Retorna os detalhes do tipo de veículo correspondente ao ID fornecido.
+     * </p>
+     *
+     * @param id ID do tipo de veículo a ser recuperado.
+     * @return Resposta com os detalhes do tipo de veículo.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get vehicle type by ID", method = "GET", description = "Retrieves a vehicle type by its ID.")
     @ApiResponses(value = {
@@ -92,6 +114,15 @@ public class VehicleTypeController {
         return new ResponseEntity<>(vehicleTypeDetails, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de todos os tipos de veículos.
+     * <p>
+     * Retorna todos os tipos de veículos com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos tipos de veículos.
+     */
     @GetMapping
     @Operation(summary = "Get all vehicle types", method = "GET", description = "Retrieves a paginated list of all vehicle types.")
     @ApiResponses(value = {
@@ -115,6 +146,16 @@ public class VehicleTypeController {
         return new ResponseEntity<>(vehicleTypes, HttpStatus.OK);
     }
 
+    /**
+     * Atualiza os detalhes de um tipo de veículo existente.
+     * <p>
+     * Atualiza o tipo de veículo com base no ID e nos dados fornecidos.
+     * </p>
+     *
+     * @param id ID do tipo de veículo a ser atualizado.
+     * @param data Dados necessários para atualizar o tipo de veículo.
+     * @return Resposta com os detalhes do tipo de veículo atualizado.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update vehicle type details", method = "PUT", description = "Updates the details of an existing vehicle type.")
@@ -143,6 +184,15 @@ public class VehicleTypeController {
         return new ResponseEntity<>(updatedVehicleType, HttpStatus.OK);
     }
 
+    /**
+     * Ativa um tipo de veículo pelo ID.
+     * <p>
+     * Marca o tipo de veículo como ativado e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id ID do tipo de veículo a ser ativado.
+     * @return Resposta indicando que o tipo de veículo foi ativado com sucesso.
+     */
     @PutMapping("/{id}/activate")
     @Transactional
     @Operation(summary = "Activate vehicle type by ID", method = "PUT", description = "Activates a vehicle type by its ID.")
@@ -165,6 +215,15 @@ public class VehicleTypeController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Desativa um tipo de veículo pelo ID.
+     * <p>
+     * Marca o tipo de veículo como desativado e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id ID do tipo de veículo a ser desativado.
+     * @return Resposta indicando que o tipo de veículo foi desativado com sucesso.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable vehicle type by ID", method = "DELETE", description = "Disables a vehicle type by its ID.")
@@ -186,6 +245,4 @@ public class VehicleTypeController {
         LOGGER.info("Vehicle Type disabled successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }

@@ -25,10 +25,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Controlador para gerenciar operações relacionadas aos veículos.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, desativar, ativar e recuperar veículos,
+ * bem como para listar veículos com base em diferentes critérios.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/vehicles")
 @SecurityRequirement(name = "bearer-key")
-@Tag(name = "Vehicle", description = "Vehicle messages")
+@Tag(name = "Vehicle", description = "Vehicle management")
 public class VehicleController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VehicleController.class);
@@ -36,6 +43,16 @@ public class VehicleController {
     @Autowired
     private VehicleService vehicleService;
 
+    /**
+     * Registra um novo veículo.
+     * <p>
+     * Valida os dados fornecidos, registra o novo veículo e retorna os detalhes do veículo registrado.
+     * </p>
+     *
+     * @param data Dados necessários para registrar um novo veículo.
+     * @param uriBuilder Builder para construir o URI do novo veículo.
+     * @return Resposta com os detalhes do veículo registrado e o URI do recurso.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Vehicle", method = "POST")
@@ -64,6 +81,15 @@ public class VehicleController {
         return ResponseEntity.created(uri).body(dataVehicleDetails);
     }
 
+    /**
+     * Recupera uma lista paginada de todos os veículos.
+     * <p>
+     * Retorna todos os veículos com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos.
+     */
     @GetMapping
     @Operation(summary = "Get all Vehicles", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getAllVehicles(Pageable pageable) {
@@ -72,6 +98,15 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Recupera um veículo pelo ID.
+     * <p>
+     * Retorna os detalhes do veículo correspondente ao ID fornecido.
+     * </p>
+     *
+     * @param id ID do veículo a ser recuperado.
+     * @return Resposta com os detalhes do veículo.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get Vehicle by ID", method = "GET")
     @ApiResponses(value = {
@@ -94,6 +129,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicle);
     }
 
+    /**
+     * Recupera uma lista paginada de veículos por categoria.
+     * <p>
+     * Retorna os veículos pertencentes à categoria fornecida.
+     * </p>
+     *
+     * @param categoryId ID da categoria dos veículos.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos da categoria.
+     */
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "Get Vehicles by Category", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByCategory(
@@ -104,6 +149,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Recupera uma lista paginada de veículos por modelo.
+     * <p>
+     * Retorna os veículos pertencentes ao modelo fornecido.
+     * </p>
+     *
+     * @param modelId ID do modelo dos veículos.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos do modelo.
+     */
     @GetMapping("/model/{modelId}")
     @Operation(summary = "Get Vehicles by Model", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByModel(
@@ -114,6 +169,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Recupera uma lista paginada de veículos por tipo.
+     * <p>
+     * Retorna os veículos pertencentes ao tipo fornecido.
+     * </p>
+     *
+     * @param typeId ID do tipo dos veículos.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos do tipo.
+     */
     @GetMapping("/type/{typeId}")
     @Operation(summary = "Get Vehicles by Type", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByType(
@@ -124,6 +189,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Recupera uma lista paginada de veículos por marca.
+     * <p>
+     * Retorna os veículos pertencentes à marca fornecida.
+     * </p>
+     *
+     * @param brandId ID da marca dos veículos.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos da marca.
+     */
     @GetMapping("/brand/{brandId}")
     @Operation(summary = "Get Vehicles by Brand", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByBrand(
@@ -134,6 +209,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Recupera uma lista paginada de veículos por propulsão.
+     * <p>
+     * Retorna os veículos pertencentes ao tipo de propulsão fornecido.
+     * </p>
+     *
+     * @param propulsionId ID da propulsão dos veículos.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos com a propulsão.
+     */
     @GetMapping("/propulsion/{propulsionId}")
     @Operation(summary = "Get Vehicles by Propulsion", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByPropulsion(
@@ -144,6 +229,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Recupera uma lista paginada de veículos por autonomia.
+     * <p>
+     * Retorna os veículos com a autonomia fornecida.
+     * </p>
+     *
+     * @param autonomyId ID da autonomia dos veículos.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos veículos com a autonomia.
+     */
     @GetMapping("/autonomy/{autonomyId}")
     @Operation(summary = "Get Vehicles by Autonomy", method = "GET")
     public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByAutonomy(
@@ -154,6 +249,16 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    /**
+     * Atualiza um veículo existente.
+     * <p>
+     * Atualiza os detalhes do veículo com base no ID fornecido e nos novos dados.
+     * </p>
+     *
+     * @param data Dados necessários para atualizar o veículo.
+     * @param id ID do veículo a ser atualizado.
+     * @return Resposta com os detalhes atualizados do veículo.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update a Vehicle", method = "PUT")
@@ -181,6 +286,15 @@ public class VehicleController {
         return ResponseEntity.ok(updatedVehicleDetails);
     }
 
+    /**
+     * Desativa um veículo existente.
+     * <p>
+     * Marca o veículo como desativado com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID do veículo a ser desativado.
+     * @return Resposta indicando que o veículo foi desativado com sucesso.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable a Vehicle", method = "DELETE")
@@ -202,6 +316,15 @@ public class VehicleController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Ativa um veículo que estava desativado.
+     * <p>
+     * Marca o veículo como ativado com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID do veículo a ser ativado.
+     * @return Resposta indicando que o veículo foi ativado com sucesso.
+     */
     @PutMapping("/enable/{id}")
     @Transactional
     @Operation(summary = "Enable a Vehicle", method = "PUT")

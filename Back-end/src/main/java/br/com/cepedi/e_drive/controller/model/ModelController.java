@@ -10,12 +10,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,13 +28,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
+/**
+ * Controlador para gerenciar operações relacionadas a modelos.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, ativar, desativar e recuperar modelos.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/models")
 @SecurityRequirement(name = "bearer-key")
-@Tag(name = "Model", description = "Model messages")
+@Tag(name = "Model", description = "Model management operations")
 public class ModelController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelController.class);
@@ -41,6 +45,16 @@ public class ModelController {
     @Autowired
     private ModelService modelService;
 
+    /**
+     * Registra um novo modelo.
+     * <p>
+     * Valida os dados fornecidos, registra o novo modelo e retorna os detalhes do modelo registrado.
+     * </p>
+     *
+     * @param data       Dados necessários para registrar um novo modelo.
+     * @param uriBuilder Construtor de URI para criar o URI do novo modelo.
+     * @return Resposta com os detalhes do modelo registrado e URI do novo modelo.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Model", method = "POST")
@@ -59,17 +73,25 @@ public class ModelController {
     })
     public ResponseEntity<DataModelDetails> register(
             @Parameter(description = "Data required to register a model", required = true)
-            @Valid @RequestBody
-            DataRegisterModel data,
+            @Valid @RequestBody DataRegisterModel data,
             UriComponentsBuilder uriBuilder
     ) {
         LOGGER.info("Registering a model");
         DataModelDetails modelDetails = modelService.register(data);
-        URI uri = uriBuilder.path("/models/{id}").buildAndExpand(modelDetails.id()).toUri();
-        LOGGER.info("Model registered successfully");
+        URI uri = uriBuilder.path("/api/v1/models/{id}").buildAndExpand(modelDetails.id()).toUri();
+        LOGGER.info("Model registered successfully with ID: {}", modelDetails.id());
         return ResponseEntity.created(uri).body(modelDetails);
     }
 
+    /**
+     * Recupera um modelo pelo ID.
+     * <p>
+     * Retorna os detalhes do modelo com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID do modelo a ser recuperado.
+     * @return Resposta com os detalhes do modelo.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get model by ID", method = "GET", description = "Retrieves a model by its ID.")
     @ApiResponses(value = {
@@ -87,12 +109,21 @@ public class ModelController {
             @Parameter(description = "ID of the model to be retrieved", required = true)
             @PathVariable Long id
     ) {
-        LOGGER.info("Retrieving model with id: {}", id);
+        LOGGER.info("Retrieving model with ID: {}", id);
         DataModelDetails modelDetails = modelService.getModelById(id);
         LOGGER.info("Model retrieved successfully");
         return new ResponseEntity<>(modelDetails, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de todos os modelos.
+     * <p>
+     * Retorna todos os modelos registrados com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos modelos.
+     */
     @GetMapping
     @Operation(summary = "Get all models", method = "GET", description = "Retrieves a paginated list of all models.")
     @ApiResponses(value = {
@@ -116,6 +147,16 @@ public class ModelController {
         return new ResponseEntity<>(models, HttpStatus.OK);
     }
 
+    /**
+     * Atualiza os detalhes de um modelo existente.
+     * <p>
+     * Valida os dados fornecidos, atualiza o modelo no repositório e retorna os detalhes do modelo atualizado.
+     * </p>
+     *
+     * @param id   ID do modelo a ser atualizado.
+     * @param data Dados necessários para atualizar o modelo.
+     * @return Resposta com os detalhes do modelo atualizado.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update model details", method = "PUT", description = "Updates the details of an existing model.")
@@ -138,12 +179,22 @@ public class ModelController {
             @Parameter(description = "Data required to update a model", required = true)
             @Valid @RequestBody DataUpdateModel data
     ) {
-        LOGGER.info("Updating model with id: {}", id);
-        DataModelDetails updatedModel = modelService.update(data,id);
+        LOGGER.info("Updating model with ID: {}", id);
+        DataModelDetails updatedModel = modelService.update(data, id);
         LOGGER.info("Model updated successfully with ID: {}", id);
         return new ResponseEntity<>(updatedModel, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de modelos por marca.
+     * <p>
+     * Retorna todos os modelos associados a uma marca específica com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param brandId  ID da marca cujos modelos devem ser recuperados.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos modelos associados à marca.
+     */
     @GetMapping("/brand/{brandId}")
     @Operation(summary = "Get models by Brand", method = "GET", description = "Retrieves a paginated list of models by brand.")
     @ApiResponses(value = {
@@ -163,12 +214,21 @@ public class ModelController {
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
     ) {
-        LOGGER.info("Retrieving models by brand id: {}", brandId);
+        LOGGER.info("Retrieving models by brand ID: {}", brandId);
         Page<DataModelDetails> models = modelService.listAllModelsByBrand(brandId, pageable);
         LOGGER.info("Models by brand retrieved successfully");
         return new ResponseEntity<>(models, HttpStatus.OK);
     }
 
+    /**
+     * Ativa um modelo pelo ID.
+     * <p>
+     * Marca o modelo como ativo e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id ID do modelo a ser ativado.
+     * @return Resposta indicando que o modelo foi ativado com sucesso.
+     */
     @PutMapping("/{id}/activate")
     @Transactional
     @Operation(summary = "Activate model by ID", method = "PUT", description = "Activates a model by its ID.")
@@ -185,12 +245,21 @@ public class ModelController {
             @Parameter(description = "ID of the model to be activated", required = true)
             @PathVariable Long id
     ) {
-        LOGGER.info("Activating model with id: {}", id);
+        LOGGER.info("Activating model with ID: {}", id);
         modelService.activated(id);
         LOGGER.info("Model activated successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Desativa um modelo pelo ID.
+     * <p>
+     * Marca o modelo como desativado e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id ID do modelo a ser desativado.
+     * @return Resposta indicando que o modelo foi desativado com sucesso.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable model by ID", method = "DELETE", description = "Disables a model by its ID.")
@@ -207,11 +276,9 @@ public class ModelController {
             @Parameter(description = "ID of the model to be disabled", required = true)
             @PathVariable Long id
     ) {
-        LOGGER.info("Disabling model with id: {}", id);
+        LOGGER.info("Disabling model with ID: {}", id);
         modelService.disable(id);
         LOGGER.info("Model disabled successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }
