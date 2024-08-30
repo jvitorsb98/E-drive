@@ -7,20 +7,28 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Valida se o modelo associado ao veículo não está desativado durante o registro do veículo.
+ */
 @Component
-public class ValidationRegisterVehicle_Model_NotDisabled implements ValidationRegisterVehicle{
+public class ValidationRegisterVehicle_Model_NotDisabled implements ValidationRegisterVehicle {
 
     @Autowired
     private ModelRepository modelRepository;
 
+    /**
+     * Valida se o modelo associado ao veículo está ativado.
+     *
+     * @param data Dados do veículo a serem validados.
+     * @throws ValidationException Se o modelo associado estiver desativado.
+     */
     @Override
     public void validate(DataRegisterVehicle data) {
         if (modelRepository.existsById(data.modelId())) {
             Model model = modelRepository.getReferenceById(data.modelId());
-            if(!model.getActivated()){
-                throw new ValidationException("The provided model id is disabled");
+            if (!model.getActivated()) {
+                throw new ValidationException("The provided model id is disabled.");
             }
         }
     }
-
 }
