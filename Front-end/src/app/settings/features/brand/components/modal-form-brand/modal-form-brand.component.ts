@@ -102,36 +102,32 @@ export class ModalFormBrandComponent {
       data: {
         faqs: [
           {
-            question: 'O que é o CEP?',
-            answer: 'O CEP (Código de Endereçamento Postal) é um código numérico utilizado pelos Correios para identificar os logradouros no Brasil. Ele é essencial para que suas correspondências e encomendas sejam entregues corretamente.',
+            question: 'Como cadastrar uma nova marca?',
+            answer: 'Para cadastrar uma nova marca, clique no botão "Nova marca" localizado na parte inferior direita da tabela. Isso abrirá um formulário onde você poderá inserir os detalhes da nova marca. Após preencher o formulário, clique em "Finalizar cadastro" para adicionar a nova marca à lista.'
           },
           {
-            question: 'Por que preciso preencher o CEP?',
-            answer: 'Ao preencher o CEP, o sistema busca automaticamente as informações de endereço relacionadas, como estado, cidade, bairro e logradouro, agilizando o preenchimento do formulário e reduzindo a chance de erros.',
+            question: 'Como visualizar os detalhes de uma marca?',
+            answer: 'Para visualizar os detalhes de uma marca, clique no ícone de "olho" (visibility) ao lado da marca que você deseja visualizar. Um modal será exibido mostrando todas as informações detalhadas sobre a marca selecionada.'
           },
           {
-            question: 'O que acontece se eu digitar um CEP inválido?',
-            answer: 'Se você digitar um CEP inválido ou inexistente, uma mensagem de erro será exibida e os campos de endereço não serão preenchidos automaticamente. Verifique se o CEP está correto e tente novamente.',
+            question: 'Como editar uma marca existente?',
+            answer: 'Para editar uma marca, clique no ícone de "lápis" (edit) ao lado da marca que você deseja modificar. Isso abrirá um modal com um formulário pré-preenchido com os dados da marca. Faça as alterações necessárias e clique em "Salvar" para atualizar as informações.'
           },
           {
-            question: 'Posso preencher os campos de endereço manualmente?',
-            answer: 'Sim, você pode preencher os campos de endereço manualmente, caso prefira ou se o CEP não estiver disponível. No entanto, recomendamos utilizar a busca automática pelo CEP para garantir a precisão das informações.',
+            question: 'Como excluir uma marca?',
+            answer: 'Para excluir uma marca, clique no ícone de "lixeira" (delete) ao lado da marca que você deseja remover. Você será solicitado a confirmar a exclusão. Após confirmar, a marca será removida da lista.'
           },
           {
-            question: 'O que significa o campo "Complemento"?',
-            answer: 'O campo "Complemento" é opcional e serve para adicionar informações adicionais sobre o endereço, como número do apartamento, bloco, ponto de referência, etc. Utilize-o para tornar o endereço mais preciso e facilitar a entrega.',
+            question: 'Como buscar marcas específicas?',
+            answer: 'Use o campo de busca localizado acima da tabela. Digite o nome da marca que você deseja encontrar e a tabela será filtrada automaticamente para mostrar apenas as marcas que correspondem à sua pesquisa.'
           },
           {
-            question: 'Por que alguns campos estão desabilitados?',
-            answer: 'Alguns campos, como Estado, Cidade, Bairro e Logradouro, podem ser desabilitados após a busca pelo CEP. Isso ocorre porque o sistema preenche automaticamente esses campos com as informações obtidas da API de CEP, garantindo a consistência dos dados. Você pode editar esses campos manualmente, se necessário.',
-          },
-          {
-            question: 'O que acontece quando eu clico em "Salvar"?',
-            answer: 'Ao clicar em "Salvar", as informações do formulário serão enviadas para o sistema para serem processadas. O sistema pode utilizar essas informações para cadastrar um novo endereço, atualizar um endereço existente ou realizar outras ações, dependendo do contexto da aplicação.',
+            question: 'Como navegar entre as páginas da tabela?',
+            answer: 'Use o paginador localizado na parte inferior da tabela para navegar entre as páginas de marcas. Você pode selecionar o número de itens por página e usar os botões de navegação para ir para a página anterior ou seguinte.'
           }
         ]
       }
-    }
-    );
+    });
   }
+
 }

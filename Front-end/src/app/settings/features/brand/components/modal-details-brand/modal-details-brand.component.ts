@@ -13,7 +13,7 @@ export class ModalDetailsBrandComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ModalDetailsBrandComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: Brand,
   ) {
     this.brand = data;
   }
