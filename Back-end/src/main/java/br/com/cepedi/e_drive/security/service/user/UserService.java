@@ -1,13 +1,16 @@
-package br.com.cepedi.e_drive.security.service;
+package br.com.cepedi.e_drive.security.service.user;
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.user.validations.update.UserValidationUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -17,6 +20,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private List<UserValidationUpdate> userValidationUpdateList;
 
     // Método para buscar usuário pelo email
     public User getUserActivatedByEmail(String email) {
@@ -33,24 +39,35 @@ public class UserService {
         }
     }
 
-
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 
     public DataDetailsUser getDetailsUserByEmail(String email){
         return new DataDetailsUser(userRepository.findByEmail(email));
     }
 
-    public DataDetailsUser updateUser(UserDetails userDetails, DataUpdateUser dataUpdateUser) {
+    public DataDetailsUser updateUser(DataUpdateUser data, UserDetails userDetails) {
+        // Obter o email do usuário autenticado a partir do token
         String email = userDetails.getUsername();
+
+        // Validar os dados de atualização com base no usuário autenticado
+        userValidationUpdateList.forEach(v -> v.validate(data, email));
+
+        // Buscar o usuário pelo email
         User user = userRepository.findByEmail(email);
-        if (user != null) {
-            user.update(dataUpdateUser);
-            return new DataDetailsUser(user);
-        } else {
+
+        if (user == null) {
             throw new RuntimeException("User not found");
         }
+
+        // Atualizar os dados do usuário
+        user.update(data); // Assumindo que há um método 'update' na entidade User para lidar com a atualização
+
+        // Persistir as alterações
+        userRepository.saveAndFlush(user);
+
+        // Retornar os dados atualizados do usuário
+        return new DataDetailsUser(user);
     }
 }

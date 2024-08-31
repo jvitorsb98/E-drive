@@ -1,12 +1,12 @@
-package br.com.cepedi.e_drive.security.service;
+package br.com.cepedi.e_drive.security.service.auth;
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
-import br.com.cepedi.e_drive.security.service.validations.register.ValidationRegisterUser;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

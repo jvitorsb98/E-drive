@@ -3,7 +3,7 @@ package br.com.cepedi.e_drive.security.infra;
 
 
 import br.com.cepedi.e_drive.security.repository.UserRepository;
-import br.com.cepedi.e_drive.security.service.TokenService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

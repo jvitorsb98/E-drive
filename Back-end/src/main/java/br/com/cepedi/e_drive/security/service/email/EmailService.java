@@ -1,18 +1,16 @@
-package br.com.cepedi.e_drive.security.service;
+package br.com.cepedi.e_drive.security.service.email;
 
 
 
-import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterMail;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
-import com.auth0.jwt.JWT;
+import br.com.cepedi.e_drive.security.service.mail.MailService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.springframework.core.io.ClassPathResource;
@@ -20,8 +18,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-
-import java.util.Map;
 
 
 @Service

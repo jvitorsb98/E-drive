@@ -1,4 +1,4 @@
-package br.com.cepedi.e_drive.security.controller;
+package br.com.cepedi.e_drive.security.controller.authController;
 
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
@@ -8,10 +8,10 @@ import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
 import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
-import br.com.cepedi.e_drive.security.service.AuthService;
-import br.com.cepedi.e_drive.security.service.EmailService;
-import br.com.cepedi.e_drive.security.service.TokenService;
-import br.com.cepedi.e_drive.security.service.UserService;
+import br.com.cepedi.e_drive.security.service.auth.AuthService;
+import br.com.cepedi.e_drive.security.service.email.EmailService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;

@@ -1,4 +1,4 @@
-package br.com.cepedi.e_drive.security.service;
+package br.com.cepedi.e_drive.security.service.token;
 
 
 import br.com.cepedi.e_drive.security.model.entitys.Token;
@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class TokenService {

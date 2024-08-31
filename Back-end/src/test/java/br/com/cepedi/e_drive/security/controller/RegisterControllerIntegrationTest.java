@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -19,9 +18,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
-import br.com.cepedi.e_drive.security.service.AuthService;
-import br.com.cepedi.e_drive.security.service.EmailService;
-import br.com.cepedi.e_drive.security.service.TokenService;
+import br.com.cepedi.e_drive.security.service.auth.AuthService;
+import br.com.cepedi.e_drive.security.service.email.EmailService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 
 import java.time.LocalDate;
 

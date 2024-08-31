@@ -1,4 +1,4 @@
-package br.com.cepedi.e_drive.security.service;
+package br.com.cepedi.e_drive.security.service.mail;
 
 
 import br.com.cepedi.e_drive.security.model.entitys.Mail;

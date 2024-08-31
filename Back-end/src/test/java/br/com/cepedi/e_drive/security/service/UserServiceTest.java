@@ -4,6 +4,7 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -176,10 +177,10 @@ public class UserServiceTest {
         assertEquals("New Cellphone", user.getCellphone(), () -> "Expected user cellphone to be updated to: New Cellphone");
         assertEquals(LocalDate.of(2000, 1, 1), user.getBirth(), () -> "Expected user birth date to be updated to: 2000-01-01");
         verify(userRepository).findByEmail(email);
-        
-        
+
+
     }
-    
-    
+
+
 }
 

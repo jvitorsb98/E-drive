@@ -4,6 +4,7 @@ import br.com.cepedi.e_drive.security.model.entitys.Mail;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsMail;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterMail;
 import br.com.cepedi.e_drive.security.repository.MailRepository;
+import br.com.cepedi.e_drive.security.service.mail.MailService;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

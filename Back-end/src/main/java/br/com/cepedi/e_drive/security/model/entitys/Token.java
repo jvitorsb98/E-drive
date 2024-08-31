@@ -2,10 +2,12 @@ package br.com.cepedi.e_drive.security.model.entitys;
 
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterToken;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Table(name = "tokens")
 @Entity

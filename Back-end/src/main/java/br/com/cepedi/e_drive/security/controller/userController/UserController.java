@@ -1,10 +1,8 @@
-package br.com.cepedi.e_drive.security.controller;
+package br.com.cepedi.e_drive.security.controller.userController;
 
-import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
-import br.com.cepedi.e_drive.security.service.UserService;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import br.com.cepedi.e_drive.security.service.user.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +33,7 @@ public class UserController {
     @PutMapping("/update")
     @Transactional
     public ResponseEntity<DataDetailsUser> updateUser(@AuthenticationPrincipal UserDetails userDetails, @RequestBody DataUpdateUser dataUpdateUser) {
-        DataDetailsUser updatedUser = userService.updateUser(userDetails, dataUpdateUser);
+        DataDetailsUser updatedUser = userService.updateUser(dataUpdateUser, userDetails);
         return ResponseEntity.ok(updatedUser);
     }
 
