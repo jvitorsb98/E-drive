@@ -1,6 +1,6 @@
 package br.com.cepedi.e_drive.security.controller;
 
-import br.com.cepedi.e_drive.security.controller.authController.AuthController;
+import br.com.cepedi.e_drive.security.controller.auth.AuthController;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;

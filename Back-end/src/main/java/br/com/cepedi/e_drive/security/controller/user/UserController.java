@@ -1,4 +1,4 @@
-package br.com.cepedi.e_drive.security.controller.userController;
+package br.com.cepedi.e_drive.security.controller.user;
 
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;

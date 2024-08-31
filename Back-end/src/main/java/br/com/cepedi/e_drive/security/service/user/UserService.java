@@ -48,26 +48,13 @@ public class UserService {
     }
 
     public DataDetailsUser updateUser(DataUpdateUser data, UserDetails userDetails) {
-        // Obter o email do usuário autenticado a partir do token
         String email = userDetails.getUsername();
-
-        // Validar os dados de atualização com base no usuário autenticado
         userValidationUpdateList.forEach(v -> v.validate(data, email));
-
-        // Buscar o usuário pelo email
         User user = userRepository.findByEmail(email);
-
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-
-        // Atualizar os dados do usuário
-        user.update(data); // Assumindo que há um método 'update' na entidade User para lidar com a atualização
-
-        // Persistir as alterações
-        userRepository.saveAndFlush(user);
-
-        // Retornar os dados atualizados do usuário
+        user.update(data);
         return new DataDetailsUser(user);
     }
 }
