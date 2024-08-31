@@ -153,13 +153,13 @@ public class UserServiceTest {
     void testUpdateUser_UserNotFound() {
         UserDetails userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn(email);
-        when(userRepository.findByEmail(email)).thenReturn(null);
+        when(userRepository.existsByEmail(email)).thenReturn(false); // Ajustado para usar existsByEmail
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(userDetails, dataUpdateUser);
+            userService.updateUser(dataUpdateUser, userDetails);
         });
 
-        assertEquals("User not found", exception.getMessage(), () -> "Expected exception message to be: User not found");
+        assertEquals("User not found", exception.getMessage(), "Expected exception message to be: User not found");
         verify(userRepository, never()).saveAndFlush(any(User.class));
     }
 
@@ -168,18 +168,19 @@ public class UserServiceTest {
     void testUpdateUser_Success() {
         UserDetails userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn(email);
+        when(userRepository.existsByEmail(email)).thenReturn(true); // Ajustado para validar existência
         when(userRepository.findByEmail(email)).thenReturn(user);
 
-        DataDetailsUser result = userService.updateUser(userDetails, dataUpdateUser);
+        DataDetailsUser result = userService.updateUser(dataUpdateUser, userDetails);
 
-        assertNotNull(result, () -> "Expected result to be non-null");
-        assertEquals("New Name", user.getName(), () -> "Expected user name to be updated to: New Name");
-        assertEquals("New Cellphone", user.getCellphone(), () -> "Expected user cellphone to be updated to: New Cellphone");
-        assertEquals(LocalDate.of(2000, 1, 1), user.getBirth(), () -> "Expected user birth date to be updated to: 2000-01-01");
+        assertNotNull(result, "Expected result to be non-null");
+        assertEquals("New Name", user.getName(), "Expected user name to be updated to: New Name");
+        assertEquals("New Cellphone", user.getCellphone(), "Expected user cellphone to be updated to: New Cellphone");
+        assertEquals(LocalDate.of(2000, 1, 1), user.getBirth(), "Expected user birth date to be updated to: 2000-01-01");
         verify(userRepository).findByEmail(email);
-
-
+        verify(userRepository).saveAndFlush(user);
     }
+
 
 
 }
