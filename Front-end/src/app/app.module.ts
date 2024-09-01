@@ -38,6 +38,7 @@ import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
+import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-p
     PhoneMaskPipe,
       MyAddressesComponent,
       FaqPopupComponent,
+      ListMyAddressesComponent,
   ],
   imports: [
     BrowserModule,

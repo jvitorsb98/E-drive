@@ -6,8 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
 import { AddressService } from '../../../../core/services/Address/address.service';
-import { IAddressRequest } from '../../../../core/models/inter-Address';
-import { Router } from '@angular/router';
+import { DataAddressDetails, IAddressRequest } from '../../../../core/models/inter-Address';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-addresses',
@@ -24,14 +25,16 @@ export class MyAddressesComponent implements
   isLoading: boolean = false;
   labelPosition: "before" | "after" = "before";
   address!: IAddressRequest;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private adderessService: AddressService,
-    private router: Router
+    private addressService: AddressService,
+    private router: Router,
+    private activatRouter: ActivatedRoute
   ) {
     this.addressForm = this.fb.group({
       country: ['Brasil', Validators.required],
@@ -47,9 +50,24 @@ export class MyAddressesComponent implements
   }
 
   ngOnInit() {
+
+    const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
+      this.addressData = data;
+    })
+
+    const titleSubscription = this.addressService.selectedTitle$.subscribe(title => {
+      this.title = title;
+    });
+
+    this.subscriptions.push(addressSubscription, titleSubscription);
+
     if (this.addressData) {
       this.addressForm.patchValue(this.addressData);
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   searchPostalCode() {
@@ -96,13 +114,13 @@ export class MyAddressesComponent implements
       // Lógica para salvar ou atualizar o endereço
       this.address = this.addressForm.value;
 
-      this.adderessService.createAddress(this.address)
+      this.addressService.createAddress(this.address)
       .subscribe(
         {
           next: () => {
             this.snackBar.open('Endereço criado com sucesso', 'Fechar', { duration: 5000 });
             this.addressForm.reset();
-            this.router.navigate(['/list-My-addresses']);
+            this.router.navigate(['/meus-enderecos']);
           },
           error: () => {
             this.snackBar.open('Erro ao criar endereço', 'Fechar', { duration: 5000 });
@@ -115,7 +133,10 @@ export class MyAddressesComponent implements
   update(){
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
-      console.log(this.addressForm.value);
+      if(this.addressData){
+        this.address = this.addressForm.value;
+        this.addressService.updateAddress(this.addressData.id,this.address)
+      }
     }
   }
 

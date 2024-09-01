@@ -7,6 +7,7 @@ import { DashboardComponent } from './settings/features/home/components/dashboar
 import { UserVehicleListComponent } from './settings/features/user-vehicle/components/user-vehicle-list/user-vehicle-list.component';
 import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
 import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
+import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 
 const routes: Routes = [
@@ -16,7 +17,9 @@ const routes: Routes = [
   { path: 'user-registration', component: UserRegistrationFormComponent},
   { path: 'meus-carros', component: UserVehicleListComponent},
   { path: 'meus-Dados', component: UserUpdateComponent},
-  { path: 'meus-enderecos', component: MyAddressesComponent },
+  { path: 'meus-enderecos', component: ListMyAddressesComponent },
+  { path: 'new-address', component: MyAddressesComponent },
+  { path: 'my-addresses/edit', component: MyAddressesComponent },
   { path: 'reset-password', component: UserPasswordModalComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];

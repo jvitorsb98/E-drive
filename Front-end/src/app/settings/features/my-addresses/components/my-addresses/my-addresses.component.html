@@ -1,7 +1,7 @@
 <div class="container">
   <mat-card class="address-card">
     <div class="icon-row">
-      <button mat-icon-button aria-label="Back" routerLink="/list-My-addresses">
+      <button mat-icon-button aria-label="Back" routerLink="/meus-enderecos">
         <mat-icon>arrow_back</mat-icon>
       </button>
       <button mat-icon-button (click)="openFAQModal()">
@@ -17,7 +17,7 @@
             <mat-form-field>
               <mat-label>CEP</mat-label>
               <input matInput formControlName="zipCode" (blur)="searchPostalCode()">
-              <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner>
+              <!-- <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="20"></mat-progress-spinner> -->
             </mat-form-field>
           </mat-grid-tile>
 
@@ -77,12 +77,12 @@
         </mat-grid-list>
 
         <mat-card-actions>
-          <button mat-raised-button class="btn-primary" [disabled]="!addressForm.valid" type="submit">Salvar</button>
+          <button mat-raised-button class="btn-primary" [inert]="!addressForm.valid" type="submit">Salvar</button>
         </mat-card-actions>
       </form>
     </mat-card-content>
   </mat-card>
-  <ng-template #loading>
+  <!-- <ng-template #loading>
     <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-  </ng-template>
+  </ng-template> -->
 </div>
