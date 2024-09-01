@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.security.service.token;
 
-
 import br.com.cepedi.e_drive.security.model.entitys.Token;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterToken;
@@ -19,6 +18,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Optional;
 
+/**
+ * Serviço responsável pela geração, verificação e revogação de tokens JWT.
+ * <p>
+ * Esta classe fornece métodos para criar tokens de autenticação e de recuperação de senha,
+ * verificar se um token é válido, registrar tokens na base de dados e obter informações dos tokens.
+ * </p>
+ */
 @Service
 public class TokenService {
 
@@ -30,22 +36,32 @@ public class TokenService {
 
     private static final String ISSUER = "API Voll.med";
 
+    /**
+     * Revoga um token JWT, desabilitando-o na base de dados.
+     *
+     * @param token O token JWT a ser revogado.
+     */
     public void revokeToken(String token) {
         Optional<Token> tokenEntity = tokenRepository.findByToken(token);
         if (tokenEntity.isPresent()) {
             Token tokenToUpdate = tokenEntity.get();
-            System.out.println("OIII" + tokenToUpdate.getToken());
             tokenToUpdate.disabled();
             tokenRepository.save(tokenToUpdate);
         }
     }
 
+    /**
+     * Gera um token JWT para um usuário.
+     *
+     * @param user O usuário para o qual o token será gerado.
+     * @return O token JWT gerado.
+     */
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer(ISSUER)
-                    .withSubject(user.getEmail()) // Use o email como subject
+                    .withSubject(user.getEmail()) // Usa o e-mail como subject
                     .withClaim("id", user.getId())
                     .withClaim("email", user.getEmail())
                     .withExpiresAt(expirationDate())
@@ -54,36 +70,53 @@ public class TokenService {
             registerToken(token, user);
 
             return token;
-	        } catch (JWTCreationException exception) {
-	            throw new RuntimeException("Erro ao gerar o token JWT", exception);
-	        }
-	    }
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar o token JWT", exception);
+        }
+    }
 
+    /**
+     * Registra um token JWT na base de dados.
+     *
+     * @param tokenValue O valor do token JWT.
+     * @param user O usuário associado ao token.
+     */
     private void registerToken(String tokenValue, User user) {
         Instant expiresAt = JWT.decode(tokenValue).getExpiresAtAsInstant();
-        System.out.println(expiresAt);
         DataRegisterToken dataRegisterToken = new DataRegisterToken(tokenValue, user.getId(), expiresAt);
         Token tokenEntity = new Token(dataRegisterToken, user);
         tokenRepository.save(tokenEntity);
     }
 
+    /**
+     * Gera um token JWT para recuperação de senha.
+     *
+     * @param user O usuário para o qual o token será gerado.
+     * @return O token JWT gerado para recuperação de senha.
+     */
     public String generateTokenRecoverPassword(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer(ISSUER)
-                    .withSubject(user.getEmail()) // Use o email como subject
+                    .withSubject(user.getEmail()) // Usa o e-mail como subject
                     .withClaim("id", user.getId())
                     .withClaim("email", user.getEmail())
                     .withExpiresAt(expirationDateRecoverPassword())
                     .sign(algorithm);
-            registerToken(token, user);  // Register the token in the database
+            registerToken(token, user);  // Registra o token na base de dados
             return token;
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar o token JWT", exception);
         }
     }
 
+    /**
+     * Verifica se um token JWT é válido.
+     *
+     * @param token O token JWT a ser verificado.
+     * @return Verdadeiro se o token for válido e não estiver desabilitado, falso caso contrário.
+     */
     public boolean isValidToken(String token) {
         try {
             var algorithm = Algorithm.HMAC256(secret);
@@ -99,18 +132,41 @@ public class TokenService {
         }
     }
 
+    /**
+     * Obtém a data de expiração do token JWT.
+     *
+     * @return A data de expiração do token.
+     */
     private Instant expirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 
+    /**
+     * Obtém a data de expiração do token de recuperação de senha.
+     *
+     * @return A data de expiração do token de recuperação de senha.
+     */
     private Instant expirationDateRecoverPassword() {
         return LocalDateTime.now().plusMinutes(10).toInstant(ZoneOffset.of("-03:00"));
     }
 
+    /**
+     * Obtém o e-mail associado a um token JWT.
+     *
+     * @param token O token JWT.
+     * @return O e-mail associado ao token.
+     */
     public String getEmailByToken(String token) {
         return JWT.decode(token).getClaim("email").asString();
     }
 
+    /**
+     * Obtém o assunto (subject) de um token JWT.
+     *
+     * @param tokenJWT O token JWT.
+     * @return O assunto do token JWT.
+     * @throws JWTVerificationException Se o token JWT for inválido ou expirado.
+     */
     public String getSubject(String tokenJWT) throws JWTVerificationException {
         try {
             var algorithm = Algorithm.HMAC256(secret);
@@ -124,19 +180,25 @@ public class TokenService {
         }
     }
 
-	    public String generateTokenForActivatedEmail(User user) {
-	        try {
-	            Algorithm algorithm = Algorithm.HMAC256(secret);
-	            String token = JWT.create()
-	                    .withIssuer(ISSUER)
-	                    .withSubject(user.getEmail()) // Use o email como subject
-	                    .withClaim("id", user.getId())
-	                    .withClaim("email", user.getEmail())
-	                    .sign(algorithm);
-	            registerToken(token, user);  // Register the token in the database
-	            return token;
-	        } catch (JWTCreationException exception) {
-	            throw new RuntimeException("Erro ao gerar o token JWT", exception);
-	        }
-	    }
-	}
+    /**
+     * Gera um token JWT para ativação de e-mail.
+     *
+     * @param user O usuário para o qual o token será gerado.
+     * @return O token JWT gerado para ativação de e-mail.
+     */
+    public String generateTokenForActivatedEmail(User user) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            String token = JWT.create()
+                    .withIssuer(ISSUER)
+                    .withSubject(user.getEmail()) // Usa o e-mail como subject
+                    .withClaim("id", user.getId())
+                    .withClaim("email", user.getEmail())
+                    .sign(algorithm);
+            registerToken(token, user);  // Registra o token na base de dados
+            return token;
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar o token JWT", exception);
+        }
+    }
+}

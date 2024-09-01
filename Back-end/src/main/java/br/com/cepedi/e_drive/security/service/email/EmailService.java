@@ -1,7 +1,5 @@
 package br.com.cepedi.e_drive.security.service.email;
 
-
-
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterMail;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.mail.MailService;
@@ -15,11 +13,16 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.springframework.core.io.ClassPathResource;
 
-
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 
-
+/**
+ * Serviço responsável pelo envio de e-mails relacionados ao registro de usuário,
+ * redefinição de senha e outros processos de autenticação.
+ * <p>
+ * Esta classe usa o Thymeleaf para gerar e-mails HTML e o JavaMailSender para enviar e-mails.
+ * </p>
+ */
 @Service
 public class EmailService {
 
@@ -28,7 +31,6 @@ public class EmailService {
 
     @Autowired
     private SpringTemplateEngine templateEngine;
-
 
     @Autowired
     private UserRepository repository;
@@ -39,16 +41,40 @@ public class EmailService {
     @Autowired
     private MailService mailService;
 
+    /**
+     * Envia um e-mail de ativação de conta de forma assíncrona.
+     *
+     * @param name O nome do destinatário.
+     * @param email O e-mail do destinatário.
+     * @param tokenForActivate O token para ativação da conta.
+     * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
+     */
     @Async
     public void sendActivationEmailAsync(String name, String email, String tokenForActivate) throws MessagingException {
         sendActivationEmail(name, email, tokenForActivate);
     }
 
+    /**
+     * Envia um e-mail para redefinição de senha de forma assíncrona.
+     *
+     * @param name O nome do destinatário.
+     * @param email O e-mail do destinatário.
+     * @param token O token para redefinir a senha.
+     * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
+     */
     @Async
     public void sendResetPasswordEmailAsync(String name, String email, String token) throws MessagingException {
-        sendResetPasswordEmail(name,email,token);
+        sendResetPasswordEmail(name, email, token);
     }
 
+    /**
+     * Envia um e-mail para redefinição de senha.
+     *
+     * @param name O nome do destinatário.
+     * @param email O e-mail do destinatário.
+     * @param token O token para redefinir a senha.
+     * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
+     */
     public void sendResetPasswordEmail(String name, String email, String token) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
@@ -62,7 +88,7 @@ public class EmailService {
         context.setVariable("token", token);
         context.setVariable("titulo", "Redefinição de Senha");
         context.setVariable("texto", "Recebemos uma solicitação para redefinir sua senha. Para redefinir sua senha, clique no botão abaixo.");
-        context.setVariable("linkRedefinicao", "http://localhost:8080/auth/reset-password?token=" + token); // Corrija esta variável
+        context.setVariable("linkRedefinicao", "http://localhost:8080/auth/reset-password?token=" + token);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reset_password_email_template", context);
@@ -80,7 +106,15 @@ public class EmailService {
         mailService.register(dataRegisterMail);
     }
 
-
+    /**
+     * Envia um e-mail de ativação de conta.
+     *
+     * @param name O nome do destinatário.
+     * @param email O e-mail do destinatário.
+     * @param tokenForActivate O token para ativação da conta.
+     * @return O token de ativação enviado.
+     * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
+     */
     public String sendActivationEmail(String name, String email, String tokenForActivate) throws MessagingException {
 
         MimeMessage message = emailSender.createMimeMessage();
@@ -91,7 +125,7 @@ public class EmailService {
 
         // Contexto para o template
         Context context = new Context();
-        context.setVariable("nome", name); // Adicionando a variável 'nome' para personalização
+        context.setVariable("nome", name);
         context.setVariable("titulo", "Bem-vindo ao e-Drive, " + name + "!");
         context.setVariable("texto", "Estamos felizes em tê-lo(a) conosco. Para começar a usar o e-Drive, confirme seu cadastro clicando no link abaixo.");
         context.setVariable("linkConfirmacao", "http://localhost:8080/auth/activate?token=" + tokenForActivate);
@@ -113,7 +147,4 @@ public class EmailService {
 
         return tokenForActivate;
     }
-
-
-
 }

@@ -16,11 +16,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Serviço responsável pela autenticação e gerenciamento de usuários.
+ * <p>
+ * Esta classe implementa {@link UserDetailsService} para fornecer detalhes do usuário
+ * e gerenciar as operações relacionadas ao registro, ativação e logout de usuários.
+ * </p>
+ */
 @Service
 public class AuthService implements UserDetailsService {
 
     @Autowired
-    UserRepository repository;
+    private UserRepository repository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -31,15 +38,28 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private List<ValidationRegisterUser> validationRegisterUserList;
 
+    /**
+     * Carrega um {@link UserDetails} com base no email fornecido.
+     *
+     * @param email O email do usuário a ser carregado.
+     * @return Os detalhes do usuário correspondente ao email fornecido.
+     * @throws UsernameNotFoundException Se nenhum usuário for encontrado com o email fornecido.
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserDetails user = repository.findByEmail(email); // Atualizado para buscar pelo email
+        UserDetails user = repository.findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with email: " + email);
         }
         return user;
     }
 
+    /**
+     * Registra um novo usuário com base nos dados fornecidos.
+     *
+     * @param dataRegisterUser Os dados do usuário a ser registrado.
+     * @return Um {@link DataDetailsRegisterUser} contendo os detalhes do usuário registrado e o token de confirmação.
+     */
     public DataDetailsRegisterUser register(DataRegisterUser dataRegisterUser) {
         validationRegisterUserList.forEach(v -> v.validation(dataRegisterUser));
         User user = new User(dataRegisterUser, passwordEncoder);
@@ -48,9 +68,15 @@ public class AuthService implements UserDetailsService {
         return new DataDetailsRegisterUser(user, confirmationToken);
     }
 
+    /**
+     * Ativa um usuário com base no token fornecido.
+     *
+     * @param token O token de confirmação de ativação do usuário.
+     * @throws UsernameNotFoundException Se nenhum usuário for encontrado com o email associado ao token.
+     */
     public void activateUser(String token) {
         String email = JWT.decode(token).getClaim("email").asString();
-        User user = repository.findByEmail(email); // Certifique-se de que este método está correto
+        User user = repository.findByEmail(email);
 
         if (user != null) {
             user.activate();
@@ -60,6 +86,12 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    /**
+     * Realiza o logout do usuário com base no token fornecido.
+     *
+     * @param token O token de logout.
+     * @throws IllegalArgumentException Se o token for inválido ou expirado.
+     */
     public void logout(String token) {
         String tokenWithoutBearer = token.replace("Bearer ", "");
         if (tokenService.isValidToken(tokenWithoutBearer)) {
@@ -68,6 +100,4 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException("Invalid or expired token.");
         }
     }
-    
-    
 }
