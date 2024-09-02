@@ -6,12 +6,22 @@ import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+/**
+ * Valida se a propulsão associada ao veículo não está desativada durante a atualização do veículo.
+ */
 @Component
 public class ValidationUpdateVehicle_Propulsion_NotDisabled implements ValidationUpdateVehicle {
 
     @Autowired
     private PropulsionRepository propulsionRepository;
 
+    /**
+     * Valida se a propulsão associada ao veículo não está desativada.
+     *
+     * @param data Dados de atualização do veículo a serem validados.
+     * @throws ValidationException Se a propulsão associada estiver desativada ou não existir.
+     */
     @Override
     public void validate(DataUpdateVehicle data) {
         if (data.propulsionId() != null) {

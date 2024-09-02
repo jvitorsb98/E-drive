@@ -15,6 +15,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Representa um usuário da aplicação, implementando a interface {@link UserDetails} para integração com o Spring Security.
+ * A entidade está mapeada para a tabela "users" no banco de dados.
+ */
 @Table(name = "users")
 @Entity
 @Getter
@@ -30,8 +34,8 @@ public class User implements UserDetails {
     private String email;
     private String name;
     private String password;
-    private LocalDate birth; // Adicionado
-    private String cellphone; // Adicionado
+    private LocalDate birth; // Data de nascimento do usuário
+    private String cellphone; // Número de celular do usuário
     private Boolean activated;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -42,23 +46,40 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
+    /**
+     * Constrói uma nova instância de {@link User} com base nos dados fornecidos durante o registro.
+     *
+     * @param dataRegisterUser  Dados fornecidos pelo usuário no momento do registro.
+     * @param passwordEncoder   Codificador de senha para armazenar a senha de forma segura.
+     */
     public User(DataRegisterUser dataRegisterUser, PasswordEncoder passwordEncoder) {
         this.email = dataRegisterUser.email();
         this.name = dataRegisterUser.name();
         this.password = passwordEncoder.encode(dataRegisterUser.password());
         this.activated = false;
-        this.birth = dataRegisterUser.birth(); // Adicionado
-        this.cellphone = dataRegisterUser.cellPhone(); // Adicionado
+        this.birth = dataRegisterUser.birth();
+        this.cellphone = dataRegisterUser.cellPhone();
     }
 
+    /**
+     * Ativa a conta do usuário.
+     */
     public void activate() {
         this.activated = true;
     }
 
+    /**
+     * Desativa a conta do usuário.
+     */
     public void disabled() {
         this.activated = false;
     }
 
+    /**
+     * Atualiza as informações do usuário com base nos dados fornecidos.
+     *
+     * @param dataUpdateUser  Dados fornecidos para a atualização do usuário.
+     */
     public void update(DataUpdateUser dataUpdateUser) {
         if (dataUpdateUser.name() != null) {
             this.name = dataUpdateUser.name();
@@ -71,6 +92,11 @@ public class User implements UserDetails {
         }
     }
 
+    /**
+     * Retorna as autoridades (roles) concedidas ao usuário.
+     *
+     * @return Coleção de {@link GrantedAuthority} representando as roles do usuário.
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -78,39 +104,81 @@ public class User implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retorna a senha do usuário.
+     *
+     * @return A senha do usuário.
+     */
     @Override
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Retorna o nome de usuário (neste caso, o email).
+     *
+     * @return O email do usuário.
+     */
     @Override
     public String getUsername() {
-        return email; // Alterado para email
+        return email;
     }
 
+    /**
+     * Indica se a conta do usuário está expirada.
+     *
+     * @return true, indicando que a conta não está expirada.
+     */
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    /**
+     * Indica se a conta do usuário está bloqueada.
+     *
+     * @return true, indicando que a conta não está bloqueada.
+     */
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    /**
+     * Indica se as credenciais do usuário (senha) estão expiradas.
+     *
+     * @return true, indicando que as credenciais não estão expiradas.
+     */
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    /**
+     * Indica se a conta do usuário está ativada.
+     *
+     * @return true, se a conta estiver ativada; false caso contrário.
+     */
     @Override
     public boolean isEnabled() {
-        return activated; // Alterado para refletir o estado de ativação
+        return activated;
     }
 
+    /**
+     * Define as autoridades (roles) do usuário.
+     *
+     * @param roleUser Coleção de {@link SimpleGrantedAuthority} representando as roles do usuário.
+     */
     public void setAuthorities(Set<SimpleGrantedAuthority> roleUser) {
+        // Método vazio
     }
 
+    /**
+     * Define a senha do usuário.
+     *
+     * @param encode A senha codificada.
+     */
     public void setPassword(String encode) {
+        // Método vazio
     }
 }

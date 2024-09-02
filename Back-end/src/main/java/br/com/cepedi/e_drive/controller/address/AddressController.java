@@ -29,6 +29,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Controlador para gerenciar operações relacionadas a endereços.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, habilitar, desabilitar e recuperar endereços.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/address")
 @SecurityRequirement(name = "bearer-key")
@@ -40,6 +46,17 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
+    /**
+     * Registra um novo endereço.
+     * <p>
+     * Valida os dados fornecidos, registra o novo endereço e retorna os detalhes do endereço registrado.
+     * </p>
+     *
+     * @param data       Dados necessários para registrar um novo endereço.
+     * @param uriBuilder Construtor de URI para criar o URI do novo endereço.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Resposta com os detalhes do endereço registrado e URI do novo endereço.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new address", method = "POST")
@@ -64,12 +81,21 @@ public class AddressController {
     ) {
         LOGGER.info("Registering a new address");
         String email = userDetails.getUsername();
-        DataAddressDetails addressDetails = addressService.register(data,email);
+        DataAddressDetails addressDetails = addressService.register(data, email);
         URI uri = uriBuilder.path("/api/v1/address/{id}").buildAndExpand(addressDetails.id()).toUri();
         LOGGER.info("Address registered successfully");
         return ResponseEntity.created(uri).body(addressDetails);
     }
 
+    /**
+     * Recupera um endereço pelo ID.
+     * <p>
+     * Retorna os detalhes do endereço com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID do endereço a ser recuperado.
+     * @return Resposta com os detalhes do endereço.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get address by ID", method = "GET", description = "Retrieves an address by its ID.")
     @ApiResponses(value = {
@@ -93,6 +119,16 @@ public class AddressController {
         return new ResponseEntity<>(addressDetails, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista de endereços associados a um ID de usuário específico.
+     * <p>
+     * Retorna uma página de endereços associados ao ID do usuário fornecido.
+     * </p>
+     *
+     * @param userDetails Detalhes do usuário autenticado.
+     * @param pageable   Informações de paginação e ordenação.
+     * @return Página de detalhes dos endereços associados ao usuário.
+     */
     @GetMapping("/user")
     @Operation(summary = "Get addresses by User ID", method = "GET", description = "Retrieves a list of addresses associated with a specific user ID.")
     @ApiResponses(value = {
@@ -119,6 +155,15 @@ public class AddressController {
         return new ResponseEntity<>(addresses, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de todos os endereços.
+     * <p>
+     * Retorna todos os endereços registrados com base nas informações de paginação e ordenação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos endereços.
+     */
     @GetMapping
     @Operation(summary = "Get all addresses", method = "GET", description = "Retrieves a paginated list of all addresses.")
     @ApiResponses(value = {
@@ -140,6 +185,16 @@ public class AddressController {
         return new ResponseEntity<>(addresses, HttpStatus.OK);
     }
 
+    /**
+     * Atualiza os detalhes de um endereço existente.
+     * <p>
+     * Valida os dados fornecidos, atualiza o endereço no repositório e retorna os detalhes do endereço atualizado.
+     * </p>
+     *
+     * @param data Dados necessários para atualizar o endereço.
+     * @param id   ID do endereço a ser atualizado.
+     * @return Resposta com os detalhes do endereço atualizado.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update address details", method = "PUT", description = "Updates the details of an existing address.")
@@ -168,6 +223,15 @@ public class AddressController {
         return new ResponseEntity<>(updatedAddress, HttpStatus.OK);
     }
 
+    /**
+     * Desativa um endereço pelo ID.
+     * <p>
+     * Marca o endereço como desativado com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID do endereço a ser desativado.
+     * @return Resposta sem conteúdo (204 No Content).
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable address by ID", method = "PATCH", description = "Disables an address by its ID.")
@@ -190,6 +254,15 @@ public class AddressController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Habilita um endereço pelo ID.
+     * <p>
+     * Marca o endereço como habilitado com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID do endereço a ser habilitado.
+     * @return Resposta sem conteúdo (204 No Content).
+     */
     @PutMapping("/{id}/enable")
     @Transactional
     @Operation(summary = "Enable address by ID", method = "PATCH", description = "Enables an address by its ID.")

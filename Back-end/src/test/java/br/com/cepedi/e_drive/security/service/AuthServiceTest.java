@@ -1,11 +1,11 @@
 package br.com.cepedi.e_drive.security.service;
 
-import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
-import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
-import br.com.cepedi.e_drive.security.service.validations.register.ValidationRegisterUser;
-import java.time.LocalDate;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
+
+import br.com.cepedi.e_drive.security.service.auth.AuthService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.github.javafaker.Faker;
@@ -24,8 +24,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

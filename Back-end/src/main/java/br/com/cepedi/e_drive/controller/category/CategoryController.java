@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.controller.category;
 
-
 import br.com.cepedi.e_drive.model.records.category.details.DataCategoryDetails;
 import br.com.cepedi.e_drive.model.records.category.register.DataRegisterCategory;
 import br.com.cepedi.e_drive.model.records.category.update.DataUpdateCategory;
@@ -27,6 +26,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Controlador para gerenciar operações relacionadas a categorias.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, desabilitar e recuperar categorias.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/categories")
 @SecurityRequirement(name = "bearer-key")
@@ -38,6 +43,16 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    /**
+     * Registra uma nova categoria.
+     * <p>
+     * Valida os dados fornecidos, registra a nova categoria e retorna os detalhes da categoria registrada.
+     * </p>
+     *
+     * @param data       Dados necessários para registrar uma nova categoria.
+     * @param uriBuilder Construtor de URI para criar o URI da nova categoria.
+     * @return Resposta com os detalhes da categoria registrada e URI da nova categoria.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Category", method = "POST")
@@ -66,6 +81,15 @@ public class CategoryController {
         return ResponseEntity.created(uri).body(categoryDetails);
     }
 
+    /**
+     * Recupera uma lista paginada de todas as categorias.
+     * <p>
+     * Retorna todas as categorias registradas com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das categorias.
+     */
     @GetMapping
     @Operation(summary = "List all categories", method = "GET")
     @ApiResponses(value = {
@@ -86,6 +110,15 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de todas as categorias desativadas.
+     * <p>
+     * Retorna todas as categorias desativadas com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das categorias desativadas.
+     */
     @GetMapping("/deactivated")
     @Operation(summary = "List all deactivated categories", method = "GET")
     @ApiResponses(value = {
@@ -106,6 +139,16 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    /**
+     * Pesquisa categorias pelo nome.
+     * <p>
+     * Retorna categorias que correspondem ao nome fornecido com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param name     Nome da categoria a ser pesquisada.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das categorias correspondentes ao nome.
+     */
     @GetMapping("/search")
     @Operation(summary = "Search categories by name", method = "GET")
     @ApiResponses(value = {
@@ -129,6 +172,15 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma categoria pelo ID.
+     * <p>
+     * Retorna os detalhes da categoria com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID da categoria a ser recuperada.
+     * @return Resposta com os detalhes da categoria.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get category by ID", method = "GET")
     @ApiResponses(value = {
@@ -152,6 +204,16 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDetails, HttpStatus.OK);
     }
 
+    /**
+     * Atualiza os detalhes de uma categoria existente.
+     * <p>
+     * Valida os dados fornecidos, atualiza a categoria no repositório e retorna os detalhes da categoria atualizada.
+     * </p>
+     *
+     * @param id   ID da categoria a ser atualizada.
+     * @param data Dados necessários para atualizar a categoria.
+     * @return Resposta com os detalhes da categoria atualizada.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update category details", method = "PUT")
@@ -175,11 +237,20 @@ public class CategoryController {
             @Valid @RequestBody DataUpdateCategory data
     ) {
         LOGGER.info("Updating category with ID: {}", id);
-        DataCategoryDetails updatedCategory = categoryService.update(data,id);
+        DataCategoryDetails updatedCategory = categoryService.update(data, id);
         LOGGER.info("Category updated successfully with ID: {}", id);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
 
+    /**
+     * Desativa uma categoria pelo ID.
+     * <p>
+     * Marca a categoria como desativada e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id ID da categoria a ser desativada.
+     * @return Resposta indicando que a categoria foi desativada com sucesso.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable category by ID", method = "DELETE")
