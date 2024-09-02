@@ -41,7 +41,7 @@ export class ListMyAddressesComponent implements OnInit {
           this.dataSource.data = data.content;
         },
         error => {
-          this.snackBar.open('Erro ao carregar endereços', 'Fechar', { duration: 3000 });
+          this.snackBar.open('Erro ao carregar endereços', 'Fechar', { duration: 5000 });
         }
       );
   }
@@ -63,6 +63,12 @@ export class ListMyAddressesComponent implements OnInit {
         ]
       }
     });
+  }
+
+  addAddress() {
+    this.addressService.selectAddress(null);
+    this.addressService.setTitle('Registrar Endereço');
+    this.router.navigate(['/new-address']);
   }
 
   editAddress(address: DataAddressDetails) {
