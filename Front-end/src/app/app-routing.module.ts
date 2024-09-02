@@ -9,6 +9,7 @@ import { UserPasswordModalComponent } from './settings/features/users/components
 import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
+import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
@@ -21,6 +22,7 @@ const routes: Routes = [
   { path: 'new-address', component: MyAddressesComponent },
   { path: 'my-addresses/edit', component: MyAddressesComponent },
   { path: 'reset-password', component: UserPasswordModalComponent },
+  { path: 'admin', component: BrandViewComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];
 
@@ -28,7 +30,7 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes, {
     anchorScrolling: 'enabled',
     scrollPositionRestoration: 'enabled',
-    scrollOffset: [0,60],
+    scrollOffset: [0, 60],
   })],
   exports: [RouterModule]
 })

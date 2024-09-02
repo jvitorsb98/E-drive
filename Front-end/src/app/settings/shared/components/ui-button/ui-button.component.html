@@ -1,34 +1,5 @@
 <!-- <button [ngClass]="{'pulse-animation': pulseAnimation}"  [attr.disabled]="disabled ? true : null" [attr.type]="typeBtn">{{ text }}</button> -->
 
-
-<!-- <a
-  *ngIf="routerLink"
-  [routerLink]="routerLink"
-  class="btn"
-  [ngClass]="{
-    'pulse-animation': pulseAnimation,
-    'disabled': disabled
-  }"
-  [attr.tabindex]="disabled ? -1 : null"
-  [attr.aria-disabled]="disabled ? 'true' : null"
->
-  <ng-content></ng-content>
-</a>
-
-<button
-  *ngIf="!routerLink"
-  [attr.type]="typeBtn"
-  [attr.disabled]="disabled ? true : null"
-  [ngClass]="{
-    'pulse-animation': pulseAnimation,
-    'disabled': disabled
-  }"
->
-  <ng-content></ng-content>
-  {{ text }}
-</button> -->
-
-<!-- ui-button.component.html -->
 <a
   *ngIf="routerLink"
   [routerLink]="routerLink"
@@ -36,8 +7,10 @@
   [attr.disabled]="disabled ? true : null"
   [ngClass]="{
     'pulse-animation': pulseAnimation,
-    'disabled': disabled
+    'disabled': disabled,
+    'icon-btn': icon && !text
   }"
+  (click)="onClick()"
 >
   <ng-content></ng-content>
   <i *ngIf="icon" [class]="icon"></i>
@@ -45,15 +18,17 @@
 
 <button
   *ngIf="!routerLink"
+  class="btn"
   [attr.type]="typeBtn"
   [attr.disabled]="disabled ? true : null"
   [ngClass]="{
     'pulse-animation': pulseAnimation,
-    'disabled': disabled
+    'disabled': disabled,
+    'icon-btn': icon && !text
   }"
+  (click)="onClick()"
 >
   <ng-content></ng-content>
-  {{ text }}
   <i *ngIf="icon" [class]="icon"></i>
+  {{ text }}
 </button>
-

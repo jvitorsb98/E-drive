@@ -1,9 +1,9 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-ui-button',
   templateUrl: './ui-button.component.html',
-  styleUrl: './ui-button.component.scss'
+  styleUrls: ['./ui-button.component.scss']
 })
 export class UiButtonComponent {
 
@@ -16,7 +16,13 @@ export class UiButtonComponent {
   @Input() text!: string;
   @Input() routerLink!: string;
   @Input() icon!: string;
+  @Output() clickEvent = new EventEmitter<void>();
 
   constructor() { }
 
+  onClick() {
+    if (!this.disabled) {
+      this.clickEvent.emit();
+    }
+  }
 }
