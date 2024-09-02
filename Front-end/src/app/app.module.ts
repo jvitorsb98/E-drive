@@ -33,6 +33,8 @@ import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-p
 import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
 import { ModalDetailsBrandComponent } from './settings/features/brand/components/modal-details-brand/modal-details-brand.component';
 import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
+import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
+import { ModalDetailsAddressComponent } from './settings/features/my-addresses/components/modal-details-address/modal-details-address.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -41,9 +43,6 @@ import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
-// import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
-// import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
-import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +68,8 @@ import { ListMyAddressesComponent } from './settings/features/my-addresses/compo
     ModalFormBrandComponent,
     MyAddressesComponent,
     FaqPopupComponent,
+    ListMyAddressesComponent,
+    ModalDetailsAddressComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
@@ -76,9 +77,6 @@ import { ListMyAddressesComponent } from './settings/features/my-addresses/compo
 
     // Pipes
     PhoneMaskPipe,
-      MyAddressesComponent,
-      FaqPopupComponent,
-      ListMyAddressesComponent,
   ],
   imports: [
     BrowserModule,
