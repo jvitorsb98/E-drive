@@ -5,6 +5,9 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Validação para garantir que um modelo existe antes de tentar desativá-lo.
+ */
 @Component
 public class ValidationModelExistsForDisabled implements ModelValidatorDisabled {
 

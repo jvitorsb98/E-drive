@@ -1,7 +1,9 @@
 package br.com.cepedi.e_drive.security.service;
 
-import br.com.cepedi.e_drive.security.model.records.register.DataRegisterMail;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.email.EmailService;
+import br.com.cepedi.e_drive.security.service.mail.MailService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import com.github.javafaker.Faker;
 import freemarker.core.ParseException;
 import freemarker.template.Configuration;
@@ -15,16 +17,13 @@ import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 

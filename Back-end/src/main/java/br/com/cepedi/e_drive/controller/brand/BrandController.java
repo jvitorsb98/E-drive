@@ -10,12 +10,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +27,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
-
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
-
+/**
+ * Controlador para gerenciar operações relacionadas a marcas.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, desabilitar e recuperar marcas.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/brands")
 @SecurityRequirement(name = "bearer-key")
@@ -42,6 +44,16 @@ public class BrandController {
     @Autowired
     private BrandService brandService;
 
+    /**
+     * Registra uma nova marca.
+     * <p>
+     * Valida os dados fornecidos, registra a nova marca e retorna os detalhes da marca registrada.
+     * </p>
+     *
+     * @param data       Dados necessários para registrar uma nova marca.
+     * @param uriBuilder Construtor de URI para criar o URI da nova marca.
+     * @return Resposta com os detalhes da marca registrada e URI da nova marca.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Brand", method = "POST")
@@ -60,8 +72,7 @@ public class BrandController {
     })
     public ResponseEntity<DataBrandDetails> register(
             @Parameter(description = "Data required to register a brand", required = true)
-            @Valid @RequestBody
-            DataRegisterBrand data,
+            @Valid @RequestBody DataRegisterBrand data,
             UriComponentsBuilder uriBuilder
     ) {
         LOGGER.info("Registering a brand");
@@ -71,6 +82,15 @@ public class BrandController {
         return ResponseEntity.created(uri).body(brandDetails);
     }
 
+    /**
+     * Recupera uma marca pelo ID.
+     * <p>
+     * Retorna os detalhes da marca com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID da marca a ser recuperada.
+     * @return Resposta com os detalhes da marca.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get brand by ID", method = "GET", description = "Retrieves a brand by its ID.")
     @ApiResponses(value = {
@@ -94,15 +114,24 @@ public class BrandController {
         return new ResponseEntity<>(brandDetails, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de todas as marcas.
+     * <p>
+     * Retorna todas as marcas registradas com base nas informações de paginação e ordenação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das marcas.
+     */
     @GetMapping
     @Operation(summary = "Get all brands", method = "GET", description = "Retrieves a paginated list of all brands.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Brand retrieved successfully",
+            @ApiResponse(responseCode = "200", description = "Brands retrieved successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Page.class))),
             @ApiResponse(responseCode = "403", description = "Forbidden",
                     content = @Content),
-            @ApiResponse(responseCode = "404", description = "Brand not found",
+            @ApiResponse(responseCode = "404", description = "No brands found",
                     content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content)
@@ -117,6 +146,16 @@ public class BrandController {
         return new ResponseEntity<>(brands, HttpStatus.OK);
     }
 
+    /**
+     * Atualiza os detalhes de uma marca existente.
+     * <p>
+     * Valida os dados fornecidos, atualiza a marca no repositório e retorna os detalhes da marca atualizada.
+     * </p>
+     *
+     * @param id   ID da marca a ser atualizada.
+     * @param data Dados necessários para atualizar a marca.
+     * @return Resposta com os detalhes da marca atualizada.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update brand details", method = "PUT", description = "Updates the details of an existing brand.")
@@ -140,13 +179,20 @@ public class BrandController {
             @Valid @RequestBody DataUpdateBrand data
     ) {
         LOGGER.info("Updating brand with id: {}", id);
-        DataBrandDetails updatedBrand = brandService.update(data,id);
+        DataBrandDetails updatedBrand = brandService.update(data, id);
         LOGGER.info("Brand updated successfully");
         return new ResponseEntity<>(updatedBrand, HttpStatus.OK);
     }
 
-
-
+    /**
+     * Desativa uma marca pelo ID.
+     * <p>
+     * Marca a marca como desativada com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID da marca a ser desativada.
+     * @return Resposta sem conteúdo (204 No Content).
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable brand by ID", method = "DELETE", description = "Disables a brand by its ID.")
@@ -168,5 +214,4 @@ public class BrandController {
         LOGGER.info("Brand disabled successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

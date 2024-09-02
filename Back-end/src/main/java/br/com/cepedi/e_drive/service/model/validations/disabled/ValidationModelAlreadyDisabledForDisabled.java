@@ -6,6 +6,9 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * Validação para verificar se um modelo já está desativado antes de tentar desativá-lo novamente.
+ */
 @Component
 public class ValidationModelAlreadyDisabledForDisabled implements ModelValidatorDisabled {
 

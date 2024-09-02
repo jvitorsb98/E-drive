@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Serviço para gerenciar operações relacionadas a veículos.
+ * Inclui registro, atualização, desativação, ativação e recuperação de veículos.
+ */
 @Service
 public class VehicleService {
 
@@ -46,6 +50,13 @@ public class VehicleService {
     @Autowired
     private List<ValidationDisabledVehicle> validationDisabledVehicleList;
 
+    /**
+     * Registra um novo veículo.
+     * Valida os dados de registro, cria e salva um novo veículo.
+     *
+     * @param data Dados do veículo a serem registrados.
+     * @return Detalhes do veículo registrado.
+     */
     public DataVehicleDetails register(DataRegisterVehicle data) {
         validationRegisterVehicleList.forEach(v -> v.validate(data));
         Model model = modelRepository.getReferenceById(data.modelId());
@@ -59,10 +70,24 @@ public class VehicleService {
         return new DataVehicleDetails(vehicle);
     }
 
+    /**
+     * Recupera todos os veículos com paginação.
+     *
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getAllVehicles(Pageable pageable) {
         return vehicleRepository.findAll(pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Recupera um veículo pelo ID.
+     * Resultados são armazenados em cache.
+     *
+     * @param id ID do veículo.
+     * @return Detalhes do veículo.
+     * @throws RuntimeException Se o veículo não for encontrado.
+     */
     @Cacheable(value = "vehicleById", key = "#id")
     public DataVehicleDetails getVehicleById(Long id) {
         Vehicle vehicle = vehicleRepository.findById(id)
@@ -70,32 +95,82 @@ public class VehicleService {
         return new DataVehicleDetails(vehicle);
     }
 
+    /**
+     * Recupera veículos por ID da categoria com paginação.
+     *
+     * @param categoryId ID da categoria.
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getVehiclesByCategory(Long categoryId, Pageable pageable) {
         return vehicleRepository.findByCategoryId(categoryId, pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Recupera veículos por ID do modelo com paginação.
+     *
+     * @param modelId ID do modelo.
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getVehiclesByModel(Long modelId, Pageable pageable) {
         return vehicleRepository.findByModelId(modelId, pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Recupera veículos por ID do tipo com paginação.
+     *
+     * @param typeId ID do tipo.
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getVehiclesByType(Long typeId, Pageable pageable) {
         return vehicleRepository.findByTypeId(typeId, pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Recupera veículos por ID da marca com paginação.
+     *
+     * @param brandId ID da marca.
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getVehiclesByBrand(Long brandId, Pageable pageable) {
         return vehicleRepository.findByBrandId(brandId, pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Recupera veículos por ID da propulsão com paginação.
+     *
+     * @param propulsionId ID da propulsão.
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getVehiclesByPropulsion(Long propulsionId, Pageable pageable) {
         return vehicleRepository.findByPropulsionId(propulsionId, pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Recupera veículos por ID da autonomia com paginação.
+     *
+     * @param autonomyId ID da autonomia.
+     * @param pageable Informações de paginação.
+     * @return Página de detalhes dos veículos.
+     */
     public Page<DataVehicleDetails> getVehiclesByAutonomy(Long autonomyId, Pageable pageable) {
         return vehicleRepository.findByAutonomyId(autonomyId, pageable).map(DataVehicleDetails::new);
     }
 
+    /**
+     * Atualiza os dados de um veículo existente.
+     * Valida os dados de atualização, atualiza e salva o veículo.
+     *
+     * @param data Dados de atualização do veículo.
+     * @param id ID do veículo a ser atualizado.
+     * @return Detalhes do veículo atualizado.
+     */
     public DataVehicleDetails updateVehicle(DataUpdateVehicle data, Long id) {
-        getValidationUpdateVehicleList().forEach(v -> v.validate(data));
+        validationUpdateVehicleList.forEach(v -> v.validate(data));
         Vehicle vehicle = vehicleRepository.getReferenceById(id);
         Category category = data.categoryId() != null ? categoryRepository.getReferenceById(data.categoryId()) : null;
         Propulsion propulsion = data.propulsionId() != null ? propulsionRepository.getReferenceById(data.propulsionId()) : null;
@@ -106,6 +181,12 @@ public class VehicleService {
         return new DataVehicleDetails(vehicle);
     }
 
+    /**
+     * Desativa um veículo existente.
+     * Valida o veículo antes de desativá-lo.
+     *
+     * @param id ID do veículo a ser desativado.
+     */
     public void disableVehicle(Long id) {
         validationDisabledVehicleList.forEach(v -> v.validate(id));
         Vehicle vehicle = vehicleRepository.getReferenceById(id);
@@ -113,19 +194,32 @@ public class VehicleService {
         vehicleRepository.save(vehicle);
     }
 
+    /**
+     * Ativa um veículo existente.
+     *
+     * @param id ID do veículo a ser ativado.
+     */
     public void enableVehicle(Long id) {
         Vehicle vehicle = vehicleRepository.getReferenceById(id);
         vehicle.enable();
         vehicleRepository.save(vehicle);
     }
 
-	public List<ValidationUpdateVehicle> getValidationUpdateVehicleList() {
-		return validationUpdateVehicleList;
-	}
+    /**
+     * Obtém a lista de validações de atualização de veículo.
+     *
+     * @return Lista de validações de atualização de veículo.
+     */
+    public List<ValidationUpdateVehicle> getValidationUpdateVehicleList() {
+        return validationUpdateVehicleList;
+    }
 
-	public void setValidationUpdateVehicleList(List<ValidationUpdateVehicle> validationUpdateVehicleList) {
-		this.validationUpdateVehicleList = validationUpdateVehicleList;
-	}
-
-
+    /**
+     * Define a lista de validações de atualização de veículo.
+     *
+     * @param validationUpdateVehicleList Lista de validações de atualização de veículo.
+     */
+    public void setValidationUpdateVehicleList(List<ValidationUpdateVehicle> validationUpdateVehicleList) {
+        this.validationUpdateVehicleList = validationUpdateVehicleList;
+    }
 }

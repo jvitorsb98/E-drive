@@ -3,6 +3,7 @@ package br.com.cepedi.e_drive.security.service;
 import br.com.cepedi.e_drive.security.model.entitys.Token;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.repository.TokenRepository;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;

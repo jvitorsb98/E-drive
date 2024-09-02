@@ -26,6 +26,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
+/**
+ * Controlador para gerenciar operações relacionadas a propulsões.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, desativar e recuperar propulsões.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/propulsions")
 @SecurityRequirement(name = "bearer-key")
@@ -37,6 +43,16 @@ public class PropulsionController {
     @Autowired
     private PropulsionService propulsionService;
 
+    /**
+     * Registra uma nova propulsão.
+     * <p>
+     * Valida os dados fornecidos, registra a nova propulsão e retorna os detalhes da propulsão registrada.
+     * </p>
+     *
+     * @param data       Dados necessários para registrar uma nova propulsão.
+     * @param uriBuilder Construtor de URI para criar o URI da nova propulsão.
+     * @return Resposta com os detalhes da propulsão registrada e URI da nova propulsão.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Propulsion", method = "POST")
@@ -65,6 +81,15 @@ public class PropulsionController {
         return ResponseEntity.created(uri).body(propulsionDetails);
     }
 
+    /**
+     * Recupera uma lista paginada de todas as propulsões.
+     * <p>
+     * Retorna todas as propulsões registradas com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das propulsões.
+     */
     @GetMapping
     @Operation(summary = "List all propulsions", method = "GET")
     @ApiResponses(value = {
@@ -85,6 +110,15 @@ public class PropulsionController {
         return new ResponseEntity<>(propulsions, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma lista paginada de todas as propulsões desativadas.
+     * <p>
+     * Retorna todas as propulsões que foram desativadas com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das propulsões desativadas.
+     */
     @GetMapping("/deactivated")
     @Operation(summary = "List all deactivated propulsions", method = "GET")
     @ApiResponses(value = {
@@ -105,6 +139,16 @@ public class PropulsionController {
         return new ResponseEntity<>(propulsions, HttpStatus.OK);
     }
 
+    /**
+     * Pesquisa propulsões pelo nome.
+     * <p>
+     * Retorna uma lista paginada de propulsões que correspondem ao nome fornecido.
+     * </p>
+     *
+     * @param name     Nome da propulsão a ser pesquisado.
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes das propulsões encontradas.
+     */
     @GetMapping("/search")
     @Operation(summary = "Search propulsions by name", method = "GET")
     @ApiResponses(value = {
@@ -128,6 +172,15 @@ public class PropulsionController {
         return new ResponseEntity<>(propulsions, HttpStatus.OK);
     }
 
+    /**
+     * Recupera uma propulsão pelo ID.
+     * <p>
+     * Retorna os detalhes da propulsão com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID da propulsão a ser recuperada.
+     * @return Resposta com os detalhes da propulsão.
+     */
     @GetMapping("/{id}")
     @Operation(summary = "Get propulsion by ID", method = "GET")
     @ApiResponses(value = {
@@ -151,6 +204,16 @@ public class PropulsionController {
         return new ResponseEntity<>(propulsionDetails, HttpStatus.OK);
     }
 
+    /**
+     * Atualiza os detalhes de uma propulsão existente.
+     * <p>
+     * Atualiza os detalhes da propulsão com base no ID e nos dados fornecidos.
+     * </p>
+     *
+     * @param id   ID da propulsão a ser atualizada.
+     * @param data Dados necessários para atualizar a propulsão.
+     * @return Resposta com os detalhes da propulsão atualizada.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update propulsion details", method = "PUT")
@@ -179,6 +242,15 @@ public class PropulsionController {
         return new ResponseEntity<>(updatedPropulsion, HttpStatus.OK);
     }
 
+    /**
+     * Desativa uma propulsão pelo ID.
+     * <p>
+     * Marca a propulsão como desativada e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id ID da propulsão a ser desativada.
+     * @return Resposta indicando que a propulsão foi desativada com sucesso.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable propulsion by ID", method = "DELETE")

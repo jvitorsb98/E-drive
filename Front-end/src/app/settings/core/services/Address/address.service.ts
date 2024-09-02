@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../security/services/auth/auth.service';
-import { IAddressRequest, IAddressResponse } from '../../models/inter-Address';
+import { DataAddressDetails, IAddressRequest, IAddressResponse } from '../../models/inter-Address';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -25,7 +25,7 @@ export class AddressService {
 
 
   // BehaviorSubject para o título da página
-  private titleSource = new BehaviorSubject<string>('Editar Endereço');
+  private titleSource = new BehaviorSubject<string>('');
   selectedTitle$ = this.titleSource.asObservable();
 
   getAddresses(): Observable<IAddressResponse[]> {
@@ -74,9 +74,12 @@ export class AddressService {
     return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers: this.headers });
   }
 
-
-  updateAddress(id: number, address: any): void {
-    this.http.put(`${this.baseUrl}/${id}`, address, { headers: this.headers })
+  // Função para atualizar um endereço
+  updateAddress(id: number, addressData: IAddressRequest): Observable<DataAddressDetails> {
+    return this.http.put<DataAddressDetails>(`${this.baseUrl}/${id}`, addressData, { headers: this.headers })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 
   // Método para definir o endereço atual
@@ -91,7 +94,15 @@ export class AddressService {
 
   // Método para definir o título da página
   setTitle(title: string) {
+    if (title == '') {
+      title = 'Registrar endereço';
+    }
     this.titleSource.next(title);
+  }
+
+  // Método para limpar o título da página
+  clearTitle() {
+    this.titleSource.next("Registrar endereço");
   }
 
 

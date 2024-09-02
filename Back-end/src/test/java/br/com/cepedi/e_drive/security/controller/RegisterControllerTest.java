@@ -1,11 +1,12 @@
 package br.com.cepedi.e_drive.security.controller;
 
+import br.com.cepedi.e_drive.security.controller.auth.AuthController;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
-import br.com.cepedi.e_drive.security.service.AuthService;
-import br.com.cepedi.e_drive.security.service.EmailService;
-import br.com.cepedi.e_drive.security.service.TokenService;
+import br.com.cepedi.e_drive.security.service.auth.AuthService;
+import br.com.cepedi.e_drive.security.service.email.EmailService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import jakarta.mail.MessagingException;
 import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;

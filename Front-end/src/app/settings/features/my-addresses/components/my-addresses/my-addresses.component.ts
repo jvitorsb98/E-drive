@@ -134,8 +134,20 @@ export class MyAddressesComponent implements
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
       if(this.addressData){
-        this.address = this.addressForm.value;
-        this.addressService.updateAddress(this.addressData.id,this.address)
+        this.address = this.addressForm.value as IAddressRequest;
+        this.addressService.updateAddress(this.addressData.id, this.address).subscribe(
+          {
+            next: () => {
+              this.snackBar.open('Endereço atualizado com sucesso', 'Fechar', { duration: 5000 });
+              this.addressForm.reset();
+              this.subscriptions.forEach(sub => sub.unsubscribe());
+              this.router.navigate(['/meus-enderecos']);
+            },
+            error: () => {
+              this.snackBar.open('Erro ao atualizar endereço', 'Fechar', { duration: 5000 });
+            }
+          }
+        )
       }
     }
   }

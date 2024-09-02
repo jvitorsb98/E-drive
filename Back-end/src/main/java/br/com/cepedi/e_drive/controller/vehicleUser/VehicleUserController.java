@@ -25,6 +25,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controlador para gerenciar operações relacionadas aos usuários de veículos.
+ * <p>
+ * Esta classe fornece endpoints para registrar, atualizar, desativar, ativar e recuperar usuários de veículos.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/vehicle-users")
 @SecurityRequirement(name = "bearer-key")
@@ -36,6 +42,16 @@ public class VehicleUserController {
     @Autowired
     private VehicleUserService vehicleUserService;
 
+    /**
+     * Registra um novo usuário de veículo.
+     * <p>
+     * Valida os dados fornecidos, registra o novo usuário de veículo e retorna os detalhes do usuário registrado.
+     * </p>
+     *
+     * @param data       Dados necessários para registrar um novo usuário de veículo.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Resposta com os detalhes do usuário de veículo registrado.
+     */
     @PostMapping
     @Transactional
     @Operation(summary = "Register a new Vehicle User", method = "POST")
@@ -60,7 +76,7 @@ public class VehicleUserController {
         try {
             String email = userDetails.getUsername();
             LOGGER.info("Registering a vehicle user for authenticated user: {}", email);
-            DataVehicleUserDetails dataVehicleUserDetails = vehicleUserService.register(data,email);
+            DataVehicleUserDetails dataVehicleUserDetails = vehicleUserService.register(data, email);
             LOGGER.info("Vehicle user registered successfully");
             return ResponseEntity.status(201).body(dataVehicleUserDetails);
         } catch (Exception e) {
@@ -69,6 +85,15 @@ public class VehicleUserController {
         }
     }
 
+    /**
+     * Recupera uma lista paginada de todos os usuários de veículos ativados.
+     * <p>
+     * Retorna todos os usuários de veículos que estão ativados com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Página de detalhes dos usuários de veículos ativados.
+     */
     @GetMapping
     @Operation(summary = "Get all activated Vehicle Users", method = "GET")
     public ResponseEntity<Page<DataVehicleUserDetails>> getAllActivatedVehicleUsers(Pageable pageable) {
@@ -77,6 +102,16 @@ public class VehicleUserController {
         return ResponseEntity.ok(vehicleUsers);
     }
 
+    /**
+     * Recupera uma lista paginada de usuários de veículos associados ao usuário autenticado.
+     * <p>
+     * Retorna todos os usuários de veículos associados ao usuário autenticado com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Página de detalhes dos usuários de veículos associados ao usuário autenticado.
+     */
     @GetMapping("/user")
     @Operation(summary = "Get Vehicle Users by User", method = "GET")
     public ResponseEntity<Page<DataVehicleUserDetails>> getVehicleUsersByUser(
@@ -89,6 +124,17 @@ public class VehicleUserController {
         return ResponseEntity.ok(vehicleUsers);
     }
 
+    /**
+     * Recupera uma lista paginada de usuários de veículos associados a um veículo específico.
+     * <p>
+     * Retorna todos os usuários de veículos associados ao veículo com o ID fornecido com base nas informações de paginação fornecidas.
+     * </p>
+     *
+     * @param vehicleId ID do veículo.
+     * @param pageable Informações de paginação e ordenação.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Página de detalhes dos usuários de veículos associados ao veículo especificado.
+     */
     @GetMapping("/vehicle/{vehicleId}")
     @Operation(summary = "Get Vehicle Users by Vehicle", method = "GET")
     public ResponseEntity<Page<DataVehicleUserDetails>> getVehicleUsersByVehicle(
@@ -102,6 +148,17 @@ public class VehicleUserController {
         return ResponseEntity.ok(vehicleUsers);
     }
 
+    /**
+     * Atualiza os detalhes de um usuário de veículo existente.
+     * <p>
+     * Atualiza os detalhes do usuário de veículo com base no ID e nos dados fornecidos.
+     * </p>
+     *
+     * @param data       Dados necessários para atualizar um usuário de veículo.
+     * @param id         ID do usuário de veículo a ser atualizado.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Resposta com os detalhes do usuário de veículo atualizado.
+     */
     @PutMapping("/{id}")
     @Transactional
     @Operation(summary = "Update a Vehicle User", method = "PUT")
@@ -137,6 +194,16 @@ public class VehicleUserController {
         }
     }
 
+    /**
+     * Desativa um usuário de veículo pelo ID.
+     * <p>
+     * Marca o usuário de veículo como desativado e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id         ID do usuário de veículo a ser desativado.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Resposta indicando que o usuário de veículo foi desativado com sucesso.
+     */
     @DeleteMapping("/{id}")
     @Transactional
     @Operation(summary = "Disable a Vehicle User", method = "DELETE")
@@ -160,12 +227,22 @@ public class VehicleUserController {
             LOGGER.info("Disabling vehicle user with ID: {} by authenticated user: {}", id, email);
             vehicleUserService.disableVehicleUser(id);
             return ResponseEntity.noContent().build();
-        }  catch (Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Error disabling vehicle user with ID: {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
+    /**
+     * Ativa um usuário de veículo pelo ID.
+     * <p>
+     * Marca o usuário de veículo como ativado e retorna uma resposta de sucesso.
+     * </p>
+     *
+     * @param id         ID do usuário de veículo a ser ativado.
+     * @param userDetails Detalhes do usuário autenticado.
+     * @return Resposta indicando que o usuário de veículo foi ativado com sucesso.
+     */
     @PutMapping("/enable/{id}")
     @Transactional
     @Operation(summary = "Enable a Vehicle User", method = "PUT")
