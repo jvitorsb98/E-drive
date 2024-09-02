@@ -6,6 +6,9 @@ import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
 import { AddressService } from '../../../../core/services/Address/address.service';
+import { DataAddressDetails, IAddressRequest } from '../../../../core/models/inter-Address';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-my-addresses',
@@ -21,20 +24,24 @@ export class MyAddressesComponent implements
   addressForm: FormGroup;
   isLoading: boolean = false;
   labelPosition: "before" | "after" = "before";
+  address!: IAddressRequest;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private adderessService: AddressService
+    private addressService: AddressService,
+    private router: Router,
+    private activatRouter: ActivatedRoute
   ) {
     this.addressForm = this.fb.group({
-      country: [{ value: 'Brasil', disabled: true }, Validators.required],
-      postalCode: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
-      state: [{ value: '', disabled: true }, Validators.required],
-      city: [{ value: '', disabled: true }, Validators.required],
-      district: ['', Validators.required],
+      country: ['Brasil', Validators.required],
+      zipCode: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
+      state: ['', Validators.required],
+      city: ['', Validators.required],
+      neighborhood: ['', Validators.required],
       street: ['', Validators.required],
       number: ['', Validators.required],
       complement: [''],
@@ -43,9 +50,24 @@ export class MyAddressesComponent implements
   }
 
   ngOnInit() {
+
+    const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
+      this.addressData = data;
+    })
+
+    const titleSubscription = this.addressService.selectedTitle$.subscribe(title => {
+      this.title = title;
+    });
+
+    this.subscriptions.push(addressSubscription, titleSubscription);
+
     if (this.addressData) {
       this.addressForm.patchValue(this.addressData);
     }
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   searchPostalCode() {
@@ -90,15 +112,31 @@ export class MyAddressesComponent implements
   create() {
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
-      console.log(this.addressForm.value);
-      this.adderessService.createAddress(this.addressForm.value)
+      this.address = this.addressForm.value;
+
+      this.addressService.createAddress(this.address)
+      .subscribe(
+        {
+          next: () => {
+            this.snackBar.open('Endereço criado com sucesso', 'Fechar', { duration: 5000 });
+            this.addressForm.reset();
+            this.router.navigate(['/meus-enderecos']);
+          },
+          error: () => {
+            this.snackBar.open('Erro ao criar endereço', 'Fechar', { duration: 5000 });
+          }
+        }
+      )
     }
   }
 
   update(){
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
-      console.log(this.addressForm.value);
+      if(this.addressData){
+        this.address = this.addressForm.value;
+        this.addressService.updateAddress(this.addressData.id,this.address)
+      }
     }
   }
 

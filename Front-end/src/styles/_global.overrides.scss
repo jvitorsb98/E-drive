@@ -13,3 +13,17 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   font-weight: bold;
 }
 
+.icon-row {
+  width: 100%;
+  display: flex; /* Usa flexbox para alinhar os ícones */
+  justify-content: space-between; /* Distribui os ícones com espaço entre eles */
+}
+
+.address-card {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
