@@ -45,5 +45,6 @@
     </table>
   </mat-card-content>
   <mat-paginator [pageSizeOptions]="[4, 8, 15]" showFirstLastButtons></mat-paginator>
-  <button mat-raised-button class="btn-primary" (click)="addAddress()">Novo endereço</button>
+  <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true"
+  (click)="addAddress()" text="Novo endereço"></app-ui-button>
 </mat-card>
