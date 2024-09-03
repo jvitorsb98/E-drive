@@ -1,3 +1,21 @@
+<div>
+  <header>
+    <nav class="navbar">
+      <div class="d-flex justify-content-between container-fluid">
+        <div class="flex-grow-1 text-center">
+          <h1 class="text-white">Perfil</h1>
+        </div>
+        <div class="justify-content-end mb-3" *ngIf="isButtonVisible">
+          <a (click)="editData()">
+            <img src="../../../../../../assets/images/edit-icon.svg" alt="">
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+</div>
+
+
 <div class="container" id="form-container">
   <!-- Formulário de visualização dos dados do usuário -->
   <div class="container-form" *ngIf="!isEditing">
@@ -37,8 +55,8 @@
 
       <!-- Botões -->
       <div class="button-group mt-5">
-        <button class="apply-button" mat-raised-button color="primary" type="button" (click)="editData()">Alterar Dados</button>
-        <button class="cancel-button" mat-raised-button color="warn" type="button" (click)="deleteAccount()">Excluir Minha Conta</button>
+        <button class="cancel-button" mat-raised-button color="warn" type="button" (click)="deleteAccount()">Excluir
+          Minha Conta</button>
       </div>
     </form>
   </div>
@@ -52,12 +70,7 @@
         <mat-card>
           <mat-form-field>
             <mat-label>Nome completo:</mat-label>
-            <input
-              type="text"
-              matInput
-              formControlName="name"
-              required
-              aria-describedby="Help" />
+            <input type="text" matInput formControlName="name" required aria-describedby="Help" />
             <!-- <mat-hint id="Help" class="mat-hint-text">O <strong>Usuário</strong> será utilizado para login.</mat-hint> -->
           </mat-form-field>
           <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('hasNumbers')">
@@ -78,13 +91,7 @@
         <mat-card>
           <mat-form-field>
             <mat-label>Data de nascimento:</mat-label>
-            <input
-              matInput
-              [matDatepicker]="picker"
-              [min]="minDate"
-              [max]="maxDate"
-              formControlName="birth"
-              required
+            <input matInput [matDatepicker]="picker" [min]="minDate" [max]="maxDate" formControlName="birth" required
               aria-describedby="Help" />
             <!-- <mat-hint id="Help" class="mat-hint-text">É para sua segurança. Por isso pedimos sua <strong>data</strong></mat-hint> -->
             <mat-datepicker-toggle matIconSuffix class="custom-icon" [for]="picker"></mat-datepicker-toggle>
@@ -105,33 +112,25 @@
           <div class="phone-group">
             <mat-form-field appearance="outline" class="country-code">
               <mat-label>Código do país:</mat-label>
-              <input
-                type="text"
-                matInput
-                formControlName="countryCode"
-                [matAutocomplete]="auto"
+              <input type="text" matInput formControlName="countryCode" [matAutocomplete]="auto"
                 (input)="userForm.get('countryCode')?.markAsTouched()">
               <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code" class="custom-autocomplete-option">
+                <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code"
+                  class="custom-autocomplete-option">
                   {{ country.name }} ({{ country.code }})
                 </mat-option>
               </mat-autocomplete>
               <!-- <mat-hint id="Help" class="mat-hint-text">Selecione o <strong>código do país</strong>.</mat-hint> -->
               <mat-error class="mat-error-codigo-text" [ngStyle]="{'white-space': 'nowrap'}" *ngIf="userForm.get('countryCode')?.hasError('required')
                 && userForm.get('countryCode')?.touched">O <strong>Código</strong> é obrigatório.</mat-error>
-              <mat-error class="mat-error-codigo-text" [ngStyle]="{'white-space': 'nowrap'}" *ngIf="userForm.get('countryCode')?.hasError('invalidCountry')">
+              <mat-error class="mat-error-codigo-text" [ngStyle]="{'white-space': 'nowrap'}"
+                *ngIf="userForm.get('countryCode')?.hasError('invalidCountry')">
                 <strong>Código do país</strong> invalido.</mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" class="phone-number">
               <mat-label>Telefone celular:</mat-label>
-              <input
-                type="text"
-                matInput
-                [placeholder]="'(xx) xxxxx-xxxx'"
-                [mask]="phoneType | phoneMask"
-                formControlName="cellPhone"
-                required
-                aria-describedby="Help" />
+              <input type="text" matInput [placeholder]="'(xx) xxxxx-xxxx'" [mask]="phoneType | phoneMask"
+                formControlName="cellPhone" required aria-describedby="Help" />
               <mat-icon matSuffix class="custom-icon">phone</mat-icon>
               <!-- <mat-hint id="Help" class="mat-hint-text">Preencha apenas os <strong>números</strong>.</mat-hint> -->
               <mat-error class="mat-error-text" *ngIf="userForm.get('cellPhone')?.hasError('required')">
@@ -146,7 +145,8 @@
       <!-- Botões -->
       <div class="button-group mt-5">
         <button class="apply-button" mat-raised-button color="primary" type="submit">Salvar Dados</button>
-        <button class="cancel-button" mat-raised-button color="warn" type="button" (click)="cancelEdit()">Cancelar</button>
+        <button class="cancel-button" mat-raised-button color="warn" type="button"
+          (click)="cancelEdit()">Cancelar</button>
       </div>
     </form>
   </div>

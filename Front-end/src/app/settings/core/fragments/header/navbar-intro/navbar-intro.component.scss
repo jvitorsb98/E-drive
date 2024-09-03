@@ -1,8 +1,8 @@
 .ingenico-logo {
   width: 120px;
   height: 60px;
-  border: none;
-  background: none;
+  position: relative;
+  z-index: 1001;
 }
 
 header {
@@ -11,13 +11,16 @@ header {
   left: 0;
   width: 100%;
   z-index: 1000;
+  box-shadow: 2px 7px 5px rgba(0, 0, 0, 0.3);
 }
 
 .nav-link {
   cursor: pointer;
   text-decoration: none;
-  color: inherit;
-  color: #000000;
+}
+
+.nav-link:hover{
+  background-color: #1389a72c;
 }
 
 /* Estilos para telas menores */
@@ -39,17 +42,15 @@ header {
 
   .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 40px;
+    top: 2rem;
+    right: 1rem;
+    font-size: 4rem;
+    border: none;
     cursor: pointer;
   }
 
   .navbar-nav {
     display: flex;
-    flex-direction: column-reverse;
-    justify-content: center;
-    align-items: center;
     margin-top: 4rem;
   }
 
@@ -57,16 +58,7 @@ header {
     .nav-link {
       font-size: 2rem;
       margin-bottom: 4rem;
-      color: #19B6DD;
+      color: #5b5b5b;
     }
-
-    .login {
-      color: #000000;
-    }
-
-    .login mat-icon {
-      transform: scale(1.6);
-    }
-
   }
 }

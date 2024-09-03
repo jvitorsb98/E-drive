@@ -4,7 +4,6 @@
   align-items: center;
   text-align: center;
   color: white;
-  border-top: 2px solid white;
 
 
   .card-fale-conosco mat-card-content{
@@ -37,13 +36,5 @@
     font-size: 1.5rem;
     color: white;
     text-decoration: none;
-  }
-
-  .social-icons mat-icon:hover {
-    color: #03a7ff;
-  }
-
-  .social-icons a:hover {
-    color: #03a7ff;
   }
 }

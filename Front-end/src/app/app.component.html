@@ -1,2 +1,7 @@
 <app-intro-page *ngIf="isHomePage()"></app-intro-page>
+
 <router-outlet [@routeAnimations]="prepareRoute(outlet)"></router-outlet>
+
+<app-bottom-bar *ngIf="isLoggedIn()"></app-bottom-bar>
+
+<app-footer *ngIf="!isLoggedIn()"></app-footer>

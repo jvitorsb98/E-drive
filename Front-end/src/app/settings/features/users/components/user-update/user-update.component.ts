@@ -37,7 +37,7 @@ export class UserUpdateComponent implements OnInit {
     private userService: UserService,
     private countryService: CountryService,
     private formBuilder: FormBuilder
-  ) {}
+  ) { }
 
   // Método chamado ao inicializar o componente
   ngOnInit(): void {
@@ -59,9 +59,11 @@ export class UserUpdateComponent implements OnInit {
   }
 
   // Ativa o modo de edição e habilita o formulário
+  isButtonVisible = true;
   editData() {
     this.isEditing = true;
     this.userForm.enable();
+    this.isButtonVisible = false;
   }
 
   // Cancela a edição, desativa o formulário e recarrega os dados do usuário
@@ -69,6 +71,7 @@ export class UserUpdateComponent implements OnInit {
     this.isEditing = false;
     this.userForm.disable();
     this.loadUserData(); // Recarrega os dados originais do usuário
+    this.isButtonVisible = true;
   }
 
   // Define as datas mínima e máxima para o campo de data
@@ -136,36 +139,40 @@ export class UserUpdateComponent implements OnInit {
   }
 
   // Atualiza os dados do usuário no servidor
- updateUser(): void {
-  if (this.userForm.valid) {
-    const userData: User = this.userForm.value;
+  updateUser(): void {
+    if (this.userForm.valid) {
+      const userData: User = this.userForm.value;
 
-    // Formata o número de telefone antes de enviá-lo para o servidor
-    userData.cellPhone = this.formatPhoneNumber(userData.countryCode, userData.cellPhone);
+      // Formata o número de telefone antes de enviá-lo para o servidor
+      userData.cellPhone = this.formatPhoneNumber(userData.countryCode, userData.cellPhone);
 
-    this.userService.updateUser(userData).subscribe({
-      next: () => {
-        console.log('Usuário atualizado com sucesso');
-      },
-      error: (err) => {
-        console.error('Erro ao atualizar usuário', err);
-      }
-    });
+      this.userService.updateUser(userData).subscribe({
+        next: () => {
+          console.log('Usuário atualizado com sucesso');
+        },
+        error: (err) => {
+          console.error('Erro ao atualizar usuário', err);
+        }
+      });
+      
+    this.isButtonVisible = true;
+    }
+    
   }
-}
 
-// Função para formatar o número de telefone
-private formatPhoneNumber(countryCode: string, phoneNumber: string): string {
-  // Remove caracteres não numéricos do número de telefone
-  const cleanedPhoneNumber = phoneNumber.replace(/\D/g, '');
+  // Função para formatar o número de telefone
+  private formatPhoneNumber(countryCode: string, phoneNumber: string): string {
+    // Remove caracteres não numéricos do número de telefone
+    const cleanedPhoneNumber = phoneNumber.replace(/\D/g, '');
 
-  // Adiciona o código do país e formata o número
-  return `+${countryCode} (${cleanedPhoneNumber.slice(0, 2)}) ${cleanedPhoneNumber.slice(2, 7)}-${cleanedPhoneNumber.slice(7)}`;
-}
+    // Adiciona o código do país e formata o número
+    return `+${countryCode} (${cleanedPhoneNumber.slice(0, 2)}) ${cleanedPhoneNumber.slice(2, 7)}-${cleanedPhoneNumber.slice(7)}`;
+  }
 
 
-   // Método para excluir a conta do usuário (implementação futura)
-   deleteAccount() {
+  // Método para excluir a conta do usuário (implementação futura)
+  deleteAccount() {
     console.log('Excluir conta do usuário');
   }
+
 }
