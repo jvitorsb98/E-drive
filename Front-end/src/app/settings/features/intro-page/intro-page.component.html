@@ -2,57 +2,64 @@
   <app-navbar-intro></app-navbar-intro>
   <div id="inicio" class="home bkg-degrad-primary">
     <section id="banner" class="banner">
-      <mat-card class="banner-card">
-        <mat-card-title>Bem-vindo ao E-Drive</mat-card-title>
-        <mat-card-content>O E-Drive é seu parceiro ideal para planejar viagens com carros elétricos.</mat-card-content>
-      </mat-card>
-      <button mat-raised-button color="primary" routerLink="/login">Comece Agora</button>
+      <div class="p-5">
+        <img class="img-logo-custom" src="../../../../assets/images/logo-e-drive.svg" alt="logo e-drive">
+      </div>
+      <div>
+        <h1 class="mb-5">Bem-vindo ao E-Drive</h1>
+        <p class="banner-text">O E-Drive é seu parceiro ideal para planejar viagens mais econômicas, com carros
+          elétricos.</p>
+      </div>
+      <button class="btn-primary" routerLink="/login">Comece Agora</button>
     </section>
 
-    <section class="servicos" id="servicos">
-      <h2>Nossos Serviços</h2>
+    <section id="servicos">
+      <div class="container-fluid">
+        <h2>Nossos Serviços</h2>
+        <hr>
+      </div>
 
-      <mat-card class="card-servico">
-        <mat-card-title>Planejamento de Rotas</mat-card-title>
-        <mat-card-content>
-          Obtenha as melhores rotas para sua viagem com um carro elétrico, levando em consideração pontos de
-          carregamento e condições de tráfego.
-        </mat-card-content>
-      </mat-card>
+      <div class="container-fluid servicos">
+        <div class="card-servico">
+          <h3>Planejamento de Rotas</h3>
+          <p>Obtenha as melhores rotas para sua viagem com um carro elétrico, levando em consideração pontos de
+            carregamento e condições de tráfego.
+          </p>
+        </div>
 
-      <mat-card class="card-servico">
-        <mat-card-title>Localização de Eletropostos</mat-card-title>
-        <mat-card-content>
-          Encontre rapidamente os eletropostos mais próximos e disponíveis ao longo da sua rota, garantindo que você
-          nunca fique sem carga.
-        </mat-card-content>
-      </mat-card>
+        <div class="card-servico">
+          <h3>Localização de Eletropostos</h3>
+          <p>
+            Encontre rapidamente os eletropostos mais próximos e disponíveis ao longo da sua rota, garantindo que você
+            nunca fique sem carga.
+          </p>
+        </div>
 
-      <mat-card class="card-servico">
-        <mat-card-title>Gerenciamento de Energia</mat-card-title>
-        <mat-card-content>
-          Calcule o consumo de energia da sua viagem, ajudando a gerenciar a carga da bateria e otimizar seu percurso.
-        </mat-card-content>
-      </mat-card>
+        <div class="card-servico">
+          <h3>Gerenciamento de Energia</h3>
+          <p>
+            Calcule o consumo de energia da sua viagem, ajudando a gerenciar a carga da bateria e otimizar seu percurso.
+          </p>
+        </div>
 
-      <mat-card class="card-servico">
-        <mat-card-title>Histórico de Viagens</mat-card-title>
-        <mat-card-content>
-          Acesse o histórico das suas viagens anteriores, permitindo analisar seu consumo de energia e melhorar o
-          planejamento de futuras rotas.
-        </mat-card-content>
-      </mat-card>
+        <div class="card-servico">
+          <h3>Histórico de Viagens</h3>
+          <p>
+            Acesse o histórico das suas viagens anteriores, permitindo analisar seu consumo de energia e melhorar o
+            planejamento de futuras rotas.
+          </p>
+        </div>
+      </div>
 
     </section>
 
     <section class="busca-eletropostos">
       <div>
-        <mat-card-title>Encontre Eletropostos</mat-card-title>
-        <mat-card-content>Encontre os eletropostos mais próximos de sua localização e aproveite o conforto do seu carro
-          eletrônico.</mat-card-content>
+        <h3>Encontre Eletropostos</h3>
+        <hr>
+        <p>Encontre os eletropostos mais próximos de sua localização e aproveite o conforto do seu carro elétrico.</p>
         <img id="img-mapa" src="../../../../assets/images/mapa.png" alt="busca-eletropostos">
       </div>
     </section>
   </div>
-  <app-footer></app-footer>
 </div>

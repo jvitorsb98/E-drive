@@ -44,6 +44,7 @@ import { CommonModule } from '@angular/common';
 // import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 // import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
+import { BottomBarComponent } from './settings/core/fragments/bottom-bar/bottom-bar.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { ListMyAddressesComponent } from './settings/features/my-addresses/compo
     ModalFormBrandComponent,
     MyAddressesComponent,
     FaqPopupComponent,
+    BottomBarComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
