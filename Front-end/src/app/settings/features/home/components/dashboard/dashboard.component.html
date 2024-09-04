@@ -1,37 +1,23 @@
-<div class="deshboard-container">
-  <mat-sidenav-container>
-    <mat-sidenav mode="side" opened>
-      <mat-nav-list>
+<div class="top-bar d-flex justify-content-between container-fluid">
+	<div class="flex-grow-1 text-center">
+		<h1 class="text-white">Menu</h1>
+	</div>
+</div>
+<div class="menu-container container-fluid d-flex justify-content-center align-items-center">
+	<div class="menu-links">
+		<a routerLink="/meus-enderecos" class="d-block my-2">
+			<mat-icon>home</mat-icon>
+			<span>Meus Endereços</span>
+		</a>
+		
+		<a routerLink="/meus-carros" class="d-block my-2">
+			<mat-icon>directions_car</mat-icon>
+			<span>Meus Carros</span>
+		</a>
 
-        <a mat-list-item routerLink="/meus-enderecos">
-          <mat-icon>home</mat-icon>
-          <span>Meus endereços</span>
-        </a>
-
-        <a mat-list-item routerLink="/meus-Dados">
-          <mat-icon>people</mat-icon>
-          <span>Meus Dados</span>
-        </a>
-
-        <a mat-list-item routerLink="/meus-carros">
-          <mat-icon>directions_car</mat-icon>
-          <span>Meus carros</span>
-        </a>
-
-        <a mat-list-item routerLink="/planejar-viagem">
-          <mat-icon>map</mat-icon>
-          <span>Planejar Viagem</span>
-        </a>
-
-        <a mat-list-item routerLink="/admin">
-          <mat-icon>admin_panel_settings</mat-icon>
-          <span>Painel de Controle</span>
-        </a>
-      </mat-nav-list>
-    </mat-sidenav>
-
-    <mat-sidenav-content>
-      <app-map-stations></app-map-stations>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
+		<a routerLink="/planejar-viagem" class="d-block my-2">
+			<mat-icon>map</mat-icon>
+			<span>Planejar Viagem</span>
+		</a>
+	</div>
 </div>
