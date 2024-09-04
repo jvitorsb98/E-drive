@@ -102,7 +102,6 @@
                 <!-- <span matSuffix class="custom-suffix">Km/l e</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em estrada.</strong></mat-hint>
                  <!-- Mensagens de erro -->
-                <mat-error *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
               <div *ngIf="userVehicleForm.get('mileagePerLiterRoad')?.hasError('pattern') && !userVehicleForm.get('mileagePerLiterRoad')?.hasError('appDynamicMask') && userVehicleForm.get('mileagePerLiterRoad')?.dirty">
                 <mat-error class="mat-error-codigo-text">O valor deve ser um <strong>número</strong> com no máximo uma casa <strong>decimal (ex.: 5.0, 12.5)</strong></mat-error>
@@ -122,7 +121,6 @@
                 <!-- <span matSuffix class="custom-suffix">Km/l c</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Quilometragem por <strong>litro em cidade.</strong></mat-hint>
                 <!-- Mensagens de erro -->
-                <mat-error *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
               <div *ngIf="userVehicleForm.get('mileagePerLiterCity')?.hasError('pattern') && userVehicleForm.get('mileagePerLiterCity')?.dirty">
                 <mat-error class="mat-error-codigo-text">Insira um <strong>número</strong> com até uma casa <strong>decimal (ex.: 5.0, 12.5).</strong></mat-error>
@@ -142,7 +140,6 @@
                 <!-- <span matSuffix class="custom-suffix">MJ/km</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Consumo <strong>energético.</strong></mat-hint>
                 <!-- Mensagens de erro -->
-                <mat-error *ngIf="userVehicleForm.get('consumptionEnergetic')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
               <div *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('pattern') && userVehicleForm.get('autonomyElectricMode')?.dirty">
                 <mat-error class="mat-error-codigo-text">Insira um número com até duas casas <strong>decimais (ex.: 5.00, 12.34).</strong></mat-error>
@@ -162,7 +159,6 @@
                 <!-- <span matSuffix class="custom-suffix">km</span> -->
                 <mat-hint id="Help" class="mat-hint-text">Autonomia em<strong> modo elétrico</strong></mat-hint>
                 <!-- Mensagens de erro -->
-                <mat-error *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('required')"> Este campo é <strong>obrigatório.</strong></mat-error>
               </mat-form-field>
               <div *ngIf="userVehicleForm.get('autonomyElectricMode')?.hasError('pattern') && userVehicleForm.get('autonomyElectricMode')?.dirty">
                 <mat-error class="mat-error-codigo-text">Insira um número inteiro com até <strong>três dígitos</strong>.</mat-error>
