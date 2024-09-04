@@ -1,49 +1,51 @@
 <div class="login-container">
-  <mat-card class="login-card">
-    <div class="icon-row">
-      <button mat-icon-button aria-label="Back" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <button mat-icon-button aria-label="Help" (click)="openFAQModal()">
-        <mat-icon>help_outline</mat-icon>
-      </button>
-    </div>
-    <mat-card-title>
-      Entre em sua conta
-    </mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <mat-form-field>
-          <mat-label>E-mail</mat-label>
-          <input matInput formControlName="email" placeholder="Digite seu e-mail" type="email" required>
-          <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
-            E-mail obrigatório
-          </mat-error>
-          <mat-error *ngIf="loginForm.controls['email'].hasError('email')">
-            E-mail inválido
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Senha</mat-label>
-          <input matInput formControlName="password" placeholder="Digite sua senha" type="password" required>
-          <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
-            Senha obrigatória
-          </mat-error>
-          <mat-error *ngIf="loginForm.controls['password'].hasError('minlength')">
-            Senha deve ter pelo menos 6 caracteres
-          </mat-error>
-        </mat-form-field>
-        <div class="actions">
-          <mat-card-actions>
-            <a class="forgot-password-link" (click)="modalResetPassword()">Esqueceu a senha?</a>
-            <button mat-stroked-button color="primary" class="full-width-button" routerLink="/user-registration"
-              (click)="dialog.closeAll()">Cadastre-se</button>
-            <button mat-raised-button color="primary" type="submit" class="full-width-button">Acessar meu
-              E-Drive</button>
-          </mat-card-actions>
+    <mat-card class="login-card">
+        <div class="icon-row">
+            <button mat-icon-button aria-label="Back" (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="Help" (click)="openFAQModal()">
+                <mat-icon>help_outline</mat-icon>
+            </button>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+        <mat-card-title>
+            Entre em sua conta
+        </mat-card-title>
+        <mat-card-content>
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <mat-form-field>
+                    <mat-label>E-mail</mat-label>
+                    <input matInput formControlName="email" placeholder="Digite seu e-mail" type="email" required>
+                    <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
+                        E-mail obrigatório
+                    </mat-error>
+                    <mat-error *ngIf="loginForm.controls['email'].hasError('email')">
+                        E-mail inválido
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Senha</mat-label>
+                    <input matInput formControlName="password" placeholder="Digite sua senha" type="password" required>
+                    <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+                        Senha obrigatória
+                    </mat-error>
+                    <mat-error *ngIf="loginForm.controls['password'].hasError('minlength')">
+                        Senha deve ter pelo menos 6 caracteres
+                    </mat-error>
+                </mat-form-field>
+                <div class="actions">
+                    <mat-card-actions>
+                        <button mat-raised-button color="primary" type="submit" class="full-width-button">Acessar meu
+                            E-Drive</button>
+                        <div class="d-flex justify-content-center gap-5">
+                            <a class="forgot-password-link" (click)="modalResetPassword()">Esqueceu a senha?</a>
+                            <a class="forgot-password-link" routerLink="/user-registration"
+                                (click)="dialog.closeAll()">Cadastre-se</a>
+                        </div>
+                    </mat-card-actions>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
 </div>

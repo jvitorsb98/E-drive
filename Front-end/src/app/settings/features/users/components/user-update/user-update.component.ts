@@ -175,4 +175,8 @@ export class UserUpdateComponent implements OnInit {
     console.log('Excluir conta do usuário');
   }
 
+  onLogout(): void {
+    this.userService.logout();
+  }
+
 }
