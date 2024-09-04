@@ -36,6 +36,9 @@ import { ModalFormBrandComponent } from './settings/features/brand/components/mo
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 import { ModalDetailsAddressComponent } from './settings/features/my-addresses/components/modal-details-address/modal-details-address.component';
 import { BottomBarComponent } from './settings/core/fragments/bottom-bar/bottom-bar.component';
+import { ModelListComponent } from './settings/features/model/components/model-list/model-list.component';
+import { ModalFormModelComponent } from './settings/features/model/components/modal-form-model/modal-form-model.component';
+import { ModalDetailsModelComponent } from './settings/features/model/components/modal-details-model/modal-details-model.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -72,6 +75,9 @@ import { CommonModule } from '@angular/common';
     ListMyAddressesComponent,
     ModalDetailsAddressComponent,
     BottomBarComponent,
+    ModelListComponent,
+    ModalFormModelComponent,
+    ModalDetailsModelComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
