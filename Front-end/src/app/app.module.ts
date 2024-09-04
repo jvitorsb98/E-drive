@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
@@ -35,6 +35,7 @@ import { ModalDetailsBrandComponent } from './settings/features/brand/components
 import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 import { ModalDetailsAddressComponent } from './settings/features/my-addresses/components/modal-details-address/modal-details-address.component';
+import { BottomBarComponent } from './settings/core/fragments/bottom-bar/bottom-bar.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -70,6 +71,7 @@ import { CommonModule } from '@angular/common';
     FaqPopupComponent,
     ListMyAddressesComponent,
     ModalDetailsAddressComponent,
+    BottomBarComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,

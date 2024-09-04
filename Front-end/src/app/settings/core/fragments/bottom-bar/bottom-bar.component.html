@@ -1,0 +1,13 @@
+<footer class="bottom-bar">
+    <nav class="bottom-bar-nav">
+        <a routerLink="/deshboard" class="bottom-bar-link" [ngClass]="{ 'active': isActive('/#') }">
+            <img src="../../../../../assets/images/home-icon.svg" alt="icone página principal" />
+        </a>
+        <a routerLink="/#" class="bottom-bar-link" [ngClass]="{ 'active': isActive('/#') }">
+            <img src="../../../../../assets/images/map-pin-icon.svg" alt="icone mapa" />
+        </a>
+        <a routerLink="/meus-Dados" class="bottom-bar-link" [ngClass]="{ 'active': isActive('/meus-Dados') }">
+            <img src="../../../../../assets/images/profile-icon.svg" alt="icone perfil" />
+        </a>
+    </nav>
+</footer>
