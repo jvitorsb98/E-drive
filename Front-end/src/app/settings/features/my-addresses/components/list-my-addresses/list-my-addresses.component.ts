@@ -4,9 +4,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
-import { AddressData, DataAddressDetails } from '../../../../core/models/inter-Address';
+import { DataAddressDetails } from '../../../../core/models/inter-Address';
 import { AddressService } from '../../../../core/services/Address/address.service';
 import { Router } from '@angular/router';
+import { MatSort } from '@angular/material/sort';
+import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
+import { ModalDetailsAddressComponent } from '../modal-details-address/modal-details-address.component';
+import { MyAddressesComponent } from '../my-addresses/my-addresses.component';
 
 @Component({
   selector: 'app-list-my-addresses',
@@ -14,17 +18,21 @@ import { Router } from '@angular/router';
   styleUrl: './list-my-addresses.component.scss'
 })
 export class ListMyAddressesComponent implements OnInit {
-  displayedColumns: string[] = ['postalCode', 'city', 'state', 'actions'];
-  dataSource = new MatTableDataSource<DataAddressDetails>([]);
+  displayedColumns: string[] = ['icon', 'postalCode', 'city', 'state', 'actions'];
+  dataSource = new MatTableDataSource<DataAddressDetails>();
+  dataAddressDetails: DataAddressDetails[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private addressService: AddressService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router
-  ) {}
+  ) {
+    this.dataSource = new MatTableDataSource<DataAddressDetails>(this.dataAddressDetails);
+  }
 
   ngOnInit() {
     this.loadAddresses();
@@ -32,35 +40,27 @@ export class ListMyAddressesComponent implements OnInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
-  loadAddresses(page: number = 0, size: number = 10, sort: string = 'city') {
-    this.addressService.getAllAddresses()
-      .subscribe(
-        (data: any) => {
-          this.dataSource.data = data.content;
-        },
-        error => {
-          this.snackBar.open('Erro ao carregar endereços', 'Fechar', { duration: 5000 });
+  loadAddresses() {
+    this.addressService.getAllAddresses().subscribe({
+      next: (response: PaginatedResponse<DataAddressDetails>) => {
+        console.log('Response from getAllAddresses:', response);
+
+        // Extrai o array de endereços do campo 'content'
+        const addressList = response.content;
+
+        if (Array.isArray(addressList)) {
+          this.dataSource.data = addressList;
+        } else {
+          console.error('Expected an array in response.content, but got:', addressList);
         }
-      );
-  }
-
-  openDetails(address: DataAddressDetails) {
-    this.dialog.open(FaqPopupComponent, { // Ou crie um componente específico para exibir os detalhes
-      width: '500px',
-      data: {
-        faqs: [
-          { question: 'CEP', answer: address.zipCode },
-          { question: 'País', answer: address.country },
-          { question: 'Estado', answer: address.state },
-          { question: 'Cidade', answer: address.city },
-          { question: 'Bairro', answer: address.neighborhood },
-          { question: 'Logradouro', answer: address.street },
-          { question: 'Número', answer: address.number },
-          { question: 'Complemento', answer: address.complement },
-          { question: 'Ponto de recarga?', answer: address.hasChargingStation ? 'Sim' : 'Não' }
-        ]
+      },
+      error: (error) => {
+        console.error('Error on loadAddresses:', error);
+        this.snackBar.open('Erro ao carregar endereços', 'Fechar', { duration: 5000 });
       }
     });
   }
@@ -69,6 +69,15 @@ export class ListMyAddressesComponent implements OnInit {
     this.addressService.selectAddress(null);
     this.addressService.setTitle('Registrar Endereço');
     this.router.navigate(['/new-address']);
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   editAddress(address: DataAddressDetails) {
@@ -91,6 +100,21 @@ export class ListMyAddressesComponent implements OnInit {
     }
   }
 
+  openModalDetailsAddress(address: DataAddressDetails) {
+    this.dialog.open(ModalDetailsAddressComponent, {
+      width: '500px',
+      height: '400px',
+      data: address
+    })
+  }
+
+  openModalAddAnddress() {
+    this.dialog.open(MyAddressesComponent, {
+      width: '800px',
+      height: '430px',
+    }).afterClosed().subscribe(() => this.loadAddresses());
+  }
+
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
@@ -104,4 +128,5 @@ export class ListMyAddressesComponent implements OnInit {
     }
     );
   }
+
 }

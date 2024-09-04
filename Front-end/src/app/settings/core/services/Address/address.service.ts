@@ -6,6 +6,7 @@ import { DataAddressDetails, IAddressRequest, IAddressResponse } from '../../mod
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -54,8 +55,8 @@ export class AddressService {
   }
 
   // Função para buscar todos os endereços do usuario
-  getAllAddresses(): Observable<IAddressResponse[]> {
-    return this.http.get<IAddressResponse[]>(`${this.baseUrl}/user`, { headers: this.headers });
+  getAllAddresses(): Observable<PaginatedResponse<DataAddressDetails>> {
+    return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.baseUrl}/user`, { headers: this.headers });
   }
 
   // Função para buscar um endereço pelo ID

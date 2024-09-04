@@ -1,50 +1,78 @@
-<mat-card class="address-card">
-  <div class="icon-row">
-    <button mat-icon-button aria-label="Back" routerLink="/deshboard">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <button mat-icon-button (click)="openFAQModal()">
-      <mat-icon>help_outline</mat-icon>
-    </button>
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
+  <div class="container-table">
+    <div class="container-fluid pt-3">
+      <div class="row">
+
+        <div class="header-container">
+          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-arrow-left'" class="btn"></app-ui-button>
+
+          <h1 class="titulo">Endereços</h1>
+
+          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-sliders'"></app-ui-button>
+        </div>
+
+        <div class="custom-filter">
+          <mat-form-field>
+            <mat-label>Busca por bairro</mat-label>
+            <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+          </mat-form-field>
+        </div>
+
+        <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="icon">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon matTooltip="Este ícone representa o endereço listado abaixo. Clique para ver os detalhes do endereço.">location_on</mat-icon>
+            </th>
+          
+            <td class="td-table" mat-cell *matCellDef="let element">
+              <mat-icon [matTooltip]=" 'Endereço: ' + element.number + ' - ' + element.neighborhood + ' - ' + element.city + ' - ' + element.state + ' - ' + element.country"
+                        matTooltipClass="multi-line-tooltip">
+                location_on
+              </mat-icon>
+            </td>
+          </ng-container>
+          
+
+          <ng-container matColumnDef="postalCode">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>País</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.country}}</strong></td>
+          </ng-container>
+
+          <ng-container matColumnDef="city">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Cidade</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.city}}</strong></td>
+          </ng-container>
+
+          <ng-container matColumnDef="state">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Estado</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.state}}</strong></td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let element">
+              <mat-icon class="icone-table" (click)="openModalDetailsAddress(element)">visibility</mat-icon>
+              <mat-icon class="icone-table" (click)="editAddress(element)">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="deleteAddress(element)">delete</mat-icon>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a pesquisa: "{{input.value}}"
+            </td>
+          </tr>
+        </table>
+
+        <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10]"
+          aria-label="Selecione endereços por página"></mat-paginator>
+
+        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (click)="openModalAddAnddress()" text="Novo endereço"></app-ui-button>
+        <!-- <button mat-raised-button class="btn-primary" (click)="addAddress()">Novo endereço</button> -->
+      </div>
+    </div>
   </div>
-  <mat-card-content>
-    <table mat-table [dataSource]="dataSource">
-
-      <ng-container matColumnDef="postalCode">
-        <th mat-header-cell *matHeaderCellDef> CEP </th>
-        <td mat-cell *matCellDef="let element"> {{element.zipCode}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="city">
-        <th mat-header-cell *matHeaderCellDef> Cidade </th>
-        <td mat-cell *matCellDef="let element"> {{element.city}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="state">
-        <th mat-header-cell *matHeaderCellDef> Estado </th>
-        <td mat-cell *matCellDef="let element"> {{element.state}} </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef> Ações </th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="openDetails(element)">
-            <mat-icon>visibility</mat-icon>
-          </button>
-          <button mat-icon-button (click)="editAddress(element)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button (click)="deleteAddress(element)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </mat-card-content>
-  <mat-paginator [pageSizeOptions]="[4, 8, 15]" showFirstLastButtons></mat-paginator>
-  <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true"
-  (click)="addAddress()" text="Novo endereço"></app-ui-button>
-</mat-card>
+</div>

@@ -58,10 +58,10 @@ export class ModalFormVehicleComponent implements OnInit {
       version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
-      mileagePerLiterRoad: [null, [Validators.required, Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
-      mileagePerLiterCity: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
-      consumptionEnergetic: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
-      autonomyElectricMode: [null, [Validators.required, Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
+      mileagePerLiterRoad: [null, [Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
+      mileagePerLiterCity: [null, [Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
+      consumptionEnergetic: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
+      autonomyElectricMode: [null, [Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
     });
     if (this.data.userVehicle && this.data.vehicle) {
       this.editUser = true;

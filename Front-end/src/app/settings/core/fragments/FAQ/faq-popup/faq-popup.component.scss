@@ -1,0 +1,35 @@
+.titulo {
+  font-size: 1.10rem;
+  /* 20px */
+  font-weight: 500;
+  padding: 0;
+  color: #19B6DD;
+  margin: 0;
+  text-align: center;
+}
+
+.subtitulo {
+  font-size: 0.810rem;
+  font-weight: 500;
+  padding: 0px 0px 10px 0px;
+  margin: 0 0 10px 0;
+  color: #747474;
+  text-align: center;
+}
+
+.faq-popup {
+  h3 {
+    font-size: 0.800rem;
+    font-weight: bold;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+
+  p {
+    font-size: 0.720rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    color: #666;
+  }
+}
