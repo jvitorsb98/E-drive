@@ -4,6 +4,7 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { User } from '../../models/user';
 import { AuthService } from '../../security/services/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
   private usersUrl: string;
   private authToken: string | null;
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
     this.usersUrl = `${environment.apiUrl}/auth`;
 
     this.authToken = this.authService.getToken();
@@ -99,6 +100,19 @@ export class UserService {
       console.error('Número de telefone inválido.');
       return '';
     }
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  setToken(token: string): void {
+    localStorage.setItem('authToken', token);
+  }
+
+  logout(): void {
+    localStorage.removeItem('authToken');
+    this.router.navigate(['/login']);
   }
 
 }

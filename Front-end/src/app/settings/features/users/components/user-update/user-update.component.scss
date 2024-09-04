@@ -1,5 +1,12 @@
 /* General styles */
 
+header {
+  position: fixed;
+  width: 100%;
+  background-color: #19B6DD;
+  padding: .2rem 0;
+}
+
 @media (max-width: 767px) {
   header {
     position: fixed;
@@ -31,9 +38,8 @@ body {
 
 .container-form {
   width: 100%;
-  max-width: 400px;
+  padding: 1rem;
   background: #fff;
-  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -95,8 +101,7 @@ body {
 }
 
 .cancel-button {
-  // background-color: red !important;
-  background-color:  #d32f2f !important;
+  background-color:  #ff5252 !important;
   color: white !important;
 }
 

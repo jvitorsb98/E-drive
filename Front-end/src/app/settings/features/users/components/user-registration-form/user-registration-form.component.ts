@@ -10,6 +10,7 @@ import { countryCodeValidator } from '../../../../shared/validators/country-code
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
 import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -32,6 +33,7 @@ export class UserRegistrationFormComponent {
     private userDataService: UserDataService,
     private countryService: CountryService,
     public dialog: MatDialog,
+    private router: Router,
     private formBuilder: FormBuilder) {
     this.buildForm();
   }
@@ -144,6 +146,11 @@ export class UserRegistrationFormComponent {
       height: '650px',
       data: this.user
     }).afterClosed().subscribe(() => this.getListUsers());
+  }
+
+  goBack() {
+    // this.dialog.closeAll();
+    this.router.navigate(['/']);
   }
 
 }
