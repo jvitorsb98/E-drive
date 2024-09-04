@@ -1,1 +1,45 @@
-<p>modal-details-address works!</p>
+<div class="container-fluid p-3">
+  <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+  <h1 class="titulo">Detalhes do Endereço</h1>
+  <h2 class="subtitulo">Tenha uma visão mais detalhada do endereço</h2>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <h4 class="titulo-informacao">País</h4>
+      <p class="informacao">{{ address.country }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">CEP</h4>
+      <p class="informacao">{{ address.zipCode }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Estado</h4>
+      <p class="informacao">{{ address.state }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Cidade</h4>
+      <p class="informacao">{{ address.city }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Bairro</h4>
+      <p class="informacao">{{ address.neighborhood }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Número</h4>
+      <p class="informacao">{{ address.number }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Rua</h4>
+      <p class="informacao">{{ address.street }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Complemento</h4>
+      <p class="informacao">{{ address.complement }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Tem Estação de Carregamento</h4>
+      <p class="informacao">{{ address.hasChargingStation ? 'Sim' : 'Não' }}</p>
+    </div>
+  </div>
+</div>

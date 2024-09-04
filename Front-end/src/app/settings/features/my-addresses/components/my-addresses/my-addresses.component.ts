@@ -1,14 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { HttpClient } from '@angular/common/http';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
 import { AddressService } from '../../../../core/services/Address/address.service';
-import { DataAddressDetails, IAddressRequest } from '../../../../core/models/inter-Address';
+import { IAddressRequest } from '../../../../core/models/inter-Address';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PostalCodeService } from '../../../../core/services/apis/postal-code/postal-code.service';
 
 @Component({
   selector: 'app-my-addresses',
@@ -29,27 +29,34 @@ export class MyAddressesComponent implements
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private postalCodeService: PostalCodeService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private addressService: AddressService,
+    public dialogRef: MatDialogRef<MyAddressesComponent>,
     private router: Router,
     private activatRouter: ActivatedRoute
   ) {
     this.addressForm = this.fb.group({
-      country: ['Brasil', Validators.required],
-      zipCode: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
-      state: ['', Validators.required],
-      city: ['', Validators.required],
-      neighborhood: ['', Validators.required],
-      street: ['', Validators.required],
-      number: ['', Validators.required],
-      complement: [''],
-      hasChargingStation: [false]
+      country: new FormControl('Brasil', Validators.required),
+      zipCode: new FormControl('', [Validators.required]),
+      state: new FormControl('', Validators.required),
+      city: new FormControl('', Validators.required),
+      neighborhood: new FormControl('', Validators.required),
+      street: new FormControl('', Validators.required),
+      number: new FormControl('', Validators.required),
+      complement: new FormControl(''),
+      hasChargingStation: new FormControl(false, Validators.requiredTrue),
     });
   }
 
   ngOnInit() {
+
+    this.addressForm.get('zipCode')?.valueChanges.subscribe(value => {
+      if (value && value.length === 8) {
+        this.searchPostalCode();
+      }
+    });
 
     const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
       this.addressData = data;
@@ -72,39 +79,35 @@ export class MyAddressesComponent implements
 
   searchPostalCode() {
     this.isLoading = true;
-    let postalCode = this.addressForm.get('postalCode')?.value;
+    let postalCode = this.addressForm.get('zipCode')?.value;
 
     if (postalCode && postalCode.length === 8) {
-
-      postalCode = postalCode.replace(/\D/g, ''); // Remove tudo o que não é número
-
-      this.http.get(`https://viacep.com.br/ws/${postalCode}/json/`)
-        .subscribe(
-          (data: any) => {
-            if (!data.erro) {
-              this.addressForm.patchValue({
-                state: data.uf,
-                city: data.localidade,
-                district: data.bairro,
-                street: data.logradouro
-              });
-            } else {
-              this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 5000 });
-            }
-            this.isLoading = false;
-          },
-          error => {
-            this.snackBar.open('Erro ao buscar CEP', 'Fechar', { duration: 5000 });
-            this.isLoading = false;
+      this.postalCodeService.searchPostalCode(postalCode).subscribe({
+        next: (data: any) => { // Sucesso: manipula os dados retornados
+          if (!data.erro) {
+            this.addressForm.patchValue({
+              state: data.uf,
+              city: data.localidade,
+              district: data.bairro,
+              street: data.logradouro
+            });
+          } else {
+            this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 5000 });
           }
-        );
+          this.isLoading = false;
+        },
+        error: () => { // Erro: manipula o erro ocorrido
+          this.snackBar.open('Erro ao buscar CEP', 'Fechar', { duration: 5000 });
+          this.isLoading = false;
+        }
+      });
     }
   }
 
   onSubmit() {
-    if(this.addressData){
+    if (this.addressData) {
       this.update();
-    }else{
+    } else {
       this.create();
     }
 
@@ -115,25 +118,25 @@ export class MyAddressesComponent implements
       this.address = this.addressForm.value;
 
       this.addressService.createAddress(this.address)
-      .subscribe(
-        {
-          next: () => {
-            this.snackBar.open('Endereço criado com sucesso', 'Fechar', { duration: 5000 });
-            this.addressForm.reset();
-            this.router.navigate(['/meus-enderecos']);
-          },
-          error: () => {
-            this.snackBar.open('Erro ao criar endereço', 'Fechar', { duration: 5000 });
+        .subscribe(
+          {
+            next: () => {
+              this.snackBar.open('Endereço criado com sucesso', 'Fechar', { duration: 5000 });
+              this.addressForm.reset();
+              this.router.navigate(['/meus-enderecos']);
+            },
+            error: () => {
+              this.snackBar.open('Erro ao criar endereço', 'Fechar', { duration: 5000 });
+            }
           }
-        }
-      )
+        )
     }
   }
 
-  update(){
+  update() {
     if (this.addressForm.valid) {
       // Lógica para salvar ou atualizar o endereço
-      if(this.addressData){
+      if (this.addressData) {
         this.address = this.addressForm.value as IAddressRequest;
         this.addressService.updateAddress(this.addressData.id, this.address).subscribe(
           {
@@ -188,5 +191,9 @@ export class MyAddressesComponent implements
       }
     }
     );
+  }
+
+  closeModal() {
+    this.dialogRef.close();
   }
 }

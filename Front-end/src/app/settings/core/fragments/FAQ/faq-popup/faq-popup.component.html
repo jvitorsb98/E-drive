@@ -1,12 +1,17 @@
-<div class="faq-popup">
-  <h2 mat-dialog-title>Perguntas Frequentes</h2>
-  <mat-dialog-content>
-    <div *ngFor="let faq of faqs">
-      <h3>{{ faq.question }}</h3>
-      <p>{{ faq.answer }}</p>
-    </div>
-  </mat-dialog-content>
-  <mat-dialog-actions>
-    <button mat-button mat-dialog-close>Fechar</button>
-  </mat-dialog-actions>
+<div class="container-fluid p-3">
+  <mat-icon class="float-end hover" mat-dialog-close>close</mat-icon>
+  <div class="faq-popup">
+    <h1 class="titulo">Perguntas Frequentes</h1>
+    <h2 class="subtitulo">Encontre aqui as respostas que procura</h2>
+    <mat-dialog-content>
+      <div *ngFor="let faq of faqs">
+        <h3>{{ faq.question }}</h3>
+        <p>{{ faq.answer }}</p>
+      </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <app-ui-button class="w-100" typeBtn="vivid-sky-blue" [pulseAnimation]="true" mat-dialog-close
+        text="Fechar"></app-ui-button>
+    </mat-dialog-actions>
+  </div>
 </div>
