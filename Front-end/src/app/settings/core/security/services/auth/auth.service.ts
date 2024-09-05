@@ -41,10 +41,15 @@ export class AuthService {
     this.isLoggedInSubject.next(false);
     this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
       .pipe(
+          tap((response: any) => {
+            localStorage.removeItem('token');
+            console.log('ola')
+            this.isLoggedInSubject.next(false); // Atualizar o estado do usuário logado
+            localStorage.clear();
+        }),
         catchError(this.handleError)
       )
       .subscribe();
-    localStorage.removeItem('token');
   }
 
   isLoggedIn(): boolean {

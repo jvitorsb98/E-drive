@@ -5,6 +5,7 @@ import { map, startWith } from 'rxjs/operators';
 import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
+import { AuthService } from '../../../../core/security/services/auth/auth.service';
 
 @Component({
   selector: 'app-user-update',
@@ -35,6 +36,7 @@ export class UserUpdateComponent implements OnInit {
   // Injeção de dependências para serviços e construtor
   constructor(
     private userService: UserService,
+    private authService: AuthService,
     private countryService: CountryService,
     private formBuilder: FormBuilder
   ) { }
