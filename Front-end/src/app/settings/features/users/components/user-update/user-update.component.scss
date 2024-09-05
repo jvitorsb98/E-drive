@@ -12,7 +12,8 @@ header {
     position: fixed;
     width: 100%;
     background-color: #19B6DD;
-    padding: 1.5rem 0;
+    padding: .5rem 0;
+    padding-top: 1rem;
   }
 }
 
@@ -100,11 +101,25 @@ body {
   color: white !important;
 }
 
-.cancel-button {
-  background-color:  #ff5252 !important;
+.delete-account-button {
+  color: #ffacac !important;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+}
+
+.cancel-button{
+  background-color: #ff6b6b !important;
   color: white !important;
 }
 
+.logout-button {
+  background-color: #19B6DD !important;
+}
+
+.edit-button {
+  cursor: pointer;
+}
 /* Desktop-specific styles */
 @media (min-width: 768px) {
   .container-form {

@@ -5,8 +5,9 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleMenu()">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav" [ngClass]="{ 'show': isMenuOpen }">
+      <div class="collapse navbar-collapse container" id="navbarNav" [ngClass]="{ 'show': isMenuOpen }">
         <button class="close-button" *ngIf="isMenuOpen" (click)="toggleMenu()">&times;</button><ul class="navbar-nav ms-auto"></ul>
+        <hr>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item px-1">
             <a class="nav-link" mat-button (click)="openLoginModal()"><img src="../../../../../../assets/images/sign-in.svg" alt="icone login"> Login</a>

@@ -13,12 +13,13 @@
 	background-repeat: no-repeat;
 
 	.img-logo-custom {
-		width: 15rem;
+		max-width: 100%;
+		height: auto;
 	}
 
 	h1 {
 		color: white;
-		font-size: 3rem;
+		font-size: 2.3rem;
 		text-align: center;
 		text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
 		line-height: 1;
@@ -26,7 +27,7 @@
 
 	.banner-text {
 		color: white;
-		font-size: 1.7rem;
+		font-size: 1.4rem;
 		text-align: center;
 		text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
 		margin: 20px 0;
@@ -34,13 +35,13 @@
 	}
 
 	.btn-primary {
-		width: 15rem;
-		font-size: 1.5rem;
+		width: 13rem;
+		font-size: 1.2rem;
 		padding: 1.7rem 2rem;
 		border: none;
 		background: #009EC6;
 		color: white;
-		margin-block: 4rem;
+		margin-block: 2rem;
 		border-radius: 25px;
 		cursor: pointer;
 		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
