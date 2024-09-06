@@ -5,9 +5,7 @@
 
         <div class="header-container">
           <app-ui-button routerLink="/deshboard" [icon]="'bi bi-arrow-left'" class="btn"></app-ui-button>
-
           <h1 class="titulo">Modelos dos Veículos</h1>
-
         </div>
 
         <div class="custom-filter">
@@ -20,28 +18,35 @@
         <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
           <ng-container matColumnDef="icon">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-              <!-- <mat-icon matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">verified</mat-icon> -->
-
               <mat-icon
-                matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">view_carousel</mat-icon>
+                matTooltip="Este ícone representa cada modelo de carro listada abaixo. Clique para ver os detalhes de cada marca.">
+                view_carousel</mat-icon>
             </th>
-
             <td class="td-table" mat-cell *matCellDef="let model">
-              <mat-icon class="icone-emoji-flags" [matTooltip]="'ID: ' + model.id + ' | Ativado: ' + model.activated"
-                matTooltipClass="multi-line-tooltip"> view_carousel
-              </mat-icon>
+              <mat-icon class="icone-emoji-flags" 
+              [matTooltip]="'ID: ' + model.id 
+              + ' | Status: ' 
+              + (model.activated ? 'Ativado' : 'Desativado')"
+               matTooltipClass="multi-line-tooltip">view_carousel</mat-icon>
             </td>
           </ng-container>
 
-          <!-- <ng-container matColumnDef="id">
-            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>ID</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let brand"><strong>{{brand.id}}</strong>
-            </td>
-          </ng-container> -->
+          <ng-container matColumnDef="marck">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let model"><strong>{{model.brand.name}}</strong></td>
+          </ng-container>
 
           <ng-container matColumnDef="name">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
             <td class="td-table" mat-cell *matCellDef="let model"><strong>{{model.name}}</strong></td>
+          </ng-container>
+
+          <ng-container matColumnDef="activated">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let model">
+              <mat-icon class="check" *ngIf="model.activated">check</mat-icon>
+              <mat-icon class="error" *ngIf="!model.activated">remove</mat-icon>
+            </td>
           </ng-container>
 
           <!-- Actions Column -->

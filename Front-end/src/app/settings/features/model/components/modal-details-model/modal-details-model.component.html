@@ -1,1 +1,41 @@
-<p>modal-details-model works!</p>
+<div class="container-fluid p-3">
+  <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+  <h1 class="titulo">Detalhes do modelo</h1>
+  <h2 class="subtitulo">Tenha uma visão mais detalhada do modelo</h2>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <h4 class="titulo-informacao">Marca</h4>
+      <p class="informacao">{{ model.brand.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Modelo</h4>
+      <p class="informacao">{{ model.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">ID do Modelo</h4>
+      <p class="informacao">{{ model.id }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Status do Modelo</h4>
+      <!-- <p class="informacao">{{ model.activated ? 'Ativado' : 'Desativado' }}</p> -->
+      @if(model.activated || model.activated){
+        <mat-icon class="check">check</mat-icon>
+        }
+        @if(!model.activated && !model.activated){
+        <mat-icon class="error">remove</mat-icon>
+        }
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Status da Marca</h4>
+      <!-- FORMA NOVA DE FAZER -->
+      @if(model.brand.activated || model.brand.activated){
+        <mat-icon class="check">check</mat-icon>
+      }
+      @if(!model.brand.activated && !model.brand.activated){
+        <mat-icon class="error">remove</mat-icon>
+      }
+    </div>
+  </div>
+</div>

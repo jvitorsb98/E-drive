@@ -17,7 +17,7 @@ import { ModalFormModelComponent } from '../modal-form-model/modal-form-model.co
   styleUrl: './model-list.component.scss'
 })
 export class ModelListComponent {
-  displayedColumns: string[] = ['icon', 'name', 'actions'];
+  displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
   dataSource = new MatTableDataSource<Model>();
   modelList: Model[] = [];
 
@@ -105,7 +105,7 @@ export class ModelListComponent {
   openModalViewModel(model: Model) {
     this.dialog.open(ModalDetailsModelComponent, {
       width: '300px',
-      height: '230px',
+      height: '290px',
       data: model
     });
   }
@@ -113,16 +113,16 @@ export class ModelListComponent {
   openModalAddModel() {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
-      height: '210px',
+      height: '320px',
     }).afterClosed().subscribe(() => this.getListModels());
   }
 
-  openModalEditModel(modelList: Model) {
-    console.log('Objeto Model enviado ao modal:', modelList);
+  openModalEditModel(model: Model) {
+    console.log('Objeto Model enviado ao modal:', model);
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
-      height: '210px',
-      data: modelList
+      height: '320px',
+      data: model
     }).afterClosed().subscribe(() => this.getListModels()); // Atualiza a lista de veículos após fechar o modal
   }
 
