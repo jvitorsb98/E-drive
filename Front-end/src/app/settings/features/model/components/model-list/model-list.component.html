@@ -55,16 +55,8 @@
             <td class="td-table" mat-cell *matCellDef="let model">
               <mat-icon class="icone-table" (click)="openModalViewModel(model)">visibility</mat-icon>
               <mat-icon class="icone-table" (click)="openModalEditModel(model)">edit</mat-icon>
-              <!-- <mat-icon class="icone-table" (click)="deleteModel(model)">delete</mat-icon> -->
-
-              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="!model.activated">check</mat-icon>
-              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">close</mat-icon>
-
-              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="!model.activated">toggle_on</mat-icon>
-              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">toggle_off</mat-icon>
-
-              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="!model.activated">power</mat-icon>
-              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">power_off</mat-icon>
+              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">check</mat-icon>
+              <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="!model.activated">close</mat-icon>
 
               <!-- <mat-icon class="icone-table" (click)="activateModel(model)" *ngIf="!model.activated">power</mat-icon>
               <mat-icon class="icone-table" (click)="deactivateModel(model)" *ngIf="model.activated">power_off</mat-icon> -->

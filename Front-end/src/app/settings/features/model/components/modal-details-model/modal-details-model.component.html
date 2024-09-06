@@ -21,20 +21,20 @@
       <h4 class="titulo-informacao">Status do Modelo</h4>
       <!-- <p class="informacao">{{ model.activated ? 'Ativado' : 'Desativado' }}</p> -->
       @if(model.activated || model.activated){
-        <mat-icon class="check">check</mat-icon>
+        <p class="informacao check">Ativo</p>
         }
         @if(!model.activated && !model.activated){
-        <mat-icon class="error">remove</mat-icon>
+        <p class="informacao error">Desativado</p>
         }
     </div>
     <div class="col-6">
       <h4 class="titulo-informacao">Status da Marca</h4>
       <!-- FORMA NOVA DE FAZER -->
       @if(model.brand.activated || model.brand.activated){
-        <mat-icon class="check">check</mat-icon>
+        <p class="informacao check">Ativo</p>
       }
       @if(!model.brand.activated && !model.brand.activated){
-        <mat-icon class="error">remove</mat-icon>
+        <p class="informacao error">Desativado</p>
       }
     </div>
   </div>

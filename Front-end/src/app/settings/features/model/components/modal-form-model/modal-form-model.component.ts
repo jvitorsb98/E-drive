@@ -99,7 +99,7 @@ export class ModalFormModelComponent {
           Swal.fire({
             title: 'Erro!',
             icon: 'error',
-            text: `Ocorreu um erro ao ${action} a marca. Tente novamente mais tarde.`,
+            text: `Ocorreu um erro ao ${action} o modelo. Tente novamente mais tarde.`,
             showConfirmButton: true,
             confirmButtonColor: 'red',
           });
@@ -109,7 +109,7 @@ export class ModalFormModelComponent {
         Swal.fire({
           title: 'Sucesso!',
           icon: 'success',
-          text: `A marca ${this.modelForm.value.name} foi ${action} com sucesso.`,
+          text: `O modelo ${this.modelForm.value.name} foi ${action} com sucesso.`,
           showConfirmButton: true,
           confirmButtonColor: '#19B6DD',
         }).then((result) => {
