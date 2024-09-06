@@ -17,9 +17,11 @@ public class ValidationUpdateModel_ModelNotDisabled implements ValidationModelUp
     public void validation(DataUpdateModel data, Long id) {
         if (modelRepository.existsById(id)) {
             Model model = modelRepository.getReferenceById(id);
-            if (model.getActivated()) {
-                throw new ValidationException("The required model is activated");
+            if (!model.getActivated()) {
+                throw new ValidationException("The required model is not activated");
             }
+        } else {
+            throw new ValidationException("Model not found");
         }
     }
 }
