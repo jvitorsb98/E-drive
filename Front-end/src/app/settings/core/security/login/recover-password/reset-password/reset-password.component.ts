@@ -33,8 +33,9 @@ export class ResetPasswordComponent {
     });
   }
   resetPassword() {
-    // Implemente a lógica de envio de e-mail para redefinição de senha
-    // melhorar logica, verificar se o formulário foi preenchido corretamente
+    if (this.resetPasswordForm.invalid) {
+      return;
+    }
     this.response = this.auth.resetPasswordRequest(this.resetPasswordForm.value.email);
     this.dialogRef.close();
     if (this.response) {
