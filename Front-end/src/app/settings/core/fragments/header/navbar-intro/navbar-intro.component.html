@@ -16,10 +16,12 @@
             <a class="nav-link" mat-button (click)="openRegisterModal()" (click)="closeMenu()"><img src="../../../../../../assets/images/sign-up.svg" alt="icone cadastro"> Cadastro</a>
           </li>
           <li class="nav-item px-1">
-            <a class="nav-link" mat-button routerLink="/intro-page/#servicos" fragment="servicos" (click)="closeMenu()"><img src="../../../../../../assets/images/services.svg" alt="icone serviços"> Serviços</a>
+            <!-- ref="#servicos" removida por conta de conflito com o fragment -->
+            <a class="nav-link" mat-button routerLink="/intro-page" fragment="servicos" (click)="closeMenu()"><img src="../../../../../../assets/images/services.svg" alt="icone serviços"> Serviços</a>
           </li>
           <li class="nav-item px-1">
-            <a class="nav-link" mat-button routerLink="/intro-page/#contatos" fragment="contato" (click)="closeMenu()"><img src="../../../../../../assets/images/contact.svg" alt="icone contato"> Contato</a>
+            <!-- ref="#contato" removida por conta de conflito com o fragment -->
+            <a class="nav-link" mat-button routerLink="/intro-page" fragment="contato" (click)="closeMenu()"><img src="../../../../../../assets/images/contact.svg" alt="icone contato"> Contato</a>
           </li>
         </ul>
       </div>
