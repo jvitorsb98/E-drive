@@ -3,21 +3,13 @@
 		<h1 class="text-white">Menu</h1>
 	</div>
 </div>
-<div class="menu-container container-fluid d-flex justify-content-center align-items-center">
-	<div class="menu-links">
-		<a routerLink="/meus-enderecos" class="d-block my-2">
-			<mat-icon>home</mat-icon>
-			<span>Meus Endereços</span>
-		</a>
-		
-		<a routerLink="/meus-carros" class="d-block my-2">
-			<mat-icon>directions_car</mat-icon>
-			<span>Meus Carros</span>
-		</a>
-
-		<a routerLink="/planejar-viagem" class="d-block my-2">
-			<mat-icon>map</mat-icon>
-			<span>Planejar Viagem</span>
-		</a>
+<div class="menu-container container-fluid d-flex justify-content-center">
+	<div class="menu-links row w-100 text-center">
+		<div class="col-4 col-md-4 mb-4" *ngFor="let link of menuLinks">
+			<a [routerLink]="link.route" class="d-flex flex-column justify-content-center align-items-center py-2">
+				<mat-icon>{{ link.icon }}</mat-icon>
+				<span>{{ link.label }}</span>
+			</a>
+		</div>
 	</div>
 </div>

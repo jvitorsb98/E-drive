@@ -10,10 +10,11 @@ import { UserUpdateComponent } from './settings/features/users/components/user-u
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
+import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
-  { path:'deshboard', component: DashboardComponent},
+  { path:'dashboard', component: DashboardComponent},
   { path: 'login', component: UserLoginModalComponent},
   { path: 'user-registration', component: UserRegistrationFormComponent},
   { path: 'meus-carros', component: UserVehicleListComponent},
@@ -23,6 +24,7 @@ const routes: Routes = [
   { path: 'my-addresses/edit', component: MyAddressesComponent },
   { path: 'reset-password', component: UserPasswordModalComponent },
   { path: 'admin', component: BrandViewComponent },
+  { path: 'mapa', component: MapStationsComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];
 
