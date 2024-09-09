@@ -33,30 +33,10 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
     	faker = new Faker();
     }
 
-    @Test
-    @DisplayName("Validation - Model Exists and is Activated - Throws ValidationException")
-    void validation_ModelExistsAndIsActivated_ThrowsValidationException() {
-    	// Arrange
-    	Long modelId = faker.number().randomNumber();
-    	DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
-
-    	Model model = new Model();
-    	model.setActivated(true);
-
-    	when(modelRepository.existsById(modelId)).thenReturn(true);
-    	when(modelRepository.getReferenceById(modelId)).thenReturn(model);
-
-    	// Act & Assert
-    	ValidationException thrownException = assertThrows(ValidationException.class,
-    			() -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId),
-    			() -> "Expected validation() to throw ValidationException when the model is activated");
-
-    	assertEquals("The required model is activated", thrownException.getMessage());
-    }
 
     @Test
-    @DisplayName("Validation - Model Exists and is Not Activated - No Exception Thrown")
-    void validation_ModelExistsAndIsNotActivated_NoExceptionThrown() {
+    @DisplayName("Validation - Model Exists and is Not Activated - Throws ValidationException")
+    void validation_ModelExistsAndIsNotActivated_ThrowsValidationException() {
         // Arrange
         Long modelId = faker.number().randomNumber();
         DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
@@ -68,12 +48,33 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
 
         // Act & Assert
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId),
+                () -> "Expected validation() to throw ValidationException when the model is not activated");
+
+        assertEquals("The required model is not activated", thrownException.getMessage());
+    }
+
+    @Test
+    @DisplayName("Validation - Model Exists and is Activated - No Exception Thrown")
+    void validation_ModelExistsAndIsActivated_NoExceptionThrown() {
+        // Arrange
+        Long modelId = faker.number().randomNumber();
+        DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
+
+        Model model = new Model();
+        model.setActivated(true); 
+
+        when(modelRepository.existsById(modelId)).thenReturn(true);
+        when(modelRepository.getReferenceById(modelId)).thenReturn(model);
+
+        // Act & Assert
         assertDoesNotThrow(() -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId));
     }
 
     @Test
-    @DisplayName("Validation - Model Does Not Exist - No Exception Thrown")
-    void validation_ModelDoesNotExist_NoExceptionThrown() {
+    @DisplayName("Validation - Model Does Not Exist - Throws ValidationException")
+    void validation_ModelDoesNotExist_ThrowsValidationException() {
         // Arrange
         Long modelId = faker.number().randomNumber();
         DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
@@ -81,7 +82,12 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
         when(modelRepository.existsById(modelId)).thenReturn(false);
 
         // Act & Assert
-        assertDoesNotThrow(() -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId));
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId),
+                () -> "Expected validation() to throw ValidationException when the model is not found");
+
+        assertEquals("Model not found", thrownException.getMessage());
     }
 }
+
 
