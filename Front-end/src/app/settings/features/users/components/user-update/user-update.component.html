@@ -1,18 +1,14 @@
-<div>
-	<header>
-		<nav class="navbar">
-			<div class="d-flex justify-content-between container-fluid">
-				<div class="flex-grow-1 text-center">
-					<h1 class="text-white">Perfil</h1>
-				</div>
-				<div class="justify-content-end mb-3" *ngIf="isButtonVisible">
-					<a class="edit-button" (click)="editData()">
-						<img src="../../../../../../assets/images/edit-icon.svg" alt="">
-					</a>
-				</div>
-			</div>
-		</nav>
-	</header>
+<div class="top-bar">
+	<div class="d-flex justify-content-between container-fluid">
+		<div class="flex-grow-1 text-center">
+			<h1 class="text-white">Perfil</h1>
+		</div>
+		<div class="justify-content-end mb-3" *ngIf="isButtonVisible">
+			<a class="edit-button" (click)="editData()">
+				<img src="../../../../../../assets/images/edit-icon.svg" alt="">
+			</a>
+		</div>
+	</div>
 </div>
 
 

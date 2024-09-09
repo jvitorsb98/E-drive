@@ -1,6 +1,6 @@
 /* General styles */
 
-header {
+.top-bar {
   position: fixed;
   width: 100%;
   background-color: #19B6DD;
@@ -8,7 +8,7 @@ header {
 }
 
 @media (max-width: 767px) {
-  header {
+  .top-bar {
     position: fixed;
     width: 100%;
     background-color: #19B6DD;
