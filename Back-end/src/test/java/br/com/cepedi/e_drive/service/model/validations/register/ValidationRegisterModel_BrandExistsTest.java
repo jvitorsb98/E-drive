@@ -29,26 +29,28 @@ public class ValidationRegisterModel_BrandExistsTest {
 
     @BeforeEach
     void setUp() {
-    	MockitoAnnotations.openMocks(this);
-    	faker = new Faker();
+        MockitoAnnotations.openMocks(this);
+        faker = new Faker();
     }
 
     @Test
     @DisplayName("Validation - Brand Does Not Exist - Throws ValidationException")
     void validation_BrandDoesNotExist_ThrowsValidationException() {
-    	// Arrange
-    	Long brandId = faker.number().randomNumber();
-    	DataRegisterModel dataRegisterModel = new DataRegisterModel(faker.lorem().word(), brandId);
+        // Arrange
+        Long brandId = faker.number().randomNumber();
+        DataRegisterModel dataRegisterModel = new DataRegisterModel(faker.lorem().word(), brandId);
 
-    	when(brandRepository.existsById(brandId)).thenReturn(false);
+        when(brandRepository.existsById(brandId)).thenReturn(false);
 
-    	// Act & Assert
-    	ValidationException thrownException = assertThrows(ValidationException.class,
-    			() -> validationRegisterModel_BrandExists.validation(dataRegisterModel),
-    			() ->"Expected validation() to throw ValidationException when the brand does not exist");
+        // Act & Assert
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationRegisterModel_BrandExists.validation(dataRegisterModel),
+                "Expected validation() to throw ValidationException when the brand does not exist");
 
-    	assertEquals("The required branch does not exists", thrownException.getMessage());
+        // Atualiza a mensagem esperada
+        assertEquals("The required brand does not exist.", thrownException.getMessage());
     }
+
 
     @Test
     @DisplayName("Validation - Brand Exists - No Exception Thrown")

@@ -56,31 +56,33 @@ public class AddressRepositoryTest {
         User user = createUser(); // Usa o Faker para criar um usuário
 
         Address address1 = new Address(
-            null,
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().numberBetween(1, 9999),
-            faker.address().streetAddress(),
-            user,
-            true,
-            true
+                null,
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 9999),
+                faker.address().streetAddress(),
+                user,
+                faker.bool().bool(),
+                null, // Para o campo `complement` se quiser passar null
+                true   // Para o campo `activated`
         );
 
         Address address2 = new Address(
-            null,
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().numberBetween(1, 9999),
-            faker.address().streetAddress(),
-            user,
-            true,
-            true
+                null,
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 9999),
+                faker.address().streetAddress(),
+                user,
+                faker.bool().bool(),
+                null, // Para o campo `complement` se quiser passar null
+                true   // Para o campo `activated`
         );
 
         addressRepository.save(address1);
@@ -97,6 +99,7 @@ public class AddressRepositoryTest {
         assertEquals(2, addresses.size(), () -> "There should be two addresses in the result");
         assertTrue(addresses.stream().allMatch(Address::getActivated), () -> "All addresses should be activated");
     }
+
 
     @Test
     @DisplayName("Should return empty page when no addresses are present for the given user ID")
@@ -120,17 +123,18 @@ public class AddressRepositoryTest {
         User user = createUser();
 
         Address address = new Address(
-            null,
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().numberBetween(1, 9999),
-            faker.address().streetAddress(),
-            user,
-            faker.bool().bool(),
-            faker.bool().bool()
+                null,
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 9999),
+                faker.address().streetAddress(),
+                user,
+                faker.bool().bool(),
+                null, // Para o campo `complement`
+                true  // Para o campo `activated`
         );
 
         // Act
@@ -149,36 +153,38 @@ public class AddressRepositoryTest {
         assertEquals(address.getUser(), savedAddress.getUser(), () -> "The user should match");
         assertEquals(address.getPlugin(), savedAddress.getPlugin(), () -> "The plugin status should match");
         assertEquals(address.getActivated(), savedAddress.getActivated(), () -> "The activation status should match");
+
     }
-    
+
     @Test
     @DisplayName("Should update address data correctly")
     void testUpdateAddressData() {
         // Arrange
         User user = createUser();
         Address address = new Address(
-            null,
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().numberBetween(1, 9999),
-            faker.address().streetAddress(),
-            user,
-            true,
-            true
+                null,
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 9999),
+                faker.address().streetAddress(),
+                user,
+                true,
+                null, // Para o campo `complement`
+                true
         );
         address = addressRepository.save(address);
         DataUpdateAddress updateData = new DataUpdateAddress(
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().numberBetween(1, 9999),
-            faker.address().streetAddress(),
-            faker.bool().bool()
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 9999),
+                faker.address().streetAddress(),
+                faker.bool().bool()
         );
 
         // Act
@@ -198,23 +204,25 @@ public class AddressRepositoryTest {
         assertEquals(updateData.plugin(), updatedAddress.getPlugin(), () -> "The plugin status should be updated");
     }
 
+
     @Test
     @DisplayName("Should activate and deactivate address correctly")
     void testActivateAndDeactivateAddress() {
         // Arrange
         User user = createUser();
         Address address = new Address(
-            null,
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().numberBetween(1, 9999),
-            faker.address().streetAddress(),
-            user,
-            true,
-            false
+                null,
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 9999),
+                faker.address().streetAddress(),
+                user,
+                true,
+                null, // Para o campo `complement`
+                false
         );
         address = addressRepository.save(address);
 
@@ -237,30 +245,32 @@ public class AddressRepositoryTest {
         assertFalse(deactivatedAddress.getActivated(), () -> "The address should be deactivated");
     }
 
+
     @Test
     @DisplayName("Should correctly paginate results with multiple addresses")
     void testPaginationWithMultipleAddresses() {
         // Arrange
         User user = createUser();
-        
+
         // Create and save multiple addresses
         for (int i = 0; i < 25; i++) {
             Address address = new Address(
-                null,
-                faker.address().country(),
-                faker.address().zipCode(),
-                faker.address().state(),
-                faker.address().city(),
-                faker.address().streetName(),
-                faker.number().numberBetween(1, 9999),
-                faker.address().streetAddress(),
-                user,
-                true,
-                true
+                    null,
+                    faker.address().country(),
+                    faker.address().zipCode(),
+                    faker.address().state(),
+                    faker.address().city(),
+                    faker.address().streetName(),
+                    faker.number().numberBetween(1, 9999),
+                    faker.address().streetAddress(),
+                    user,
+                    true,
+                    null, // Para o campo `complement`
+                    true
             );
             addressRepository.save(address);
         }
-        
+
         // Act - Request the first page with 10 items per page
         Pageable pageable = PageRequest.of(0, 10);
         Page<Address> page = addressRepository.findByUserIdAndActivated(user.getId(), pageable);
@@ -271,5 +281,6 @@ public class AddressRepositoryTest {
         assertEquals(25, page.getTotalElements(), () -> "The total number of elements should be 25");
         assertEquals(3, page.getTotalPages(), () -> "The total number of pages should be 3");
     }
+
 }
 

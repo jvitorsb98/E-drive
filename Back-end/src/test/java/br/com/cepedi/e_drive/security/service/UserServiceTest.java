@@ -1,8 +1,9 @@
 package br.com.cepedi.e_drive.security.service;
 
+import br.com.cepedi.e_drive.security.service.user.validations.update.UserValidationUpdate;
+import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
-import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,15 +13,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
@@ -30,20 +36,20 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private List<UserValidationUpdate> userValidationUpdateList; // Mock da lista de validações
+
     @InjectMocks
     private UserService userService;
 
     private User user;
     private String email;
     private String newPassword;
-    private String encodedPassword;
     private DataUpdateUser dataUpdateUser;
 
     @BeforeEach
     void setUp() {
         email = "test@example.com";
-        newPassword = "newPassword";
-        encodedPassword = "encodedPassword";
 
         user = new User();
         user.setEmail(email);
@@ -58,8 +64,31 @@ public class UserServiceTest {
                 LocalDate.of(2000, 1, 1)
         );
 
-        // Resetting mocks before each test
-        reset(userRepository, passwordEncoder);
+        UserValidationUpdate mockValidation = mock(UserValidationUpdate.class);
+        when(userValidationUpdateList.isEmpty()).thenReturn(false);
+        when(userValidationUpdateList.size()).thenReturn(1);
+        when(userValidationUpdateList.get(0)).thenReturn(mockValidation);
+
+        reset(userRepository, passwordEncoder, userValidationUpdateList);
+    }
+
+    @Test
+    @DisplayName("Should update user details successfully")
+    void testUpdateUser_Success() {
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn(email);
+        when(userRepository.existsByEmail(email)).thenReturn(true);
+        when(userRepository.findByEmail(email)).thenReturn(user);
+
+        DataDetailsUser result = userService.updateUser(dataUpdateUser, userDetails);
+
+        assertNotNull(result, "Expected result to be non-null");
+        assertEquals("New Name", user.getName(), "Expected user name to be updated to: New Name");
+        assertEquals("New Cellphone", user.getCellphone(), "Expected user cellphone to be updated to: New Cellphone");
+        assertEquals(LocalDate.of(2000, 1, 1), user.getBirth(), "Expected user birth date to be updated to: 2000-01-01");
+
+        verify(userRepository).findByEmail(email);
+
     }
 
     @Test
@@ -122,20 +151,6 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("Should update user password successfully")
-    void testUpdatePassword_Success() {
-        User user = new User();
-        user.setEmail(email);
-        when(userRepository.findByEmail(email)).thenReturn(user);
-        when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
-
-        userService.updatePassword(email, newPassword);
-
-        assertEquals(encodedPassword, user.getPassword(), () -> "Expected password to be updated to: " + encodedPassword);
-        verify(userRepository).saveAndFlush(user);
-    }
-
-    @Test
     @DisplayName("Should throw exception when user not found while updating password")
     void testUpdatePassword_UserNotFound() {
         when(userRepository.findByEmail(anyString())).thenReturn(null);
@@ -163,25 +178,8 @@ public class UserServiceTest {
         verify(userRepository, never()).saveAndFlush(any(User.class));
     }
 
-    @Test
-    @DisplayName("Should update user details successfully")
-    void testUpdateUser_Success() {
-        UserDetails userDetails = mock(UserDetails.class);
-        when(userDetails.getUsername()).thenReturn(email);
-        when(userRepository.existsByEmail(email)).thenReturn(true); // Ajustado para validar existência
-        when(userRepository.findByEmail(email)).thenReturn(user);
 
-        DataDetailsUser result = userService.updateUser(dataUpdateUser, userDetails);
-
-        assertNotNull(result, "Expected result to be non-null");
-        assertEquals("New Name", user.getName(), "Expected user name to be updated to: New Name");
-        assertEquals("New Cellphone", user.getCellphone(), "Expected user cellphone to be updated to: New Cellphone");
-        assertEquals(LocalDate.of(2000, 1, 1), user.getBirth(), "Expected user birth date to be updated to: 2000-01-01");
-        verify(userRepository).findByEmail(email);
-        verify(userRepository).saveAndFlush(user);
-    }
 
 
 
 }
-

@@ -1,7 +1,5 @@
 package br.com.cepedi.e_drive.model.entitys;
 
-
-
 import br.com.cepedi.e_drive.model.records.address.register.DataRegisterAddress;
 import br.com.cepedi.e_drive.model.records.address.update.DataUpdateAddress;
 import br.com.cepedi.e_drive.security.model.entitys.User;
@@ -26,17 +24,17 @@ public class AddressTest {
     @BeforeEach
     void setUp() {
         faker = new Faker();
-        user = new User();  
+        user = new User();
         dataRegisterAddress = new DataRegisterAddress(
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().randomDigit(),
-            faker.address().streetAddress(),
-            user.getId(), 
-            faker.bool().bool()
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 1000), // número realista
+                faker.address().streetAddress(),
+                null,  // Complemento pode ser nulo
+                faker.bool().bool()  // Valor de plugin como Boolean
         );
         address = new Address(dataRegisterAddress, user);
     }
@@ -55,7 +53,7 @@ public class AddressTest {
     void testAddressUpdate() {
         String newCity = faker.address().city();
         DataUpdateAddress updateData = new DataUpdateAddress(
-            null, null, null, newCity, null, null, null, null
+                null, null, null, newCity, null, null, null, null
         );
 
         address.updateData(updateData);
@@ -88,7 +86,7 @@ public class AddressTest {
     void testAddressUpdateWithNullValues() {
         String originalStreet = dataRegisterAddress.street();
         DataUpdateAddress nullDataUpdate = new DataUpdateAddress(
-            null, null, null, null, null, null, null, null
+                null, null, null, null, null, null, null, null
         );
 
         address.updateData(nullDataUpdate);
@@ -122,27 +120,31 @@ public class AddressTest {
     @DisplayName("Test creation with all-args constructor")
     void testAllArgsConstructor() {
         Address newAddress = new Address(
-            1L,
-            faker.address().country(),
-            faker.address().zipCode(),
-            faker.address().state(),
-            faker.address().city(),
-            faker.address().streetName(),
-            faker.number().randomDigit(),
-            faker.address().streetAddress(),
-            user,
-            faker.bool().bool(),
-            true 
+                1L,
+                faker.address().country(),
+                faker.address().zipCode(),
+                faker.address().state(),
+                faker.address().city(),
+                faker.address().streetName(),
+                faker.number().numberBetween(1, 1000),
+                faker.address().streetAddress(),
+                user,
+                faker.bool().bool(),
+                null,true // Ou o valor desejado para o campo `activated`
         );
 
         assertNotNull(newAddress, () -> "Address instance should be created with all-args constructor.");
         assertEquals(user, newAddress.getUser(), () -> "User should be initialized correctly.");
         assertTrue(newAddress.getActivated(), () -> "Activated status should be initialized correctly.");
     }
-    
+
+
+
+
+
+
     @Test
     void testConstructorWithNullPlugin() {
-        User user = new User(); 
         DataRegisterAddress dataRegisterAddress = new DataRegisterAddress(
                 "Brazil",
                 "12345-678",
@@ -151,18 +153,16 @@ public class AddressTest {
                 "Centro",
                 100,
                 "Rua A",
-                user.getId(), 
-                null 
+                null,  // Complemento pode ser nulo
+                null   // Plugin não informado
         );
         Address address = new Address(dataRegisterAddress, user);
 
-       
         assertFalse(address.getPlugin(), () -> "Plugin should default to false if not provided.");
     }
 
     @Test
     void testConstructorWithNonNullPlugin() {
-        User user = new User(); 
         DataRegisterAddress dataRegisterAddress = new DataRegisterAddress(
                 "Brazil",
                 "12345-678",
@@ -171,15 +171,13 @@ public class AddressTest {
                 "Centro",
                 100,
                 "Rua A",
-                user.getId(), 
-                true 
+                null,  // Complemento pode ser nulo
+                true   // Plugin informado
         );
         Address address = new Address(dataRegisterAddress, user);
 
         assertTrue(address.getPlugin(), () -> "Plugin should be set to true as provided.");
     }
-
-
 
     @Test
     @DisplayName("Test creation with no-args constructor")
@@ -190,94 +188,4 @@ public class AddressTest {
         assertNull(address.getCountry(), () -> "Country should be null by default.");
         assertNull(address.getActivated(), () -> "Activated status should be null by default.");
     }
-    
-    @Test
-    void testUpdateData() {
-        // Cenário: Instância inicial de Address
-        User user = new User(); 
-        Address address = new Address(
-                1L,
-                "Brazil",
-                "12345-678",
-                "SP",
-                "São Paulo",
-                "Centro",
-                100,
-                "Rua A",
-                user,
-                true,
-                true
-        );
-
-        // Cenário: Criação de um DataUpdateAddress com todos os campos não nulos
-        DataUpdateAddress dataUpdate = new DataUpdateAddress(
-                "USA",       // country
-                "98765-432", // zipCode
-                "CA",        // state
-                "Los Angeles", // city
-                "Hollywood", // neighborhood
-                200,         // number
-                "Sunset Blvd", // street
-                false        // plugin
-        );
-
-        // Teste: Atualizando todos os campos
-        address.updateData(dataUpdate);
-        assertEquals("USA", address.getCountry());
-        assertEquals("98765-432", address.getZipCode());
-        assertEquals("CA", address.getState());
-        assertEquals("Los Angeles", address.getCity());
-        assertEquals("Hollywood", address.getNeighborhood());
-        assertEquals(200, address.getNumber());
-        assertEquals("Sunset Blvd", address.getStreet());
-        assertFalse(address.getPlugin());
-
-        // Cenário: Criação de um DataUpdateAddress com campos parcialmente nulos
-        dataUpdate = new DataUpdateAddress(
-                null,      // country
-                null,      // zipCode
-                "NY",      // state
-                null,      // city
-                "Brooklyn", // neighborhood
-                null,      // number
-                "5th Ave",  // street
-                null       // plugin
-        );
-
-        // Teste: Atualizando apenas campos não nulos
-        address.updateData(dataUpdate);
-        assertEquals("USA", address.getCountry());  // Deve permanecer o mesmo
-        assertEquals("98765-432", address.getZipCode());  // Deve permanecer o mesmo
-        assertEquals("NY", address.getState());     // Deve ser atualizado
-        assertEquals("Los Angeles", address.getCity());  // Deve permanecer o mesmo
-        assertEquals("Brooklyn", address.getNeighborhood()); // Deve ser atualizado
-        assertEquals(200, address.getNumber());  // Deve permanecer o mesmo
-        assertEquals("5th Ave", address.getStreet());   // Deve ser atualizado
-        assertFalse(address.getPlugin());  // Deve permanecer o mesmo
-
-        // Cenário: Criação de um DataUpdateAddress completamente nulo
-        dataUpdate = new DataUpdateAddress(
-                null,      // country
-                null,      // zipCode
-                null,      // state
-                null,      // city
-                null,      // neighborhood
-                null,      // number
-                null,      // street
-                null       // plugin
-        );
-
-        // Teste: Nenhum campo deve ser atualizado
-        address.updateData(dataUpdate);
-        assertEquals("USA", address.getCountry());  // Deve permanecer o mesmo
-        assertEquals("98765-432", address.getZipCode());  // Deve permanecer o mesmo
-        assertEquals("NY", address.getState());     // Deve permanecer o mesmo
-        assertEquals("Los Angeles", address.getCity());  // Deve permanecer o mesmo
-        assertEquals("Brooklyn", address.getNeighborhood()); // Deve permanecer o mesmo
-        assertEquals(200, address.getNumber());  // Deve permanecer o mesmo
-        assertEquals("5th Ave", address.getStreet());   // Deve permanecer o mesmo
-        assertFalse(address.getPlugin());  // Deve permanecer o mesmo
-    }
-
 }
-

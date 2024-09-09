@@ -2,7 +2,6 @@ package br.com.cepedi.e_drive.service.model.validations.activated;
 
 import br.com.cepedi.e_drive.model.entitys.Model;
 import br.com.cepedi.e_drive.repository.ModelRepository;
-import br.com.cepedi.e_drive.service.model.validations.activated.ValidationModelAlreadyDisabledForActivated;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,8 +28,28 @@ public class ValidationModelAlreadyDisabledForActivatedTest {
     }
 
     @Test
-    @DisplayName("Validation - Model Exists and is Activated - Throws ValidationException")
-    void validation_ModelExistsAndIsActivated_ThrowsValidationException() {
+    @DisplayName("Validation - Model Exists and is Disabled - Throws ValidationException")
+    void validation_ModelExistsAndIsDisabled_ThrowsValidationException() {
+        // Arrange
+        Long modelId = 1L;
+        Model model = new Model();
+        model.setActivated(false);
+
+        when(modelRepository.existsById(modelId)).thenReturn(true);
+        when(modelRepository.getReferenceById(modelId)).thenReturn(model);
+
+        // Act & Assert
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationModelAlreadyDisabledForActivated.validation(modelId),
+                "Expected validation() to throw ValidationException when the model is disabled");
+
+        assertEquals("The model is already disabled", thrownException.getMessage());
+    }
+
+
+    @Test
+    @DisplayName("Validation - Model Exists and is Activated - No Exception Thrown")
+    void validation_ModelExistsAndIsActivated_NoExceptionThrown() {
         // Arrange
         Long modelId = 1L;
         Model model = new Model();
@@ -40,12 +59,9 @@ public class ValidationModelAlreadyDisabledForActivatedTest {
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
 
         // Act & Assert
-        ValidationException thrownException = assertThrows(ValidationException.class,
-            () -> validationModelAlreadyDisabledForActivated.validation(modelId),
-            "Expected validation() to throw ValidationException when the model is activated");
-        
-        assertEquals("The model is already disabled", thrownException.getMessage());
+        validationModelAlreadyDisabledForActivated.validation(modelId);
     }
+
 
     @Test
     @DisplayName("Validation - Model Does Not Exist - No Exception Thrown")
@@ -56,24 +72,9 @@ public class ValidationModelAlreadyDisabledForActivatedTest {
         when(modelRepository.existsById(modelId)).thenReturn(false);
 
         // Act & Assert
-        // No exception should be thrown
         validationModelAlreadyDisabledForActivated.validation(modelId);
     }
 
-    @Test
-    @DisplayName("Validation - Model Exists and is Disabled - No Exception Thrown")
-    void validation_ModelExistsAndIsDisabled_NoExceptionThrown() {
-        // Arrange
-        Long modelId = 1L;
-        Model model = new Model();
-        model.setActivated(false);
 
-        when(modelRepository.existsById(modelId)).thenReturn(true);
-        when(modelRepository.getReferenceById(modelId)).thenReturn(model);
 
-        // Act & Assert
-        // No exception should be thrown
-        validationModelAlreadyDisabledForActivated.validation(modelId);
-    }
 }
-

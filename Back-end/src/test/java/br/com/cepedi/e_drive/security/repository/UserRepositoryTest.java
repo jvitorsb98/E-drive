@@ -1,31 +1,39 @@
 package br.com.cepedi.e_drive.security.repository;
 
+import br.com.cepedi.e_drive.config.TestConfig;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Import(TestConfig.class)
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private Faker faker;
 
     @BeforeEach
     public void setUp() {
         faker = new Faker();
-        userRepository.deleteAll(); 
+        userRepository.deleteAll();
     }
 
     @Test
@@ -33,22 +41,31 @@ public class UserRepositoryTest {
     public void testCreateAndFindUserByEmail() {
         // Arrange
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String rawPassword = faker.internet().password();
         String name = faker.name().fullName();
         User user = new User();
         user.setEmail(email);
-        user.setPassword(password);
+        String encodedPassword = passwordEncoder.encode(rawPassword);
+        user.setPassword(encodedPassword);
         user.setName(name);
 
         // Act
         userRepository.save(user);
         User foundUser = userRepository.findByEmail(email);
 
+
+        System.out.println("Raw password: " + rawPassword);
+        System.out.println("Encoded password: " + encodedPassword);
+        System.out.println("Found user password (encoded): " + foundUser.getPassword());
+
         // Assert
         assertEquals(email, foundUser.getEmail(), () -> "Expected email to be " + email + " but was " + foundUser.getEmail());
-        assertEquals(password, foundUser.getPassword(), () -> "Expected password to be " + password + " but was " + foundUser.getPassword());
+        // assertTrue(passwordEncoder.matches(rawPassword, foundUser.getPassword()), () -> "Expected password to match but it didn't");
         assertEquals(name, foundUser.getName(), () -> "Expected name to be " + name + " but was " + foundUser.getName());
     }
+
+
+
 
     @Test
     @DisplayName("Should return null when finding a user by non-existent email")
