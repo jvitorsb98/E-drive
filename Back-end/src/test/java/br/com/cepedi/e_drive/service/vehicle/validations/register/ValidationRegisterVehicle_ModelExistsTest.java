@@ -48,8 +48,9 @@ class ValidationRegisterVehicle_ModelExistsTest {
 
         // Act & Assert
         ValidationException thrown = assertThrows(ValidationException.class, () -> validation.validate(data));
-        assertEquals("The provided model id does not exist", thrown.getMessage());
+        assertEquals("The provided model id does not exist.", thrown.getMessage());  // Incluído o ponto final
     }
+
 
     @Test
     @DisplayName("Should not throw ValidationException if model exists")

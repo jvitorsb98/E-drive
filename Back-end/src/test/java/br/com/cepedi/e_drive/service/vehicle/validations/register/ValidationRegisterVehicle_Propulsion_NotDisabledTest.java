@@ -59,7 +59,7 @@ class ValidationRegisterVehicle_Propulsion_NotDisabledTest {
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(data));
         verify(propulsionRepository).existsById(propulsionId);
         verify(propulsionRepository).getReferenceById(propulsionId);
-        assertEquals("The provided propulsion id is disabled", exception.getMessage());
+        assertEquals("The provided propulsion id is disabled.", exception.getMessage());
     }
 
     @Test

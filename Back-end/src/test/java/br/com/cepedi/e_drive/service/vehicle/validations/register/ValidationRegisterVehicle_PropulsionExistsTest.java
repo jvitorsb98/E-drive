@@ -47,7 +47,7 @@ class ValidationRegisterVehicle_PropulsionExistsTest {
 
         // Act & Assert
         ValidationException thrown = assertThrows(ValidationException.class, () -> validation.validate(data));
-        assertEquals("The provided propulsion id does not exist", thrown.getMessage());
+        assertEquals("The provided propulsion id does not exist.", thrown.getMessage());
     }
 
     @Test

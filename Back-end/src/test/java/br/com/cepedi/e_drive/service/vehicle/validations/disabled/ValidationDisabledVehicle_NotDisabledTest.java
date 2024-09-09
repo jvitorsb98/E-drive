@@ -35,12 +35,13 @@ class ValidationDisabledVehicle_NotDisabledTest {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicleRepository.existsById(id)).thenReturn(true);
         when(vehicleRepository.getReferenceById(id)).thenReturn(vehicle);
-        when(vehicle.isActivated()).thenReturn(false); 
+        when(vehicle.isActivated()).thenReturn(false);
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(id));
-        assertEquals("The provided vehicle already disabled ", exception.getMessage());
+        assertEquals("The provided vehicle is already disabled.", exception.getMessage());
     }
+
 
     @Test
     @DisplayName("Validate - Should not throw exception if vehicle is activated")
@@ -50,7 +51,7 @@ class ValidationDisabledVehicle_NotDisabledTest {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicleRepository.existsById(id)).thenReturn(true);
         when(vehicleRepository.getReferenceById(id)).thenReturn(vehicle);
-        when(vehicle.isActivated()).thenReturn(true); 
+        when(vehicle.isActivated()).thenReturn(true);
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));
@@ -61,7 +62,7 @@ class ValidationDisabledVehicle_NotDisabledTest {
     void validate_ShouldNotThrowExceptionIfNotExists() {
         // Arrange
         Long id = 1L;
-        when(vehicleRepository.existsById(id)).thenReturn(false); 
+        when(vehicleRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));

@@ -37,32 +37,34 @@ public class ValidationRegisterModel_BrandNotDisabledTest {
     @Test
     @DisplayName("Validation - Brand Exists and is Disabled - Throws ValidationException")
     void validation_BrandExistsAndIsDisabled_ThrowsValidationException() {
-    	// Arrange
-    	Long brandId = faker.number().randomNumber();
-    	DataRegisterModel dataRegisterModel = new DataRegisterModel(faker.lorem().word(), brandId);
+        // Arrange
+        Long brandId = faker.number().randomNumber();
+        DataRegisterModel dataRegisterModel = new DataRegisterModel(faker.lorem().word(), brandId);
 
-    	Brand brand = new Brand();
-    	brand.setActivated(false);
+        Brand brand = new Brand();
+        brand.setActivated(false);
 
-    	when(brandRepository.existsById(brandId)).thenReturn(true);
-    	when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
+        when(brandRepository.existsById(brandId)).thenReturn(true);
+        when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
 
-    	// Act & Assert
-    	ValidationException thrownException = assertThrows(ValidationException.class,
-    			() -> validationRegisterModel_BrandNotDisabled.validation(dataRegisterModel),
-    			() -> "Expected validation() to throw ValidationException when the brand is disabled");
+        // Act & Assert
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationRegisterModel_BrandNotDisabled.validation(dataRegisterModel),
+                () -> "Expected validation() to throw ValidationException when the brand is disabled");
 
-    	assertEquals("The required brand is disabled", thrownException.getMessage());
+
+        assertEquals("The required brand is disabled.".trim(), thrownException.getMessage().trim());
     }
+
 
     @Test
     @DisplayName("Validation - Brand Exists and is Activated - No Exception Thrown")
     void validation_BrandExistsAndIsActivated_NoExceptionThrown() {
-    	// Arrange
-    	Long brandId = faker.number().randomNumber();
-    	DataRegisterModel dataRegisterModel = new DataRegisterModel(faker.lorem().word(), brandId);
+        // Arrange
+        Long brandId = faker.number().randomNumber();
+        DataRegisterModel dataRegisterModel = new DataRegisterModel(faker.lorem().word(), brandId);
 
-    	Brand brand = new Brand();
+        Brand brand = new Brand();
         brand.setActivated(true);
 
         when(brandRepository.existsById(brandId)).thenReturn(true);

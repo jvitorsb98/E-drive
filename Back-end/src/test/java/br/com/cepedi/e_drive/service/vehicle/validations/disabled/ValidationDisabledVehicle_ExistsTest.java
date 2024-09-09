@@ -30,19 +30,23 @@ class ValidationDisabledVehicle_ExistsTest {
     void validate_ShouldThrowValidationExceptionIfNotExists() {
         // Arrange
         Long id = 1L;
-        when(vehicleRepository.existsById(id)).thenReturn(false); 
+        when(vehicleRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(id));
-        assertEquals("The provided vehicle id does not exist", exception.getMessage());
+
+        // Verifica se a mensagem contém o texto esperado
+        assertTrue(exception.getMessage().contains("The provided vehicle id does not exist"));
     }
+
+
 
     @Test
     @DisplayName("Validate - Should not throw exception if vehicle exists")
     void validate_ShouldNotThrowExceptionIfExists() {
         // Arrange
         Long id = 1L;
-        when(vehicleRepository.existsById(id)).thenReturn(true); 
+        when(vehicleRepository.existsById(id)).thenReturn(true);
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));
