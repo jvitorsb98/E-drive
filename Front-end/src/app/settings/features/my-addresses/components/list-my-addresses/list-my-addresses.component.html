@@ -1,16 +1,22 @@
+<div class="top-bar">
+  <div class="d-flex justify-content-between container-fluid">
+    <div class="justify-content-start">
+      <app-ui-button routerLink="/dashboard" [icon]="'bi bi-arrow-left ps-5'"></app-ui-button>
+    </div>
+    <div class="flex-grow-1 text-center">
+      <h1 class="text-white">Perfil</h1>
+    </div>
+    <div class="justify-content-end">
+      <app-ui-button routerLink="/dashboard" [icon]="'bi bi-sliders'"></app-ui-button>
+    </div>
+  </div>
+</div>
+
+
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
   <div class="container-table">
     <div class="container-fluid pt-3">
       <div class="row">
-
-        <div class="header-container">
-          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-arrow-left'" class="btn"></app-ui-button>
-
-          <h1 class="titulo">Endereços</h1>
-
-          <app-ui-button routerLink="/deshboard" [icon]="'bi bi-sliders'"></app-ui-button>
-        </div>
-
         <div class="custom-filter">
           <mat-form-field>
             <mat-label>Busca por bairro</mat-label>
@@ -21,17 +27,19 @@
         <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
           <ng-container matColumnDef="icon">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-              <mat-icon matTooltip="Este ícone representa o endereço listado abaixo. Clique para ver os detalhes do endereço.">location_on</mat-icon>
+              <mat-icon
+                matTooltip="Este ícone representa o endereço listado abaixo. Clique para ver os detalhes do endereço.">location_on</mat-icon>
             </th>
-          
+
             <td class="td-table" mat-cell *matCellDef="let element">
-              <mat-icon [matTooltip]=" 'Endereço: ' + element.number + ' - ' + element.neighborhood + ' - ' + element.city + ' - ' + element.state + ' - ' + element.country"
-                        matTooltipClass="multi-line-tooltip">
+              <mat-icon
+                [matTooltip]=" 'Endereço: ' + element.number + ' - ' + element.neighborhood + ' - ' + element.city + ' - ' + element.state + ' - ' + element.country"
+                matTooltipClass="multi-line-tooltip">
                 location_on
               </mat-icon>
             </td>
           </ng-container>
-          
+
 
           <ng-container matColumnDef="postalCode">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>País</strong></th>
@@ -70,7 +78,7 @@
         <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10]"
           aria-label="Selecione endereços por página"></mat-paginator>
 
-        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (click)="openModalAddAnddress()" text="Novo endereço"></app-ui-button>
+        <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAddAnddress()" text="Novo endereço"></app-ui-button>
         <!-- <button mat-raised-button class="btn-primary" (click)="addAddress()">Novo endereço</button> -->
       </div>
     </div>
