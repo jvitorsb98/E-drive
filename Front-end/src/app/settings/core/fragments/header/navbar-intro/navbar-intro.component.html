@@ -1,27 +1,28 @@
 <header>
   <nav class="navbar navbar-expand-md navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" routerLink="/"><img class="ingenico-logo" src="../../../../assets/images/logo-ingenico-site.svg" alt="ingenicoLogo"></a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleMenu()">
+      <a class="navbar-brand" routerLink="/"><img class="ingenico-logo"
+          src="../../../../assets/images/logo-ingenico-site.svg" alt="ingenicoLogo"></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" (click)="toggleMenu()">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse container" id="navbarNav" [ngClass]="{ 'show': isMenuOpen }">
-        <button class="close-button" *ngIf="isMenuOpen" (click)="toggleMenu()">&times;</button><ul class="navbar-nav ms-auto"></ul>
+        <button class="close-button" *ngIf="isMenuOpen" (click)="toggleMenu()">&times;</button>
+        <ul class="navbar-nav ms-auto"></ul>
         <hr>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item px-1">
-            <a class="nav-link" mat-button (click)="openLoginModal()"><img src="../../../../../../assets/images/sign-in.svg" alt="icone login"> Login</a>
+            <a class="nav-link" mat-button (click)="openLoginModal()"><img
+                src="../../../../../../assets/images/sign-in.svg" alt="icone login"> Login</a>
           </li>
           <li class="nav-item px-1">
-            <a class="nav-link" mat-button (click)="openRegisterModal()" (click)="closeMenu()"><img src="../../../../../../assets/images/sign-up.svg" alt="icone cadastro"> Cadastro</a>
+            <a class="nav-link" mat-button routerLink="/intro-page" (click)="closeMenu()" fragment="servicos"><img
+                src="../../../../../../assets/images/services.svg" alt="icone serviços"> Serviços</a>
           </li>
           <li class="nav-item px-1">
-            <!-- ref="#servicos" removida por conta de conflito com o fragment -->
-            <a class="nav-link" mat-button routerLink="/intro-page" fragment="servicos" (click)="closeMenu()"><img src="../../../../../../assets/images/services.svg" alt="icone serviços"> Serviços</a>
-          </li>
-          <li class="nav-item px-1">
-            <!-- ref="#contato" removida por conta de conflito com o fragment -->
-            <a class="nav-link" mat-button routerLink="/intro-page" fragment="contato" (click)="closeMenu()"><img src="../../../../../../assets/images/contact.svg" alt="icone contato"> Contato</a>
+            <a class="nav-link" mat-button routerLink="/intro-page" (click)="closeMenu()" fragment="contato"><img
+                src="../../../../../../assets/images/contact.svg" alt="icone contato"> Contato</a>
           </li>
         </ul>
       </div>

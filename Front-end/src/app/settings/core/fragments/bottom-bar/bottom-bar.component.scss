@@ -17,16 +17,16 @@
         color: white;
         text-decoration: none;
         font-size: 1.2rem;
-        padding: .7rem;
+        
         border-radius: 1rem;
     }
 
     img{
-        width: 2.3rem;
-        height: 2.3rem;
+        width: 1.4rem;
+        height: 1.4rem;
     }
 
     .bottom-bar-link.active img {
-        filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(108%) contrast(100%);
+        filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(63deg) brightness(105%) contrast(101%);
     }
 }

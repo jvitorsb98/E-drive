@@ -5,8 +5,15 @@ import { Component } from '@angular/core';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent{
+export class DashboardComponent {
 
   constructor() { }
+
+  menuLinks = [
+    { route: '/meus-enderecos', icon: 'home', label: 'Meus Endereços' },
+    { route: '/meus-carros', icon: 'directions_car', label: 'Meus Carros' },
+    { route: '/planejar-viagem', icon: 'map', label: 'Planejar Viagem' }
+  ];
+
 
 }

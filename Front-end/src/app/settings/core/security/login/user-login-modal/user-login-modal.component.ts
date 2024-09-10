@@ -60,7 +60,7 @@ export class UserLoginModalComponent {
       next: () => {
         this.isLoading = false;
         // redirecionar para a rota home/dashboard
-        this.router.navigate(['deshboard']);
+        this.router.navigate(['dashboard']);
         // fechar o modal
         this.dialog.closeAll();
       },
