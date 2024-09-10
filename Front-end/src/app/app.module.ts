@@ -39,6 +39,8 @@ import { BottomBarComponent } from './settings/core/fragments/bottom-bar/bottom-
 import { ModelListComponent } from './settings/features/model/components/model-list/model-list.component';
 import { ModalFormModelComponent } from './settings/features/model/components/modal-form-model/modal-form-model.component';
 import { ModalDetailsModelComponent } from './settings/features/model/components/modal-details-model/modal-details-model.component';
+import { ListVehiclesComponent } from './settings/features/admin-management/components/list-vehicles/list-vehicles.component';
+import { VehicleFormComponent } from './settings/features/admin-management/components/vehicle-form/vehicle-form.component';
 
 // Diretivas
 import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
@@ -78,6 +80,8 @@ import { CommonModule } from '@angular/common';
     ModelListComponent,
     ModalFormModelComponent,
     ModalDetailsModelComponent,
+    ListVehiclesComponent,
+    VehicleFormComponent,
 
     // Diretivas
     EmailPatternValidatorDirective,
