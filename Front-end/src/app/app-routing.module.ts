@@ -10,6 +10,7 @@ import { UserUpdateComponent } from './settings/features/users/components/user-u
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
+import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'new-address', component: MyAddressesComponent },
   { path: 'my-addresses/edit', component: MyAddressesComponent },
   { path: 'reset-password', component: UserPasswordModalComponent },
-  { path: 'admin', component: BrandViewComponent },
+  { path: 'brand-adm', component: BrandViewComponent },
+  { path: 'mapa', component: MapStationsComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];
 
