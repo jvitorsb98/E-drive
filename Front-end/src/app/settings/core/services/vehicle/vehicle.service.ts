@@ -55,6 +55,14 @@ export class VehicleService {
     return this.http.get<PaginatedResponse<Vehicle>>(`${this.vehicleUrl}/api/v1/vehicles`, { params: params });
   }
 
+  register(vehicle: Vehicle): Observable<Vehicle> {
+    return this.http.post<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles`, vehicle, { headers: this.headers });
+  }
+
+  update(id: number, vehicle: Vehicle): Observable<Vehicle> {
+    return this.http.put<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, vehicle, { headers: this.headers });
+  }
+
   activate(): Observable<any> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}` // Utilize o token mockado ou real

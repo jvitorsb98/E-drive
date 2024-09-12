@@ -4,72 +4,61 @@
     <div class="row">
       <!-- Container para os botões e título -->
       <div class="col-12 header-container">
-        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()"><mat-icon>arrow_back</mat-icon></button>
-        <h1 class="titulo" *ngIf="!editModel">Cadastrar Modelo</h1>
-        <h1 class="titulo" *ngIf="editModel">Editar Marca</h1>
+        <button class="icon" mat-icon-button aria-label="Back"
+          (click)="closeModal()"><mat-icon>arrow_back</mat-icon></button>
+        <h1 class="titulo" *ngIf="!editVersion">Cadastrar Versão</h1>
+        <h1 class="titulo" *ngIf="editVersion">Editar Versão</h1>
         <button class="icon" mat-icon-button (click)="openFAQModal()"><mat-icon>help_outline</mat-icon></button>
       </div>
     </div>
 
-    <form [formGroup]="modelForm">
-      <div class="content">
-          <div class="row">
-            <div class="col-12 col-md-6 mb-2">
-              <mat-form-field class="custom-select">
-                <mat-label>Marca do veículo:</mat-label>
-                <input
-                type="text"
-                matInput
-                formControlName="brand"
-                [value]="modelForm.get('brand')?.value?.name || ''"
-                [matAutocomplete]="autoBrand"
-                aria-describedby="Help">
-                <!-- <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint> -->
-                <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
-                  <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
-                    {{ brand.name }}
-                  </mat-option>
-                </mat-autocomplete>
-                <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
+    <form [formGroup]="versionForm">
+      <mat-form-field class="custom-select">
+        <mat-label>Marca do veículo:</mat-label>
+        <input type="text" matInput formControlName="brand" [value]="versionForm.get('brand')?.value?.name || ''"
+          [matAutocomplete]="autoBrand" aria-describedby="Help">
+        <!-- <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint> -->
+        <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onFieldSelected($event, 'brand', loadModels.bind(this))">
+          <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
+            {{ brand.name }}
+          </mat-option>
+        </mat-autocomplete>
+        <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
 
-                @if(modelForm.get('brand')?.hasError('required') && modelForm.get('brand')?.touched){
-                  <mat-error class="mat-error-text"><strong>Marca </strong> é obrigatória</mat-error>
-                }
-              </mat-form-field>
-              <!-- Exibe o erro se nenhuma marca for encontrada -->
-              @if(noBrandFound){
-                <mat-error class="mat-error-no-brand">Nenhuma <strong>marca</strong> encontrada.</mat-error>
-              }
-            </div>
-        </div>
+        @if(versionForm.get('brand')?.hasError('required') && versionForm.get('brand')?.touched){
+        <mat-error class="mat-error-text"><strong>Marca </strong> é obrigatória</mat-error>
+        }
+        <!-- Exibe o erro se nenhuma marca for encontrada -->
+        @if(noBrandFound){
+        <mat-error class="mat-error-no-brand">Nenhuma <strong>marca</strong> encontrada.</mat-error>
+        }
+      </mat-form-field>
 
-        <div class="row">
-          <div class="col-12 col-md-6 mb-2">
-            <mat-card appearance="outlined" class="border-0">
-              <mat-form-field>
-                <mat-label class="custom-label">Modelo</mat-label>
-                <input
-                type="text"
-                name="name"
-                matInput
-                formControlName="name"
-                required
-                aria-describedby="Help" />
-                <!-- <mat-hint id="Help" class="mat-hint-text">Informe o nome do <strong>modelo.</strong></mat-hint> -->
-                <mat-error class="mat-error-text"
-                *ngIf="modelForm.get('name')?.hasError('required')
-                && modelForm.get('name')?.touched" class="mat-error-text">O <strong>modelo</strong> é obrigatório.</mat-error>
-              </mat-form-field>
-              <div *ngIf="modelForm.get('name')?.hasError('minlength') && modelForm.get('name')?.dirty">
-                <mat-error class="mat-error-text-minlength">O <strong>Nome</strong> deve ter pelo menos {{
-                modelForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-              </div>
-            </mat-card>
-          </div>
-      </div>
+      <!-- Campo para selecionar o modelo -->
+      <div class="col-12 col-md-6 mb-2 w-100" [ngClass]="{'hidden': !versionForm.get('brand')?.value}">
+        <mat-form-field class="custom-select">
+          <mat-label>Modelo do veículo:</mat-label>
+          <input
+          type="text"
+          matInput
+          formControlName="model"
+          [value]="versionForm.get('model')?.value?.name || ''"
+          [matAutocomplete]="autoModel">
+          <mat-hint id="Help" class="mat-hint-text">Selecione o <strong>modelo.</strong></mat-hint>
+          <mat-autocomplete #autoModel="matAutocomplete" (optionSelected)="onFieldSelected($event, 'model')">
+            <mat-option *ngFor="let model of filteredModels | async" [value]="model">
+              {{ model.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+          <mat-error *ngIf="versionForm.get('model')?.hasError('required') && versionForm.get('model')?.touched">
+           <strong>Modelo</strong> é obrigatório
+          </mat-error>
+        </mat-form-field>
       </div>
       <div class="buttons-container">
-        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!modelForm.valid" (click)="submitForm()" text="Finalizar cadastro"></app-ui-button>
+        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!versionForm.valid"
+          (click)="submitForm()" text="Finalizar cadastro"></app-ui-button>
       </div>
     </form>
   </div>

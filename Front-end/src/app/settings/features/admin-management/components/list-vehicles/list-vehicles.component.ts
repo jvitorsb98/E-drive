@@ -152,8 +152,8 @@ export class ListVehiclesComponent {
 
   openModalAdd() {
     this.dialog.open(VehicleFormComponent, {
-      width: '100%',
-      height: '100%',
+      width: '99vw',
+      height: '100vh',
       data: null
     }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize));
   }

@@ -9,6 +9,9 @@ import { Model } from '../../../../core/models/model';
 import { BrandService } from '../../../../core/services/brand/brand.service';
 import { ModelService } from '../../../../core/services/model/model.service';
 import { ModalFormModelComponent } from '../../../model/components/modal-form-model/modal-form-model.component';
+import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
+import { Vehicle } from '../../../../core/models/vehicle';
+import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
 @Component({
   selector: 'app-vehicle-form',
@@ -17,47 +20,61 @@ import { ModalFormModelComponent } from '../../../model/components/modal-form-mo
 })
 export class VehicleFormComponent {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
-  modelForm!: FormGroup;
-  editModel: boolean = false;
+
+  versionForm!: FormGroup;
+  editVersion: boolean = false;
   noBrandFound: boolean = false;
+
   brands: { name: string; id: number }[] = [];
+  models: { name: string; id: number }[] = [];
+
   filteredBrands: Observable<{ name: string; id: number }[]> = of([]);
+  filteredModels: Observable<{ name: string; id: number }[]> = of([]);
 
   constructor(
-    private modelService: ModelService,
+    private vehicleService: VehicleService,
     private brandService: BrandService,
+    private modelService: ModelService,
     private formBuilder: FormBuilder,
+    private userDataService: UserDataService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormModelComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Model
+    @Inject(MAT_DIALOG_DATA) public data: Vehicle
   ) { }
 
   ngOnInit(): void {
-    this.editModel = !!this.data?.name; // Atribui true se data.brand existir e false se não existir
+    this.editVersion = !!this.data?.version; // Atribui true se data.brand existir e false se não existir
     this.loadBrands();
     this.buildForm();
-    if (this.editModel) {
+    if (this.editVersion) {
       this.fillForm();
-      this.modelForm.get('name')?.enable();
+      this.versionForm.get('')?.enable();
     }
   }
 
   buildForm() {
-    this.modelForm = this.formBuilder.group({
-      name: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]),
+    this.versionForm = this.formBuilder.group({
       brand: new FormControl(null, [Validators.required]),
+      model: new FormControl(null, [Validators.required]),
+
     });
-    this.monitorBrandChanges();
+    // this.monitorFormChanges('brand', 'model', (brandValue) => {
+    //   return this.brands.some(brand => brand.name === brandValue);
+    // });
   }
 
   fillForm() {
-    if (this.data.name) {
-      this.modelForm.patchValue({
-        name: this.data.name,
-        brand: this.data.brand.name
-        // activated: this.data.activated
+    if (this.data.version) {
+      this.versionForm.patchValue({
+        brand: this.data.model.brand.name,
+        model: this.data.model.name,
+        category: this.data.category,
+        year: this.data.year,
+        version: this.data.version,
+        motor: this.data.motor,
+        activated: this.data.activated
       });
-      console.log("fillForm", this.modelForm.value);
+      console.log("fillForm", this.versionForm.value);
     } else {
       console.warn('Dados estão incompletos:', this.data);
     }
@@ -76,31 +93,53 @@ export class VehicleFormComponent {
     });
   }
 
+  loadModels(brandId: number) {
+    this.modelService.getModelsByBrandId(brandId).subscribe({
+      next: (response: any) => {
+        const models = response.content || [];
+
+        if (Array.isArray(models)) {
+          this.models = models.map(model => ({
+            name: this.userDataService.capitalizeWords(model.name),
+            id: model.id,
+            brandId: model.brand.id
+          }));
+        } else {
+          console.error('Expected an array but got:', models);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar os modelos', error);
+      }
+    });
+  }
+
   submitForm() {
-    if (this.modelForm.valid) {
-      console.log('Formulário válido:', this.modelForm.value);
+    if (this.versionForm.valid) {
+      console.log('Formulário válido:', this.versionForm.value);
       const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Usa o método isEditing para determinar a ação
 
       // Obtém o ID da marca selecionada
-      const selectedBrandId = this.getSelectedBrandId();
+      const selectedBrandId = this.getSelectedItemId('brand', this.brands);
+;
 
-      // Cria o objeto com os dados do modelo e o ID da marca
-      const modelData = {
+      // Cria o objeto com os dados do version e o ID da marca
+      const versionData = {
         ...this.data,
-        name: this.modelForm.get('name')?.value,
+        name: this.versionForm.get('name')?.value,
         idBrand: selectedBrandId
       };
 
       const request$ = this.isEditing()
-        ? this.modelService.updateModel(modelData)
-        : this.modelService.registerModel(modelData);
+        ? this.vehicleService.update(versionData.id,versionData)
+        : this.vehicleService.register(versionData);
 
       request$.pipe(
         catchError(() => {
           Swal.fire({
             title: 'Erro!',
             icon: 'error',
-            text: `Ocorreu um erro ao ${action} o modelo. Tente novamente mais tarde.`,
+            text: `Ocorreu um erro ao ${action} o version. Tente novamente mais tarde.`,
             showConfirmButton: true,
             confirmButtonColor: 'red',
           });
@@ -110,7 +149,7 @@ export class VehicleFormComponent {
         Swal.fire({
           title: 'Sucesso!',
           icon: 'success',
-          text: `O modelo ${this.modelForm.value.name} foi ${action} com sucesso.`,
+          text: `O version ${this.versionForm.value.name} foi ${action} com sucesso.`,
           showConfirmButton: true,
           confirmButtonColor: '#19B6DD',
         }).then((result) => {
@@ -120,12 +159,12 @@ export class VehicleFormComponent {
         });
       });
     } else {
-      console.warn('Formulário inválido:', this.modelForm);
+      console.warn('Formulário inválido:', this.versionForm);
     }
   }
 
   private _filterBrands() {
-    this.modelForm.get('brand')!.valueChanges.pipe(
+    this.versionForm.get('brand')!.valueChanges.pipe(
       startWith(''),
       map(value => {
         const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
@@ -141,17 +180,61 @@ export class VehicleFormComponent {
     });
   }
 
-  onBrandSelected(event: MatAutocompleteSelectedEvent): void {
-    const selectedBrand = event.option.value;
-    this.modelForm.get('brand')?.setValue(selectedBrand.name); // Atualiza o valor do input
-    console.log('Marca selecionada:', selectedBrand);
+  /* NOTE - Método para Atualizar o valor do campo no formulário ao selecionar um item no autocomplete
+  - O primeiro parametro é o evento do autocomplete e o segundo é o nome do campo que será atualizado
+  - Se o ID do item estiver disponível e a função de carregamento for passada, executa a função de carregamento
+  - A função de carregamento recebe o ID do item selecionado
+  - Modo de uso com id: this.onFieldSelected(event, 'fieldName', (id) => { this.loadFunction(id); });
+  - exemplo: this.onFieldSelected(event, 'brand', loadModels.bind(this); });
+  - Modo de uso sem id: this.onFieldSelected(event, 'fieldName');
+  - exemplo: this.onFieldSelected(event, 'model');
+  */
+  onFieldSelected(event: MatAutocompleteSelectedEvent, fieldName: string, loadFunction?: (id: any) => void): void {
+    const selectedItem = event.option.value;
+
+    // Atualiza o valor do campo no formulário
+    this.versionForm.get(fieldName)?.setValue(selectedItem.name);
+
+    // Se o ID do item estiver disponível e a função de carregamento for passada, executa a função de carregamento
+    if (selectedItem.id && loadFunction) {
+      loadFunction(selectedItem.id);
+    }
   }
 
-  private getSelectedBrandId(): number | undefined {
-    const selectedBrandName = this.modelForm.get('brand')?.value;
-    const selectedBrand = this.brands.find(brand => brand.name === selectedBrandName);
-    return selectedBrand?.id;
+
+  /**
+ * Obtém o ID do item selecionado com base no nome do campo do formulário e na lista de itens fornecida.
+ *
+ * @param fieldName - O nome do campo do formulário cujo valor é usado para encontrar o item.
+ *                    Por exemplo, 'brand' ou 'model'.
+ * @param items - A lista de objetos na qual o item selecionado será procurado.
+ *                Por exemplo, this.brands ou this.models.
+ * @param itemKey - (Opcional) A chave do objeto utilizada para comparar o valor do campo.
+ *                  O padrão é 'name'. Pode ser alterado se o valor do campo do formulário
+ *                  corresponde a uma chave diferente no objeto.
+ *
+ * @returns O ID do item selecionado, ou `undefined` se o item não for encontrado ou não tiver um ID.
+ *
+ * @example
+ * // Obtém o ID da marca selecionada
+ * const brandId = this.getSelectedItemId('brand', this.brands);
+ *
+ * @example
+ * // Obtém o ID do modelo selecionado
+ * const modelId = this.getSelectedItemId('model', this.models);
+ *
+ * TODO: Certifique-se de que a lista de itens e o campo do formulário estejam sincronizados para garantir
+ *        que o método retorne resultados corretos.
+ *
+ * NOTE: A chave `itemKey` deve corresponder ao nome da propriedade nos objetos da lista de itens.
+ *        Se a propriedade não for 'name', passe o nome correto ao chamar o método.
+ */
+  private getSelectedItemId(fieldName: string, items: any[], itemKey: string = 'name'): number | undefined {
+    const selectedItemName = this.versionForm.get(fieldName)?.value;
+    const selectedItem = items.find(item => item[itemKey] === selectedItemName);
+    return selectedItem?.id;
   }
+
 
   toggleAutocomplete(event: Event) {
     event.stopPropagation(); // Impede que o clique cause conflito com o foco do input
@@ -162,16 +245,18 @@ export class VehicleFormComponent {
     }
   }
 
-  monitorBrandChanges(): void {
-    this.modelForm.get('brand')?.valueChanges.subscribe((brandValue) => {
-      const selectedBrand = this.brands.find(brand => brand.name === brandValue);
-
-      if (selectedBrand) {
-        // Habilita o campo 'name' quando uma marca válida for selecionada
-        this.modelForm.get('name')?.enable();
+  /* NOTE - Método para monitorar mudanças em um campo dependente e habilitar/desabilitar o campo dependente correspondente de forma flexível
+  - Modo de uso: this.monitorFormChanges('controlName', 'dependentControlName', (value) => { return condition; });
+  - Exemplo: this.monitorFormChanges('brand', 'model', (brandValue) => { return this.brands.some(brand => brand.name === brandValue); } );
+  */
+  monitorFormChanges(controlName: string, dependentControlName: string, conditionFn: (value: any) => boolean): void {
+    this.versionForm.get(controlName)?.valueChanges.subscribe((controlValue) => {
+      if (conditionFn(controlValue)) {
+        // Habilita o campo dependente quando a condição for verdadeira
+        this.versionForm.get(dependentControlName)?.enable();
       } else {
-        // Desabilita o campo 'name' se não houver uma marca válida selecionada
-        this.modelForm.get('name')?.disable();
+        // Desabilita o campo dependente quando a condição for falsa
+        this.versionForm.get(dependentControlName)?.disable();
       }
     });
   }
@@ -189,28 +274,28 @@ export class VehicleFormComponent {
       data: {
         faqs: [
           {
-            question: 'Como cadastrar um novo modelo?',
-            answer: 'Para cadastrar um novo modelo, clique no botão "Novo modelo" localizado na parte inferior direita da tabela. Isso abrirá um formulário onde você poderá inserir os detalhes do novo modelo. Após preencher o formulário, clique em "Finalizar cadastro" para adicionar o novo modelo à lista.'
+            question: 'Como cadastrar um novo version?',
+            answer: 'Para cadastrar um novo version, clique no botão "Novo version" localizado na parte inferior direita da tabela. Isso abrirá um formulário onde você poderá inserir os detalhes do novo version. Após preencher o formulário, clique em "Finalizar cadastro" para adicionar o novo version à lista.'
           },
           {
-            question: 'Como visualizar os detalhes de um modelo?',
-            answer: 'Para visualizar os detalhes de um modelo, clique no ícone de "olho" (visibility) ao lado do modelo que você deseja visualizar. Um modal será exibido mostrando todas as informações detalhadas sobre o modelo selecionado.'
+            question: 'Como visualizar os detalhes de um version?',
+            answer: 'Para visualizar os detalhes de um version, clique no ícone de "olho" (visibility) ao lado do version que você deseja visualizar. Um modal será exibido mostrando todas as informações detalhadas sobre o version selecionado.'
           },
           {
-            question: 'Como editar um modelo existente?',
-            answer: 'Para editar um modelo, clique no ícone de "lápis" (edit) ao lado do modelo que você deseja modificar. Isso abrirá um modal com um formulário pré-preenchido com os dados do modelo. Faça as alterações necessárias e clique em "Salvar" para atualizar as informações.'
+            question: 'Como editar um version existente?',
+            answer: 'Para editar um version, clique no ícone de "lápis" (edit) ao lado do version que você deseja modificar. Isso abrirá um modal com um formulário pré-preenchido com os dados do version. Faça as alterações necessárias e clique em "Salvar" para atualizar as informações.'
           },
           {
-            question: 'Como excluir um modelo?',
-            answer: 'Para excluir um modelo, clique no ícone de "lixeira" (delete) ao lado do modelo que você deseja remover. Você será solicitado a confirmar a exclusão. Após confirmar, o modelo será removido da lista.'
+            question: 'Como excluir um version?',
+            answer: 'Para excluir um version, clique no ícone de "lixeira" (delete) ao lado do version que você deseja remover. Você será solicitado a confirmar a exclusão. Após confirmar, o version será removido da lista.'
           },
           {
-            question: 'Como buscar modelos específicos?',
-            answer: 'Use o campo de busca localizado acima da tabela. Digite o nome do modelo que você deseja encontrar e a tabela será filtrada automaticamente para mostrar apenas os modelos que correspondem à sua pesquisa.'
+            question: 'Como buscar versions específicos?',
+            answer: 'Use o campo de busca localizado acima da tabela. Digite o nome do version que você deseja encontrar e a tabela será filtrada automaticamente para mostrar apenas os versions que correspondem à sua pesquisa.'
           },
           {
             question: 'Como navegar entre as páginas da tabela?',
-            answer: 'Use o paginador localizado na parte inferior da tabela para navegar entre as páginas de modelos. Você pode selecionar o número de itens por página e usar os botões de navegação para ir para a página anterior ou seguinte.'
+            answer: 'Use o paginador localizado na parte inferior da tabela para navegar entre as páginas de versions. Você pode selecionar o número de itens por página e usar os botões de navegação para ir para a página anterior ou seguinte.'
           }
         ]
       }
