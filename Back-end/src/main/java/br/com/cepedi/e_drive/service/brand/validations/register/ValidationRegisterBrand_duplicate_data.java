@@ -26,7 +26,6 @@ public class ValidationRegisterBrand_duplicate_data implements ValidationBrandRe
      */
     @Override
     public void validation(DataRegisterBrand dataRegisterBrand) {
-        // Verifica se o nome já existe ignorando o case
         boolean exists = brandRepository.existsByNameIgnoreCase(dataRegisterBrand.name());
 
         if (exists) {
