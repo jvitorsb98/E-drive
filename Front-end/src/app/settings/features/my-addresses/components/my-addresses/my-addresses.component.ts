@@ -1,14 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
 import { AddressService } from '../../../../core/services/Address/address.service';
-import { IAddressRequest } from '../../../../core/models/inter-Address';
+import { DataAddressDetails, IAddressRequest } from '../../../../core/models/inter-Address';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PostalCodeService } from '../../../../core/services/apis/postal-code/postal-code.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-my-addresses',
@@ -25,6 +26,8 @@ export class MyAddressesComponent implements
   isLoading: boolean = false;
   labelPosition: "before" | "after" = "before";
   address!: IAddressRequest;
+  editAddress: boolean = false;
+  actionTitle: string = "";
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -35,7 +38,8 @@ export class MyAddressesComponent implements
     private addressService: AddressService,
     public dialogRef: MatDialogRef<MyAddressesComponent>,
     private router: Router,
-    private activatRouter: ActivatedRoute
+    private activatRouter: ActivatedRoute,
+    @Inject(MAT_DIALOG_DATA) public data: { addressData: DataAddressDetails; actionTitle: string }
   ) {
     this.addressForm = this.fb.group({
       country: new FormControl('Brasil', Validators.required),
@@ -44,34 +48,37 @@ export class MyAddressesComponent implements
       city: new FormControl('', Validators.required),
       neighborhood: new FormControl('', Validators.required),
       street: new FormControl('', Validators.required),
-      number: new FormControl('', Validators.required),
+      number: new FormControl('', Validators.required),      
       complement: new FormControl(''),
-      hasChargingStation: new FormControl(false, Validators.requiredTrue),
+      hasChargingStation: new FormControl(false),
     });
+    this.actionTitle = data.actionTitle;
+    if (data.addressData) {
+      this.addressForm.patchValue(data.addressData);
+    }
   }
 
   ngOnInit() {
-
     this.addressForm.get('zipCode')?.valueChanges.subscribe(value => {
       if (value && value.length === 8) {
         this.searchPostalCode();
       }
     });
-
+  
     const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
       this.addressData = data;
-    })
-
+      if (this.addressData) {
+        this.addressForm.patchValue(this.addressData);
+      }
+    });
+  
     const titleSubscription = this.addressService.selectedTitle$.subscribe(title => {
       this.title = title;
     });
-
+  
     this.subscriptions.push(addressSubscription, titleSubscription);
-
-    if (this.addressData) {
-      this.addressForm.patchValue(this.addressData);
-    }
   }
+  
 
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
@@ -114,24 +121,37 @@ export class MyAddressesComponent implements
   }
   create() {
     if (this.addressForm.valid) {
-      // Lógica para salvar ou atualizar o endereço
       this.address = this.addressForm.value;
-
       this.addressService.createAddress(this.address)
         .subscribe(
           {
             next: () => {
-              this.snackBar.open('Endereço criado com sucesso', 'Fechar', { duration: 5000 });
-              this.addressForm.reset();
-              this.router.navigate(['/meus-enderecos']);
+              Swal.fire({
+                title: 'Endereço criado com sucesso!',
+                icon: 'success',
+                text: 'O endereço foi criado com sucesso.',
+                showConfirmButton: true,
+                confirmButtonColor: '#19B6DD',
+              }).then(() => {
+                this.addressForm.reset();
+                this.closeModal();
+                this.router.navigate(['/meus-enderecos']);
+              });
             },
             error: () => {
-              this.snackBar.open('Erro ao criar endereço', 'Fechar', { duration: 5000 });
+              Swal.fire({
+                title: 'Erro ao criar endereço!',
+                icon: 'error',
+                text: 'Houve um problema ao criar o endereço. Tente novamente mais tarde.',
+                showConfirmButton: true,
+                confirmButtonColor: 'red',
+              });
             }
           }
-        )
+        );
     }
   }
+  
 
   update() {
     if (this.addressForm.valid) {

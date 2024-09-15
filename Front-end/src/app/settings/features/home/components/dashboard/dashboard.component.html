@@ -1,13 +1,14 @@
-<div class="top-bar d-flex justify-content-between container-fluid">
+<div class="top-bar d-flex justify-content-between container-fluid pt-3">
 	<div class="flex-grow-1 text-center">
 		<h1 class="text-white">Menu</h1>
 	</div>
 </div>
-<div class="menu-container container-fluid d-flex justify-content-center">
+<div class="menu-container container-fluid d-flex justify-content-center pt-3">
 	<div class="menu-links row w-100 text-center">
-		<div class="col-4 col-md-4 mb-4" *ngFor="let link of menuLinks">
-			<a [routerLink]="link.route" class="d-flex flex-column justify-content-center align-items-center py-2">
-				<mat-icon>{{ link.icon }}</mat-icon>
+		<div *ngFor="let link of menuLinks; let i = index" [ngClass]="getColumnClass(i)"
+			class="d-flex flex-column justify-content-center align-items-center py-2">
+			<a [routerLink]="link.route" class="d-flex flex-column align-items-center">
+				<mat-icon class="icon-size">{{ link.icon }}</mat-icon>
 				<span>{{ link.label }}</span>
 			</a>
 		</div>
