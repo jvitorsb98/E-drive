@@ -32,4 +32,14 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
      * @return Uma página de modelos associados à marca fornecida.
      */
     Page<Model> findByBrand(Brand brand, Pageable pageable);
+
+    /**
+     * Verifica se existe um modelo com o nome fornecido associado a uma determinada marca.
+     *
+     * @param name    O nome do modelo a ser verificado. Este parâmetro é sensível a maiúsculas e minúsculas.
+     * @param brandId O ID da marca a qual o modelo está associado.
+     * @return {@code true} se já existir um modelo com o nome e a marca fornecidos; {@code false} caso contrário.
+     */
+    boolean existsByNameAndBrandId(String name, Long brandId);
+
 }

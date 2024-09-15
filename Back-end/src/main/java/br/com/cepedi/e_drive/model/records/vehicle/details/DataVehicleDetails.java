@@ -107,7 +107,14 @@ public record DataVehicleDetails(
          *
          * @return Ano de fabricação do veículo. Pode ser nulo se não aplicável.
          */
-        Long year
+        Long year,
+
+        /**
+         * Detalhes de ativação do veículo.
+         *
+         * @return 'true' se o veículo estiver ativo, 'false' caso contrário..
+         */
+        Boolean activated
 
 ) {
     /**
@@ -125,7 +132,8 @@ public record DataVehicleDetails(
                 new DataVehicleTypeDetails(vehicle.getType()),
                 new DataPropulsionDetails(vehicle.getPropulsion()),
                 new DataAutonomyDetails(vehicle.getAutonomy()),
-                vehicle.getYear()
+                vehicle.getYear(),
+                vehicle.isActivated()
         );
     }
 }

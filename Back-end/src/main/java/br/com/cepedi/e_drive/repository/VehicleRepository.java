@@ -86,4 +86,22 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     @Query("SELECT v FROM Vehicle v WHERE v.autonomy.id = :autonomyId")
     Page<Vehicle> findByAutonomyId(@Param("autonomyId") Long autonomyId, Pageable pageable);
 
+    /**
+     * Verifica se existe um veículo com o mesmo modelo, motor e versão, ignorando diferenças de maiúsculas/minúsculas.
+     *
+     * @param modelId O ID do modelo do veículo.
+     * @param motor O nome do motor do veículo.
+     * @param version A versão do veículo.
+     * @return true se um veículo com o mesmo modelo, motor e versão já existir; caso contrário, false.
+     */
+    boolean existsByModelIdAndMotorIgnoreCaseAndVersionIgnoreCase(Long modelId, String motor, String version);
+
+    /**
+     * Verifica se existe um veículo com a mesma versão, ignorando diferenças de maiúsculas/minúsculas.
+     *
+     * @param version A versão do veículo.
+     * @return true se um veículo com a mesma versão já existir; caso contrário, false.
+     */
+    boolean existsByVersionIgnoreCase(String version);
+
 }
