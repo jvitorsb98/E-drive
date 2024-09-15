@@ -86,32 +86,46 @@ export class UserVehicleListComponent {
   }
 
   deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
-    console.log('Deletando veículo:', vehicleData);
-    this.userVehicleService.deleteUserVehicle(vehicleData.userVehicle.id).pipe(
-      catchError(() => {
-        Swal.fire({
-          title: 'Erro!',
-          icon: 'error',
-          text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
-          showConfirmButton: true,
-          confirmButtonColor: 'red',
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: `Deseja realmente deletar o veículo? Esta ação não poderá ser desfeita.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#19B6DD',
+      cancelButtonColor: '#ff6b6b',
+      confirmButtonText: 'Sim, deletar!',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log('Deletando veículo:', vehicleData);
+        this.userVehicleService.deleteUserVehicle(vehicleData.userVehicle.id).pipe(
+          catchError(() => {
+            Swal.fire({
+              title: 'Erro!',
+              icon: 'error',
+              text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
+              showConfirmButton: true,
+              confirmButtonColor: 'red',
+            });
+            return of(null); 
+          })
+        ).subscribe(() => { 
+          Swal.fire({
+            title: 'Sucesso!',
+            icon: 'success',
+            text: 'O veículo foi deletado com sucesso!',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          }).then((result) => {
+            if (result.isConfirmed || result.isDismissed) {
+              this.getListUserVehicles();
+            }
+          });
         });
-        return of(null); // Continua a sequência de observáveis com um valor nulo
-      })
-    ).subscribe(() => {  // Omiti o parâmetro `response` porque o backend esta retornando null
-      Swal.fire({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: 'O veículo foi deletado com sucesso!',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      }).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          this.getListUserVehicles();
-        }
-      });
+      }
     });
   }
+  
 
   formatVehicleData(vehicle: Vehicle): Vehicle {
     vehicle.model.name = this.userDataService.capitalizeWords(vehicle.model.name);
@@ -124,7 +138,7 @@ export class UserVehicleListComponent {
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-
+  
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
@@ -133,8 +147,8 @@ export class UserVehicleListComponent {
   // LOGICA DO MODAL
   openModalViewVeicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalDetailsVehicleComponent, {
-      width: '600px',
-      height: '530px',
+      width: '80vw',
+      height: '75vh',
       data: {
         vehicle: userVehicleWithDetails,
         userVehicle: userVehicleWithDetails.userVehicle
@@ -144,16 +158,16 @@ export class UserVehicleListComponent {
 
   openModalAddUserVehicle() {
     this.dialog.open(ModalFormVehicleComponent, {
-      width: '600px',
-      height: '810px',
+      width: '80vw',
+      height: '90vh',
       data: {}
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
   openModalEditUserVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
-      width: '600px',
-      height: '810px',
+      width: '80vw',
+      height: '90vh',
       data: {
         vehicle: userVehicleWithDetails,
         userVehicle: userVehicleWithDetails.userVehicle

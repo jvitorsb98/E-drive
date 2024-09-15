@@ -11,6 +11,8 @@ import { MatSort } from '@angular/material/sort';
 import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
 import { ModalDetailsAddressComponent } from '../modal-details-address/modal-details-address.component';
 import { MyAddressesComponent } from '../my-addresses/my-addresses.component';
+import Swal from 'sweetalert2';
+import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-list-my-addresses',
@@ -80,39 +82,74 @@ export class ListMyAddressesComponent implements OnInit {
     }
   }
 
-  editAddress(address: DataAddressDetails) {
-
-    this.addressService.selectAddress(address);
-
-    this.addressService.setTitle('Editar Endereço');
-
-    this.router.navigate(['/my-addresses/edit']);
-
-  }
 
   deleteAddress(address: DataAddressDetails) {
-    if (confirm('Tem certeza que deseja excluir este endereço?')) {
-      this.addressService.disable(address.id)
-        .subscribe(() => {
-          this.loadAddresses();
-          this.snackBar.open('Endereço excluído com sucesso!', 'Fechar', { duration: 5000 });
+    Swal.fire({
+      title: 'Tem certeza?',
+      text: `Deseja realmente deletar o endereço? Esta ação não poderá ser desfeita.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#19B6DD',
+      cancelButtonColor: '#ff6b6b',
+      confirmButtonText: 'Sim, deletar!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log('Deletando endereço:', address);
+        this.addressService.disable(address.id).pipe(
+          catchError(() => {
+            Swal.fire({
+              title: 'Erro!',
+              icon: 'error',
+              text: 'Ocorreu um erro ao deletar o endereço. Tente novamente mais tarde.',
+              showConfirmButton: true,
+              confirmButtonColor: 'red'
+            });
+            return of(null);
+          })
+        ).subscribe(() => {
+          Swal.fire({
+            title: 'Sucesso!',
+            icon: 'success',
+            text: 'O endereço foi deletado com sucesso!',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD'
+          }).then(() => {
+            this.loadAddresses();
+          });
         });
-    }
+      }
+    });
   }
 
   openModalDetailsAddress(address: DataAddressDetails) {
     this.dialog.open(ModalDetailsAddressComponent, {
-      width: '500px',
-      height: '400px',
+      width: '80vw',
+      height: '75vh',
       data: address
     })
   }
-
-  openModalAddAnddress() {
+  openModalAddAddress() {
     this.dialog.open(MyAddressesComponent, {
-      width: '800px',
-      height: '430px',
+      width: '80vw',
+      height: '90vh',
+      data: {
+        actionTitle: 'Cadastrar Endereço'
+      }
     }).afterClosed().subscribe(() => this.loadAddresses());
+  }
+  
+  editAddress(address: DataAddressDetails) {
+    this.dialog.open(MyAddressesComponent, {
+      width: '80vw',
+      height: '90vh',
+      data: {
+        addressData: address,
+        actionTitle: 'Editar Endereço'
+      }
+    }).afterClosed().subscribe(() => {
+      this.loadAddresses();
+    });
   }
 
   openFAQModal() {
