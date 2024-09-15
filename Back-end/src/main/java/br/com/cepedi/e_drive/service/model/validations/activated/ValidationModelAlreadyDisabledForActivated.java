@@ -25,8 +25,8 @@ public class ValidationModelAlreadyDisabledForActivated implements ValidationMod
     public void validation(Long id) {
         if (modelRepository.existsById(id)) {
             Model model = modelRepository.getReferenceById(id);
-            if (!model.getActivated()) {  // Corrigi a lógica para verificar se está desativado.
-                throw new ValidationException("The model is already disabled");
+            if (model.getActivated()) {  // Corrigi a lógica para verificar se está desativado.
+                throw new ValidationException("The model is already activated");
             }
         }
     }

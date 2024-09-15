@@ -6,6 +6,7 @@ import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
 import br.com.cepedi.e_drive.model.records.brand.input.DataUpdateBrand;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import br.com.cepedi.e_drive.service.brand.validations.disabled.BrandValidatorDisabled;
+import br.com.cepedi.e_drive.service.brand.validations.register.ValidationBrandRegister;
 import br.com.cepedi.e_drive.service.brand.validations.update.ValidationBrandUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,9 @@ public class BrandService {
     private BrandRepository brandRepository;
 
     @Autowired
+    private List<ValidationBrandRegister> brandValidationRegisterList;
+
+    @Autowired
     private List<ValidationBrandUpdate> brandValidationUpdateList;
 
     @Autowired
@@ -38,8 +42,9 @@ public class BrandService {
      * @return Detalhes da marca registrada.
      */
     public DataBrandDetails register(DataRegisterBrand data) {
+        brandValidationRegisterList.forEach(validator -> validator.validation(data));
         Brand brand = new Brand(data);
-        brand = brandRepository.save(brand);
+        brandRepository.save(brand);
         return new DataBrandDetails(brand);
     }
 

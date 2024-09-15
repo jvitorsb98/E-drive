@@ -140,4 +140,13 @@ public class ModelService {
         Model model = modelRepository.getReferenceById(id);
         model.deactivated();
     }
+
+
+    public void enable(Long id) {
+        // Executa validações no modelo antes de continuar
+        modelValidatorActivatedList.forEach(v -> v.validation(id));
+        Model model = modelRepository.getReferenceById(id);
+
+        model.activated();
+    }
 }

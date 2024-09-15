@@ -281,4 +281,28 @@ public class ModelController {
         LOGGER.info("Model disabled successfully");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/enable/{id}")
+    @Transactional
+    @Operation(summary = "Enable model by ID", method = "PUT", description = "Enables and updates a model by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Model enabled successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Model not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Void> enable(
+            @Parameter(description = "ID of the model to be enabled", required = true)
+            @PathVariable Long id,
+            @RequestBody DataUpdateModel data
+    ) {
+        LOGGER.info("Enabling model with ID: {}", id);
+        modelService.enable( id);
+        LOGGER.info("Model enabled successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }
