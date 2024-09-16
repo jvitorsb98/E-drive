@@ -30,7 +30,6 @@ import { ModalDetailsVehicleComponent } from './settings/features/user-vehicle/c
 import { ModalFormVehicleComponent } from './settings/features/user-vehicle/components/modal-form-vehicle/modal-form-vehicle.component';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
-import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
 import { ModalDetailsBrandComponent } from './settings/features/brand/components/modal-details-brand/modal-details-brand.component';
 import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
@@ -49,6 +48,7 @@ import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.
 // Pipes
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
+import { BrandListComponent } from './settings/features/brand/components/brand-list/brand-list.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +69,6 @@ import { CommonModule } from '@angular/common';
     UiButtonComponent,
     ModalDetailsVehicleComponent,
     UserVehicleListComponent,
-    BrandViewComponent,
     ModalDetailsBrandComponent,
     ModalFormBrandComponent,
     MyAddressesComponent,
@@ -89,6 +88,7 @@ import { CommonModule } from '@angular/common';
 
     // Pipes
     PhoneMaskPipe,
+      BrandListComponent,
   ],
   imports: [
     BrowserModule,

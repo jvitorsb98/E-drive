@@ -1,22 +1,22 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { Brand } from '../../../../core/models/brand';
+import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
+import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
+import Swal from 'sweetalert2';
+import { catchError, of } from 'rxjs';
+import { MatTableDataSource } from '@angular/material/table';
+import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { BrandService } from '../../../../core/services/brand/brand.service';
 import { MatDialog } from '@angular/material/dialog';
-import Swal from 'sweetalert2';
-import { catchError, of } from 'rxjs';
-import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
-import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
-import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
 
 @Component({
-  selector: 'app-brand-view',
-  templateUrl: './brand-view.component.html',
-  styleUrl: './brand-view.component.scss'
+  selector: 'app-brand-list',
+  templateUrl: './brand-list.component.html',
+  styleUrl: './brand-list.component.scss'
 })
-export class BrandViewComponent {
+export class BrandListComponent {
   displayedColumns: string[] = ['icon', 'name', 'actions'];
   dataSource = new MatTableDataSource<Brand>();
   brandList: Brand[] = [];
@@ -125,5 +125,4 @@ export class BrandViewComponent {
       data: brandList
     }).afterClosed().subscribe(() => this.getListBrands()); // Atualiza a lista de veículos após fechar o modal
   }
-
 }
