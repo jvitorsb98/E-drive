@@ -71,7 +71,7 @@ export class UserLoginModalComponent implements OnInit {
   private handleLoginSuccess(): void {
     this.isLoading = false;
     // TODO: uso de success com o swal this.showAlert('Bem vindo!', 'Login efetuado com sucesso!', true);
-    this.router.navigate(['dashboard']);
+    this.router.navigate(['e-driver/dashboard']);
     this.dialog.closeAll();
   }
 

@@ -11,10 +11,9 @@ export class DashboardComponent {
 
 
   menuLinks = [
-    { route: '/meus-enderecos', icon: 'home', label: 'Meus Endereços' },
-    { route: '/meus-carros', icon: 'directions_car', label: 'Meus Veículos' },
-    { route: '/planejar-viagem', icon: 'map', label: 'Planejar Viagem' },
-
+    { route: '/e-driver/users/my-addresses', icon: 'home', label: 'Meus Endereços' },
+    { route: '/e-driver/users/my-vehicles', icon: 'directions_car', label: 'Meus Carros' },
+    { route: '/e-driver/users/plan-trip', icon: 'map', label: 'Planejar Viagem' }
   ];
 
   getColumnClass(index: number): string {
