@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
-import { ILoginRequest, IResetPasswordRequest, IResetPasswordResponse } from '../../../models/inter-Login';
+import { ILoginRequest, ILoginResponse, IResetPasswordRequest, IResetPasswordResponse } from '../../../models/inter-Login';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
@@ -22,9 +22,8 @@ export class AuthService {
     this.apiUrl = `${environment.apiUrl}/auth`;
   }
 
-  login(credential: ILoginRequest): Observable<any> {
-    // rever essa logica
-    todo: //console.log(crede ntial); remover
+  login(credential: ILoginRequest): Observable<ILoginResponse> {
+    // TODO: rever essa logica
     return this.http.post(this.apiUrl + '/login', credential)
       .pipe(
         tap((response: any) => {
@@ -38,18 +37,15 @@ export class AuthService {
   }
 
   logout() {
-    this.isLoggedInSubject.next(false);
-    this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
+    this.http.post(this.apiUrl + '/logout', { header: this.getToken()})
       .pipe(
-          tap((response: any) => {
+          tap(() => {
             localStorage.removeItem('token');
-            console.log('ola')
             this.isLoggedInSubject.next(false); // Atualizar o estado do usuário logado
             localStorage.clear();
         }),
         catchError(this.handleError)
       )
-      .subscribe();
   }
 
   isLoggedIn(): boolean {
@@ -76,11 +72,7 @@ export class AuthService {
     return localStorage.getItem('token-reset-password');
   }
 
-  handleError(error: any) {
-    return throwError(() => new Error(error || 'Server Error'));
-  }
-
-  // Implemente a lógica de envio de e-mail para redefinição de senha
+  // TODO: Implemente a lógica de envio de e-mail para redefinição de senha
   // o back-end deve retornar um e-mail com um link para redefinição de senha
   // o link deve redirecionar para a rota "reset-password" com o token de troca de senha
   // o token deve expirar em 1 hora
@@ -99,5 +91,24 @@ export class AuthService {
     return this.http.post(this.apiUrl + '/reset-password', { token, password }).pipe(
       catchError(this.handleError)
     )
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    // let errorMessage = 'An unexpected error occurred'; // en-us
+    let errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.'; // pt-br
+
+    // Verifica o status do erro e define uma mensagem personalizada
+    if (error.status === 400) {
+      // errorMessage = 'User is not activated. Please check your email for activation.'; // en-us
+      errorMessage = 'O usuário não foi ativado. Verifique seu e-mail para ativar o usuário.'; // pt-br
+    } else if (error.status === 401) {
+      // errorMessage = 'Unauthorized. Please check your credentials.'; // en-us
+      errorMessage = 'Acesso não autorizado. Verifique suas credenciais.'; // pt-br
+    } else if (error.status === 500) {
+      // errorMessage = 'Internal server error. Please try again later.'; // en-us
+      errorMessage = 'Erro interno do servidor. Tente novamente mais tarde.'; // pt-br
+    }
+
+    return throwError(() => new Error(errorMessage));
   }
 }

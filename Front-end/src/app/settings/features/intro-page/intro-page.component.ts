@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ModalService } from '../../core/services/modal/modal.service';
 import { UserLoginModalComponent } from '../../core/security/login/user-login-modal/user-login-modal.component';
+import { AuthService } from '../../core/security/services/auth/auth.service';
 
 @Component({
   selector: 'app-intro-page',
@@ -10,13 +11,10 @@ import { UserLoginModalComponent } from '../../core/security/login/user-login-mo
 export class IntroPageComponent {
 
   constructor(
-    private modal: ModalService
-  ) { }
+    private modal: ModalService,
+  ) {
+  }
   openLoginModal() {
-    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
-      if (result) {
-        console.log(result);
-      }
-    });
+    this.modal.openModal(UserLoginModalComponent)
   }
 }

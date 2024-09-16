@@ -1,4 +1,4 @@
-import { Autonomy } from './autonomy';
+import { Autonomy, IAutonomyRequest } from './autonomy';
 import { Category } from './category';
 import { Model } from "./model";
 import { Propulsion } from "./propulsion";
@@ -11,7 +11,19 @@ export interface Vehicle {
   category: Category;
   type: VehicleType;
   propulsion: Propulsion;
-  autonomy: Autonomy;
+  autonomy: IAutonomyRequest;
+  activated: boolean;
+  year: number;
+}
+
+export interface IVehicleRequest {
+  motor: string;
+  version: string;
+  model: Model;
+  category: Category;
+  type: VehicleType;
+  propulsion: Propulsion;
+  autonomy: IAutonomyRequest;
   activated: boolean;
   year: number;
 }

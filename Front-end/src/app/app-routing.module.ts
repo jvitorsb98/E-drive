@@ -11,6 +11,8 @@ import { ListMyAddressesComponent } from './settings/features/my-addresses/compo
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
 import { BrandViewComponent } from './settings/features/brand/components/brand-view/brand-view.component';
 import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
+import { ListVehiclesComponent } from './settings/features/admin-management/components/list-vehicles/list-vehicles.component';
+import { ModelListComponent } from './settings/features/model/components/model-list/model-list.component';
 
 const routes: Routes = [
   { path: 'intro-page', component: IntroPageComponent},
@@ -24,6 +26,8 @@ const routes: Routes = [
   { path: 'my-addresses/edit', component: MyAddressesComponent },
   { path: 'reset-password', component: UserPasswordModalComponent },
   { path: 'brand-adm', component: BrandViewComponent },
+  { path: 'model-adm', component: ModelListComponent },
+  { path: 'vehicles-adm', component: ListVehiclesComponent },
   { path: 'mapa', component: MapStationsComponent },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];

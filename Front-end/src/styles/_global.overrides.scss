@@ -4,12 +4,12 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
 
 .bkg-degrad-primary {
-  background: linear-gradient(to right, #19B6DD, #0D6277);
+  background: linear-gradient(to right, $btn-primary,$btn-secondary);
 }
 
 .btn-primary {
   width: 100%;
-  background-color: #19B6DD !important;
+  background-color: $btn-primary !important;
   font-weight: bold;
 }
 
@@ -25,5 +25,40 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+.custom-swal-popup-error {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.custom-swal-confirm-button-error {
+  background-color: red;
+  border-color: #721c24;
+  color: #f8d7da;
+}
+
+.custom-swal-confirm-button-error:hover {
+  background-color: #f8d7da;
+  border-color: #f8d7da;
+  color: #721c24;
+}
+
+.custom-swal-confirm-button-success {
+  background-color: $btn-primary;
+  border-color: $btn-secondary;
+  color: white;
+}
+
+.custom-swal-confirm-button-success:hover {
+  background-color: $btn-secondary;
+  border-color: $btn-secondary;
+  color: white;
+}
+
+.custom-swal-popup-success{
+  background-color: #d4edda;
+  border-color: #c3e6cb;
 }
 
