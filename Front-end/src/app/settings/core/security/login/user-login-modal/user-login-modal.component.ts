@@ -6,7 +6,7 @@ import { AuthService } from '../../../../core/security/services/auth/auth.servic
 import { ILoginRequest } from '../../../models/inter-Login';
 import { ResetPasswordComponent } from '../recover-password/reset-password/reset-password.component';
 import { Router } from '@angular/router';
-import { FaqPopupComponent } from '../../../fragments/FAQ/faq-popup/faq-popup.component';
+import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
 import Swal from 'sweetalert2';
 import { HttpErrorResponse } from '@angular/common/http';
 

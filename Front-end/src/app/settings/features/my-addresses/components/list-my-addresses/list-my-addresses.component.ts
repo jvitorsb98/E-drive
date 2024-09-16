@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
 import { DataAddressDetails } from '../../../../core/models/inter-Address';
 import { AddressService } from '../../../../core/services/Address/address.service';
 import { Router } from '@angular/router';

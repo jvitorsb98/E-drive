@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import Swal from 'sweetalert2';
 import { Brand } from '../../../../core/models/brand';
 import { catchError, of } from 'rxjs';
-import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
 
 @Component({
   selector: 'app-modal-form-brand',

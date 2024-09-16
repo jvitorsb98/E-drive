@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { HttpClient } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
 import { AddressService } from '../../../../core/services/Address/address.service';
 import { DataAddressDetails, IAddressRequest } from '../../../../core/models/inter-Address';
 import { ActivatedRoute, Router } from '@angular/router';

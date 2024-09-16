@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { Model } from '../../../../core/models/model';
 import Swal from 'sweetalert2';
 import { catchError, map, Observable, of, startWith } from 'rxjs';
-import { FaqPopupComponent } from '../../../../core/fragments/FAQ/faq-popup/faq-popup.component';
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { BrandService } from '../../../../core/services/brand/brand.service';
 

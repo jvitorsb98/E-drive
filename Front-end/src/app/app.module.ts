@@ -16,7 +16,6 @@ import { UserRegistrationFormComponent } from './settings/features/users/compone
 import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { FooterComponent } from './settings/core/fragments/footer/footer.component';
-import { NavbarIntroComponent } from './settings/core/fragments/header/navbar-intro/navbar-intro.component';
 import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
 import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
 import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
@@ -29,7 +28,6 @@ import { UserVehicleListComponent } from './settings/features/user-vehicle/compo
 import { ModalDetailsVehicleComponent } from './settings/features/user-vehicle/components/modal-details-vehicle/modal-details-vehicle.component';
 import { ModalFormVehicleComponent } from './settings/features/user-vehicle/components/modal-form-vehicle/modal-form-vehicle.component';
 import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
-import { FaqPopupComponent } from './settings/core/fragments/FAQ/faq-popup/faq-popup.component';
 import { ModalDetailsBrandComponent } from './settings/features/brand/components/modal-details-brand/modal-details-brand.component';
 import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
 import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
@@ -49,6 +47,8 @@ import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.
 import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
 import { CommonModule } from '@angular/common';
 import { BrandListComponent } from './settings/features/brand/components/brand-list/brand-list.component';
+import { FaqPopupComponent } from './settings/core/fragments/faq-popup/faq-popup.component';
+import { NavbarIntroComponent } from './settings/core/fragments/navbar-intro/navbar-intro.component';
 
 @NgModule({
   declarations: [
