@@ -23,8 +23,7 @@ export class AuthService {
   }
 
   login(credential: ILoginRequest): Observable<ILoginResponse> {
-    // rever essa logica
-    todo: //console.log(crede ntial); remover
+    // TODO: rever essa logica
     return this.http.post(this.apiUrl + '/login', credential)
       .pipe(
         tap((response: any) => {
@@ -38,8 +37,7 @@ export class AuthService {
   }
 
   logout() {
-    this.isLoggedInSubject.next(false);
-    this.http.post(this.apiUrl + '/logout', localStorage.getItem('token'))
+    this.http.post(this.apiUrl + '/logout', { header: this.getToken()})
       .pipe(
           tap(() => {
             localStorage.removeItem('token');
@@ -48,7 +46,6 @@ export class AuthService {
         }),
         catchError(this.handleError)
       )
-      .subscribe();
   }
 
   isLoggedIn(): boolean {

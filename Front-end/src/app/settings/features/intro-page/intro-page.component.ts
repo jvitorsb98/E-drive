@@ -12,15 +12,9 @@ export class IntroPageComponent {
 
   constructor(
     private modal: ModalService,
-    private auth: AuthService
   ) {
-    auth.logout();
   }
   openLoginModal() {
-    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
-      if (result) {
-        console.log(result);
-      }
-    });
+    this.modal.openModal(UserLoginModalComponent)
   }
 }

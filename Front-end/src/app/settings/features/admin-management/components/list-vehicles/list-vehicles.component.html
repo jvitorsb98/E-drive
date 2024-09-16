@@ -49,9 +49,9 @@
 
           <ng-container matColumnDef="activated">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let model">
-              <mat-icon class="check" *ngIf="model.activated">check</mat-icon>
-              <mat-icon class="error" *ngIf="!model.activated">remove</mat-icon>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <mat-icon class="check" *ngIf="vehicle.activated" (click)="deactivate(vehicle)">check</mat-icon>
+              <mat-icon class="error" *ngIf="!vehicle.activated" (click)="activate(vehicle)">remove</mat-icon>
             </td>
           </ng-container>
 
@@ -76,7 +76,7 @@
         </table>
     </div>
   </div>
-  <mat-paginator class="shadow-sn" [length]="totalVeicles" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 30, 40, 50]"
+  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 30, 40, 50]"
           (page)="onPageChange($event)" aria-label="Selecione modelos por página"></mat-paginator>
   <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (click)="openModalAdd()"
           text="Nova Versão de Veiculo"></app-ui-button>

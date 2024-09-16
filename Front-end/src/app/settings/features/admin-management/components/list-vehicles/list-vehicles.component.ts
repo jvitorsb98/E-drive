@@ -5,13 +5,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
-import { Model } from '../../../../core/models/model';
 import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
 import { ModalDetailsModelComponent } from '../../../model/components/modal-details-model/modal-details-model.component';
-import { ModalFormModelComponent } from '../../../model/components/modal-form-model/modal-form-model.component';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../core/models/vehicle';
 import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-list-vehicles',
@@ -19,13 +18,15 @@ import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
   styleUrl: './list-vehicles.component.scss'
 })
 export class ListVehiclesComponent {
-  totalVeicles: number = 0;
+  totalVehicles: number = 0;
   pageIndex: number = 0;
   pageSize: number = 5;
   currentPage: number = 0;
   displayedColumns: string[] = ['icon', 'motor','version', 'year', 'actions'];
   dataSource = new MatTableDataSource<Vehicle>();
   List: Vehicle[] = [];
+  isFilterActive: boolean = false;
+  filteredData: Vehicle[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -48,26 +49,29 @@ export class ListVehiclesComponent {
   }
 
   getList(pageIndex: number, pageSize: number) {
-    this.vehicleService.getAll(pageIndex, pageSize).subscribe({
-      next: (response: PaginatedResponse<Vehicle>) => { // Usa a interface tipada
-        console.log('Response from getAllModels:', response);
+    if (this.isFilterActive) {
+      this.dataSource.data = this.filteredData;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    }else {
+      this.vehicleService.getAll(pageIndex, pageSize).subscribe({
+        next: (response: PaginatedResponse<Vehicle>) => { // Usa a interface tipada
+          // Extrai o array de marcas do campo 'content'
+          this.List = response.content;
 
-        // Extrai o array de marcas do campo 'content'
-        this.List = response.content;
-        console.log("List:", this.List);
-
-        if (Array.isArray(this.List)) {
-          this.dataSource = new MatTableDataSource(this.List);
-          this.dataSource.sort = this.sort;
-          this.totalVeicles = response.totalElements;
-        } else {
-          console.error('Expected an array in response.content, but got:', this.List);
+          if (Array.isArray(this.List)) {
+            this.dataSource = new MatTableDataSource(this.List);
+            this.dataSource.sort = this.sort;
+            this.totalVehicles = response.totalElements;
+          } else {
+            this.showAlert("Erro !!", "Ocorreu um erro ao obter a lista de veículos");
+          }
+        },
+        error: (error: any) => {
+          this.handleError(error);
         }
-      },
-      error: (error: any) => {
-        console.error('Error on getListModels:', error);
-      }
-    });
+      });
+    }
   }
 
   onPageChange(event: any) {
@@ -76,69 +80,94 @@ export class ListVehiclesComponent {
     this.getList(this.currentPage, this.pageSize);
   }
 
-  deactivate(modelData: Model) {
-    console.log('Deletando veículo:', modelData);
-    this.vehicleService.deactivate().pipe(
-      catchError(() => {
-        Swal.fire({
-          title: 'Erro!',
-          icon: 'error',
-          text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
-          showConfirmButton: true,
-          confirmButtonColor: 'red',
-        });
-        return of(null); // Continua a sequência de observáveis com um valor nulo
-      })
-    ).subscribe(() => {  // Omiti o parâmetro `response` porque o backend esta retornando null
-      Swal.fire({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: 'O veículo foi deletado com sucesso!',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      }).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          this.getList(this.pageIndex, this.pageSize);
-        }
-      });
+  deactivate(Data: Vehicle) {
+    this.vehicleService.deactivate(Data.id).subscribe({
+      next: () => {
+        this.handleSuccess("Desativado com sucesso")
+        this.getList(this.pageIndex, this.pageSize);
+      },
+      error: (error: HttpErrorResponse) => this.handleError(error)
     });
   }
 
-  activate(modelData: Model) {
-    console.log('Ativando veículo:', modelData);
-    this.vehicleService.activate().pipe(
-      catchError(() => {
-        Swal.fire({
-          title: 'Erro!',
-          icon: 'error',
-          text: 'Ocorreu um erro ao ativar o veículo. Tente novamente mais tarde.',
-          showConfirmButton: true,
-          confirmButtonColor: 'red',
-        });
-        return of(null); // Continua a sequência de observáveis com um valor nulo
-      })
-    ).subscribe(() => {  // Omiti o parâmetro `response` porque o backend esta retornando null
-      Swal.fire({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: 'O veículo foi ativado com sucesso!',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      }).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          this.getList(this.pageIndex, this.pageSize);
-        }
-      });
+  activate(Data: Vehicle) {
+    this.vehicleService.activate(Data.id).subscribe({
+      next: () => {
+        this.handleSuccess("Ativado com sucesso")
+        this.getList(this.pageIndex, this.pageSize);
+      },
+      error: (error: HttpErrorResponse) => this.handleError(error)
     });
   }
 
+  handleError(error: HttpErrorResponse) {
+    this.showAlert("Erro !!", error.message);
+  }
+
+  handleSuccess(text: string = "Operação realizada com sucesso") {
+    this.showAlert("Sucesso !!", text, true);
+  }
+
+  // TODO: O Filtro esta com bug quando pula para proximo paginacao
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    try {
+      this.isFilterActive = true;
+      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+
+      this.vehicleService.getAll(0, this.totalVehicles)
+        .pipe(
+          catchError((error) => {
+            this.handleError(new HttpErrorResponse({ error: error }));
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<Vehicle> | never[]) => {
+          if (Array.isArray(response)) {
+            // Verifica se o retorno é um array vazio
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            this.filteredData = response.content.filter(vehicle =>
+              vehicle.version.toLowerCase().includes(filterValue) ||
+              vehicle.motor.toLowerCase().includes(filterValue)
+            );
+
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+    } catch (error) {
+      this.handleError(new HttpErrorResponse({ error: error }));
     }
+  }
+
+
+  private showAlert(title: string = 'Erro', text: string = 'Algo deu errado', success: boolean = false): void {
+    const icon = success ? 'success' : 'error';
+    const popup = success ? 'custom-swal-popup-success' : 'custom-swal-popup-error';
+    const confirmButton = success ? 'custom-swal-confirm-button-success' : 'custom-swal-confirm-button-error';
+
+    Swal.fire({
+      icon: icon,
+      title: title,
+      text: text,
+      confirmButtonText: 'Ok',
+      customClass: {
+        popup: popup,
+        confirmButton: confirmButton
+      }
+    });
   }
 
   // LOGICA DO MODAL
@@ -159,7 +188,6 @@ export class ListVehiclesComponent {
   }
 
   openModalEdit(vehicle: Vehicle) {
-    console.log('Objeto Model enviado ao modal:', vehicle);
     this.dialog.open(VehicleFormComponent, {
       width: '100%',
       height: '100%',
