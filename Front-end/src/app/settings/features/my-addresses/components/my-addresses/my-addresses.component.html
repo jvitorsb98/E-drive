@@ -4,225 +4,147 @@
     <div class="row">
       <!-- Container para os botões e título -->
       <div class="col-12 header-container">
-        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()"><mat-icon>arrow_back</mat-icon></button>
-        <!-- <h1 class="titulo" *ngIf="!editBrand">Cadastrar Marca</h1> -->
-        <!-- <h1 class="titulo" *ngIf="editBrand">Editar Marca</h1> -->
-         <h1 class="titulo">Cadastrar Endereço</h1>
-        <button class="icon" mat-icon-button (click)="openFAQModal()"><mat-icon>help_outline</mat-icon></button>
+        <div class="ps-2">
+          <mat-icon (click)="closeModal()">arrow_back</mat-icon>
+        </div>
+        <h1 class="titulo" *ngIf="editAddress">{{this.actionTitle}}</h1>
+        <h1 class="titulo" *ngIf="!editAddress">{{this.actionTitle}}</h1>
+        <button class="btn">
+          <img class="icon" (click)="openFAQModal()"
+            src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+        </button>
       </div>
     </div>
 
-    <form [formGroup]="addressForm">
+    <form [formGroup]="addressForm" (ngSubmit)="onSubmit()">
       <div class="content">
-          <div class="row">
-            <div class="col-12 col-md-6 mb-2">
-               <mat-card>
-                <mat-form-field>
-                  <mat-label class="custom-label">CEP</mat-label>
-                  <input 
-                  type="text" 
-                  name="zipCode" 
-                  matInput 
-                  formControlName="zipCode" 
-                  required 
-                  aria-describedby="Help" 
-                  (blur)="searchPostalCode()"/>
-                  <mat-hint id="Help" class="mat-hint-text">Informe o <strong>CPF.</strong></mat-hint>
-                  <mat-error class="mat-error-text" 
-                  *ngIf="addressForm.get('zipCode')?.hasError('required') 
-                  && addressForm.get('zipCode')?.touched" class="mat-error-text">O <strong>CPF</strong> é obrigatório.</mat-error>
-                </mat-form-field>
+        <div class="row">
+          <div class="col-12 col-md-6 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">CEP</mat-label>
+                <input type="text" name="zipCode" matInput formControlName="zipCode" required aria-describedby="Help"
+                  (blur)="searchPostalCode()" />
+              </mat-form-field>
 
-                <div *ngIf="addressForm.get('zipCode')?.hasError('minlength') && addressForm.get('zipCode')?.dirty">
-                  <mat-error class="mat-error-text-minlength">O <strong>CPF</strong> deve ter pelo menos {{
+              <div *ngIf="addressForm.get('zipCode')?.hasError('minlength') && addressForm.get('zipCode')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>CPF</strong> deve ter pelo menos {{
                   addressForm.get('zipCode')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-                </div>
-              </mat-card>
-            </div>
+              </div>
+            </mat-card>
+          </div>
 
-            <div class="col-12 col-md-6 mb-2">
-              <mat-card>
-               <mat-form-field>
-                 <mat-label class="custom-label">País</mat-label>
-                 <input 
-                 type="text" 
-                 name="country" 
-                 matInput 
-                 formControlName="country" 
-                 required 
-                 aria-describedby="Help" 
-                 (blur)="searchPostalCode()"/>
-                 <mat-hint id="Help" class="mat-hint-text">Informe o <strong>país.</strong></mat-hint>
-                 <mat-error class="mat-error-text" 
-                 *ngIf="addressForm.get('country')?.hasError('required') 
-                 && addressForm.get('country')?.touched" class="mat-error-text">O <strong>país</strong> é obrigatório.</mat-error>
-               </mat-form-field>
-               <div *ngIf="addressForm.get('country')?.hasError('minlength') && addressForm.get('country')?.dirty">
-                 <mat-error class="mat-error-text-minlength">O <strong>país</strong> deve ter pelo menos {{
-                 addressForm.get('country')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-               </div>
-             </mat-card>
-           </div>
+          <div class="col-12 col-md-6 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">País</mat-label>
+                <input type="text" name="country" matInput formControlName="country" required aria-describedby="Help"
+                  (blur)="searchPostalCode()" />
+              </mat-form-field>
+              <div *ngIf="addressForm.get('country')?.hasError('minlength') && addressForm.get('country')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>país</strong> deve ter pelo menos {{
+                  addressForm.get('country')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+              </div>
+            </mat-card>
+          </div>
 
-            <div class="col-12 col-md-6 mb-2">
-              <mat-card>
-                <mat-form-field>
-                  <mat-label class="custom-label">Estado</mat-label>
-                  <input 
-                  type="text" 
-                  name="state" 
-                  matInput 
-                  formControlName="state" 
-                  required 
-                  aria-describedby="Help" 
-                  (blur)="searchPostalCode()"/>
-                  <mat-hint id="Help" class="mat-hint-text">Informe o <strong>estado.</strong></mat-hint>
-                  <mat-error class="mat-error-text" 
-                  *ngIf="addressForm.get('state')?.hasError('required') 
-                  && addressForm.get('state')?.touched" class="mat-error-text">O <strong>estado</strong> é obrigatório.</mat-error>
-                </mat-form-field>
-                <div *ngIf="addressForm.get('state')?.hasError('minlength') && addressForm.get('state')?.dirty">
-                  <mat-error class="mat-error-text-minlength">O <strong>estado</strong> deve ter pelo menos {{
+          <div class="col-12 col-md-6 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">Estado</mat-label>
+                <input type="text" name="state" matInput formControlName="state" required aria-describedby="Help"
+                  (blur)="searchPostalCode()" />
+              </mat-form-field>
+              <div *ngIf="addressForm.get('state')?.hasError('minlength') && addressForm.get('state')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>estado</strong> deve ter pelo menos {{
                   addressForm.get('state')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-                </div>
-              </mat-card>
-            </div>
+              </div>
+            </mat-card>
+          </div>
 
-              <div class="col-12 col-md-5 mb-2">
-                <mat-card>
-                 <mat-form-field>
-                   <mat-label class="custom-label">Cidade</mat-label>
-                   <input 
-                   type="text" 
-                   name="city" 
-                   matInput 
-                   formControlName="city" 
-                   required 
-                   aria-describedby="Help" 
-                   (blur)="searchPostalCode()"/>
-                   <mat-hint id="Help" class="mat-hint-text">Informe a <strong>cidade.</strong></mat-hint>
-                   <mat-error class="mat-error-text" 
-                   *ngIf="addressForm.get('city')?.hasError('required') 
-                   && addressForm.get('city')?.touched" class="mat-error-text">A <strong>cidade</strong> é obrigatório.</mat-error>
-                 </mat-form-field>
-                 <div *ngIf="addressForm.get('city')?.hasError('minlength') && addressForm.get('city')?.dirty">
-                   <mat-error class="mat-error-text-minlength">O <strong>cidade</strong> deve ter pelo menos {{
-                   addressForm.get('city')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-                 </div>
-               </mat-card>
-             </div>
+          <div class="col-12 col-md-5 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">Cidade</mat-label>
+                <input type="text" name="city" matInput formControlName="city" required aria-describedby="Help"
+                  (blur)="searchPostalCode()" />
+              </mat-form-field>
+              <div *ngIf="addressForm.get('city')?.hasError('minlength') && addressForm.get('city')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>cidade</strong> deve ter pelo menos {{
+                  addressForm.get('city')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+              </div>
+            </mat-card>
+          </div>
 
-             <div class="col-12 col-md-6 mb-2">
-              <mat-card>
-                <mat-form-field>
-                  <mat-label class="custom-label">Bairro</mat-label>
-                  <input 
-                  type="text" 
-                  name="neighborhood" 
-                  matInput 
-                  formControlName="neighborhood" 
-                  required 
+          <div class="col-12 col-md-6 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">Bairro</mat-label>
+                <input type="text" name="neighborhood" matInput formControlName="neighborhood" required
                   aria-describedby="Help" />
-                  <mat-hint id="Help" class="mat-hint-text">Informe o <strong>bairro.</strong></mat-hint>
-                  <mat-error class="mat-error-text" 
-                  *ngIf="addressForm.get('neighborhood')?.hasError('required') 
-                  && addressForm.get('neighborhood')?.touched" class="mat-error-text">O <strong>bairro</strong> é obrigatório.</mat-error>
-                </mat-form-field>
-                <div *ngIf="addressForm.get('neighborhood')?.hasError('minlength') && addressForm.get('neighborhood')?.dirty">
-                  <mat-error class="mat-error-text-minlength">O <strong>bairro</strong> deve ter pelo menos {{
+              </mat-form-field>
+              <div
+                *ngIf="addressForm.get('neighborhood')?.hasError('minlength') && addressForm.get('neighborhood')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>bairro</strong> deve ter pelo menos {{
                   addressForm.get('neighborhood')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-                </div>
-              </mat-card>
-            </div>
+              </div>
+            </mat-card>
+          </div>
 
-             <div class="col-12 col-md-4 mb-2">
-              <mat-card>
-               <mat-form-field>
-                 <mat-label class="custom-label">Número</mat-label>
-                 <input 
-                 type="text" 
-                 name="number" 
-                 matInput 
-                 formControlName="number" 
-                 required 
-                 aria-describedby="Help" 
-                 (blur)="searchPostalCode()"/>
-                 <mat-hint id="Help" class="mat-hint-text">Informe o <strong>número.</strong></mat-hint>
-                 <mat-error class="mat-error-text" 
-                 *ngIf="addressForm.get('number')?.hasError('required') 
-                 && addressForm.get('number')?.touched" class="mat-error-text">O <strong>número</strong> é obrigatório.</mat-error>
-               </mat-form-field>
-               <div *ngIf="addressForm.get('number')?.hasError('minlength') && addressForm.get('number')?.dirty">
-                 <mat-error class="mat-error-text-minlength">O <strong>número</strong> deve ter pelo menos {{
-                 addressForm.get('number')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-               </div>
-             </mat-card>
-           </div>
+          <div class="col-12 col-md-4 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">Número</mat-label>
+                <input type="text" name="number" matInput formControlName="number" required aria-describedby="Help"
+                  (blur)="searchPostalCode()" />
+              </mat-form-field>
+              <div *ngIf="addressForm.get('number')?.hasError('minlength') && addressForm.get('number')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>número</strong> deve ter pelo menos {{
+                  addressForm.get('number')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+              </div>
+            </mat-card>
+          </div>
 
-             <div class="col-12 col-md-6 mb-2">
-               <mat-card>
-                 <mat-form-field>
-                   <mat-label class="custom-label">Logradouro</mat-label>
-                   <input 
-                   type="text" 
-                   name="street" 
-                   matInput 
-                   formControlName="street" 
-                   required 
-                   aria-describedby="Help" />
-                   <mat-hint id="Help" class="mat-hint-text">Informe o <strong>logradouro.</strong></mat-hint>
-                   <mat-error class="mat-error-text" 
-                   *ngIf="addressForm.get('street')?.hasError('required') 
-                   && addressForm.get('street')?.touched" class="mat-error-text">O <strong>logradouro</strong> é obrigatório.</mat-error>
-                 </mat-form-field>
-                 <div *ngIf="addressForm.get('street')?.hasError('minlength') && addressForm.get('street')?.dirty">
-                   <mat-error class="mat-error-text-minlength">O <strong>logradouro</strong> deve ter pelo menos {{
-                   addressForm.get('street')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-                 </div>
-               </mat-card>
-             </div>
+          <div class="col-12 col-md-6 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">Logradouro</mat-label>
+                <input type="text" name="street" matInput formControlName="street" required aria-describedby="Help" />
+              </mat-form-field>
+              <div *ngIf="addressForm.get('street')?.hasError('minlength') && addressForm.get('street')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>logradouro</strong> deve ter pelo menos {{
+                  addressForm.get('street')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+              </div>
+            </mat-card>
+          </div>
 
-           <div class="col-12 col-md-6 mb-2">
-             <mat-card>
-               <mat-form-field>
-                 <mat-label class="custom-label">Complemento</mat-label>
-                 <input 
-                 type="text" 
-                 name="complement" 
-                 matInput 
-                 formControlName="complement" 
-                 required 
-                 aria-describedby="Help" />
-                 <mat-hint id="Help" class="mat-hint-text">Informe o <strong>complemento.</strong></mat-hint>
-                 <mat-error class="mat-error-text" 
-                 *ngIf="addressForm.get('complement')?.hasError('required') 
-                 && addressForm.get('complement')?.touched" class="mat-error-text">O <strong>complemento</strong> é obrigatório.</mat-error>
-               </mat-form-field>
-               <div *ngIf="addressForm.get('complement')?.hasError('minlength') && addressForm.get('complement')?.dirty">
-                 <mat-error class="mat-error-text-minlength">O <strong>complemento</strong> deve ter pelo menos {{
-                 addressForm.get('complement')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
-               </div>
-             </mat-card>
-           </div>
+          <div class="col-12 col-md-6 mb-2">
+            <mat-card appearance="outlined" class="border-0">
+              <mat-form-field>
+                <mat-label class="custom-label">Complemento</mat-label>
+                <input type="text" name="complement" matInput formControlName="complement" aria-describedby="Help" />
+              </mat-form-field>
+              <div *ngIf="addressForm.get('complement')?.hasError('minlength') && addressForm.get('complement')?.dirty">
+                <mat-error class="mat-error-text-minlength">O <strong>complemento</strong> deve ter pelo menos {{
+                  addressForm.get('complement')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+              </div>
+            </mat-card>
+          </div>
         </div>
       </div>
-        <!-- <mat-checkbox formControlName="hasChargingStation" [labelPosition]="labelPosition">Possui ponto de recarga para veículo elétrico?</mat-checkbox> -->
+      <!-- <mat-checkbox formControlName="hasChargingStation" [labelPosition]="labelPosition">Possui ponto de recarga para veículo elétrico?</mat-checkbox> -->
 
-        <div class="mb-3 form-container">
-          <label class="form-check-label">Possui ponto de recarga para <strong>veículo elétrico?</strong></label>
-          <div class="form-check mb-2 custom-checkbox">
-            <input class="form-check-input"
-            type="checkbox"
-            name="hasChargingStation"
-            formControlName="hasChargingStation"
-            checked>
-          </div>
-          <div *ngIf="addressForm.get('hasChargingStation')?.invalid && addressForm.get('hasChargingStation')?.touched" class="text-danger">
-            <mat-error class="mat-error-text">Você deve <strong>informar se existe ponto de  </strong>recarga.</mat-error>
-          </div>
+      <div class="mb-3 form-container">
+        <div class="form-check mb-2 custom-checkbox">
+          <input class="form-check-input" type="checkbox" name="hasChargingStation"
+            formControlName="hasChargingStation"> <label class="form-check-label">Possui ponto de recarga para
+            <strong>veículo
+              elétrico?</strong></label>
+
+        </div>
       </div>
       <div class="buttons-container">
-        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (ngSubmit)="onSubmit()" text="Finalizar cadastro"></app-ui-button>
+        <button class="btn w-100 mb-2 border-0 text-white" type="submit" [disabled]="!addressForm.valid">Finalizar</button>
       </div>
     </form>
   </div>

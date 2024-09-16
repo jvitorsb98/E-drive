@@ -13,13 +13,13 @@ body {
 }
 
 .col-12 {
-  flex: 1; // Permite que o conteúdo ocupe o espaço disponível
+  flex: 1; 
 }
 
 .content {
-  flex: 1; // Faz com que a área de conteúdo cresça para ocupar o espaço disponível
+  flex: 1; 
   display: flex;
-  flex-direction: column; // Permite que os campos do formulário sejam empilhados
+  flex-direction: column; 
 }
 
 #Help {
@@ -36,7 +36,10 @@ body {
 .buttons-container {
   display: flex;
   flex-direction: column;
-  margin-top: auto; // Empurra os botões para o fundo
+  margin-top: auto;
+  button{
+    background-color: #19B6DD;
+  }
 }
 
 .hidden {
@@ -44,7 +47,7 @@ body {
 }
 
 .titulo {
-  font-size: 20px;
+  font-size: 1rem;
   color: #19B6DD;
   margin: 0;
   text-align: center;
@@ -52,14 +55,7 @@ body {
 }
 
 .icon {
-  color: #000; // Cor padrão do ícone
-  transition: color 0.3s, box-shadow 0.3s; // Adiciona uma transição suave para cor e sombra
-
-  &:hover {
-    cursor: pointer;
-    color: #19B6DD; // Cor do ícone quando o mouse passa sobre ele
-    box-shadow: 0px 0px 5px 3px rgba(25, 182, 221, 0.5); // Efeito de sombra suave
-  }
+  width: 20px;
 }
 
 .mat-error-text {
@@ -153,7 +149,6 @@ body {
   outline: none;
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
-  /* Transição suave para a cor de fundo e borda */
 }
 
 .form-check-input:hover {

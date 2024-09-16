@@ -25,7 +25,7 @@ export class ModalFormVehicleComponent implements OnInit {
   userVehicleForm!: FormGroup;
   selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
-  editUser: boolean = false; // Variável para controlar a exibição do h1 do modal
+  editVehicle: boolean = false; // Variável para controlar a exibição do h1 do modal
 
   brands: { name: string; id: number }[] = [];
   models: { name: string; id: number }[] = [];
@@ -64,7 +64,7 @@ export class ModalFormVehicleComponent implements OnInit {
       autonomyElectricMode: [null, [Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
     });
     if (this.data.userVehicle && this.data.vehicle) {
-      this.editUser = true;
+      this.editVehicle = true;
       this.fillForm();
     } else {
       console.warn('@Inject(MAT_DIALOG_DATA) public data Dados estão incompletos:', this.data);
