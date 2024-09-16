@@ -11,7 +11,7 @@ export interface Vehicle {
   category: Category;
   type: VehicleType;
   propulsion: Propulsion;
-  autonomy: Autonomy;
+  autonomy: IAutonomyRequest;
   activated: boolean;
   year: number;
 }
@@ -24,6 +24,6 @@ export interface IVehicleRequest {
   type: VehicleType;
   propulsion: Propulsion;
   autonomy: IAutonomyRequest;
-  // activated: boolean;
+  activated: boolean;
   year: number;
 }

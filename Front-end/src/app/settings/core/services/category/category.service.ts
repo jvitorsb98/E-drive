@@ -30,14 +30,14 @@ export class CategoryService {
     });
   }
 
-  getAll(page : number, size : number): Observable<Category[]> {
-
-    let params = new HttpParams()
-    .set('page', page.toString())
-    .set('size', size.toString());
+  getAll(): Observable<Category[]> {
+    // page : number, size : number
+    // let params = new HttpParams()
+    // .set('page', page.toString())
+    // .set('size', size.toString());
     // .set('headers', this.headers.toString());
 
-    return this.http.get<Category[]>(this.baseUrl, { params: params }).pipe(
+    return this.http.get<Category[]>(this.baseUrl).pipe(
       catchError(this.handleError)
     );
   }

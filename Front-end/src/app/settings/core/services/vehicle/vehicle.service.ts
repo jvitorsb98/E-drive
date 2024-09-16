@@ -81,10 +81,18 @@ export class VehicleService {
     );
   }
 
+  // cadastro de Autonomia
+  registerAutonomy(autonomy: any): Observable<any> {
+    return this.http.post<any>(`${this.vehicleUrl}/api/v1/vehicles/autonomy`, autonomy, { headers: this.headers }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
+    //NOTE - Adicione as mensagens de erro personalizadas conforme necessário
     // let errorMessage = 'An unexpected error occurred'; // en-us
     let errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.'; // pt-br
-    
+
      if (error.status === 400) {
       // errorMessage = 'Unauthorized. Please check your credentials.'; // en-us
       errorMessage = 'Acesso não autorizado. Verifique suas credenciais.'; // pt-br

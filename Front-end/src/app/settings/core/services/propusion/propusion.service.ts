@@ -30,14 +30,14 @@ export class PropusionService {
     });
   }
 
-  getAll(page: number, size: number): Observable<Propulsion[]> {
-
-    let params = new HttpParams()
-    .set('page', page.toString())
-    .set('size', size.toString());
+  getAll(): Observable<Propulsion[]> {
+    // page: number, size: number
+    // let params = new HttpParams()
+    // .set('page', page.toString())
+    // .set('size', size.toString());
     // .set('headers', this.headers.toString());
 
-    return this.http.get<Propulsion[]>(this.baseUrl, { params: params }).pipe(
+    return this.http.get<Propulsion[]>(this.baseUrl).pipe(
       catchError(this.handleError)
     );
   }

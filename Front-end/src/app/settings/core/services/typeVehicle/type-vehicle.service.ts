@@ -29,14 +29,14 @@ export class TypeVehicleService {
     });
   }
 
-  getAll(page: number, size: number): Observable<VehicleType[]> {
-
-    let params = new HttpParams()
-    .set('page', page.toString())
-    .set('size', size.toString());
+  getAll(): Observable<VehicleType[]> {
+    // page: number, size: number
+    // let params = new HttpParams()
+    // .set('page', page.toString())
+    // .set('size', size.toString());
     // .set('headers', this.headers.toString());
 
-    return this.http.get<VehicleType[]>(this.baseUrl, { params: params }).pipe(
+    return this.http.get<VehicleType[]>(this.baseUrl).pipe(
       catchError(this.handleError)
     );
   }
