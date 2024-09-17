@@ -8,7 +8,6 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { Model } from '../../../../core/models/model';
 import { BrandService } from '../../../../core/services/brand/brand.service';
 import { ModelService } from '../../../../core/services/model/model.service';
-import { ModalFormModelComponent } from '../../../model/components/modal-form-model/modal-form-model.component';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { IVehicleRequest, Vehicle } from '../../../../core/models/vehicle';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';

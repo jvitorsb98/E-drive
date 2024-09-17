@@ -1,12 +1,14 @@
 <footer class="bottom-bar">
     <nav class="bottom-bar-nav">
-        <a routerLink="/dashboard" class="bottom-bar-link" [ngClass]="{ 'active': isActive('/dashboard') }">
+        <a routerLink="e-driver/dashboard" class="bottom-bar-link"
+            [ngClass]="{ 'active': isActive('e-driver/dashboard') }">
             <img src="../../../../../assets/images/home-icon.svg" alt="icone página principal" />
         </a>
-        <a routerLink="/mapa" class="bottom-bar-link" [ngClass]="{ 'active': isActive('/mapa') }">
+        <a routerLink="e-driver/map" class="bottom-bar-link" [ngClass]="{ 'active': isActive('e-driver/map') }">
             <img src="../../../../../assets/images/map-pin-icon.svg" alt="icone mapa" />
         </a>
-        <a routerLink="/meus-Dados" class="bottom-bar-link" [ngClass]="{ 'active': isActive('/meus-Dados') }">
+        <a routerLink="e-driver/users/myinfo" class="bottom-bar-link"
+            [ngClass]="{ 'active': isActive('e-driver/users/myinfo') }">
             <img src="../../../../../assets/images/profile-icon.svg" alt="icone perfil" />
         </a>
     </nav>

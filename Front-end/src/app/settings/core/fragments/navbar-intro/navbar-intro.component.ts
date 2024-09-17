@@ -29,7 +29,7 @@ export class NavbarIntroComponent {
   openRegisterModal() {
     this.closeMenu();
     // this.modal.openModal(UserRegistrationModalComponent)
-    this.router.navigate(['/user-registration']);
+    this.router.navigate(['/e-driver/users/registration']);
   }
 
   toggleMenu() {

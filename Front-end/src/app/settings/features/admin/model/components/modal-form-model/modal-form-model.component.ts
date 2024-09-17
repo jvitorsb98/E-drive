@@ -1,54 +1,71 @@
-import { Component, Inject, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModelService } from '../../../../core/services/model/model.service';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Model } from '../../../../core/models/model';
-import Swal from 'sweetalert2';
-import { catchError, map, Observable, of, startWith } from 'rxjs';
-import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { BrandService } from '../../../../core/services/brand/brand.service';
+// Angular Core
+import { Component, Inject, ViewChild } from '@angular/core'; // Importa Component, Inject e ViewChild do núcleo Angular para criar componentes, injetar dados e acessar elementos do DOM
+
+// Angular Forms
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; // Importa ferramentas para construir e validar formulários
+
+// Angular Material
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'; // Importa ferramentas para criar e manipular diálogos modais
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete'; // Importa componentes para autocompletar entradas
+
+// SweetAlert2
+import Swal from 'sweetalert2'; // Biblioteca para exibir alertas bonitos e personalizáveis
+
+// RxJS
+import { catchError, map, Observable, of, startWith } from 'rxjs'; // Importa operadores e tipos para manipulação de observáveis
+
+// Serviços
+import { ModelService } from '../../../../../core/services/model/model.service'; // Serviço para operações relacionadas a modelos
+import { BrandService } from '../../../../../core/services/brand/brand.service'; // Serviço para operações relacionadas a marcas
+
+// Modelos
+import { Model } from '../../../../../core/models/model'; // Modelo de dados para modelos
+
+// Componentes
+import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para exibir informações úteis
 
 @Component({
   selector: 'app-modal-form-model',
   templateUrl: './modal-form-model.component.html',
-  styleUrl: './modal-form-model.component.scss'
+  styleUrls: ['./modal-form-model.component.scss'] // Corrigido para styleUrls
 })
 export class ModalFormModelComponent {
-  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
-  modelForm!: FormGroup;
-  editModel: boolean = false;
-  noBrandFound: boolean = false;
-  brands: { name: string; id: number }[] = [];
-  filteredBrands: Observable<{ name: string; id: number }[]> = of([]);
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger; // Referência ao gatilho do autocomplete
+  modelForm!: FormGroup; // Formulário para criar/editar modelos
+  editModel: boolean = false; // Indica se estamos editando um modelo
+  noBrandFound: boolean = false; // Indica se nenhuma marca foi encontrada
+  brands: { name: string; id: number }[] = []; // Lista de marcas disponíveis
+  filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Observable para marcas filtradas
 
   constructor(
-    private modelService: ModelService,
-    private brandService: BrandService,
-    private formBuilder: FormBuilder,
-    private dialog: MatDialog,
-    public dialogRef: MatDialogRef<ModalFormModelComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Model
+    private modelService: ModelService, // Serviço para modelos
+    private brandService: BrandService, // Serviço para marcas
+    private formBuilder: FormBuilder, // Construtor de formulários
+    private dialog: MatDialog, // Serviço de diálogo
+    public dialogRef: MatDialogRef<ModalFormModelComponent>, // Referência ao diálogo
+    @Inject(MAT_DIALOG_DATA) public data: Model // Dados recebidos para o modal
   ) { }
 
   ngOnInit(): void {
-    this.editModel = !!this.data?.name; // Atribui true se data.brand existir e false se não existir
-    this.loadBrands();
-    this.buildForm();
+    this.editModel = !!this.data?.name; // Atribui true se data.name existir, indicando que estamos editando
+    this.loadBrands(); // Carrega a lista de marcas
+    this.buildForm(); // Constrói o formulário
     if (this.editModel) {
-      this.fillForm();
-      this.modelForm.get('name')?.enable();
+      this.fillForm(); // Preenche o formulário com dados existentes, se estiver editando
+      this.modelForm.get('name')?.enable(); // Habilita o campo 'name' para edição
     }
   }
 
+  // Constrói o formulário com validação
   buildForm() {
     this.modelForm = this.formBuilder.group({
       name: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]),
       brand: new FormControl(null, [Validators.required]),
     });
-    this.monitorBrandChanges();
+    this.monitorBrandChanges(); // Monitora alterações no campo 'brand'
   }
 
+  // Preenche o formulário com dados existentes
   fillForm() {
     if (this.data.name) {
       this.modelForm.patchValue({
@@ -62,12 +79,12 @@ export class ModalFormModelComponent {
     }
   }
 
+  // Carrega a lista de marcas disponíveis
   loadBrands() {
     this.brandService.getAllBrands().subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
-        // Inicializa o filtro após carregar as marcas
-        this._filterBrands();
+        this._filterBrands(); // Inicializa o filtro após carregar as marcas
       },
       error: (error) => {
         console.error('Erro ao carregar as marcas', error);
@@ -75,10 +92,11 @@ export class ModalFormModelComponent {
     });
   }
 
+  // Submete o formulário para criar ou atualizar um modelo
   submitForm() {
     if (this.modelForm.valid) {
       console.log('Formulário válido:', this.modelForm.value);
-      const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Usa o método isEditing para determinar a ação
+      const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a ação com base em estar editando ou criando
 
       // Obtém o ID da marca selecionada
       const selectedBrandId = this.getSelectedBrandId();
@@ -123,6 +141,7 @@ export class ModalFormModelComponent {
     }
   }
 
+  // Filtra a lista de marcas com base na entrada do usuário
   private _filterBrands() {
     this.modelForm.get('brand')!.valueChanges.pipe(
       startWith(''),
@@ -130,8 +149,7 @@ export class ModalFormModelComponent {
         const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
         const filtered = this.brands.filter(brand => brand.name.toLowerCase().includes(filterValue));
 
-        // Atualiza a variável noBrandFound
-        this.noBrandFound = filtered.length === 0;
+        this.noBrandFound = filtered.length === 0; // Atualiza a variável noBrandFound
 
         return filtered;
       })
@@ -140,18 +158,21 @@ export class ModalFormModelComponent {
     });
   }
 
+  // Manipula a seleção de uma marca no autocomplete
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value;
     this.modelForm.get('brand')?.setValue(selectedBrand.name); // Atualiza o valor do input
     console.log('Marca selecionada:', selectedBrand);
   }
 
+  // Obtém o ID da marca selecionada
   private getSelectedBrandId(): number | undefined {
     const selectedBrandName = this.modelForm.get('brand')?.value;
     const selectedBrand = this.brands.find(brand => brand.name === selectedBrandName);
     return selectedBrand?.id;
   }
 
+  // Alterna a abertura do painel de autocomplete
   toggleAutocomplete(event: Event) {
     event.stopPropagation(); // Impede que o clique cause conflito com o foco do input
     if (this.autocompleteTrigger.panelOpen) {
@@ -161,28 +182,30 @@ export class ModalFormModelComponent {
     }
   }
 
+  // Monitora alterações no campo 'brand' para habilitar/desabilitar o campo 'name'
   monitorBrandChanges(): void {
     this.modelForm.get('brand')?.valueChanges.subscribe((brandValue) => {
       const selectedBrand = this.brands.find(brand => brand.name === brandValue);
 
       if (selectedBrand) {
-        // Habilita o campo 'name' quando uma marca válida for selecionada
-        this.modelForm.get('name')?.enable();
+        this.modelForm.get('name')?.enable(); // Habilita o campo 'name' se uma marca válida for selecionada
       } else {
-        // Desabilita o campo 'name' se não houver uma marca válida selecionada
-        this.modelForm.get('name')?.disable();
+        this.modelForm.get('name')?.disable(); // Desabilita o campo 'name' se não houver uma marca válida selecionada
       }
     });
   }
 
+  // Verifica se estamos editando um modelo
   isEditing(): boolean {
-    return !!this.data; // Retorna true se this.data estiver definido, indicando que estamos editando
+    return !!this.data; // Retorna true se this.data estiver definido
   }
 
+  // Fecha o modal
   closeModal() {
     this.dialogRef.close();
   }
 
+  // Abre o modal de FAQ
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
@@ -193,27 +216,12 @@ export class ModalFormModelComponent {
           },
           {
             question: 'Como visualizar os detalhes de um modelo?',
-            answer: 'Para visualizar os detalhes de um modelo, clique no ícone de "olho" (visibility) ao lado do modelo que você deseja visualizar. Um modal será exibido mostrando todas as informações detalhadas sobre o modelo selecionado.'
-          },
-          {
-            question: 'Como editar um modelo existente?',
-            answer: 'Para editar um modelo, clique no ícone de "lápis" (edit) ao lado do modelo que você deseja modificar. Isso abrirá um modal com um formulário pré-preenchido com os dados do modelo. Faça as alterações necessárias e clique em "Salvar" para atualizar as informações.'
-          },
-          {
-            question: 'Como excluir um modelo?',
-            answer: 'Para excluir um modelo, clique no ícone de "lixeira" (delete) ao lado do modelo que você deseja remover. Você será solicitado a confirmar a exclusão. Após confirmar, o modelo será removido da lista.'
-          },
-          {
-            question: 'Como buscar modelos específicos?',
-            answer: 'Use o campo de busca localizado acima da tabela. Digite o nome do modelo que você deseja encontrar e a tabela será filtrada automaticamente para mostrar apenas os modelos que correspondem à sua pesquisa.'
-          },
-          {
-            question: 'Como navegar entre as páginas da tabela?',
-            answer: 'Use o paginador localizado na parte inferior da tabela para navegar entre as páginas de modelos. Você pode selecionar o número de itens por página e usar os botões de navegação para ir para a página anterior ou seguinte.'
+            answer: 'Para visualizar os detalhes de um modelo existente, localize o modelo desejado na tabela e clique no botão de edição (ícone de lápis) ao lado do modelo. Isso abrirá um formulário com os detalhes do modelo, onde você poderá visualizar e editar as informações conforme necessário.'
           }
         ]
-      }
+      },
+      width: '500px',
+      height: '400px'
     });
   }
-
 }

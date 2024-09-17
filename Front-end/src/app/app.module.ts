@@ -1,104 +1,45 @@
-// Angular Modulos
+// Angular Módulos
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+// Rotas e Módulos de Funcionalidades
+import { AppRoutingModule } from './app-routing.module';
 import { AngularMaterialModule } from './settings/angular-material/angular-material.module';
+import { SharedModule } from './settings/shared/shared.module';
+import { VehiclesModule } from './settings/features/vehicles/vehicles.module';
+import { FragmentsModule } from './settings/core/fragments/fragments.module';
+import { IntroPageModule } from './settings/features/intro-page/module/intro-page.module';
 
 // Providers
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
-// Componentes
+// Componentes Principais
 import { AppComponent } from './app.component';
-import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
-import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
-import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
-import { FooterComponent } from './settings/core/fragments/footer/footer.component';
-import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
-import { ResetPasswordComponent } from './settings/core/security/login/recover-password/reset-password/reset-password.component';
-import { VehicleListComponent } from './settings/features/vehicles/components/vehicle-list/vehicle-list.component';
-import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
-import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
-import { DashboardComponent } from './settings/features/home/components/dashboard/dashboard.component';
-import { NavbarComponent } from './settings/features/home/components/navbar/navbar.component';
-import { UiButtonComponent } from './settings/shared/components/ui-button/ui-button.component';
-import { UserVehicleListComponent } from './settings/features/user-vehicle/components/user-vehicle-list/user-vehicle-list.component';
-import { ModalDetailsVehicleComponent } from './settings/features/user-vehicle/components/modal-details-vehicle/modal-details-vehicle.component';
-import { ModalFormVehicleComponent } from './settings/features/user-vehicle/components/modal-form-vehicle/modal-form-vehicle.component';
-import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
-import { ModalDetailsBrandComponent } from './settings/features/brand/components/modal-details-brand/modal-details-brand.component';
-import { ModalFormBrandComponent } from './settings/features/brand/components/modal-form-brand/modal-form-brand.component';
-import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
-import { ModalDetailsAddressComponent } from './settings/features/my-addresses/components/modal-details-address/modal-details-address.component';
-import { BottomBarComponent } from './settings/core/fragments/bottom-bar/bottom-bar.component';
-import { ModelListComponent } from './settings/features/model/components/model-list/model-list.component';
-import { ModalFormModelComponent } from './settings/features/model/components/modal-form-model/modal-form-model.component';
-import { ModalDetailsModelComponent } from './settings/features/model/components/modal-details-model/modal-details-model.component';
 import { ListVehiclesComponent } from './settings/features/admin-management/components/list-vehicles/list-vehicles.component';
 import { VehicleFormComponent } from './settings/features/admin-management/components/vehicle-form/vehicle-form.component';
-
-// Diretivas
-import { EmailPatternValidatorDirective } from './settings/shared/directives/email-pattern-validator.directive';
-import { DynamicMaskDirective } from './settings/shared/directives/dynamic-mask.directive';
-
-// Pipes
-import { PhoneMaskPipe } from './settings/shared/pipes/phone-mask.pipe';
-import { CommonModule } from '@angular/common';
-import { BrandListComponent } from './settings/features/brand/components/brand-list/brand-list.component';
-import { FaqPopupComponent } from './settings/core/fragments/faq-popup/faq-popup.component';
-import { NavbarIntroComponent } from './settings/core/fragments/navbar-intro/navbar-intro.component';
+import { AdminModule } from './settings/features/admin/admin.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserRegistrationFormComponent,
-    UserPasswordModalComponent,
-    IntroPageComponent,
-    FooterComponent,
-    NavbarIntroComponent,
-    UserLoginModalComponent,
-    ResetPasswordComponent,
-    VehicleListComponent,
-    ModalFormVehicleComponent,
-    MapStationsComponent,
-    UserUpdateComponent,
-    NavbarComponent,
-    DashboardComponent,
-    UiButtonComponent,
-    ModalDetailsVehicleComponent,
-    UserVehicleListComponent,
-    ModalDetailsBrandComponent,
-    ModalFormBrandComponent,
-    MyAddressesComponent,
-    FaqPopupComponent,
-    ListMyAddressesComponent,
-    ModalDetailsAddressComponent,
-    BottomBarComponent,
-    ModelListComponent,
-    ModalFormModelComponent,
-    ModalDetailsModelComponent,
     ListVehiclesComponent,
-    VehicleFormComponent,
-
-    // Diretivas
-    EmailPatternValidatorDirective,
-    DynamicMaskDirective,
-
-    // Pipes
-    PhoneMaskPipe,
-      BrandListComponent,
+    VehicleFormComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
-    HttpClientModule,
-    ReactiveFormsModule,
-    FormsModule,
+    AppRoutingModule, // Rotas principais da aplicação
+
+    // Módulos de funcionalidades
+    SharedModule,
+    VehiclesModule,
+    FragmentsModule,
+    IntroPageModule,
+    AdminModule,
+
+    // Módulo do Angular Material
     AngularMaterialModule,
-    CommonModule
   ],
   providers: [
     provideAnimationsAsync()
@@ -106,3 +47,4 @@ import { NavbarIntroComponent } from './settings/core/fragments/navbar-intro/nav
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

@@ -1,16 +1,33 @@
+// Angular Core
 import { Component, ElementRef, HostListener, Inject, Input, OnInit, Renderer2 } from '@angular/core';
+
+// Angular Forms
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { UserService } from '../../../../core/services/user/user.service';
+
+// Angular Material
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+// RxJS
+import { filter, take } from 'rxjs';
+
+// Bibliotecas de terceiros
 import Swal from 'sweetalert2';
+
+// Serviços e Modelos
+import { UserService } from '../../../../core/services/user/user.service';
+import { AuthService } from '../../../../core/security/services/auth/auth.service';
+import { ModalService } from '../../../../core/services/modal/modal.service';
+import { User } from '../../../../core/models/user';
+
+// Componentes
+import { UserLoginModalComponent } from '../../../../core/security/login/user-login-modal/user-login-modal.component';
+
+// Validators
 import { passwordMatchValidator } from '../../../../shared/validators/confirm-password.validators';
 import { PasswordFieldValidator } from '../../../../shared/validators/password-field.validator';
-import { User } from '../../../../core/models/user';
+
+// Angular Router
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { UserLoginModalComponent } from '../../../../core/security/login/user-login-modal/user-login-modal.component';
-import { ModalService } from '../../../../core/services/modal/modal.service';
-import { filter, take } from 'rxjs';
-import { AuthService } from '../../../../core/security/services/auth/auth.service';
 
 @Component({
   selector: 'app-user-password-modal',

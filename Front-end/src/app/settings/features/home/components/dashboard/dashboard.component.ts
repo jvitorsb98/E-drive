@@ -1,22 +1,24 @@
+// Imports do Angular
 import { Component } from '@angular/core';
 
+// Componente para o Dashboard
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss'] // Corrigido para 'styleUrls'
 })
 export class DashboardComponent {
 
   constructor() { }
 
-
+  // Links do menu para navegação
   menuLinks = [
-    { route: '/meus-enderecos', icon: 'home', label: 'Meus Endereços' },
-    { route: '/meus-carros', icon: 'directions_car', label: 'Meus Veículos' },
-    { route: '/planejar-viagem', icon: 'map', label: 'Planejar Viagem' },
-
+    { route: '/e-driver/users/my-addresses', icon: 'home', label: 'Meus Endereços' },
+    { route: '/e-driver/users/my-vehicles', icon: 'directions_car', label: 'Meus Carros' },
+    { route: '/e-driver/users/plan-trip', icon: 'map', label: 'Planejar Viagem' }
   ];
 
+  // Calcula a classe da coluna com base no índice do item
   getColumnClass(index: number): string {
     const totalItems = this.menuLinks.length;
     const itemsPerRow = 3;

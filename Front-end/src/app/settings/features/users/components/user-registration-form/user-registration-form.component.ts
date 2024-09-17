@@ -1,17 +1,31 @@
+// Angular Core
 import { Component } from '@angular/core';
+
+// Angular Forms
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+
+// RxJS
 import { distinctUntilChanged, map, Observable, startWith } from 'rxjs';
+
+// Angular Material
+import { MatDialog } from '@angular/material/dialog';
+
+// Angular Router
+import { Router } from '@angular/router';
+
+// Serviços e Modelos
 import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
-import { MatDialog } from '@angular/material/dialog';
+import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
+
+// Componentes
 import { UserPasswordModalComponent } from '../user-password-modal/user-password-modal.component';
+
+// Validators
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
 import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
-import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
-import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-user-registration-form',

@@ -1,34 +1,69 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
-import { UserRegistrationFormComponent } from './settings/features/users/components/user-registration-form/user-registration-form.component';
-import { UserLoginModalComponent } from './settings/core/security/login/user-login-modal/user-login-modal.component';
-import { DashboardComponent } from './settings/features/home/components/dashboard/dashboard.component';
-import { UserVehicleListComponent } from './settings/features/user-vehicle/components/user-vehicle-list/user-vehicle-list.component';
-import { UserPasswordModalComponent } from './settings/features/users/components/user-password-modal/user-password-modal.component';
-import { UserUpdateComponent } from './settings/features/users/components/user-update/user-update.component';
-import { ListMyAddressesComponent } from './settings/features/my-addresses/components/list-my-addresses/list-my-addresses.component';
-import { MyAddressesComponent } from './settings/features/my-addresses/components/my-addresses/my-addresses.component';
-import { MapStationsComponent } from './settings/features/map-stations/map-stations.component';
-import { ListVehiclesComponent } from './settings/features/admin-management/components/list-vehicles/list-vehicles.component';
-import { ModelListComponent } from './settings/features/model/components/model-list/model-list.component';
-import { BrandListComponent } from './settings/features/brand/components/brand-list/brand-list.component';
+import { authGuard } from './settings/core/security/guards/auth.guard';
+import { canMatchGuard } from './settings/core/security/guards/can-match.guard';
+
 
 const routes: Routes = [
-  { path: 'intro-page', component: IntroPageComponent},
-  { path:'dashboard', component: DashboardComponent},
-  { path: 'login', component: UserLoginModalComponent},
-  { path: 'user-registration', component: UserRegistrationFormComponent},
-  { path: 'meus-carros', component: UserVehicleListComponent},
-  { path: 'meus-Dados', component: UserUpdateComponent},
-  { path: 'meus-enderecos', component: ListMyAddressesComponent },
-  { path: 'new-address', component: MyAddressesComponent },
-  { path: 'my-addresses/edit', component: MyAddressesComponent },
-  { path: 'reset-password', component: UserPasswordModalComponent },
-  { path: 'brand-adm', component: BrandListComponent },
-  { path: 'model-adm', component: ModelListComponent },
-  { path: 'vehicles-adm', component: ListVehiclesComponent },
-  { path: 'mapa', component: MapStationsComponent },
+
+  {
+    path: 'intro-page', component: IntroPageComponent
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./settings/core/security/login/login.module').then(m => m.LoginModule)
+  },
+  {
+    path: 'e-driver/users',
+    children: [
+      {
+        path: 'registration',
+        loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
+      },
+    ]
+  },
+  {
+    path: 'e-driver',
+    canActivate: [authGuard],
+    canMatch: [canMatchGuard],
+    children: [
+      {
+        path: 'users',
+        children: [
+          {
+            path: '',
+            loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
+          },
+          {
+            path: 'myinfo',
+            loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
+          },
+          {
+            path: 'reset-password',
+            loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule)
+          },
+          {
+            path: 'my-vehicles',
+            loadChildren: () => import('./settings/features/user-vehicle/user-vehicle.module').then(m => m.UserVehicleModule),
+          },
+          {
+            path: 'my-addresses',
+            loadChildren: () => import('./settings/features/my-addresses/my-addresses.module').then(m => m.MyAddressesModule),
+          },
+          // Adicionar outras rotas para 'users' aqui
+        ]
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./settings/features/home/home.module').then(m => m.HomeModule),
+      },
+      {
+        path: 'map',
+        loadChildren: () => import('./settings/features/map-stations/module/map-stations.module').then(m => m.MapStationsModule),
+      },
+    ]
+  },
   { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
 ];
 
