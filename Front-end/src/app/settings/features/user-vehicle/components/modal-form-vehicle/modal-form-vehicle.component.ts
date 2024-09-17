@@ -1,16 +1,23 @@
+// Importa os modelos necessários
 import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { Vehicle } from '../../../../core/models/vehicle';
+
+// Importa os serviços necessários
 import { BrandService } from '../../../../core/services/brand/brand.service';
 import { ModelService } from '../../../../core/services/model/model.service';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
+
+// Importa os módulos do Angular
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+
+// Importa o Swal para alertas
 import Swal from 'sweetalert2';
 
 @Component({

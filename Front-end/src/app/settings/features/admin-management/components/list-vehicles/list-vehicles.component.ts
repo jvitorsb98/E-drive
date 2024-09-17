@@ -6,11 +6,11 @@ import { MatTableDataSource } from '@angular/material/table';
 import { catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
-import { ModalDetailsModelComponent } from '../../../model/components/modal-details-model/modal-details-model.component';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../core/models/vehicle';
 import { VehicleFormComponent } from '../vehicle-form/vehicle-form.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ModalDetailsModelComponent } from '../../../admin/model/components/modal-details-model/modal-details-model.component';
 
 @Component({
   selector: 'app-list-vehicles',

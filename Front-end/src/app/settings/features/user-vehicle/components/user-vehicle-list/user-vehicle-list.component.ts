@@ -1,24 +1,33 @@
+// Importa os módulos e classes do Angular
 import { Component, ViewChild } from '@angular/core';
-import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
 import { MatTableDataSource } from '@angular/material/table';
-import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog } from '@angular/material/dialog';
+
+// Importa os modelos necessários
+import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
+import { UserVehicle } from '../../../../core/models/user-vehicle';
+import { Vehicle } from '../../../../core/models/vehicle';
+import { IApiResponse } from '../../../../core/models/api-response';
+
+// Importa os serviços necessários
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
-import { MatDialog } from '@angular/material/dialog';
-import { IApiResponse } from '../../../../core/models/api-response';
-import { Vehicle } from '../../../../core/models/vehicle';
-import Swal from 'sweetalert2';
+
+// Importa os componentes do modal
 import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
-import { catchError, forkJoin, map, of } from 'rxjs';
 import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-details-vehicle.component';
+
+// Importa funções e classes auxiliares
+import Swal from 'sweetalert2';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-user-vehicle-list',
   templateUrl: './user-vehicle-list.component.html',
-  styleUrl: './user-vehicle-list.component.scss'
+  styleUrls: ['./user-vehicle-list.component.scss']
 })
 export class UserVehicleListComponent {
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions'];
@@ -47,6 +56,7 @@ export class UserVehicleListComponent {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
+  // Obtém a lista de veículos do usuário
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
@@ -85,6 +95,7 @@ export class UserVehicleListComponent {
     });
   }
 
+  // Deleta um veículo do usuário
   deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
     Swal.fire({
       title: 'Tem certeza?',
@@ -107,9 +118,9 @@ export class UserVehicleListComponent {
               showConfirmButton: true,
               confirmButtonColor: 'red',
             });
-            return of(null); 
+            return of(null);
           })
-        ).subscribe(() => { 
+        ).subscribe(() => {
           Swal.fire({
             title: 'Sucesso!',
             icon: 'success',
@@ -125,8 +136,8 @@ export class UserVehicleListComponent {
       }
     });
   }
-  
 
+  // Formata os dados do veículo
   formatVehicleData(vehicle: Vehicle): Vehicle {
     vehicle.model.name = this.userDataService.capitalizeWords(vehicle.model.name);
     vehicle.version = this.userDataService.capitalizeWords(vehicle.version);
@@ -135,17 +146,18 @@ export class UserVehicleListComponent {
     return vehicle;
   }
 
+  // Aplica o filtro na tabela
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-  
+
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
 
-  // LOGICA DO MODAL
-  openModalViewVeicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
+  // Abre o modal de visualização de veículo
+  openModalViewVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalDetailsVehicleComponent, {
       width: '80vw',
       height: '75vh',
@@ -156,6 +168,7 @@ export class UserVehicleListComponent {
     });
   }
 
+  // Abre o modal para adicionar um veículo
   openModalAddUserVehicle() {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '80vw',
@@ -164,6 +177,7 @@ export class UserVehicleListComponent {
     }).afterClosed().subscribe(() => this.getListUserVehicles());
   }
 
+  // Abre o modal para editar um veículo
   openModalEditUserVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '80vw',

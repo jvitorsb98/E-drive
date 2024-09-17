@@ -1,19 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+// Routing
 import { MapStationsRoutingModule } from './map-stations-routing.module';
-import { MapStationsComponent } from '../map-stations.component';
+
+// Modules
 import { SharedModule } from '../../../shared/shared.module';
 
+// Components
+import { MapStationsComponent } from '../map-stations.component';
 
 @NgModule({
   declarations: [
-    MapStationsComponent,
+    // MapStations component
+    MapStationsComponent
   ],
   imports: [
-    CommonModule,
-    MapStationsRoutingModule,
-    SharedModule
+    CommonModule,             // Modulo comum
+    MapStationsRoutingModule, // Modulo de rotas
+    SharedModule              // Modulo compartilhado
   ]
 })
 export class MapStationsModule { }

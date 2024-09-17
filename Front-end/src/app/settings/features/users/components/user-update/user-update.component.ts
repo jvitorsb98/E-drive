@@ -1,7 +1,14 @@
+// Angular Core
 import { Component, OnInit } from '@angular/core';
+
+// Angular Forms
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+
+// RxJS
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+
+// Serviços e Modelos
 import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';

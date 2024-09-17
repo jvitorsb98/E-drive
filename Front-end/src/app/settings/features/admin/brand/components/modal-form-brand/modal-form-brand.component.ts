@@ -1,11 +1,26 @@
-import { Component, Inject } from '@angular/core';
-import { BrandService } from '../../../../core/services/brand/brand.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import Swal from 'sweetalert2';
-import { Brand } from '../../../../core/models/brand';
-import { catchError, of } from 'rxjs';
-import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
+// Angular Core
+import { Component, Inject } from '@angular/core'; // Importa Component e Inject do núcleo Angular para criar componentes e injetar dados
+
+// Angular Forms
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'; // Importa utilitários para criação e manipulação de formulários, incluindo validação
+
+// Angular Material Dialog
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'; // Importa ferramentas para criar e manipular diálogos modais
+
+// SweetAlert2
+import Swal from 'sweetalert2'; // Biblioteca para exibir alertas bonitos e personalizáveis
+
+// RxJS
+import { catchError, of } from 'rxjs'; // Importa operadores para lidar com erros e criar observáveis
+
+// Serviços
+import { BrandService } from '../../../../../core/services/brand/brand.service'; // Serviço para operações relacionadas a marcas
+
+// Modelos
+import { Brand } from '../../../../../core/models/brand'; // Modelo de dados para marcas
+
+// Componentes
+import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para exibir informações úteis
 
 @Component({
   selector: 'app-modal-form-brand',
@@ -13,37 +28,45 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
   styleUrl: './modal-form-brand.component.scss'
 })
 export class ModalFormBrandComponent {
+  // Formulário de marca
   brandForm!: FormGroup;
+
+  // Flag para determinar se estamos editando uma marca
   editBrand: boolean = false;
 
   constructor(
-    private brandService: BrandService,
-    private formBuilder: FormBuilder,
-    private dialog: MatDialog,
-    public dialogRef: MatDialogRef<ModalFormBrandComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Brand
+    private brandService: BrandService, // Serviço para manipulação de marcas
+    private formBuilder: FormBuilder, // Utilitário para construção de formulários
+    private dialog: MatDialog, // Serviço para abrir modais
+    public dialogRef: MatDialogRef<ModalFormBrandComponent>, // Referência ao diálogo
+    @Inject(MAT_DIALOG_DATA) public data: Brand // Dados recebidos para o modal
   ) { }
 
   ngOnInit(): void {
-    this.editBrand = !!this.data?.name; // Atribui true se data.brand existir e false se não existir
-    this.buildForm();
+    // Determina se estamos editando com base na existência de dados
+    this.editBrand = !!this.data?.name;
+    this.buildForm(); // Constrói o formulário
     console.log('editBrand:', this.editBrand);
+
+    // Preenche o formulário se estivermos editando
     if (this.editBrand) {
       this.fillForm();
     }
   }
 
+  // Constrói o formulário de marca
   buildForm() {
     this.brandForm = this.formBuilder.group({
-      name: new FormControl(null, [Validators.required, Validators.minLength(3)])
+      name: new FormControl(null, [Validators.required, Validators.minLength(3)]) // Campo nome com validação
     });
   }
 
+  // Preenche o formulário com dados existentes, se disponíveis
   fillForm() {
     if (this.data.name) {
       this.brandForm.patchValue({
-        name: this.data.name,
-        // activated: this.data.activated
+        name: this.data.name
+        // activated: this.data.activated // Se necessário, adicionar este campo
       });
       console.log("fillForm", this.brandForm.value);
     } else {
@@ -51,14 +74,17 @@ export class ModalFormBrandComponent {
     }
   }
 
+  // Submete o formulário
   submitForm() {
     if (this.brandForm.valid) {
       console.log('Formulário válido:', this.brandForm.value);
-      const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Usa o método isEditing para determinar a ação
+
+      // Determina a ação com base na edição
+      const action = this.isEditing() ? 'atualizada' : 'cadastrada';
 
       const request$ = this.isEditing()
-        ? this.brandService.updateBrand({ ...this.data, ...this.brandForm.value }) // Mistura os dados existentes com os atualizados
-        : this.brandService.registerBrand(this.brandForm.value);
+        ? this.brandService.updateBrand({ ...this.data, ...this.brandForm.value }) // Atualiza a marca
+        : this.brandService.registerBrand(this.brandForm.value); // Cadastra uma nova marca
 
       request$.pipe(
         catchError(() => {
@@ -80,7 +106,7 @@ export class ModalFormBrandComponent {
           confirmButtonColor: '#19B6DD',
         }).then((result) => {
           if (result.isConfirmed || result.isDismissed) {
-            this.closeModal(); // Envia os dados atualizados ao fechar o modal
+            this.closeModal(); // Fecha o modal e envia os dados atualizados
           }
         });
       });
@@ -89,14 +115,17 @@ export class ModalFormBrandComponent {
     }
   }
 
+  // Verifica se estamos editando
   isEditing(): boolean {
-    return !!this.data; // Retorna true se this.data estiver definido, indicando que estamos editando
+    return !!this.data; // Retorna true se this.data estiver definido
   }
 
+  // Fecha o modal
   closeModal() {
     this.dialogRef.close();
   }
 
+  // Abre o modal de FAQ
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
@@ -129,5 +158,4 @@ export class ModalFormBrandComponent {
       }
     });
   }
-
 }

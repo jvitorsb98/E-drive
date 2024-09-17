@@ -1,51 +1,70 @@
+// Componente para exibir detalhes de endereços
+import { ModalDetailsAddressComponent } from '../modal-details-address/modal-details-address.component';
+
+// Componente para listar endereços e editar/adicionar endereços
+import { MyAddressesComponent } from '../my-addresses/my-addresses.component';
+
+// Angular Router para navegação
+import { Router } from '@angular/router';
+
+// Serviço para operações relacionadas a endereços
+import { AddressService } from '../../../../core/services/Address/address.service';
+
+// Modelo de dados para endereço
+import { DataAddressDetails } from '../../../../core/models/inter-Address';
+
+// Interface para resposta paginada
+import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
+
+// Componente para o popup de FAQ
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
+
+// Imports do Angular Material
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
-import { DataAddressDetails } from '../../../../core/models/inter-Address';
-import { AddressService } from '../../../../core/services/Address/address.service';
-import { Router } from '@angular/router';
 import { MatSort } from '@angular/material/sort';
-import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
-import { ModalDetailsAddressComponent } from '../modal-details-address/modal-details-address.component';
-import { MyAddressesComponent } from '../my-addresses/my-addresses.component';
+
+// Imports de bibliotecas externas
 import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-list-my-addresses',
   templateUrl: './list-my-addresses.component.html',
-  styleUrl: './list-my-addresses.component.scss'
+  styleUrls: ['./list-my-addresses.component.scss'] // Corrigido para 'styleUrls'
 })
 export class ListMyAddressesComponent implements OnInit {
+  // Colunas exibidas na tabela
   displayedColumns: string[] = ['icon', 'postalCode', 'city', 'state', 'actions'];
-  dataSource = new MatTableDataSource<DataAddressDetails>();
-  dataAddressDetails: DataAddressDetails[] = [];
+  dataSource = new MatTableDataSource<DataAddressDetails>(); // Fonte de dados para a tabela
+  dataAddressDetails: DataAddressDetails[] = []; // Lista de endereços
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação da tabela
+  @ViewChild(MatSort) sort!: MatSort; // Ordenação da tabela
 
   constructor(
-    private addressService: AddressService,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
-    private router: Router
+    private addressService: AddressService, // Serviço de endereços
+    private dialog: MatDialog, // Diálogo para modais
+    private snackBar: MatSnackBar, // Snackbar para mensagens
+    private router: Router // Navegação
   ) {
-    this.dataSource = new MatTableDataSource<DataAddressDetails>(this.dataAddressDetails);
+    this.dataSource = new MatTableDataSource<DataAddressDetails>(this.dataAddressDetails); // Inicializa o datasource da tabela
   }
 
   ngOnInit() {
-    this.loadAddresses();
+    this.loadAddresses(); // Carrega os endereços ao iniciar o componente
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
+    this.dataSource.paginator = this.paginator; // Configura a paginação
+    this.dataSource.sort = this.sort; // Configura a ordenação
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página'; // Customiza o rótulo de itens por página
   }
 
+  // Carrega a lista de endereços do serviço
   loadAddresses() {
     this.addressService.getAllAddresses().subscribe({
       next: (response: PaginatedResponse<DataAddressDetails>) => {
@@ -67,12 +86,14 @@ export class ListMyAddressesComponent implements OnInit {
     });
   }
 
+  // Navega para o formulário de adição de endereço
   addAddress() {
     this.addressService.selectAddress(null);
     this.addressService.setTitle('Registrar Endereço');
     this.router.navigate(['/new-address']);
   }
 
+  // Aplica filtro na tabela
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -82,7 +103,7 @@ export class ListMyAddressesComponent implements OnInit {
     }
   }
 
-
+  // Deleta um endereço e atualiza a lista
   deleteAddress(address: DataAddressDetails) {
     Swal.fire({
       title: 'Tem certeza?',
@@ -115,20 +136,23 @@ export class ListMyAddressesComponent implements OnInit {
             showConfirmButton: true,
             confirmButtonColor: '#19B6DD'
           }).then(() => {
-            this.loadAddresses();
+            this.loadAddresses(); // Atualiza a lista de endereços após a exclusão
           });
         });
       }
     });
   }
 
+  // Abre o modal para visualizar detalhes do endereço
   openModalDetailsAddress(address: DataAddressDetails) {
     this.dialog.open(ModalDetailsAddressComponent, {
       width: '80vw',
       height: '75vh',
       data: address
-    })
+    });
   }
+
+  // Abre o modal para adicionar um novo endereço
   openModalAddAddress() {
     this.dialog.open(MyAddressesComponent, {
       width: '80vw',
@@ -136,9 +160,10 @@ export class ListMyAddressesComponent implements OnInit {
       data: {
         actionTitle: 'Cadastrar Endereço'
       }
-    }).afterClosed().subscribe(() => this.loadAddresses());
+    }).afterClosed().subscribe(() => this.loadAddresses()); // Atualiza a lista de endereços após o fechamento do modal
   }
-  
+
+  // Abre o modal para editar um endereço existente
   editAddress(address: DataAddressDetails) {
     this.dialog.open(MyAddressesComponent, {
       width: '80vw',
@@ -148,10 +173,11 @@ export class ListMyAddressesComponent implements OnInit {
         actionTitle: 'Editar Endereço'
       }
     }).afterClosed().subscribe(() => {
-      this.loadAddresses();
+      this.loadAddresses(); // Atualiza a lista de endereços após o fechamento do modal
     });
   }
 
+  // Abre o modal de FAQ
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
@@ -162,8 +188,6 @@ export class ListMyAddressesComponent implements OnInit {
           }
         ]
       }
-    }
-    );
+    });
   }
-
 }
