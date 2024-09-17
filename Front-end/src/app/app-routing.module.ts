@@ -2,6 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { authGuard } from './settings/core/security/guards/auth.guard';
+import { canMatchGuard } from './settings/core/security/guards/can-match.guard';
+
 
 const routes: Routes = [
 
@@ -24,6 +26,7 @@ const routes: Routes = [
   {
     path: 'e-driver',
     canActivate: [authGuard],
+    canMatch: [canMatchGuard],
     children: [
       {
         path: 'users',
