@@ -1,4 +1,3 @@
-// can-load.guard.ts
 import { CanMatchFn } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth/auth.service';

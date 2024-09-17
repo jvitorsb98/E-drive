@@ -3,7 +3,14 @@
 	<div id="inicio" class="container-fluid home bkg-degrad-primary">
 		<section id="banner" class="container-fluid banner">
 			<div class="p-5">
+				@defer{
 				<img class="img-logo-custom img-fluid" src="../../../../assets/images/logo-e-drive.svg" alt="logo e-drive">
+				} @placeholder (minimum 2000ms){
+				<!-- <span class="material-icons">cached</span> Carregando imagem ... -->
+				<mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
+				} @error {
+				Falha ao carregar a imagem!
+				}
 			</div>
 			<div>
 				<h1 class="mb-5">Bem-vindo ao E-Drive</h1>
@@ -63,7 +70,14 @@
 				<hr>
 				<p>Encontre os eletropostos mais próximos de sua localização e aproveite o conforto do seu carro
 					elétrico.</p>
+				@defer{
 				<img id="img-mapa" src="../../../../assets/images/mapa.png" alt="busca-eletropostos">
+				} @placeholder (minimum 2000ms){
+				<!-- <span class="material-icons">cached</span> Carregando imagem ... -->
+				<mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
+				} @error {
+				Falha ao carregar a imagem!
+				}
 			</div>
 		</section>
 	</div>
