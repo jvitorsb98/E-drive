@@ -1,11 +1,9 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { AuthService } from '../../security/services/auth/auth.service';
 import { DataAddressDetails, IAddressRequest, IAddressResponse } from '../../models/inter-Address';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
@@ -13,41 +11,28 @@ import { PaginatedResponse } from '../../models/paginatedResponse';
 })
 export class AddressService {
 
-  private baseUrl = 'your-api-url'; // Replace with your actual API URL
-
-  private authToken: string | null;
-
-  private headers!: HttpHeaders;
+  private addressUrl: string; // Replace with your actual API URL
 
   // Inicializa o BehaviorSubject com um valor null ou vazio
   private addressSource = new BehaviorSubject<any>(null);
   // Exponha o BehaviorSubject como um Observable
   selectedAddress$ = this.addressSource.asObservable();
 
-
   // BehaviorSubject para o título da página
   private titleSource = new BehaviorSubject<string>('');
   selectedTitle$ = this.titleSource.asObservable();
 
   getAddresses(): Observable<IAddressResponse[]> {
-    return this.http.get<IAddressResponse[]>(this.baseUrl);
+    return this.http.get<IAddressResponse[]>(this.addressUrl);
   }
 
-  constructor(private http: HttpClient, private authService: AuthService, private snackBar: MatSnackBar) {
-    this.baseUrl = `${environment.apiUrl}/api/v1/address`;
-
-    this.authToken = this.authService.getToken();
-
-    this.headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authToken}`,
-      'Content-Type': 'application/json'
-    });
+  constructor(private http: HttpClient, private snackBar: MatSnackBar) {
+    this.addressUrl = `${environment.apiUrl}/api/v1/address`;
   }
 
   createAddress(address: IAddressRequest): Observable<any> {
     // retornar a resposta do servidor para o componente pai
-    return this.http.post(this.baseUrl, address, { headers: this.headers })
-    .pipe(
+    return this.http.post(this.addressUrl, address).pipe(
       catchError((error) => {
         return this.handleError(error);
       })
@@ -56,14 +41,12 @@ export class AddressService {
 
   // Função para buscar todos os endereços do usuario
   getAllAddresses(): Observable<PaginatedResponse<DataAddressDetails>> {
-    return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.baseUrl}/user`, { headers: this.headers });
+    return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.addressUrl}/user`);
   }
 
   // Função para buscar um endereço pelo ID
   getAddressById(id: number): Observable<IAddressResponse> {
-    console.log("Servise de endereços: getAddressById = ",id);
-    return this.http.get<IAddressResponse>(`${this.baseUrl}/${id}`, { headers: this.headers })
-    .pipe(
+    return this.http.get<IAddressResponse>(`${this.addressUrl}/${id}`).pipe(
       catchError((error) => {
         return this.handleError(error);
       })
@@ -72,15 +55,14 @@ export class AddressService {
 
   // Função para desabilitar um endereço
   disable(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`, { headers: this.headers });
+    return this.http.delete<void>(`${this.addressUrl}/${id}`);
   }
 
   // Função para atualizar um endereço
   updateAddress(id: number, addressData: IAddressRequest): Observable<DataAddressDetails> {
-    return this.http.put<DataAddressDetails>(`${this.baseUrl}/${id}`, addressData, { headers: this.headers })
-      .pipe(
-        catchError(this.handleError)
-      );
+    return this.http.put<DataAddressDetails>(`${this.addressUrl}/${id}`, addressData).pipe(
+      catchError(this.handleError)
+    );
   }
 
   // Método para definir o endereço atual
@@ -105,7 +87,6 @@ export class AddressService {
   clearTitle() {
     this.titleSource.next("Registrar endereço");
   }
-
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'Ocorreu um erro. Por favor, tente novamente mais tarde.';
