@@ -41,10 +41,11 @@ import { ModalFormBrandComponent } from './brand/components/modal-form-brand/mod
     ModalFormVehicleComponent
   ],
   imports: [
-    CommonModule,           // Modulo comum
+    CommonModule,   
     AdminRoutingModule,    // Modulo de rotas
     SharedModule,          // Modulo compartilhado
     AngularMaterialModule // Módulo Angular Material
-  ]
+  ],
+  exports: [BrandListComponent, ModelListComponent]
 })
 export class AdminModule { }

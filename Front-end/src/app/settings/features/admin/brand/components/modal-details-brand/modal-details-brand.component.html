@@ -14,8 +14,14 @@
       <p class="informacao">{{ brand.name }}</p>
     </div>
     <div class="col-6">
-      <h4 class="titulo-informacao">Status</h4>
-      <p class="informacao">{{ brand.activated ? 'Ativado' : 'Desativado' }}</p>
+      <h4 class="titulo-informacao">Status da Marca</h4>
+      <!-- FORMA NOVA DE FAZER -->
+      @if(brand.activated || brand.activated){
+        <p class="informacao check">Ativo</p>
+      }
+      @if(!brand.activated && !brand.activated){
+        <p class="informacao error">Desativado</p>
+      }
     </div>
   </div>
 </div>

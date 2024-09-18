@@ -45,13 +45,22 @@
             <td class="td-table" mat-cell *matCellDef="let brand"><strong>{{brand.name}}</strong></td>
           </ng-container>
 
+          <ng-container matColumnDef="activated">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let brand">
+              <mat-icon class="check" *ngIf="brand.activated">check</mat-icon>
+              <mat-icon class="error" *ngIf="!brand.activated">remove</mat-icon>
+            </td>
+          </ng-container>
+
           <!-- Actions Column -->
           <ng-container matColumnDef="actions">
             <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
             <td class="td-table" mat-cell *matCellDef="let brand">
               <mat-icon class="icone-table" (click)="openModalViewBrand(brand)">visibility</mat-icon>
               <mat-icon class="icone-table" (click)="openModalEditBrand(brand)">edit</mat-icon>
-              <mat-icon class="icone-table" (click)="deleteBrand(brand)">delete</mat-icon>
+              <mat-icon class="icone-table" (click)="deleteBrand(brand)" *ngIf="brand.activated">check</mat-icon>
+              <mat-icon class="icone-table" (click)="deleteBrand(brand)" *ngIf="!brand.activated">close</mat-icon>
             </td>
           </ng-container>
 
