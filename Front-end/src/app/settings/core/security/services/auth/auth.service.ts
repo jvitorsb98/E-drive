@@ -40,12 +40,11 @@ export class AuthService {
     if (token) {
       const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
       this.http.post(this.apiUrl + '/logout', {}, { headers })
-        .pipe(
-          tap(() => {
-            localStorage.removeItem('token');
-            this.isLoggedInSubject.next(false);
-            localStorage.clear();
-          }),
+        .pipe(tap(() => {
+          localStorage.removeItem('token');
+          this.isLoggedInSubject.next(false);
+          localStorage.clear();
+        }),
           catchError(this.handleError)
         ).subscribe(); // Assinatura necessária para executar o request
     }
@@ -66,6 +65,7 @@ export class AuthService {
       return false;
     }
   }
+
   getToken(): string | null {
     return localStorage.getItem('token');
   }

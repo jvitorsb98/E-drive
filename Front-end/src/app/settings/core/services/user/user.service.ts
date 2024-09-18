@@ -21,26 +21,23 @@ export class UserService {
   }
 
   // Método para obter o usuário logado
+  getAllUsers(): Observable<User[]> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}`
+    });
 
+    todo:// trocar por um interceptor para adicionar o token ao cabecalho
+    return this.http.get<User[]>(`${this.usersUrl}/user/me`, { headers });
+  }
 
-    // Método para obter o usuário logado
-    getAllUsers(): Observable<User[]> {
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${this.authToken}`
-      });
+  // Método para obter os detalhes do usuário autenticado sem passar o ID explicitamente
+  getAuthenticatedUserDetails(): Observable<User> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.authToken}`
+    });
 
-      todo:// trocar por um interceptor para adicionar o token ao cabecalho
-      return this.http.get<User[]>(`${this.usersUrl}/user/me`, { headers });
-    }
-
-    // Método para obter os detalhes do usuário autenticado sem passar o ID explicitamente
-    getAuthenticatedUserDetails(): Observable<User> {
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${this.authToken}`
-      });
-
-      return this.http.get<User>(`${this.usersUrl}/user/me`, { headers });
-    }
+    return this.http.get<User>(`${this.usersUrl}/user/me`, { headers });
+  }
 
   // Método para adicionar um usuário
   addUser(user: User): Observable<any> {
@@ -71,8 +68,8 @@ export class UserService {
     );
   }
 
-   // Método para atualizar os dados do usuário
-   updateUser(user: User): Observable<User> {
+  // Método para atualizar os dados do usuário
+  updateUser(user: User): Observable<User> {
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.authToken}`,
       'Content-Type': 'application/json'
@@ -87,28 +84,28 @@ export class UserService {
       );
   }
 
-  formatAndStoreUserData(countryCode: string, cellPhone: string): string {
-    countryCode = countryCode.replace(/^\+/, '');
-    const cleanedPhone = cellPhone.replace(/\D/g, '');
+  // formatAndStoreUserData(countryCode: string, cellPhone: string): string {
+  //   countryCode = countryCode.replace(/^\+/, '');
+  //   const cleanedPhone = cellPhone.replace(/\D/g, '');
 
-    if (cleanedPhone.length === 11) {
-      const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-      const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
+  //   if (cleanedPhone.length === 11) {
+  //     const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+  //     const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
 
-      return cellPhoneWithCountryCode;
-    } else {
-      console.error('Número de telefone inválido.');
-      return '';
-    }
-  }
+  //     return cellPhoneWithCountryCode;
+  //   } else {
+  //     console.error('Número de telefone inválido.');
+  //     return '';
+  //   }
+  // }
 
-  getToken(): string | null {
-    return localStorage.getItem('authToken');
-  }
+  // getToken(): string | null {
+  //   return localStorage.getItem('authToken');
+  // }
 
-  setToken(token: string): void {
-    localStorage.setItem('authToken', token);
-  }
+  // setToken(token: string): void {
+  //   localStorage.setItem('authToken', token);
+  // }
 
   logout(): void {
     localStorage.removeItem('authToken');
