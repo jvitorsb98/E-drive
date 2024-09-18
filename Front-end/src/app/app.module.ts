@@ -10,6 +10,7 @@ import { SharedModule } from './settings/shared/shared.module';
 import { VehiclesModule } from './settings/features/vehicles/vehicles.module';
 import { FragmentsModule } from './settings/core/fragments/fragments.module';
 import { IntroPageModule } from './settings/features/intro-page/module/intro-page.module';
+import { AdminModule } from './settings/features/admin/admin.module';
 
 // Providers
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -18,7 +19,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { AppComponent } from './app.component';
 import { ListVehiclesComponent } from './settings/features/admin-management/components/list-vehicles/list-vehicles.component';
 import { VehicleFormComponent } from './settings/features/admin-management/components/vehicle-form/vehicle-form.component';
-import { AdminModule } from './settings/features/admin/admin.module';
+
 
 @NgModule({
   declarations: [
@@ -42,7 +43,7 @@ import { AdminModule } from './settings/features/admin/admin.module';
     AngularMaterialModule,
   ],
   providers: [
-    provideAnimationsAsync()
+    provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent]
 })

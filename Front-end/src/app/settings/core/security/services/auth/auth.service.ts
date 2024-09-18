@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { ILoginRequest, ILoginResponse, IResetPasswordRequest, IResetPasswordResponse } from '../../../models/inter-Login';
@@ -23,47 +23,49 @@ export class AuthService {
   }
 
   login(credential: ILoginRequest): Observable<ILoginResponse> {
-    // TODO: rever essa logica
-    return this.http.post(this.apiUrl + '/login', credential)
+    return this.http.post<ILoginResponse>(this.apiUrl + '/login', credential)
       .pipe(
-        tap((response: any) => {
-          localStorage.setItem('token', response.token);
-          this.isLoggedInSubject.next(true); // Atualizar o estado do usuário logado
+        tap((response: ILoginResponse) => {
+          if (response && response.token) {
+            localStorage.setItem('token', response.token);
+            this.isLoggedInSubject.next(true);
+          }
         }),
-        catchError(
-          this.handleError
-        )
+        catchError(this.handleError)
       );
   }
 
-  logout() {
-    this.http.post(this.apiUrl + '/logout', { header: this.getToken()})
-      .pipe(
+  logout(): void {
+    const token = this.getToken();
+    if (token) {
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      this.http.post(this.apiUrl + '/logout', {}, { headers })
+        .pipe(
           tap(() => {
             localStorage.removeItem('token');
-            this.isLoggedInSubject.next(false); // Atualizar o estado do usuário logado
+            this.isLoggedInSubject.next(false);
             localStorage.clear();
-        }),
-        catchError(this.handleError)
-      )
+          }),
+          catchError(this.handleError)
+        ).subscribe(); // Assinatura necessária para executar o request
+    }
   }
 
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
     if (!token) {
-      return false; // Token não existe, usuário não está logado
+      return false;
     }
 
     try {
       const decodedToken: any = (jwtDecode as any)(token);
-      const currentTime = Date.now() / 1000; // Tempo atual em segundos
-      return decodedToken.exp > currentTime; // Verifica se o token ainda não expirou
+      const currentTime = Date.now() / 1000;
+      return decodedToken.exp > currentTime;
     } catch (error) {
       console.error('Erro ao decodificar o token:', error);
-      return false; // Em caso de erro, consideramos o token inválido
+      return false;
     }
   }
-
   getToken(): string | null {
     return localStorage.getItem('token');
   }
