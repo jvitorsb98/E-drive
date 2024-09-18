@@ -16,15 +16,11 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 // Componentes Principais
 import { AppComponent } from './app.component';
-import { ListVehiclesComponent } from './settings/features/admin-management/components/list-vehicles/list-vehicles.component';
-import { VehicleFormComponent } from './settings/features/admin-management/components/vehicle-form/vehicle-form.component';
 import { AdminModule } from './settings/features/admin/admin.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ListVehiclesComponent,
-    VehicleFormComponent
   ],
   imports: [
     BrowserModule,

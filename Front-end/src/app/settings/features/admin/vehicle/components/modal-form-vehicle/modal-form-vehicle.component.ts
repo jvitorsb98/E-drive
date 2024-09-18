@@ -12,7 +12,6 @@ import { ModelService } from '../../../../../core/services/model/model.service';
 import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
-import { VehicleFormComponent } from '../../../../admin-management/components/vehicle-form/vehicle-form.component';
 
 @Component({
   selector: 'app-modal-form-vehicle',

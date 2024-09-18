@@ -9,8 +9,8 @@ import Swal from 'sweetalert2';
 import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
 import { Vehicle } from '../../../../../core/models/vehicle';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
-import { VehicleFormComponent } from '../../../../admin-management/components/vehicle-form/vehicle-form.component';
 import { ModalDetailsModelComponent } from '../../../model/components/modal-details-model/modal-details-model.component';
+import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -180,7 +180,7 @@ export class VehicleListComponent {
   }
 
   openModalAdd() {
-    this.dialog.open(VehicleFormComponent, {
+    this.dialog.open(ModalFormVehicleComponent, {
       width: '99vw',
       height: '100vh',
       data: null
@@ -188,7 +188,7 @@ export class VehicleListComponent {
   }
 
   openModalEdit(vehicle: Vehicle) {
-    this.dialog.open(VehicleFormComponent, {
+    this.dialog.open(ModalFormVehicleComponent, {
       width: '100%',
       height: '100%',
       data: vehicle
