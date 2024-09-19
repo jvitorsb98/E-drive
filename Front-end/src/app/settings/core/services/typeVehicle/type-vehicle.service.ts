@@ -16,12 +16,6 @@ export class TypeVehicleService {
   }
 
   getAll(): Observable<PaginatedResponse<VehicleType>> {
-    // page: number, size: number
-    // let params = new HttpParams()
-    // .set('page', page.toString())
-    // .set('size', size.toString());
-    // .set('headers', this.headers.toString());
-
     return this.http.get<PaginatedResponse<VehicleType>>(this.vehicleTypeUrl).pipe(
       catchError(this.handleError)
     );
