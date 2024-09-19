@@ -94,7 +94,6 @@ public class AuthController {
     /**
      * Solicita a redefinição de senha enviando um e-mail para o usuário com instruções.
      *
-     * @param data Dados de solicitação de redefinição de senha.
      * @return Uma resposta indicando se o e-mail foi enviado com sucesso.
      * @throws MessagingException Se houver um erro ao enviar o e-mail.
      */
@@ -128,7 +127,6 @@ public class AuthController {
     /**
      * Redefine a senha do usuário com base no token fornecido.
      *
-     * @param data Dados de redefinição de senha.
      * @return Uma resposta indicando se a senha foi atualizada com sucesso.
      */
     @PutMapping("/reset-password/reset")
