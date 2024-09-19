@@ -5,8 +5,6 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { Vehicle } from '../../models/vehicle';
 import { PaginatedResponse } from '../../models/paginatedResponse';
 import { AuthService } from '../../security/services/auth/auth.service';
-import { AuthInterceptor } from '../../security/interceptors/auth.interceptor';
-
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +17,7 @@ export class VehicleService {
 
   private headers!: HttpHeaders;
 
-  constructor(private http: HttpClient, private authService: AuthService, private interceptor : AuthInterceptor) {
+  constructor(private http: HttpClient, private authService: AuthService) {
     this.vehicleUrl = `${environment.apiUrl}`;
 
     this.authToken = this.authService.getToken();
