@@ -1,19 +1,23 @@
 <div>
 	<app-navbar-intro></app-navbar-intro>
 	<div id="inicio" class="container-fluid home bkg-degrad-primary">
-		<section id="banner" class="container-fluid banner">
-			<div class="p-5">
+		<section id="banner" class="container-fluid d-flex flex-column justify-content-center banner parallax">
+			<!-- <div class="p-5">
 				@defer{
-				<img class="img-logo-custom img-fluid" src="../../../../assets/images/logo-e-drive.svg" alt="logo e-drive">
-				} @placeholder (minimum 2000ms){
-				<!-- <span class="material-icons">cached</span> Carregando imagem ... -->
+				<img class="img-logo-custom img-fluid" src="../../../../assets/images/logo-e-drive.svg"
+					alt="logo e-drive">
+				} @placeholder {
 				<mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
 				} @error {
 				Falha ao carregar a imagem!
 				}
-			</div>
+			</div> -->
 			<div>
-				<h1 class="mb-5">Bem-vindo ao E-Drive</h1>
+				<div class="mb-5">
+					<h1>Bem-vindo</h1>
+					<h1>ao</h1>
+					<h1>E-Drive</h1>
+				</div>
 				<p class="banner-text">O seu parceiro ideal para planejar viagens mais econômicas, com carros
 					elétricos.</p>
 			</div>
@@ -64,6 +68,8 @@
 
 		</section>
 
+		<section class="parallax vh-50"></section>
+
 		<section class="container-fluid busca-eletropostos">
 			<div>
 				<h3>Encontre Eletropostos</h3>
@@ -72,7 +78,7 @@
 					elétrico.</p>
 				@defer{
 				<img id="img-mapa" src="../../../../assets/images/mapa.png" alt="busca-eletropostos">
-				} @placeholder (minimum 2000ms){
+				} @placeholder {
 				<!-- <span class="material-icons">cached</span> Carregando imagem ... -->
 				<mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
 				} @error {
@@ -81,6 +87,5 @@
 			</div>
 		</section>
 	</div>
-
-	<app-footer></app-footer>
+		<app-footer></app-footer>
 </div>
