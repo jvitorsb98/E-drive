@@ -25,7 +25,6 @@ export class UserVehicleService {
   }
 
   updateVehicleUser(id: number, dataRegisterAutonomy: any): Observable<any> {
-
     return this.http.put(`${this.userVehicleUrl}/${id}`, dataRegisterAutonomy)
       .pipe(
         map(response => {
