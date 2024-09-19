@@ -67,27 +67,28 @@ public class AuthController {
     @Operation(summary = "User login", description = "Authenticates the user and generates an authentication token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful"),
-            @ApiResponse(responseCode = "400", description = "User is not activated", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DataAuth data) {
         User user = userService.getUserActivatedByEmail(data.login());
-
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not registered");
         }
-
         if (!user.getActivated()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not activated");
         }
-
-        var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        Authentication authentication = manager.authenticate(authenticationToken);
-
-        var tokenJWT = tokenService.generateToken(user);
-        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        try {
+            var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+            Authentication authentication = manager.authenticate(authenticationToken);
+            var tokenJWT = tokenService.generateToken(user);
+            return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email or password");
+        }
     }
+
 
     /**
      * Solicita a redefinição de senha enviando um e-mail para o usuário com instruções.
