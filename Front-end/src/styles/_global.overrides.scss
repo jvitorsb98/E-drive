@@ -27,6 +27,21 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   justify-content: space-between;
 }
 
+// Customização de Botões
+button[type="button-confirm"] {
+  background-color: #19B6DD;
+  color: #FFF;
+
+  &:hover {
+    background-color: #32aecd;
+  }
+}
+
+button[type="button-cancel"] {
+  background-color: #ff6b6b;
+  color: #FFF;
+}
+
 .custom-swal-popup-error {
   background-color: #f8d7da;
   border-color: #f5c6cb;

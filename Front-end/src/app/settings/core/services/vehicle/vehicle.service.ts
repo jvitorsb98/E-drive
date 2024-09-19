@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Vehicle } from '../../models/vehicle';
+import { IVehicleRequest, Vehicle } from '../../models/vehicle';
 import { AuthService } from '../../security/services/auth/auth.service';
 import { PaginatedResponse } from '../../models/paginatedResponse';
 
@@ -57,13 +57,14 @@ export class VehicleService {
     );
   }
 
-  register(vehicle: Vehicle): Observable<Vehicle> {
+  register(vehicle: IVehicleRequest): Observable<Vehicle> {
+    console.log("Chegou no service register: ",vehicle);
     return this.http.post<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles`, vehicle, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
   }
 
-  update(id: number, vehicle: Vehicle): Observable<Vehicle> {
+  update(id: number, vehicle: IVehicleRequest): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, vehicle, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );

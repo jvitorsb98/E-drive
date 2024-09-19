@@ -58,20 +58,6 @@
   cursor: pointer;
 }
 
-button[type="button-confirm"] {
-  background-color: #19B6DD;
-  color: #FFF;
-
-  &:hover {
-    background-color: #32aecd;
-  }
-}
-
-button[type="button-cancel"] {
-  background-color: #ff6b6b;
-  color: #FFF;
-}
-
 .custom-select {
   position: relative;
   display: flex;

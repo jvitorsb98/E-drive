@@ -1,1 +1,66 @@
-<p>modal-details-vehicle works!</p>
+<div class="container-fluid p-3">
+  <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
+
+  <h1 class="titulo">Detalhes do veículo</h1>
+  <h2 class="subtitulo">Tenha uma visão mais detalhada do veículo</h2>
+
+  <div class="row mt-3">
+    <div class="col-6">
+      <h4 class="titulo-informacao">Motor</h4>
+      <p class="informacao">{{ vehicle.motor }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Versão</h4>
+      <p class="informacao">{{ vehicle.version }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Marca</h4>
+      <p class="informacao">{{ vehicle.model.brand.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Modelo</h4>
+      <p class="informacao">{{ vehicle.model.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Categoria</h4>
+      <p class="informacao">{{ vehicle.category.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Tipo</h4>
+      <p class="informacao">{{ vehicle.type.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Propução</h4>
+      <p class="informacao">{{ vehicle.propulsion.name }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Ano</h4>
+      <p class="informacao">{{ vehicle.year }}</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Autonomia no modo elétrico</h4>
+      <p class="informacao">{{ vehicle.autonomy.autonomyElectricMode }} (Km)</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Consumo energético</h4>
+      <p class="informacao">{{ vehicle.autonomy.consumptionEnergetic }} (MJ/km)</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Quilometragem por litro na cidade</h4>
+      <p class="informacao">{{ vehicle.autonomy.mileagePerLiterCity }} (km/l e)</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Quilometragem por litro na estrada</h4>
+      <p class="informacao">{{ vehicle.autonomy.mileagePerLiterRoad }} (km/l e)</p>
+    </div>
+    <div class="col-6">
+      <h4 class="titulo-informacao">Status do Veiculo</h4>
+      @if(vehicle.activated || vehicle.activated){
+        <p class="informacao check">Ativo</p>
+        }
+        @if(!vehicle.activated && !vehicle.activated){
+        <p class="informacao error">Desativado</p>
+        }
+    </div>
+  </div>
+</div>

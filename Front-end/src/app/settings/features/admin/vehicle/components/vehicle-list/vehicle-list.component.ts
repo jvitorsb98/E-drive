@@ -9,8 +9,8 @@ import Swal from 'sweetalert2';
 import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
 import { Vehicle } from '../../../../../core/models/vehicle';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
-import { ModalDetailsModelComponent } from '../../../model/components/modal-details-model/modal-details-model.component';
 import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
+import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-details-vehicle.component';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -172,25 +172,25 @@ export class VehicleListComponent {
 
   // LOGICA DO MODAL
   openModalView(vehicle: Vehicle) {
-    this.dialog.open(ModalDetailsModelComponent, {
-      width: '100%',
-      height: '100%',
+    this.dialog.open(ModalDetailsVehicleComponent, {
+      width: '99%',
+      height: '80%',
       data: vehicle
     });
   }
 
   openModalAdd() {
     this.dialog.open(ModalFormVehicleComponent, {
-      width: '99vw',
-      height: '100vh',
+      width: '99%',
+      height: '80%',
       data: null
     }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize));
   }
 
   openModalEdit(vehicle: Vehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
-      width: '100%',
-      height: '100%',
+      width: '99%',
+      height: '80%',
       data: vehicle
     }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize)); // Atualiza a lista de veículos após fechar o modal
   }

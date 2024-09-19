@@ -78,6 +78,6 @@
   </div>
   <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 30, 40, 50]"
           (page)="onPageChange($event)" aria-label="Selecione modelos por página"></mat-paginator>
-  <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" (click)="openModalAdd()"
+  <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAdd()"
           text="Nova Versão de Veiculo"></app-ui-button>
 </div>
