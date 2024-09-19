@@ -4,6 +4,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../security/services/auth/auth.service';
 import { Propulsion } from '../../models/propulsion';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -30,14 +31,14 @@ export class PropusionService {
     });
   }
 
-  getAll(): Observable<Propulsion[]> {
+  getAll(): Observable<PaginatedResponse<Propulsion>> {
     // page: number, size: number
     // let params = new HttpParams()
     // .set('page', page.toString())
     // .set('size', size.toString());
     // .set('headers', this.headers.toString());
 
-    return this.http.get<Propulsion[]>(this.baseUrl).pipe(
+    return this.http.get<PaginatedResponse<Propulsion>>(this.baseUrl).pipe(
       catchError(this.handleError)
     );
   }

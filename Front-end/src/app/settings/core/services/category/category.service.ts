@@ -4,6 +4,7 @@ import { AuthService } from '../../security/services/auth/auth.service';
 import { environment } from '../../../../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { Category } from '../../models/category';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -30,14 +31,14 @@ export class CategoryService {
     });
   }
 
-  getAll(): Observable<Category[]> {
+  getAll(): Observable<PaginatedResponse<Category>> {
     // page : number, size : number
     // let params = new HttpParams()
     // .set('page', page.toString())
     // .set('size', size.toString());
     // .set('headers', this.headers.toString());
 
-    return this.http.get<Category[]>(this.baseUrl).pipe(
+    return this.http.get<PaginatedResponse<Category>>(this.baseUrl).pipe(
       catchError(this.handleError)
     );
   }

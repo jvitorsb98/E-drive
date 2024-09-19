@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { authGuard } from './settings/core/security/guards/auth.guard';
 import { canMatchGuard } from './settings/core/security/guards/can-match.guard';
+import { VehicleListComponent } from './settings/features/admin/vehicle/components/vehicle-list/vehicle-list.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./settings/core/security/login/login.module').then(m => m.LoginModule)
+  },
+  {
+    path: 'vehicles-adm',
+    component: VehicleListComponent
   },
   {
     path: 'e-driver/users',

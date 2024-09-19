@@ -76,6 +76,9 @@
               <mat-error *ngIf="vehicleForm.get('model')?.hasError('required') && vehicleForm.get('model')?.touched">
                 O modelo é obrigatório.
               </mat-error>
+              <mat-error *ngIf="!models">
+                Nenhum <strong>modelo</strong> encontrado.
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -97,6 +100,7 @@
           </div>
         </div>
 
+        <!-- Campo Categoría - Aparece apenas se o campo 'type' for válido -->
         <div class="row" *ngIf="vehicleForm.get('type')?.valid">
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
@@ -113,7 +117,7 @@
             </mat-form-field>
           </div>
         </div>
-
+        <!-- Propulsão -->
         <div class="row" *ngIf="vehicleForm.get('category')?.valid">
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
@@ -130,7 +134,7 @@
             </mat-form-field>
           </div>
         </div>
-
+        <!-- Ano -->
         <div class="row" *ngIf="vehicleForm.get('propulsion')?.valid">
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
