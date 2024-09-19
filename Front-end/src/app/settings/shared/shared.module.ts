@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -13,6 +13,7 @@ import { DynamicMaskDirective } from './directives/dynamic-mask.directive';
 
 // Pipes
 import { PhoneMaskPipe } from './pipes/phone-mask.pipe';
+import { AuthInterceptor } from '../core/security/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { PhoneMaskPipe } from './pipes/phone-mask.pipe';
     EmailPatternValidatorDirective, // Reexporta para usar esta diretiva em outros módulos
     DynamicMaskDirective,    // Reexporta para usar esta diretiva em outros módulos
     PhoneMaskPipe            // Reexporta para usar este pipe em outros módulos
-  ]
+  ],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
 })
 export class SharedModule { }
 

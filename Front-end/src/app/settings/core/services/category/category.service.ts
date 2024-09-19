@@ -1,6 +1,5 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AuthService } from '../../security/services/auth/auth.service';
 import { environment } from '../../../../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { Category } from '../../models/category';
@@ -10,24 +9,10 @@ import { Category } from '../../models/category';
 })
 export class CategoryService {
 
-  baseUrl!: string;
+  categoryUrl!: string;
 
-  authToken!: string | null;
-
-  headers!: HttpHeaders;
-
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {
-    this.baseUrl = `${environment.apiUrl}/api/v1/categories`;
-
-    this.authToken = this.authService.getToken();
-
-    this.headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authToken}`,
-      'Content-Type': 'application/json'
-    });
+  constructor(private http: HttpClient) {
+    this.categoryUrl = `${environment.apiUrl}/api/v1/categories`;
   }
 
   getAll(): Observable<Category[]> {
@@ -37,7 +22,7 @@ export class CategoryService {
     // .set('size', size.toString());
     // .set('headers', this.headers.toString());
 
-    return this.http.get<Category[]>(this.baseUrl).pipe(
+    return this.http.get<Category[]>(this.categoryUrl).pipe(
       catchError(this.handleError)
     );
   }

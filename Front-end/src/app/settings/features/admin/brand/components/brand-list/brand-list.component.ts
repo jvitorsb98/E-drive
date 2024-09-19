@@ -23,7 +23,7 @@ import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details
   styleUrls: ['./brand-list.component.scss']
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = ['icon', 'name', 'actions']; // Colunas a serem exibidas na tabela
+  displayedColumns: string[] = ['icon', 'name', 'activated', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brandList: Brand[] = []; // Lista de marcas
 
