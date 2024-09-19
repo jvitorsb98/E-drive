@@ -345,4 +345,28 @@ public class VehicleController {
         vehicleService.enableVehicle(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/version/{version}")
+    @Operation(summary = "Get Vehicles by Version with Pagination", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vehicles found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DataVehicleDetails.class))),
+            @ApiResponse(responseCode = "404", description = "No vehicles found for the provided version",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByVersion(
+            @Parameter(description = "Version of the vehicles to retrieve", required = true)
+            @PathVariable String version,
+            @Parameter(description = "Pagination information", required = false)
+            Pageable pageable) {
+        Page<DataVehicleDetails> vehicles = vehicleService.getVehiclesByVersion(version, pageable);
+        return ResponseEntity.ok(vehicles);
+    }
 }
