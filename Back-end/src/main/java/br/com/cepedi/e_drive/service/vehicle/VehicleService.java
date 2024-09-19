@@ -222,4 +222,19 @@ public class VehicleService {
     public void setValidationUpdateVehicleList(List<ValidationUpdateVehicle> validationUpdateVehicleList) {
         this.validationUpdateVehicleList = validationUpdateVehicleList;
     }
+
+    /**
+     * Busca uma página de veículos filtrados pela versão e armazena em cache o resultado.
+     * O cache é identificado pela chave gerada a partir da versão do veículo e o número da página.
+     *
+     * @param version A versão do veículo a ser filtrada.
+     * @param pageable Objeto de paginação que define o tamanho da página, número da página e ordenação.
+     * @return Um objeto {@code Page<DataVehicleDetails>} contendo os detalhes dos veículos correspondentes à versão fornecida.
+     */
+    @Cacheable(value = "vehicleByVersion", key = "#version + '-' + #pageable.pageNumber")
+    public Page<DataVehicleDetails> getVehiclesByVersion(String version, Pageable pageable) {
+        return vehicleRepository.findByVersion(version, pageable)
+                .map(DataVehicleDetails::new);
+    }
+
 }
