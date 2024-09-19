@@ -346,6 +346,14 @@ public class VehicleController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Endpoint para obter veículos filtrados pela versão com suporte a paginação.
+     *
+     * @param version A versão dos veículos a serem recuperados.
+     * @param pageable Informações de paginação, como número da página, tamanho e ordenação. Este parâmetro é opcional.
+     * @return Um {@code ResponseEntity} contendo uma página de {@code DataVehicleDetails} se os veículos forem encontrados,
+     *         ou uma resposta 404 se nenhum veículo for encontrado para a versão fornecida.
+     */
     @GetMapping("/version/{version}")
     @Operation(summary = "Get Vehicles by Version with Pagination", method = "GET")
     @ApiResponses(value = {
@@ -369,4 +377,5 @@ public class VehicleController {
         Page<DataVehicleDetails> vehicles = vehicleService.getVehiclesByVersion(version, pageable);
         return ResponseEntity.ok(vehicles);
     }
+
 }

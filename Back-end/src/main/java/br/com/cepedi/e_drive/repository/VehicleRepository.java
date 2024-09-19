@@ -104,5 +104,13 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
      */
     boolean existsByVersionIgnoreCase(String version);
 
+    /**
+     * Busca uma página de veículos filtrados pela versão fornecida.
+     *
+     * @param version A versão do veículo a ser filtrada.
+     * @param pageable Objeto de paginação que define o tamanho da página, número da página e ordenação.
+     * @return Um objeto {@code Page<Vehicle>} contendo os veículos correspondentes à versão fornecida.
+     */
     Page<Vehicle> findByVersion(String version, Pageable pageable);
+
 }
