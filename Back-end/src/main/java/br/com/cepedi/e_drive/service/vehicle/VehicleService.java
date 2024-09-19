@@ -222,4 +222,9 @@ public class VehicleService {
     public void setValidationUpdateVehicleList(List<ValidationUpdateVehicle> validationUpdateVehicleList) {
         this.validationUpdateVehicleList = validationUpdateVehicleList;
     }
+    @Cacheable(value = "vehicleByVersion", key = "#version + '-' + #pageable.pageNumber")
+    public Page<DataVehicleDetails> getVehiclesByVersion(String version, Pageable pageable) {
+        return vehicleRepository.findByVersion(version, pageable)
+                .map(DataVehicleDetails::new);
+    }
 }
