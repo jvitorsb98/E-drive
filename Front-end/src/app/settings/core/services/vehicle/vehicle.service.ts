@@ -3,8 +3,9 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { Vehicle } from '../../models/vehicle';
-import { AuthService } from '../../security/services/auth/auth.service';
 import { PaginatedResponse } from '../../models/paginatedResponse';
+import { AuthService } from '../../security/services/auth/auth.service';
+import { AuthInterceptor } from '../../security/interceptors/auth.interceptor';
 
 
 @Injectable({
@@ -13,11 +14,14 @@ import { PaginatedResponse } from '../../models/paginatedResponse';
 export class VehicleService {
 
   private vehicleUrl!: string;
+
   private authToken: string | null;
+
   private headers!: HttpHeaders;
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private interceptor : AuthInterceptor) {
     this.vehicleUrl = `${environment.apiUrl}`;
+
     this.authToken = this.authService.getToken();
 
     this.headers = new HttpHeaders({
@@ -32,18 +36,11 @@ export class VehicleService {
   }
 
   getVehicleDetails(id: number): Observable<Vehicle> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authToken}` // Utilize o token mockado ou real
-    });
-
-    return this.http.get<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, { headers });
+    return this.http.get<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`);
   }
 
   getVehiclesByModel(modelId: number): Observable<Vehicle[]> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.authToken}` // Utilize o token mockado ou real
-    });
-    return this.http.get<Vehicle[]>(`${this.vehicleUrl}/api/v1/vehicles/model/${modelId}`, { headers });
+    return this.http.get<Vehicle[]>(`${this.vehicleUrl}/api/v1/vehicles/model/${modelId}`);
   }
 
   getAll(page: number, size: number): Observable<PaginatedResponse<Vehicle>> {
@@ -58,32 +55,33 @@ export class VehicleService {
   }
 
   register(vehicle: Vehicle): Observable<Vehicle> {
-    return this.http.post<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles`, vehicle, { headers: this.headers }).pipe(
+    return this.http.post<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles`, vehicle).pipe(
       catchError(this.handleError)
     );
   }
 
   update(id: number, vehicle: Vehicle): Observable<Vehicle> {
-    return this.http.put<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, vehicle, { headers: this.headers }).pipe(
+    return this.http.put<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, vehicle).pipe(
       catchError(this.handleError)
     );
   }
 
   activate(id: number): Observable<any> {
+    Todo: // Verificar a necessidade de enviar o token no header para ativar o veículo 
     return this.http.put<any>(`${this.vehicleUrl}/api/v1/vehicles/enable/${id}`, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
   }
 
   deactivate(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, { headers: this.headers }).pipe(
+    return this.http.delete<any>(`${this.vehicleUrl}/api/v1/vehicles/${id}`).pipe(
       catchError(this.handleError)
     );
   }
 
   // cadastro de Autonomia
   registerAutonomy(autonomy: any): Observable<any> {
-    return this.http.post<any>(`${this.vehicleUrl}/api/v1/vehicles/autonomy`, autonomy, { headers: this.headers }).pipe(
+    return this.http.post<any>(`${this.vehicleUrl}/api/v1/vehicles/autonomy`, autonomy).pipe(
       catchError(this.handleError)
     );
   }
