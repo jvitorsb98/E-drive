@@ -1,4 +1,5 @@
-.footer{
+.footer {
+  padding-top: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,20 +7,20 @@
   color: white;
 
 
-  .card-fale-conosco mat-card-content{
+  .card-fale-conosco mat-card-content {
     font-size: 1rem;
     margin-top: 10px;
     margin-bottom: 10px;
 
   }
 
-  .card-fale-conosco{
+  .card-fale-conosco {
     background: none !important;
     width: 100%;
     box-shadow: none;
   }
 
-  .card-fale-conosco mat-card-title{
+  .card-fale-conosco mat-card-title {
     font-size: 2rem;
   }
 
@@ -33,7 +34,7 @@
   .social-icons a {
     display: inline-block;
     margin: 0 10px;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: white;
     text-decoration: none;
   }

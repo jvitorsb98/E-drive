@@ -112,12 +112,6 @@ export class UserRegistrationFormComponent {
     }
   }
 
-  private getListUsers() {
-    this.userService.getAllUsers().subscribe(users => {
-      this.users = users;
-    });
-  }
-
   // Filtra a lista de países com base na string de pesquisa, considerando nome e código.
   private filterCountries(value: string): any[] {
     const filterValue = value.toLowerCase();
@@ -159,7 +153,7 @@ export class UserRegistrationFormComponent {
       width: '430px',
       height: '650px',
       data: this.user
-    }).afterClosed().subscribe(() => this.getListUsers());
+    });
   }
 
   goBack() {

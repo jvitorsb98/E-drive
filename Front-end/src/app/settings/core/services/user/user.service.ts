@@ -16,11 +16,6 @@ export class UserService {
     this.usersUrl = `${environment.apiUrl}/auth`;
   }
 
-  // Método para obter o usuário logado
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.usersUrl}/user/me`);
-  }
-
   // Método para obter os detalhes do usuário autenticado sem passar o ID explicitamente
   getAuthenticatedUserDetails(): Observable<User> {
     return this.http.get<User>(`${this.usersUrl}/user/me`);

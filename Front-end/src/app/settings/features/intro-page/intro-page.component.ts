@@ -17,13 +17,31 @@ import { Component } from '@angular/core';
 })
 export class IntroPageComponent {
 
-  constructor(
-    private modal: ModalService, // Serviço para gerenciar modais
-  ) {
+
+  constructor(private modal: ModalService) { }
+
+  openLoginModal() {
+    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
+      if (result) {
+        console.log(result);
+      }
+    });
   }
 
-  // Abre o modal de login
-  openLoginModal() {
-    this.modal.openModal(UserLoginModalComponent);
+  ngAfterViewInit() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('show');
+        }
+      });
+    }, {
+      threshold: .5
+    });
+
+    const elementos = document.querySelectorAll('.fade-in');
+    elementos.forEach(element => {
+      observer.observe(element);
+    });
   }
 }
