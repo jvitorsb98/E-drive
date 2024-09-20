@@ -34,7 +34,7 @@ export class ModalRecoverPasswordComponent {
   ) { }
 
   ngOnInit(): void {
-    this.emailControl = new FormControl ('', [Validators.required, Validators.email]),
+    this.emailControl = new FormControl ('', [Validators.required, Validators.email], [emailExistsValidator(this.userService)]);
     this.recoverPasswordForm = this.fb.group({
       email: this.emailControl
     });
