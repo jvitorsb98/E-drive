@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
 import { IResetPasswordResponse } from '../../../../../models/inter-Login';
 import { AuthService } from '../../../../services/auth/auth.service';
-import { emailExistsValidator } from '../../../../../../shared/validators/email-exists.validator';
+import {  emailnoExistsValidator } from '../../../../../../shared/validators/email-exists.validator';
 import { UserService } from '../../../../../services/user/user.service';
 
 
@@ -34,7 +34,11 @@ export class ModalRecoverPasswordComponent {
   ) { }
 
   ngOnInit(): void {
-    this.emailControl = new FormControl ('', [Validators.required, Validators.email], [emailExistsValidator(this.userService)]);
+    this.emailControl = new FormControl ('', {
+      validators: [Validators.required, Validators.email],
+      asyncValidators: [emailnoExistsValidator(this.userService)],
+    });
+
     this.recoverPasswordForm = this.fb.group({
       email: this.emailControl
     });

@@ -81,9 +81,7 @@ export class AuthService {
   // o token deve expirar em 1 hora
 
   recoverPasswordRequest(email: IResetPasswordRequest): Observable<IResetPasswordResponse> {
-    return this.http.put<IResetPasswordResponse>(`${this.apiUrl}/reset-password/request`, { email }).pipe(
-      catchError(this.handleError)
-    )
+    return this.http.put<IResetPasswordResponse>(`${this.apiUrl}/reset-password/request`, { email })
   }
 
   resetPassword(token: string, password: string): Observable<any> {
