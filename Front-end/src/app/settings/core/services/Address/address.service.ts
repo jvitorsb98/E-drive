@@ -26,11 +26,7 @@ export class AddressService {
     this.addressUrl = `${environment.apiUrl}/api/v1/address`;
   }
 
-  getAddresses(): Observable<IAddressResponse[]> {
-    return this.http.get<IAddressResponse[]>(this.addressUrl);
-  }
-
-  createAddress(address: IAddressRequest): Observable<any> {
+  register(address: IAddressRequest): Observable<any> {
     // retornar a resposta do servidor para o componente pai
     return this.http.post(this.addressUrl, address).pipe(
       catchError((error) => {
@@ -39,13 +35,8 @@ export class AddressService {
     )
   }
 
-  // Função para buscar todos os endereços do usuario
-  getAllAddresses(): Observable<PaginatedResponse<DataAddressDetails>> {
-    return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.addressUrl}/user`);
-  }
-
   // Função para buscar um endereço pelo ID
-  getAddressById(id: number): Observable<IAddressResponse> {
+  getById(id: number): Observable<IAddressResponse> {
     return this.http.get<IAddressResponse>(`${this.addressUrl}/${id}`).pipe(
       catchError((error) => {
         return this.handleError(error);
@@ -53,16 +44,26 @@ export class AddressService {
     );
   }
 
-  // Função para desabilitar um endereço
-  disable(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.addressUrl}/${id}`);
+  // Função para buscar todos os endereços do usuario
+  getAll(): Observable<PaginatedResponse<DataAddressDetails>> {
+    return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.addressUrl}/user`);
+  }
+
+  listAllAddresses(): Observable<IAddressResponse[]> {
+    Todo: // Método não esta cendo utilizado até o momento
+    return this.http.get<IAddressResponse[]>(this.addressUrl);
   }
 
   // Função para atualizar um endereço
-  updateAddress(id: number, addressData: IAddressRequest): Observable<DataAddressDetails> {
+  update(id: number, addressData: IAddressRequest): Observable<DataAddressDetails> {
     return this.http.put<DataAddressDetails>(`${this.addressUrl}/${id}`, addressData).pipe(
       catchError(this.handleError)
     );
+  }
+
+  // Função para desabilitar um endereço
+  disable(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.addressUrl}/${id}`);
   }
 
   // Método para definir o endereço atual
