@@ -37,7 +37,7 @@ export class UserLoginModalComponent implements OnInit {
 
   private initLoginForm(): void {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email], [emailExistsValidator(this.userService)]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
