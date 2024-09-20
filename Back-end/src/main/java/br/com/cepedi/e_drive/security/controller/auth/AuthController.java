@@ -67,32 +67,33 @@ public class AuthController {
     @Operation(summary = "User login", description = "Authenticates the user and generates an authentication token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful"),
-            @ApiResponse(responseCode = "400", description = "User is not activated", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DataAuth data) {
         User user = userService.getUserActivatedByEmail(data.login());
-
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not registered");
         }
-
         if (!user.getActivated()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not activated");
         }
+        try {
+            var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+            Authentication authentication = manager.authenticate(authenticationToken);
 
-        var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-        Authentication authentication = manager.authenticate(authenticationToken);
-
-        var tokenJWT = tokenService.generateToken(user);
-        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+            var tokenJWT = tokenService.generateToken(user);
+            return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email or password");
+        }
     }
+
 
     /**
      * Solicita a redefinição de senha enviando um e-mail para o usuário com instruções.
      *
-     * @param data Dados de solicitação de redefinição de senha.
      * @return Uma resposta indicando se o e-mail foi enviado com sucesso.
      * @throws MessagingException Se houver um erro ao enviar o e-mail.
      */
@@ -126,7 +127,6 @@ public class AuthController {
     /**
      * Redefine a senha do usuário com base no token fornecido.
      *
-     * @param data Dados de redefinição de senha.
      * @return Uma resposta indicando se a senha foi atualizada com sucesso.
      */
     @PutMapping("/reset-password/reset")

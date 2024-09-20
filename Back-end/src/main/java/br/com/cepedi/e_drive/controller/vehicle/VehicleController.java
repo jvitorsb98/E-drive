@@ -345,4 +345,37 @@ public class VehicleController {
         vehicleService.enableVehicle(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * Endpoint para obter veículos filtrados pela versão com suporte a paginação.
+     *
+     * @param version A versão dos veículos a serem recuperados.
+     * @param pageable Informações de paginação, como número da página, tamanho e ordenação. Este parâmetro é opcional.
+     * @return Um {@code ResponseEntity} contendo uma página de {@code DataVehicleDetails} se os veículos forem encontrados,
+     *         ou uma resposta 404 se nenhum veículo for encontrado para a versão fornecida.
+     */
+    @GetMapping("/version/{version}")
+    @Operation(summary = "Get Vehicles by Version with Pagination", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vehicles found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DataVehicleDetails.class))),
+            @ApiResponse(responseCode = "404", description = "No vehicles found for the provided version",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Page<DataVehicleDetails>> getVehiclesByVersion(
+            @Parameter(description = "Version of the vehicles to retrieve", required = true)
+            @PathVariable String version,
+            @Parameter(description = "Pagination information", required = false)
+            Pageable pageable) {
+        Page<DataVehicleDetails> vehicles = vehicleService.getVehiclesByVersion(version, pageable);
+        return ResponseEntity.ok(vehicles);
+    }
+
 }

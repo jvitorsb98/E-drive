@@ -57,7 +57,7 @@ export class UserRegistrationFormComponent {
       name: new FormControl(null, [Validators.required, Validators.minLength(2), noNumbersValidator]),
       email: new FormControl(null, {
         validators: [Validators.required, Validators.email],
-        asyncValidators: [emailExistsValidator(this.userService)],
+        // asyncValidators: [emailExistsValidator(this.userService)],
         updateOn: 'blur' // Verifica o e-mail quando o usuário sai do campo
       }),
       birth: new FormControl(null, Validators.required),
@@ -112,12 +112,6 @@ export class UserRegistrationFormComponent {
     }
   }
 
-  private getListUsers() {
-    this.userService.getAllUsers().subscribe(users => {
-      this.users = users;
-    });
-  }
-
   // Filtra a lista de países com base na string de pesquisa, considerando nome e código.
   private filterCountries(value: string): any[] {
     const filterValue = value.toLowerCase();
@@ -159,7 +153,7 @@ export class UserRegistrationFormComponent {
       width: '430px',
       height: '650px',
       data: this.user
-    }).afterClosed().subscribe(() => this.getListUsers());
+    });
   }
 
   goBack() {

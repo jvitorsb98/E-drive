@@ -22,12 +22,12 @@ export class AddressService {
   private titleSource = new BehaviorSubject<string>('');
   selectedTitle$ = this.titleSource.asObservable();
 
-  getAddresses(): Observable<IAddressResponse[]> {
-    return this.http.get<IAddressResponse[]>(this.addressUrl);
-  }
-
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {
     this.addressUrl = `${environment.apiUrl}/api/v1/address`;
+  }
+
+  getAddresses(): Observable<IAddressResponse[]> {
+    return this.http.get<IAddressResponse[]>(this.addressUrl);
   }
 
   createAddress(address: IAddressRequest): Observable<any> {

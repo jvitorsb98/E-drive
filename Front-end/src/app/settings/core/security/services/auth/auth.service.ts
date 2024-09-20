@@ -6,8 +6,8 @@ import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
 // import * as jwt_decode from 'jwt-decode'; // Importe a biblioteca para decodificar o JWT
-import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +28,7 @@ export class AuthService {
         tap((response: ILoginResponse) => {
           if (response && response.token) {
             localStorage.setItem('token', response.token);
+
             this.isLoggedInSubject.next(true);
           }
         }),
