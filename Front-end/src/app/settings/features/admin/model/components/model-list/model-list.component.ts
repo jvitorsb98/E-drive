@@ -46,7 +46,7 @@ export class ModelListComponent {
   }
 
   ngOnInit() {
-    this.getListModels(); // Carrega os modelos ao iniciar o componente
+    this.loadModels(); // Carrega os modelos ao iniciar o componente
   }
 
   ngAfterViewInit() {
@@ -56,8 +56,8 @@ export class ModelListComponent {
   }
 
   // Obtém a lista de modelos do serviço
-  getListModels() {
-    this.modelService.getAllModels().subscribe({
+  loadModels() {
+    this.modelService.getAll().subscribe({
       next: (response: PaginatedResponse<Model>) => { // Usa a interface tipada
         console.log('Response from getAllModels:', response);
 
@@ -82,7 +82,7 @@ export class ModelListComponent {
   // Deleta um modelo e atualiza a lista
   deleteModel(modelData: Model) {
     console.log('Deletando veículo:', modelData);
-    this.modelService.deleteModel(modelData.id).pipe(
+    this.modelService.delete(modelData.id).pipe(
       catchError(() => {
         Swal.fire({
           title: 'Erro!',
@@ -102,7 +102,7 @@ export class ModelListComponent {
         confirmButtonColor: '#19B6DD',
       }).then((result) => {
         if (result.isConfirmed || result.isDismissed) {
-          this.getListModels(); // Atualiza a lista de modelos após a exclusão
+          this.loadModels(); // Atualiza a lista de modelos após a exclusão
         }
       });
     });
@@ -132,7 +132,7 @@ export class ModelListComponent {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
       height: '320px',
-    }).afterClosed().subscribe(() => this.getListModels()); // Atualiza a lista de modelos após o fechamento do modal
+    }).afterClosed().subscribe(() => this.loadModels()); // Atualiza a lista de modelos após o fechamento do modal
   }
 
   // Abre o modal para editar um modelo existente
@@ -142,6 +142,6 @@ export class ModelListComponent {
       width: '500px',
       height: '320px',
       data: model
-    }).afterClosed().subscribe(() => this.getListModels()); // Atualiza a lista de modelos após o fechamento do modal
+    }).afterClosed().subscribe(() => this.loadModels()); // Atualiza a lista de modelos após o fechamento do modal
   }
 }

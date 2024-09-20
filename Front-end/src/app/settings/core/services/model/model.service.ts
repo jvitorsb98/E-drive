@@ -17,7 +17,7 @@ export class ModelService {
   }
 
   // Método para obter todas as marcas
-  getAllModels(): Observable<PaginatedResponse<Model>> {
+  getAll(): Observable<PaginatedResponse<Model>> {
     return this.http.get<PaginatedResponse<Model>>(this.modelUrl);
   }
 
@@ -25,7 +25,7 @@ export class ModelService {
     return this.http.get<Model[]>(`${this.modelUrl}/brand/${brandId}`);
   }
 
-  registerModel(model: Model): Observable<Model> {
+  register(model: Model): Observable<Model> {
     return this.http.post<Model>(this.modelUrl, model).pipe(
       map(response => {
         return response;
@@ -36,7 +36,7 @@ export class ModelService {
     );
   }
 
-  updateModel(model: Model): Observable<Model> {
+  update(model: Model): Observable<Model> {
     // Verifica se a brand possui um ID e outros campos obrigatórios antes de fazer a requisição
     if (!model.id || !model.name) {
       return throwError(() => new Error('Dados do modelo são insuficientes para atualização.'));
@@ -52,7 +52,7 @@ export class ModelService {
     );
   }
 
-  deleteModel(id: number): Observable<void> {
+  delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.modelUrl}/${id}`);
   }
 }
