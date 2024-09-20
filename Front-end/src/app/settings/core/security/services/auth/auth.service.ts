@@ -76,11 +76,11 @@ export class AuthService {
   }
 
   // TODO: Implemente a lógica de envio de e-mail para redefinição de senha
-  // o back-end deve retornar um e-mail com um link para redefinição de senha
+  // o back-end deve mandar um e-mail com um link para redefinição de senha
   // o link deve redirecionar para a rota "reset-password" com o token de troca de senha
   // o token deve expirar em 1 hora
 
-  resetPasswordRequest(email: IResetPasswordRequest): Observable<IResetPasswordResponse> {
+  recoverPasswordRequest(email: IResetPasswordRequest): Observable<IResetPasswordResponse> {
     return this.http.post<IResetPasswordResponse>(this.apiUrl + '/reset-password/request', email).pipe(
       tap((response: IResetPasswordResponse) => {
         localStorage.setItem('token-reset-password', response.token);

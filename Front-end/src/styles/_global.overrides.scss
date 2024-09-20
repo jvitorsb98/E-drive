@@ -28,8 +28,8 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
 }
 
 // Customização de Botões
-button[type="button-confirm"] {
-  background-color: #19B6DD;
+button[type="button-confirm"], button[type="submit"] {
+  background-color: #19B6DD !important;
   color: #FFF;
 
   &:hover {

@@ -1,14 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, AbstractControl, AsyncValidatorFn } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
 import { ILoginRequest } from '../../../models/inter-Login';
-import { ResetPasswordComponent } from '../recover-password/reset-password/reset-password.component';
+import { ModalRecoverPasswordComponent } from '../../login/recover-password/components/modal-recover-password/modal-recover-password.component';
 import { Router } from '@angular/router';
 import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
 import Swal from 'sweetalert2';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../../../services/user/user.service';
+import { of, map, catchError } from 'rxjs';
+import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-user-login-modal',
@@ -24,6 +27,7 @@ export class UserLoginModalComponent implements OnInit {
     private dialog: MatDialog,
     private modal: ModalService,
     private auth: AuthService,
+    private userService: UserService,
     private router: Router,
   ) {}
 
@@ -33,13 +37,19 @@ export class UserLoginModalComponent implements OnInit {
 
   private initLoginForm(): void {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email], [emailExistsValidator(this.userService)]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
   }
 
   modalResetPassword(): void {
-    this.modal.openModal(ResetPasswordComponent);
+    this.modal.openModal(ModalRecoverPasswordComponent, {
+      email: this.loginForm.get('email')?.value
+    }, {
+      width: '80%',
+      height: 'auto',
+      disableClose: true
+    });
   }
 
   goBack(): void {
