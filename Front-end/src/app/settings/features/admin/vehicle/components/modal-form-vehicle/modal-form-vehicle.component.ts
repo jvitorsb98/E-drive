@@ -113,7 +113,7 @@ export class ModalFormVehicleComponent {
   }
 
   loadBrands() {
-    this.brandService.getAllBrands().subscribe({
+    this.brandService.getAll().subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
       },

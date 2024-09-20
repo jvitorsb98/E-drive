@@ -33,10 +33,10 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   constructor(
     private brandService: BrandService, // Serviço para interagir com a API de marcas
     private dialog: MatDialog // Serviço para abrir diálogos
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.getListBrands(); // Carregar a lista de marcas ao inicializar o componente
+    this.loadBrands(); // Carregar a lista de marcas ao inicializar o componente
   }
 
   ngAfterViewInit() {
@@ -45,13 +45,10 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página'; // Label para itens por página
   }
 
-  getListBrands() {
-    this.brandService.getAllBrands().subscribe({
+  loadBrands() {
+    this.brandService.getAll().subscribe({
       next: (response: PaginatedResponse<Brand>) => { // Recebe a resposta paginada
-        console.log('Resposta de getAllBrands:', response);
-
         this.brandList = response.content; // Extrai a lista de marcas
-        console.log("brandList:", this.brandList);
 
         if (Array.isArray(this.brandList)) {
           this.dataSource = new MatTableDataSource(this.brandList); // Atualiza a fonte de dados
@@ -69,7 +66,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
 
   deleteBrand(brandData: Brand) {
     console.log('Deletando marca:', brandData);
-    this.brandService.deleteBrand(brandData.id).pipe(
+    this.brandService.delete(brandData.id).pipe(
       catchError(() => {
         Swal.fire({
           title: 'Erro!',
@@ -89,7 +86,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
         confirmButtonColor: '#19B6DD',
       }).then((result) => {
         if (result.isConfirmed || result.isDismissed) {
-          this.getListBrands(); // Atualiza a lista após exclusão
+          this.loadBrands(); // Atualiza a lista após exclusão
         }
       });
     });
@@ -117,7 +114,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
       height: '210px',
-    }).afterClosed().subscribe(() => this.getListBrands()); // Atualiza a lista após fechamento do modal
+    }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
   }
 
   openModalEditBrand(brandList: Brand) {
@@ -126,6 +123,6 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       width: '500px',
       height: '210px',
       data: brandList
-    }).afterClosed().subscribe(() => this.getListBrands()); // Atualiza a lista após fechamento do modal
+    }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
   }
 }

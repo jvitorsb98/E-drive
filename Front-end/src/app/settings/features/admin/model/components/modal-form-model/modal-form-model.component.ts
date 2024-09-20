@@ -81,7 +81,7 @@ export class ModalFormModelComponent {
 
   // Carrega a lista de marcas disponíveis
   loadBrands() {
-    this.brandService.getAllBrands().subscribe({
+    this.brandService.getAll().subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
         this._filterBrands(); // Inicializa o filtro após carregar as marcas

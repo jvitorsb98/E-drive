@@ -75,7 +75,7 @@ export class ModalFormBrandComponent {
   }
 
   // Submete o formulário
-  submitForm() {
+  onSubmit() {
     if (this.brandForm.valid) {
       console.log('Formulário válido:', this.brandForm.value);
 
@@ -83,8 +83,8 @@ export class ModalFormBrandComponent {
       const action = this.isEditing() ? 'atualizada' : 'cadastrada';
 
       const request$ = this.isEditing()
-        ? this.brandService.updateBrand({ ...this.data, ...this.brandForm.value }) // Atualiza a marca
-        : this.brandService.registerBrand(this.brandForm.value); // Cadastra uma nova marca
+        ? this.brandService.update({ ...this.data, ...this.brandForm.value }) // Atualiza a marca
+        : this.brandService.register(this.brandForm.value); // Cadastra uma nova marca
 
       request$.pipe(
         catchError(() => {
