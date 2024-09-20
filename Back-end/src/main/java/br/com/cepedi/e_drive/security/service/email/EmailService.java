@@ -87,8 +87,7 @@ public class EmailService {
         context.setVariable("nome", name);
         context.setVariable("token", token);
         context.setVariable("titulo", "Redefinição de Senha");
-        context.setVariable("texto", "Recebemos uma solicitação para redefinir sua senha. Para redefinir sua senha, clique no botão abaixo.");
-        context.setVariable("linkRedefinicao", "http://localhost:8080/auth/reset-password?token=" + token);
+        context.setVariable("linkRedefinicao", "http://localhost:4200/reset-password?token=" + token);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reset_password_email_template", context);
@@ -105,6 +104,7 @@ public class EmailService {
         DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Password Reset");
         mailService.register(dataRegisterMail);
     }
+
 
     /**
      * Envia um e-mail de ativação de conta.
