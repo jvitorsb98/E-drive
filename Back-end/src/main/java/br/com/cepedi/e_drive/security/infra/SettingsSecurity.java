@@ -45,8 +45,9 @@ public class SettingsSecurity {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers("/auth/login").permitAll();
-                    req.requestMatchers(HttpMethod.POST, "/auth/register").permitAll();
+                    req.requestMatchers("/auth/register").permitAll();
                     req.requestMatchers("/auth/user/exists").permitAll();
+                    req.requestMatchers("/auth/reset-password/request").permitAll();
 
 //                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
 //                    req.requestMatchers("/auth/reset-password/**").permitAll();
