@@ -87,9 +87,7 @@ public class EmailService {
         context.setVariable("nome", name);
         context.setVariable("token", token);
         context.setVariable("titulo", "Redefinição de Senha");
-
-        // Passando o token corretamente no link usando a sintaxe ${token}
-        context.setVariable("linkRedefinicao", "http://localhost:4200/reset-password?token=${token}");
+        context.setVariable("linkRedefinicao", "http://localhost:4200/reset-password?token=" + token);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reset_password_email_template", context);
@@ -106,7 +104,6 @@ public class EmailService {
         DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Password Reset");
         mailService.register(dataRegisterMail);
     }
-
 
 
     /**
@@ -132,6 +129,8 @@ public class EmailService {
         context.setVariable("titulo", "Bem-vindo ao e-Drive, " + name + "!");
         context.setVariable("texto", "Estamos felizes em tê-lo(a) conosco. Para começar a usar o e-Drive, confirme seu cadastro clicando no link abaixo.");
         context.setVariable("linkConfirmacao", "http://localhost:8080/auth/activate?token=" + tokenForActivate);
+
+        // TODO:  criar a tela de ativação e redirecionar para a tela principal no front
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("activate_user_by_email_template", context);

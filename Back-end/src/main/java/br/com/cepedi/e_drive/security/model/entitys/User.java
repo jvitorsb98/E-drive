@@ -172,13 +172,4 @@ public class User implements UserDetails {
     public void setAuthorities(Set<SimpleGrantedAuthority> roleUser) {
         // Método vazio
     }
-
-    /**
-     * Define a senha do usuário.
-     *
-     * @param encode A senha codificada.
-     */
-    public void setPassword(String encode) {
-        // Método vazio
-    }
 }
