@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { VehicleType } from '../../models/vehicle-type';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -14,14 +15,8 @@ export class TypeVehicleService {
     this.vehicleTypeUrl = `${environment.apiUrl}/api/v1/vehicleTypes`;
   }
 
-  getAll(): Observable<VehicleType[]> {
-    // page: number, size: number
-    // let params = new HttpParams()
-    // .set('page', page.toString())
-    // .set('size', size.toString());
-    // .set('headers', this.headers.toString());
-
-    return this.http.get<VehicleType[]>(this.vehicleTypeUrl).pipe(
+  getAll(): Observable<PaginatedResponse<VehicleType>> {
+    return this.http.get<PaginatedResponse<VehicleType>>(this.vehicleTypeUrl).pipe(
       catchError(this.handleError)
     );
   }

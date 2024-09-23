@@ -1,13 +1,14 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
-import { ILoginRequest, ILoginResponse, IResetPasswordRequest, IResetPasswordResponse } from '../../../models/inter-Login';
+import { ILoginRequest, ILoginResponse, IRecoverPasswordRequest, IRecoverPasswordResponse, IResetPasswordRequest } from '../../../models/inter-Login';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
 // import * as jwt_decode from 'jwt-decode'; // Importe a biblioteca para decodificar o JWT
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { Token } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -76,24 +77,19 @@ export class AuthService {
   }
 
   // TODO: Implemente a lógica de envio de e-mail para redefinição de senha
-  // o back-end deve retornar um e-mail com um link para redefinição de senha
+  // o back-end deve mandar um e-mail com um link para redefinição de senha
   // o link deve redirecionar para a rota "reset-password" com o token de troca de senha
   // o token deve expirar em 1 hora
 
-  resetPasswordRequest(email: IResetPasswordRequest): Observable<IResetPasswordResponse> {
-    return this.http.post<IResetPasswordResponse>(this.apiUrl + '/reset-password/request', email).pipe(
-      tap((response: IResetPasswordResponse) => {
-        localStorage.setItem('token-reset-password', response.token);
-        this.router.navigate(['reset-password']);
-      }),
-      catchError(this.handleError)
-    )
+  //TODO - Padronizar o retorno de Erros do back-end
+
+  recoverPasswordRequest(email: IRecoverPasswordRequest): Observable<IRecoverPasswordResponse> {
+    return this.http.put<IRecoverPasswordResponse>(`${this.apiUrl}/reset-password/request`, { email })
   }
 
-  resetPassword(token: string, password: string): Observable<any> {
-    return this.http.post(this.apiUrl + '/reset-password', { token, password }).pipe(
-      catchError(this.handleError)
-    )
+  resetPassword(request: IResetPasswordRequest): Observable<any> {
+    const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
+    return this.http.put(`${this.apiUrl}/reset-password/reset`,request ,{ headers: header })
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import { Category } from '../../models/category';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +16,8 @@ export class CategoryService {
     this.categoryUrl = `${environment.apiUrl}/api/v1/categories`;
   }
 
-  getAll(): Observable<Category[]> {
-    // page : number, size : number
-    // let params = new HttpParams()
-    // .set('page', page.toString())
-    // .set('size', size.toString());
-    // .set('headers', this.headers.toString());
-
-    return this.http.get<Category[]>(this.categoryUrl).pipe(
+  getAll(): Observable<PaginatedResponse<Category>> {
+    return this.http.get<PaginatedResponse<Category>>(this.categoryUrl).pipe(
       catchError(this.handleError)
     );
   }

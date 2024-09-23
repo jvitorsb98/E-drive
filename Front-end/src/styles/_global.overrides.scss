@@ -27,11 +27,26 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   justify-content: space-between;
 }
 
-.custom-swal-popup-error {
-  background-color: #f8d7da;
-  border-color: #f5c6cb;
-  color: #721c24;
+// Customização de Botões
+button[type="button-confirm"], button[type="submit"] {
+  background-color: #19B6DD !important;
+  color: #FFF;
+
+  &:hover {
+    background-color: #32aecd;
+  }
 }
+
+button[type="button-cancel"] {
+  background-color: #ff6b6b;
+  color: #FFF;
+}
+// NOTE: Customização de Alertas Swal erro
+// .custom-swal-popup-error {
+//   background-color: #f8d7da;
+//   border-color: #f5c6cb;
+//   color: #721c24;
+// }
 
 .custom-swal-confirm-button-error {
   background-color: red;
@@ -56,9 +71,9 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   border-color: $btn-secondary;
   color: white;
 }
-
-.custom-swal-popup-success{
-  background-color: #d4edda;
-  border-color: #c3e6cb;
-}
+// NOTE: Customização de Alertas Swal sucesso
+// .custom-swal-popup-success{
+//   background-color: #d4edda;
+//   border-color: #c3e6cb;
+// }
 

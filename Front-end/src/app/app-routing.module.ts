@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { authGuard } from './settings/core/security/guards/auth.guard';
 import { canMatchGuard } from './settings/core/security/guards/can-match.guard';
+import { ResetPasswordComponent } from './settings/core/security/login/recover-password/components/reset-password/reset-password.component';
 
 
 const routes: Routes = [
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./settings/core/security/login/login.module').then(m => m.LoginModule)
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent
   },
   {
     path: 'e-driver/users',
@@ -38,10 +43,6 @@ const routes: Routes = [
           {
             path: 'myinfo',
             loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
-          },
-          {
-            path: 'reset-password',
-            loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule)
           },
           {
             path: 'my-vehicles',

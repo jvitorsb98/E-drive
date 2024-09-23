@@ -8,10 +8,15 @@ export interface ILoginResponse {
   token: string;
 }
 
-export interface IResetPasswordRequest {
+export interface IRecoverPasswordRequest {
   email: string
 }
 
-export interface IResetPasswordResponse {
+export interface IRecoverPasswordResponse {
   token: string
+}
+
+export interface IResetPasswordRequest {
+  token: string
+  password: string
 }

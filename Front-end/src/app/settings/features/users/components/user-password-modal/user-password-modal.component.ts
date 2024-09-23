@@ -28,6 +28,7 @@ import { PasswordFieldValidator } from '../../../../shared/validators/password-f
 
 // Angular Router
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { IResetPasswordRequest } from '../../../../core/models/inter-Login';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -137,11 +138,14 @@ export class UserPasswordModalComponent implements OnInit {
   // função para troca de senha
   changePassword(): void {
     if (this.userPassword.valid) {
-      const token = this.auth.getTokenReset()
-      if (token) {
-        this.auth.resetPassword(token, this.userPassword.value.password).subscribe({
+      //NOTE - fiz essa alteração para usar a IResetPasswordRequest que não estava sendo usada
+      const request: IResetPasswordRequest = {
+        password: this.userPassword.value.password,
+        token: this.auth.getTokenReset()!
+      }
+      if (request.token) {
+        this.auth.resetPassword(request).subscribe({
           next: (response) => {
-            console.log('Senha alterada com sucesso', response); todo://remover depois
             Swal.fire({
               title: 'Senha alterada com sucesso!',
               icon: 'success',

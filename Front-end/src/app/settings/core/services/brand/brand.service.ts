@@ -21,6 +21,10 @@ export class BrandService {
     return this.http.get<PaginatedResponse<Brand>>(this.brandUrl);
   }
 
+  getAll(): Observable<PaginatedResponse<Brand>> {
+    return this.http.get<PaginatedResponse<Brand>>(`${this.brandUrl}?size=1000`);
+  }
+
   // Método para obter detalhes de uma marca específica
   getBrandDetails(id: number): Observable<Brand> {
     return this.http.get<Brand>(`${this.brandUrl}/${id}`);

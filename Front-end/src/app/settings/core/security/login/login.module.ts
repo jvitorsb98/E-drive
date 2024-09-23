@@ -12,12 +12,14 @@ import { SharedModule } from '../../../shared/shared.module';
 
 // Componentes específicos para o módulo de login
 import { UserLoginModalComponent } from './user-login-modal/user-login-modal.component';
-import { ResetPasswordComponent } from './recover-password/reset-password/reset-password.component';
+import { ModalRecoverPasswordComponent } from './recover-password/components/modal-recover-password/modal-recover-password.component';
+import { ResetPasswordComponent } from './recover-password/components/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
     // Declaração dos componentes que pertencem a este módulo
     UserLoginModalComponent,
+    ModalRecoverPasswordComponent,
     ResetPasswordComponent
   ],
   imports: [

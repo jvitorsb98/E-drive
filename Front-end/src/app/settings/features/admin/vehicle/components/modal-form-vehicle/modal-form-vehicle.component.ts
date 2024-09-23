@@ -2,39 +2,49 @@ import { Component, Inject, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, of, catchError } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component';
-import { Vehicle } from '../../../../../core/models/vehicle';
+import { IVehicleRequest, Vehicle } from '../../../../../core/models/vehicle';
 import { BrandService } from '../../../../../core/services/brand/brand.service';
 import { CategoryService } from '../../../../../core/services/category/category.service';
 import { ModelService } from '../../../../../core/services/model/model.service';
 import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
+import { IAutonomyRequest } from '../../../../../core/models/autonomy';
+import { Brand } from '../../../../../core/models/brand';
+import { Model } from '../../../../../core/models/model';
+import { Category } from '../../../../../core/models/category';
+import { VehicleType } from '../../../../../core/models/vehicle-type';
+import { Propulsion } from '../../../../../core/models/propulsion';
+import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-modal-form-vehicle',
   templateUrl: './modal-form-vehicle.component.html',
-  styleUrl: './modal-form-vehicle.component.scss'
+  styleUrls: ['./modal-form-vehicle.component.scss'] // Corrigido 'styleUrl' para 'styleUrls'
 })
 export class ModalFormVehicleComponent {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
+
   vehicleForm!: FormGroup;
-  editVehicle: boolean = false;
-  noCategoryFound: boolean = false;
-  noBrandFound: boolean = false;
+  editVehicle = false;
+  noCategoryFound = false;
+  noBrandFound = false;
+
   brands: { name: string; id: number }[] = [];
   filteredBrands: Observable<{ name: string; id: number }[]> = of([]);
   categories: { name: string; id: number }[] = [];
   models: { name: string; id: number }[] = [];
   types: { name: string; id: number }[] = [];
   propulsions: { name: string; id: number }[] = [];
+
   filteredCategories: Observable<{ name: string; id: number }[]> = of([]);
   filteredModels: Observable<{ name: string }[]> = of([]);
   vehicles: Vehicle[] = [];
 
-  // TODO: Ta cheio de bugs identificar-los e corrigir-los e melhorar o design ta feio.
   constructor(
     private vehicleService: VehicleService,
     private categoryService: CategoryService,
@@ -46,223 +56,252 @@ export class ModalFormVehicleComponent {
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Vehicle
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.editVehicle = !!this.data?.motor;
-    this.loadBrands();
-    this.loadCategories();
-    this.loadTypes();
-    this.loadPropulsions();
-    this.buildForm();
+    this.initForm();
+    this.loadFormDependencies();
+
     if (this.editVehicle) {
       this.fillForm();
     }
 
-    // Monitorar mudanças no campo brand para carregar modelos
-    this.vehicleForm.get('brand')?.valueChanges.subscribe((selectedBrand) => {
-      const brand = this.brands.find(b => b.name === selectedBrand);
-      if (brand) {
-        this.loadModels(brand.id);
-      } else {
-        this.models = []; // Limpa os modelos caso a marca não seja válida
-      }
-    });
+    this.vehicleForm.get('brand')?.valueChanges.subscribe(this.onBrandChange.bind(this));
   }
 
-  buildForm() {
+  //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetodo mais não tem a validação
+
+  private initForm(): void {
     this.vehicleForm = this.formBuilder.group({
       motor: new FormControl(null, [Validators.required, Validators.minLength(2)]),
-      version: new FormControl(null, [Validators.required]),
+      version: new FormControl(null, [Validators.required, Validators.minLength(2)]),
       brand: new FormControl(null, [Validators.required]),
       model: new FormControl(null, [Validators.required]),
       category: new FormControl(null, [Validators.required]),
       type: new FormControl(null, [Validators.required]),
       propulsion: new FormControl(null, [Validators.required]),
-      autonomy: this.formBuilder.group({
-        mileagePerLiterRoad: [null, [Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
-        mileagePerLiterCity: [null, [Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
-        consumptionEnergetic: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
-        autonomyElectricMode: [null, [Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
-      }),
+      mileagePerLiterRoad: new FormControl(null, [
+        Validators.pattern(/^\d{1,2}(\.\d)?$/),
+        Validators.required
+      ]),
+      mileagePerLiterCity: new FormControl(null, [
+        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        Validators.required
+      ]),
+      consumptionEnergetic: new FormControl(null, [
+        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        Validators.required
+      ]),
+      autonomyElectricMode: new FormControl(null, [
+        Validators.pattern(/^\d+(\d{1,2})?$/),
+        Validators.required
+      ]),
       year: new FormControl(null, [Validators.required, Validators.min(1886)]),
       activated: new FormControl(true, [Validators.required]),
     });
   }
 
-  fillForm() {
-    if (this.data.motor) {
-      this.vehicleForm.patchValue({
-        motor: this.data.motor,
-        version: this.data.version,
-        brand: this.data.model.brand.name,
-        model: this.data.model.name,
-        category: this.data.category.name,
-        type: this.data.type.name,
-        propulsion: this.data.propulsion.name,
-        autonomy: {
-          mileagePerLiterCity: this.data.autonomy.mileagePerLiterCity,
-          mileagePerLiterRoad: this.data.autonomy.mileagePerLiterRoad,
-          consumptionEnergetic: this.data.autonomy.consumptionEnergetic,
-          autonomyElectricMode: this.data.autonomy.autonomyElectricMode
-        },
-        year: this.data.year,
-        activated: this.data.activated,
-      });
+  private fillForm(): void {
+    const { motor, version, model, category, type, propulsion, autonomy, year, activated } = this.data;
+    console.log(model.brand.name);
+    // Preencher os dados que não dependem da marca e do modelo
+    this.vehicleForm.patchValue({
+      motor,
+      version,
+      category: category.name,
+      type: type.name,
+      propulsion: propulsion.name,
+      mileagePerLiterCity: autonomy.mileagePerLiterCity,
+      mileagePerLiterRoad: autonomy.mileagePerLiterRoad,
+      consumptionEnergetic: autonomy.consumptionEnergetic,
+      autonomyElectricMode: autonomy.autonomyElectricMode,
+      year,
+      activated,
+    });
+
+    const brand = model.brand;
+    if (brand) {
+      this.loadModels(brand.id); // Carregar modelos com base na marca selecionada
+      // Após carregar os modelos, setar o campo de modelo
+      this.vehicleForm.patchValue({ model: model.name});
     }
+
+    this.vehicleForm.get('brand')?.setValue(brand.name);
   }
 
-  loadBrands() {
-    this.brandService.getAllBrands().subscribe({
-      next: (response: any) => {
-        this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+
+  private loadFormDependencies(): void {
+    this.loadBrands();
+    this.loadCategories();
+    this.loadTypes();
+    this.loadPropulsions();
+  }
+
+  private loadBrands(): void {
+    this.brandService.getAll().subscribe({
+      next: (response) => {
+        this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
       },
-      error: (error) => {
-        console.error('Error loading brands', error);
-      }
+      error: (error) => this.handleError('brands', error),
     });
   }
 
-  loadModels(idBrand: number) {
+  private loadModels(idBrand: number): void {
     this.modelService.getModelsByBrandId(idBrand).subscribe({
       next: (response: any) => {
-        this.models = response.content.map((model: any) => ({ name: model.name, id: model.id }));
+        this.models = response.content.map((model: Model) => ({ name: model.name, id: model.id }));
       },
-      error: (error) => {
-        console.error('Error loading models', error);
-      }
+      error: (error) => this.handleError('models', error),
     });
   }
 
-  loadCategories() {
+  private loadCategories(): void {
     this.categoryService.getAll().subscribe({
-      next: (response: any) => {
-        this.categories = response.content.map((category: any) => ({ name: category.name, id: category.id }));
+      next: (response: PaginatedResponse<VehicleType>) => {
+        this.categories = response.content.map((category: Category) => ({ name: category.name, id: category.id }));
       },
-      error: (error) => {
-        console.error('Error loading categories', error);
-      }
+      error: (error) => this.handleError('categories', error),
     });
   }
 
-  loadTypes() {
+  private loadTypes(): void {
     this.vehicleTypeService.getAll().subscribe({
-      next: (response: any) => {
-        this.types = response.content.map((type: any) => ({ name: type.name, id: type.id }));
+      next: (response: PaginatedResponse<VehicleType>) => {
+        this.types = response.content.map((type: VehicleType) => ({ name: type.name, id: type.id }));
       },
-      error: (error) => {
-        console.error('Error loading vehicle types', error);
-      }
+      error: (error) => this.handleError('types', error),
     });
   }
 
-  loadPropulsions() {
+  private loadPropulsions(): void {
     this.propulsionService.getAll().subscribe({
-      next: (response: any) => {
-        this.propulsions = response.content.map((propulsion: any) => ({ name: propulsion.name, id: propulsion.id }));
+      next: (response: PaginatedResponse<Propulsion>) => {
+        this.propulsions = response.content.map((propulsion: Propulsion) => ({ name: propulsion.name, id: propulsion.id }));
       },
-      error: (error) => {
-        console.error('Error loading propulsions', error);
-      }
+      error: (error) => this.handleError('propulsions', error),
     });
   }
 
-  submitForm() {
-    if (this.vehicleForm.valid) {
-      const action = this.isEditing() ? 'updated' : 'registered';
-
-      const vehicleData = {
-        ...this.data,
-        motor: this.vehicleForm.get('motor')?.value,
-        version: this.vehicleForm.get('version')?.value,
-        modelId: this.getSelectedModelId(),
-        categoryId: this.getSelectedCategoryId(),
-        typeId: this.getSelectedTypeId(),
-        propulsionId: this.getSelectedPropulsionId(),
-        autonomy: this.vehicleForm.get('autonomy')?.value,
-        year: this.vehicleForm.get('year')?.value,
-        activated: this.vehicleForm.get('activated')?.value
-      };
-
-      const request$ = this.isEditing()
-        ? this.vehicleService.update(vehicleData.id, vehicleData)
-        : this.vehicleService.register(vehicleData);
-
-      if (this.isEditing()) {
-
-        this.vehicleService.update(vehicleData.id, vehicleData)
-      }
-
-      request$.pipe(
-        catchError(() => {
-          Swal.fire({
-            title: 'Error!',
-            icon: 'error',
-            text: `An error occurred while ${action} the vehicle. Please try again later.`,
-            showConfirmButton: true,
-            confirmButtonColor: 'red',
-          });
-          return of(null);
-        })
-      ).subscribe(() => {
-        Swal.fire({
-          title: 'Success!',
-          icon: 'success',
-          text: `The vehicle has been successfully ${action}.`,
-          showConfirmButton: true,
-          confirmButtonColor: '#19B6DD',
-        }).then((result) => {
-          if (result.isConfirmed || result.isDismissed) {
-            this.closeModal();
-          }
-        });
-      });
+  private onBrandChange(selectedBrand: string): void {
+    const brand = this.brands.find(b => b.name === selectedBrand);
+    if (brand) {
+      this.loadModels(brand.id);
     } else {
-      console.warn('Invalid form:', this.vehicleForm);
+      this.models = [];
     }
+  }
+
+  submitForm(): void {
+    if (this.vehicleForm.invalid) {
+      console.warn('Invalid form:', this.vehicleForm);
+      return;
+    }
+
+    const vehicleData = this.buildVehicleRequest();
+    const action = this.isEditing() ? 'updated' : 'registered';
+
+    const saveOperation = this.isEditing()
+      ? this.vehicleService.update(this.data.id, vehicleData)
+      : this.vehicleService.register(vehicleData);
+
+    saveOperation.subscribe({
+      next: () => this.showSuccessMessage(action),
+      error: () => this.showErrorMessage(action),
+    });
+  }
+
+  private buildVehicleRequest(): IVehicleRequest {
+    const autonomyData: IAutonomyRequest = {
+      mileagePerLiterCity: this.vehicleForm.get('mileagePerLiterCity')?.value,
+      mileagePerLiterRoad: this.vehicleForm.get('mileagePerLiterRoad')?.value,
+      consumptionEnergetic: this.vehicleForm.get('consumptionEnergetic')?.value,
+      autonomyElectricMode: this.vehicleForm.get('autonomyElectricMode')?.value,
+    };
+
+    return {
+      motor: this.vehicleForm.get('motor')?.value,
+      version: this.vehicleForm.get('version')?.value,
+      modelId: this.getSelectedModelId()!,
+      categoryId: this.getSelectedCategoryId()!,
+      typeId: this.getSelectedTypeId()!,
+      propulsionId: this.getSelectedPropulsionId()!,
+      dataRegisterAutonomy: autonomyData,
+      year: this.vehicleForm.get('year')?.value,
+    };
   }
 
   private getSelectedModelId(): number | undefined {
-    const selectedModelName = this.vehicleForm.get('model')?.value;
-    const selectedModel = this.models.find(model => model.name === selectedModelName);
-    return selectedModel?.id;
+    return this.models.find(model => model.name === this.vehicleForm.get('model')?.value)?.id;
   }
 
   private getSelectedCategoryId(): number | undefined {
-    const selectedCategoryName = this.vehicleForm.get('category')?.value;
-    const selectedCategory = this.categories.find(category => category.name === selectedCategoryName);
-    return selectedCategory?.id;
+    return this.categories.find(category => category.name === this.vehicleForm.get('category')?.value)?.id;
   }
 
   private getSelectedTypeId(): number | undefined {
-    const selectedTypeName = this.vehicleForm.get('type')?.value;
-    const selectedType = this.types.find(type => type.name === selectedTypeName);
-    return selectedType?.id;
+    return this.types.find(type => type.name === this.vehicleForm.get('type')?.value)?.id;
   }
 
   private getSelectedPropulsionId(): number | undefined {
-    const selectedPropulsionName = this.vehicleForm.get('propulsion')?.value;
-    const selectedPropulsion = this.propulsions.find(propulsion => propulsion.name === selectedPropulsionName);
-    return selectedPropulsion?.id;
+    return this.propulsions.find(propulsion => propulsion.name === this.vehicleForm.get('propulsion')?.value)?.id;
+  }
+
+  private showSuccessMessage(action: string): void {
+    Swal.fire({
+      title: 'Success!',
+      icon: 'success',
+      text: `Vehicle successfully ${action}`,
+    });
+    this.dialogRef.close(true);
+  }
+
+  private showErrorMessage(action: string): void {
+    Swal.fire({
+      title: 'Error!',
+      icon: 'error',
+      text: `Failed to ${action} vehicle`,
+    });
+  }
+
+  private handleError(context: string, error: HttpErrorResponse): void {
+    Swal.fire({
+      title: 'Error!',
+      icon: 'error',
+      text: `Failed to load ${context}. Please try again.`,
+    });
   }
 
   isEditing(): boolean {
-    return !!this.data;
+    return this.editVehicle;
   }
 
-  closeModal() {
-    this.dialogRef.close();
+closeModal() {
+  this.dialogRef.close();
+}
+
+  resetForm(): void {
+    this.vehicleForm.reset();
   }
 
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
         faqs: [
-          { question: 'How to register a new vehicle?', answer: '...' },
-          { question: 'How to update a vehicle?', answer: '...' }
+          { question: 'Como criar um veículo?', answer: 'Preencha todos os campos obrigatórios e clique em "Cadastrar Veículo".' },
+          { question: 'Como editar um veículo?', answer: 'Selecione um veículo existente para editar, faça as alterações necessárias e clique em "Atualizar Veículo".' },
+          { question: 'O que significa o campo "Motor"?', answer: 'Informe o tipo de motor do veículo, como "Elétrico", "Combustão", etc.' },
+          { question: 'Quando devo preencher o campo "Versão"?', answer: 'Este campo só aparece quando o campo "Motor" está preenchido corretamente. Insira a versão específica do veículo.' },
+          { question: 'Como escolher a marca?', answer: 'O campo "Marca" será exibido após o preenchimento da "Versão". Escolha uma marca da lista disponibilizada.' },
+          { question: 'E se a marca não aparecer?', answer: 'Se nenhuma marca for exibida, certifique-se de que o campo "Versão" está preenchido corretamente. Caso contrário, entre em contato com o suporte.' },
+          { question: 'Como preencher o campo "Modelo"?', answer: 'Após selecionar a marca, escolha o modelo correspondente ao veículo.' },
+          { question: 'O que são "Tipo" e "Categoria"?', answer: 'Esses campos especificam o tipo de veículo (como SUV, Sedan) e sua categoria (como compacta, esportiva).' },
+          { question: 'Como preencher o campo "Propulsão"?', answer: 'Selecione a propulsão do veículo, como "Elétrico", "Híbrido", etc., após definir a categoria.' },
+          { question: 'Como definir o "Ano" do veículo?', answer: 'Informe o ano de fabricação do veículo. O campo aceita apenas números com 4 dígitos.' },
+          { question: 'Como preencher os campos de "Quilometragem"?', answer: 'Informe a quilometragem por litro ou energia do veículo tanto na estrada quanto na cidade, caso seja um veículo de combustão ou híbrido.' },
+          { question: 'O que é "Autonomia em modo elétrico"?', answer: 'Este campo especifica a autonomia do veículo quando está operando no modo totalmente elétrico.' }
         ]
       }
     });
   }
 }
-

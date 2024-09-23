@@ -1,8 +1,9 @@
-import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Propulsion } from '../../models/propulsion';
+import { PaginatedResponse } from '../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +16,8 @@ export class PropusionService {
     this.propulsionUrl = `${environment.apiUrl}/api/v1/propulsions`;
   }
 
-  getAll(): Observable<Propulsion[]> {
-    // page: number, size: number
-    // let params = new HttpParams()
-    // .set('page', page.toString())
-    // .set('size', size.toString());
-    // .set('headers', this.headers.toString());
-
-    return this.http.get<Propulsion[]>(this.propulsionUrl).pipe(
+  getAll(): Observable<PaginatedResponse<Propulsion>> {
+    return this.http.get<PaginatedResponse<Propulsion>>(this.propulsionUrl).pipe(
       catchError(this.handleError)
     );
   }

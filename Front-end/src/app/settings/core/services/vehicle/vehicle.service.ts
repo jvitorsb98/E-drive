@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Vehicle } from '../../models/vehicle';
+import { IVehicleRequest, Vehicle } from '../../models/vehicle';
 import { PaginatedResponse } from '../../models/paginatedResponse';
 import { AuthService } from '../../security/services/auth/auth.service';
 
@@ -52,20 +52,20 @@ export class VehicleService {
     );
   }
 
-  register(vehicle: Vehicle): Observable<Vehicle> {
+  register(vehicle: IVehicleRequest): Observable<Vehicle> {
     return this.http.post<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles`, vehicle).pipe(
       catchError(this.handleError)
     );
   }
 
-  update(id: number, vehicle: Vehicle): Observable<Vehicle> {
+  update(id: number, vehicle: IVehicleRequest): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, vehicle).pipe(
       catchError(this.handleError)
     );
   }
 
   activate(id: number): Observable<any> {
-    Todo: // Verificar a necessidade de enviar o token no header para ativar o veículo 
+    Todo: // Verificar a necessidade de enviar o token no header para ativar o veículo
     return this.http.put<any>(`${this.vehicleUrl}/api/v1/vehicles/enable/${id}`, { headers: this.headers }).pipe(
       catchError(this.handleError)
     );
