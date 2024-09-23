@@ -130,6 +130,8 @@ public class EmailService {
         context.setVariable("texto", "Estamos felizes em tê-lo(a) conosco. Para começar a usar o e-Drive, confirme seu cadastro clicando no link abaixo.");
         context.setVariable("linkConfirmacao", "http://localhost:8080/auth/activate?token=" + tokenForActivate);
 
+        // TODO:  criar a tela de ativação e redirecionar para a tela principal no front
+
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("activate_user_by_email_template", context);
         helper.setText(htmlBody, true);
