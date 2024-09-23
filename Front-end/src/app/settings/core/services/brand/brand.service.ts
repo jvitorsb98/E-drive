@@ -17,7 +17,7 @@ export class BrandService {
   }
 
   // Método para obter todas as marcas
-  getAllBrands(): Observable<PaginatedResponse<Brand>> {
+  getAll(): Observable<PaginatedResponse<Brand>> {
     return this.http.get<PaginatedResponse<Brand>>(this.brandUrl);
   }
 
@@ -30,7 +30,7 @@ export class BrandService {
     return this.http.get<Brand>(`${this.brandUrl}/${id}`);
   }
 
-  registerBrand(brand: Brand): Observable<Brand> {
+  register(brand: Brand): Observable<Brand> {
     return this.http.post<Brand>(this.brandUrl, brand).pipe(
       map(response => {
         return response;
@@ -41,7 +41,7 @@ export class BrandService {
     );
   }
 
-  updateBrand(brand: Brand): Observable<Brand> {
+  update(brand: Brand): Observable<Brand> {
     // Verifica se a brand possui um ID e outros campos obrigatórios antes de fazer a requisição
     if (!brand.id || !brand.name) {
       return throwError(() => new Error('Dados da marca são insuficientes para atualização.'));
@@ -57,7 +57,7 @@ export class BrandService {
     );
   }
 
-  deleteBrand(id: number): Observable<void> {
+  delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.brandUrl}/${id}`);
   }
 }

@@ -16,7 +16,6 @@ import Swal from 'sweetalert2';
 // Serviços e Modelos
 import { UserService } from '../../../../core/services/user/user.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
-import { ModalService } from '../../../../core/services/modal/modal.service';
 import { User } from '../../../../core/models/user';
 
 // Componentes
@@ -45,7 +44,6 @@ export class UserPasswordModalComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private modalService: ModalService,
     private auth: AuthService,
     private router: Router,
     private routerActivator: ActivatedRoute,
@@ -94,7 +92,7 @@ export class UserPasswordModalComponent implements OnInit {
     if (this.userPassword.valid) {
       this.userData.password = this.userPassword.value.password;
 
-      this.userService.addUser(this.userData).subscribe({
+      this.userService.register(this.userData).subscribe({
         next: (response) => {
           console.log('Usuário cadastrado', response);
 
@@ -193,14 +191,6 @@ export class UserPasswordModalComponent implements OnInit {
     if (this.userPassword.get('newsletter')?.invalid) {
       this.userPassword.get('newsletter')?.markAsTouched();
     }
-  }
-
-  openLoginModal() {
-    this.modalService.openModal(UserLoginModalComponent).subscribe(result => {
-      if (result) {
-        console.log(result);
-      }
-    });
   }
 
   // Função para fechar o modal

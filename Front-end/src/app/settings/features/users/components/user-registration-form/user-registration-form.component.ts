@@ -43,7 +43,7 @@ export class UserRegistrationFormComponent {
   minDate: Date | null = null;
   maxDate: Date | null = null;
 
-  constructor(private userService: UserService,
+  constructor(
     private userDataService: UserDataService,
     private countryService: CountryService,
     public dialog: MatDialog,

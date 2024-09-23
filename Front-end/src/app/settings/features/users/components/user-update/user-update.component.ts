@@ -12,7 +12,6 @@ import { map, startWith } from 'rxjs/operators';
 import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
-import { AuthService } from '../../../../core/security/services/auth/auth.service';
 
 @Component({
   selector: 'app-user-update',
@@ -43,7 +42,6 @@ export class UserUpdateComponent implements OnInit {
   // Injeção de dependências para serviços e construtor
   constructor(
     private userService: UserService,
-    private authService: AuthService,
     private countryService: CountryService,
     private formBuilder: FormBuilder
   ) { }
@@ -155,7 +153,7 @@ export class UserUpdateComponent implements OnInit {
       // Formata o número de telefone antes de enviá-lo para o servidor
       userData.cellPhone = this.formatPhoneNumber(userData.countryCode, userData.cellPhone);
 
-      this.userService.updateUser(userData).subscribe({
+      this.userService.update(userData).subscribe({
         next: () => {
           console.log('Usuário atualizado com sucesso');
         },
@@ -177,7 +175,6 @@ export class UserUpdateComponent implements OnInit {
     // Adiciona o código do país e formata o número
     return `+${countryCode} (${cleanedPhoneNumber.slice(0, 2)}) ${cleanedPhoneNumber.slice(2, 7)}-${cleanedPhoneNumber.slice(7)}`;
   }
-
 
   // Método para excluir a conta do usuário (implementação futura)
   deleteAccount() {

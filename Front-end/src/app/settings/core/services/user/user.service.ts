@@ -22,7 +22,7 @@ export class UserService {
   }
 
   // Método para adicionar um usuário
-  addUser(user: User): Observable<any> {
+  register(user: User): Observable<any> {
     return this.http.post(`${this.usersUrl}/register`, user, { responseType: 'text' }).pipe(
       map(response => {
         return { message: response };
@@ -36,6 +36,15 @@ export class UserService {
     );
   }
 
+  // Método para atualizar os dados do usuário
+  update(user: User): Observable<User> {
+    return this.http.put<User>(`${this.usersUrl}/user/update`, user).pipe(
+        catchError(e => {
+          return throwError(() => e);
+        })
+      );
+  }
+
   // Método para verificar se o email já existe
   checkEmailExists(email: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.usersUrl}/user/exists`, {
@@ -46,30 +55,6 @@ export class UserService {
       })
     );
   }
-
-  // Método para atualizar os dados do usuário
-  updateUser(user: User): Observable<User> {
-    return this.http.put<User>(`${this.usersUrl}/user/update`, user).pipe(
-        catchError(e => {
-          return throwError(() => e);
-        })
-      );
-  }
-
-  // formatAndStoreUserData(countryCode: string, cellPhone: string): string {
-  //   countryCode = countryCode.replace(/^\+/, '');
-  //   const cleanedPhone = cellPhone.replace(/\D/g, '');
-
-  //   if (cleanedPhone.length === 11) {
-  //     const formattedPhone = cleanedPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-  //     const cellPhoneWithCountryCode = `+${countryCode} ${formattedPhone}`;
-
-  //     return cellPhoneWithCountryCode;
-  //   } else {
-  //     console.error('Número de telefone inválido.');
-  //     return '';
-  //   }
-  // }
 
   logout(): void {
     localStorage.removeItem('authToken');

@@ -66,10 +66,8 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Carrega a lista de endereços do serviço
   loadAddresses() {
-    this.addressService.getAllAddresses().subscribe({
+    this.addressService.getAll().subscribe({
       next: (response: PaginatedResponse<DataAddressDetails>) => {
-        console.log('Response from getAllAddresses:', response);
-
         // Extrai o array de endereços do campo 'content'
         const addressList = response.content;
 
@@ -116,7 +114,6 @@ export class ListMyAddressesComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log('Deletando endereço:', address);
         this.addressService.disable(address.id).pipe(
           catchError(() => {
             Swal.fire({
@@ -164,7 +161,7 @@ export class ListMyAddressesComponent implements OnInit {
   }
 
   // Abre o modal para editar um endereço existente
-  editAddress(address: DataAddressDetails) {
+  openModalEditAddress(address: DataAddressDetails) {
     this.dialog.open(MyAddressesComponent, {
       width: '80vw',
       height: '90vh',

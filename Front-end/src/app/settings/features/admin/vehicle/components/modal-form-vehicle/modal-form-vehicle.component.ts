@@ -12,14 +12,6 @@ import { ModelService } from '../../../../../core/services/model/model.service';
 import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
-import { IAutonomyRequest } from '../../../../../core/models/autonomy';
-import { Brand } from '../../../../../core/models/brand';
-import { Model } from '../../../../../core/models/model';
-import { Category } from '../../../../../core/models/category';
-import { VehicleType } from '../../../../../core/models/vehicle-type';
-import { Propulsion } from '../../../../../core/models/propulsion';
-import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -56,13 +48,15 @@ export class ModalFormVehicleComponent {
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Vehicle
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.editVehicle = !!this.data?.motor;
-    this.initForm();
-    this.loadFormDependencies();
-
+    this.loadBrands();
+    this.loadCategories();
+    this.loadTypes();
+    this.loadPropulsions();
+    this.buildForm();
     if (this.editVehicle) {
       this.fillForm();
     }
@@ -102,46 +96,32 @@ export class ModalFormVehicleComponent {
     });
   }
 
-  private fillForm(): void {
-    const { motor, version, model, category, type, propulsion, autonomy, year, activated } = this.data;
-    console.log(model.brand.name);
-    // Preencher os dados que não dependem da marca e do modelo
-    this.vehicleForm.patchValue({
-      motor,
-      version,
-      category: category.name,
-      type: type.name,
-      propulsion: propulsion.name,
-      mileagePerLiterCity: autonomy.mileagePerLiterCity,
-      mileagePerLiterRoad: autonomy.mileagePerLiterRoad,
-      consumptionEnergetic: autonomy.consumptionEnergetic,
-      autonomyElectricMode: autonomy.autonomyElectricMode,
-      year,
-      activated,
-    });
-
-    const brand = model.brand;
-    if (brand) {
-      this.loadModels(brand.id); // Carregar modelos com base na marca selecionada
-      // Após carregar os modelos, setar o campo de modelo
-      this.vehicleForm.patchValue({ model: model.name});
+  fillForm() {
+    if (this.data.motor) {
+      this.vehicleForm.patchValue({
+        motor: this.data.motor,
+        version: this.data.version,
+        brand: this.data.model.brand.name,
+        model: this.data.model.name,
+        category: this.data.category.name,
+        type: this.data.type.name,
+        propulsion: this.data.propulsion.name,
+        autonomy: {
+          mileagePerLiterCity: this.data.autonomy.mileagePerLiterCity,
+          mileagePerLiterRoad: this.data.autonomy.mileagePerLiterRoad,
+          consumptionEnergetic: this.data.autonomy.consumptionEnergetic,
+          autonomyElectricMode: this.data.autonomy.autonomyElectricMode
+        },
+        year: this.data.year,
+        activated: this.data.activated,
+      });
     }
-
-    this.vehicleForm.get('brand')?.setValue(brand.name);
   }
 
-
-  private loadFormDependencies(): void {
-    this.loadBrands();
-    this.loadCategories();
-    this.loadTypes();
-    this.loadPropulsions();
-  }
-
-  private loadBrands(): void {
+  loadBrands() {
     this.brandService.getAll().subscribe({
-      next: (response) => {
-        this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
+      next: (response: any) => {
+        this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
       },
       error: (error) => this.handleError('brands', error),
     });
@@ -276,9 +256,9 @@ export class ModalFormVehicleComponent {
     return this.editVehicle;
   }
 
-closeModal() {
-  this.dialogRef.close();
-}
+  closeModal() {
+    this.dialogRef.close();
+  }
 
   resetForm(): void {
     this.vehicleForm.reset();

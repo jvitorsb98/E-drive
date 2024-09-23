@@ -81,10 +81,10 @@ export class ModalFormModelComponent {
 
   // Carrega a lista de marcas disponíveis
   loadBrands() {
-    this.brandService.getAllBrands().subscribe({
+    this.brandService.getAll().subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
-        this._filterBrands(); // Inicializa o filtro após carregar as marcas
+        this.filterBrands(); // Inicializa o filtro após carregar as marcas
       },
       error: (error) => {
         console.error('Erro ao carregar as marcas', error);
@@ -93,7 +93,7 @@ export class ModalFormModelComponent {
   }
 
   // Submete o formulário para criar ou atualizar um modelo
-  submitForm() {
+  onSubmit() {
     if (this.modelForm.valid) {
       console.log('Formulário válido:', this.modelForm.value);
       const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a ação com base em estar editando ou criando
@@ -109,8 +109,8 @@ export class ModalFormModelComponent {
       };
 
       const request$ = this.isEditing()
-        ? this.modelService.updateModel(modelData)
-        : this.modelService.registerModel(modelData);
+        ? this.modelService.update(modelData)
+        : this.modelService.register(modelData);
 
       request$.pipe(
         catchError(() => {
@@ -142,7 +142,7 @@ export class ModalFormModelComponent {
   }
 
   // Filtra a lista de marcas com base na entrada do usuário
-  private _filterBrands() {
+  private filterBrands() {
     this.modelForm.get('brand')!.valueChanges.pipe(
       startWith(''),
       map(value => {

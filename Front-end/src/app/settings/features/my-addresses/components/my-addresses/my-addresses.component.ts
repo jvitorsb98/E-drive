@@ -7,9 +7,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 // Importa MatSnackBar para exibir mensagens de feedback ao usuário
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-// Importa HttpClient para realizar requisições HTTP
-import { HttpClient } from '@angular/common/http';
-
 // Importa MAT_DIALOG_DATA, MatDialog e MatDialogRef para manipulação de diálogos
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -163,7 +160,7 @@ export class MyAddressesComponent implements OnInit {
   onSubmit() {
     // Verifica se há dados de endereço para decidir entre criar ou atualizar
     if (this.addressData) {
-      this.update();
+      this.edit();
     } else {
       this.create();
     }
@@ -173,9 +170,8 @@ export class MyAddressesComponent implements OnInit {
     // Cria um novo endereço se o formulário for válido
     if (this.addressForm.valid) {
       this.address = this.addressForm.value;
-      this.addressService.createAddress(this.address)
-        .subscribe({
-          next: () => {
+      this.addressService.register(this.address).subscribe({
+        next: () => {
             Swal.fire({
               title: 'Endereço criado com sucesso!',
               icon: 'success',
@@ -201,12 +197,12 @@ export class MyAddressesComponent implements OnInit {
     }
   }
 
-  update() {
+  edit() {
     // Atualiza um endereço existente se o formulário for válido
     if (this.addressForm.valid) {
       if (this.addressData) {
         this.address = this.addressForm.value as IAddressRequest;
-        this.addressService.updateAddress(this.addressData.id, this.address).subscribe({
+        this.addressService.update(this.addressData.id, this.address).subscribe({
           next: () => {
             this.snackBar.open('Endereço atualizado com sucesso', 'Fechar', { duration: 5000 });
             this.addressForm.reset();
