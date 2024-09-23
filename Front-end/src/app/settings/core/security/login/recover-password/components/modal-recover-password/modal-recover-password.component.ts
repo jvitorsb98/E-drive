@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
-import { IResetPasswordResponse } from '../../../../../models/inter-Login';
+import { IRecoverPasswordResponse } from '../../../../../models/inter-Login';
 import { AuthService } from '../../../../services/auth/auth.service';
 import {  emailnoExistsValidator } from '../../../../../../shared/validators/email-exists.validator';
 import { UserService } from '../../../../../services/user/user.service';
@@ -21,7 +21,7 @@ export class ModalRecoverPasswordComponent {
   emailControl!: FormControl;
   email!: string;
 
-  response: Observable<IResetPasswordResponse> | undefined;
+  response: Observable<IRecoverPasswordResponse> | undefined;
 
 
   constructor(
@@ -85,6 +85,9 @@ export class ModalRecoverPasswordComponent {
   }
 
   goBack() {
+    this.recoverPasswordForm.markAllAsTouched();
+    this.recoverPasswordForm.reset();
+    this.recoverPasswordForm.setErrors({invalid: true});
     this.dialogRef.close();
   }
 }
