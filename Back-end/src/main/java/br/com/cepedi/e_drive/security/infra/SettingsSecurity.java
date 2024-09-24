@@ -49,36 +49,14 @@ public class SettingsSecurity {
                     req.requestMatchers("/auth/user/exists").permitAll();
                     req.requestMatchers("/auth/reset-password/request").permitAll();
 
-//                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
-//                    req.requestMatchers("/auth/reset-password/**").permitAll();
-//                    req.requestMatchers("/auth/activate-account").permitAll();
-//
-//                    req.requestMatchers(HttpMethod.POST, "/api/v2/brands/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/brands/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/brands/**").hasRole("ADMIN");
-//
-//                    req.requestMatchers(HttpMethod.POST, "/api/v2/categories/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/categories/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/categories/**").hasRole("ADMIN");
-//
-//                    req.requestMatchers(HttpMethod.POST, "/api/v2/payments/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/payments/**").hasRole("ADMIN");
-//
-//                    req.requestMatchers(HttpMethod.POST, "/api/v2/possible-facets/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/possible-facets/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/possible-facets/**").hasRole("ADMIN");
-//
-//                    req.requestMatchers(HttpMethod.POST, "/api/v2/products/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/products/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/products/**").hasRole("ADMIN");
-//
-//                    req.requestMatchers(HttpMethod.POST, "/api/v2/productsAttributte/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.PUT, "/api/v2/productsAttributte/**").hasRole("ADMIN");
-//                    req.requestMatchers(HttpMethod.DELETE, "/api/v2/productsAttributte/**").hasRole("ADMIN");
-//
-//
-//                    req.requestMatchers(HttpMethod.GET, "/api/v2/payments/users/{userId}").authenticated();
-//                    req.requestMatchers(HttpMethod.GET, "/api/v2/payments").hasRole("ADMIN");
+
+
+                    // Adicionando proteção para endpoints de marca
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/brands").hasRole("ADMIN"); // Permissão para criar marcas
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/brands/**").hasRole("ADMIN"); // Permissão para atualizar marcas
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/brands/**").hasRole("ADMIN"); // Permissão para desativar marcas
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll(); // Permissão para visualizar marcas
+
 
                     req.anyRequest().permitAll();
                 })
