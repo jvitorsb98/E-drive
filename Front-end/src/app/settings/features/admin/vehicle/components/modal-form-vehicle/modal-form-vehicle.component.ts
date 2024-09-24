@@ -12,6 +12,13 @@ import { ModelService } from '../../../../../core/services/model/model.service';
 import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
+import { Model } from '../../../../../core/models/model';
+import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
+import { VehicleType } from '../../../../../core/models/vehicle-type';
+import { Category } from '../../../../../core/models/category';
+import { Propulsion } from '../../../../../core/models/propulsion';
+import { IAutonomyRequest } from '../../../../../core/models/autonomy';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -55,8 +62,8 @@ export class ModalFormVehicleComponent {
     this.loadBrands();
     this.loadCategories();
     this.loadTypes();
-    this.loadPropulsions();
     this.buildForm();
+    this.loadPropulsions();
     if (this.editVehicle) {
       this.fillForm();
     }
@@ -66,7 +73,7 @@ export class ModalFormVehicleComponent {
 
   //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetodo mais não tem a validação
 
-  private initForm(): void {
+  private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
       motor: new FormControl(null, [Validators.required, Validators.minLength(2)]),
       version: new FormControl(null, [Validators.required, Validators.minLength(2)]),

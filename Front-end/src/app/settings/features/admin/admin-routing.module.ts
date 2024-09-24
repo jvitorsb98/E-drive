@@ -1,7 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { BrandListComponent } from './brand/components/brand-list/brand-list.component';
+import { ModelListComponent } from './model/components/model-list/model-list.component';
+import { VehicleListComponent } from './vehicle/components/vehicle-list/vehicle-list.component';
 
-const adminRoutes: Routes = [];
+const adminRoutes: Routes = [
+  { path: '', component: VehicleListComponent },
+  { path: 'vehicles', component: VehicleListComponent },
+  { path: 'brands', component: BrandListComponent },
+  { path: 'models', component: ModelListComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forChild(adminRoutes)],

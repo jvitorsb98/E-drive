@@ -16,11 +16,6 @@ export class BrandService {
     this.brandUrl = `${environment.apiUrl}/api/v1/brands`;
   }
 
-  // Método para obter todas as marcas
-  getAll(): Observable<PaginatedResponse<Brand>> {
-    return this.http.get<PaginatedResponse<Brand>>(this.brandUrl);
-  }
-
   getAll(): Observable<PaginatedResponse<Brand>> {
     return this.http.get<PaginatedResponse<Brand>>(`${this.brandUrl}?size=1000`);
   }

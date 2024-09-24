@@ -46,6 +46,5 @@ import { ModalFormBrandComponent } from './brand/components/modal-form-brand/mod
     SharedModule,          // Modulo compartilhado
     AngularMaterialModule // Módulo Angular Material
   ],
-  exports: [BrandListComponent, ModelListComponent]
 })
 export class AdminModule { }

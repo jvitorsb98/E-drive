@@ -7,7 +7,10 @@ import { ResetPasswordComponent } from './settings/core/security/login/recover-p
 
 
 const routes: Routes = [
-
+  {
+    path: 'admin',
+    loadChildren: () => import('./settings/features/admin/admin.module').then(m => m.AdminModule)
+  },
   {
     path: 'intro-page', component: IntroPageComponent
   },
@@ -16,8 +19,7 @@ const routes: Routes = [
     loadChildren: () => import('./settings/core/security/login/login.module').then(m => m.LoginModule)
   },
   {
-    path: 'reset-password',
-    component: ResetPasswordComponent
+    path: 'reset-password', component: ResetPasswordComponent
   },
   {
     path: 'e-driver/users',
