@@ -239,4 +239,31 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    /**
+     * Desabilita um usuário com base no ID fornecido.
+     *
+     * Este método manipula uma solicitação DELETE para desativar um usuário.
+     * Quando um usuário é desativado com sucesso, retorna um status 204 (No Content).
+     *
+     * @param id O ID do usuário a ser desativado. Este parâmetro é obrigatório.
+     * @return Uma resposta HTTP com status 204 se o usuário foi desativado com sucesso.
+     */
+    @DeleteMapping("/{id}")
+    @Transactional
+    @Operation(summary = "Disable user by ID", method = "DELETE", description = "Disables a user by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User disabled successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    public ResponseEntity<Void> disableUser(
+            @Parameter(description = "ID of the user to be disabled", required = true)
+            @PathVariable Long id
+    ) {
+        authService.disableUser(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
 }
