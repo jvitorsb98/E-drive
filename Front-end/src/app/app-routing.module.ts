@@ -50,7 +50,7 @@ const routes: Routes = [
       },
       {
         path: 'map',
-        loadChildren: () => import('./settings/features/map-stations/module/map-stations.module').then(m => m.MapStationsModule),
+        loadChildren: () => import('./settings/features/trip-planner-maps/map-stations.module').then(m => m.MapStationsModule),
       },
       {
         path: 'admin',

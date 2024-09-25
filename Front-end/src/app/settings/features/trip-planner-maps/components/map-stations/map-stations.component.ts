@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../../environments/environment';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
