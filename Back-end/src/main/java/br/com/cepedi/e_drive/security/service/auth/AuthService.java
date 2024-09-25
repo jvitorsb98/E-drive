@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterU
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.validations.disabled.ValidationDisabledUser;
 import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
 import com.auth0.jwt.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private List<ValidationRegisterUser> validationRegisterUserList;
+
+    @Autowired
+    private List<ValidationDisabledUser> validationDisabledUserList;
+
 
     /**
      * Carrega um {@link UserDetails} com base no email fornecido.
@@ -86,6 +91,7 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+
     /**
      * Realiza o logout do usuário com base no token fornecido.
      *
@@ -100,4 +106,27 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException("Invalid or expired token.");
         }
     }
+
+
+    /**
+     * Desativa um usuário com o ID fornecido.
+     *
+     * Este método executa as validações definidas na lista de validações de usuários desativados
+     * antes de desativar o usuário. Se todas as validações forem bem-sucedidas, o usuário será
+     * marcado como desativado e salvo no repositório.
+     *
+     * @param id O ID do usuário a ser desativado.
+     * @throws IllegalArgumentException Se alguma validação falhar, indicando que o usuário não pode ser desativado.
+     * @throws EntityNotFoundException Se não houver um usuário com o ID fornecido no repositório.
+     */
+    public void disableUser(Long id) {
+        validationDisabledUserList.forEach(v -> v.validation(id));
+        User user = repository.getReferenceById(id);
+        user.disabled();
+        repository.save(user);
+    }
+
+
 }
+
+
