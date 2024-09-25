@@ -144,7 +144,9 @@
         </div>
       </div>
       <div class="buttons-container">
-        <button class="btn w-100 mb-2 border-0 text-white" type="submit" [disabled]="!addressForm.valid">Finalizar</button>
+        <!-- <button class="btn w-100 mb-2 border-0 text-white" type="submit" [disabled]="!addressForm.valid">Finalizar</button> -->
+        <app-ui-button class="w-100 mb-2 border-0 text-white" typeBtn="vivid-sky-blue" type="submit" [disabled]="!addressForm.valid" 
+        text="Finalizar"></app-ui-button>
       </div>
     </form>
   </div>

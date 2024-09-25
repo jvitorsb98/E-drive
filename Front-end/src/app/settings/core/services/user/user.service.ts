@@ -59,7 +59,7 @@ export class UserService {
   logout(): void {
     localStorage.removeItem('authToken');
     localStorage.clear();
-    this.router.navigate(['/login']);
+    this.router.navigate(['e-driver/login']);
   }
 
 }

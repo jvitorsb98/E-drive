@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = (): boolean => {
   if (authService.isLoggedIn()) {
     return true; // Permite o acesso à rota
   } else {
-    router.navigate(['/login']); // Redireciona para a página de login
+    router.navigate(['/e-driver/login']); // Redireciona para a página de login
     return false; // Bloqueia o acesso à rota
   }
 };

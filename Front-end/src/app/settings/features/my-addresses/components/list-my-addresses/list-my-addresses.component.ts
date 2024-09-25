@@ -143,8 +143,8 @@ export class ListMyAddressesComponent implements OnInit {
   // Abre o modal para visualizar detalhes do endereço
   openModalDetailsAddress(address: DataAddressDetails) {
     this.dialog.open(ModalDetailsAddressComponent, {
-      width: '80vw',
-      height: '75vh',
+      width: '600px',
+      height: '400px',
       data: address
     });
   }
@@ -152,8 +152,8 @@ export class ListMyAddressesComponent implements OnInit {
   // Abre o modal para adicionar um novo endereço
   openModalAddAddress() {
     this.dialog.open(MyAddressesComponent, {
-      width: '80vw',
-      height: '90vh',
+      width: '700px',
+      height: '515px',
       data: {
         actionTitle: 'Cadastrar Endereço'
       }
@@ -163,8 +163,8 @@ export class ListMyAddressesComponent implements OnInit {
   // Abre o modal para editar um endereço existente
   openModalEditAddress(address: DataAddressDetails) {
     this.dialog.open(MyAddressesComponent, {
-      width: '80vw',
-      height: '90vh',
+      width: '650px',
+      height: '515px',
       data: {
         addressData: address,
         actionTitle: 'Editar Endereço'

@@ -164,13 +164,18 @@
 				</div>
 			</div>
 			<div *ngIf="!editVehicle" class="buttons-container py-3">
-				<button class="btn w-100 mb-3" type="button-confirm" (click)="resetForm()">Redefinir</button>
-				<button class="btn w-100 mb-2" type="button-confirm" (click)="submitForm()"
-					[disabled]="!userVehicleForm.valid">Finalizar cadastro</button>
+				<!-- <button class="btn w-100 mb-3" type="button-confirm" (click)="resetForm()">Redefinir</button> -->
+				<app-ui-button class="w-100 mb-3" typeBtn="vivid-sky-blue" (click)="resetForm()" text="Redefinir"></app-ui-button>
+				<!-- <button class="btn w-100 mb-2" type="button-confirm" (click)="submitForm()"
+					[disabled]="!userVehicleForm.valid">Finalizar cadastro</button> -->
+					<app-ui-button typeBtn="vivid-sky-blue" [disabled]="!userVehicleForm.valid" (click)="submitForm()"
+        text="Finalizar cadastro"></app-ui-button>
 			</div>
 			<div *ngIf="editVehicle" class="buttons-container py-3">
-				<button class="btn w-100 mb-3" type="button-confirm" (click)="submitForm()">Salvar</button>
-				<button class="btn w-100 mb-2" type="button-cancel" (click)="closeModal()">Cancelar</button>
+				<!-- <button class="btn w-100 mb-3" type="button-confirm" (click)="submitForm()">Salvar</button> -->
+				<app-ui-button class="w-100 mb-3" typeBtn="vivid-sky-blue" (click)="submitForm()" text="Salvar"></app-ui-button>
+				<!-- <button class="btn w-100 mb-2" type="button-cancel" (click)="closeModal()">Cancelar</button> -->
+				<app-ui-button class="w-100 mb-3" typeBtn="outline-secondary" (click)="closeModal()" text="Cancelar"></app-ui-button>
 			</div>
 		</form>
 	</div>

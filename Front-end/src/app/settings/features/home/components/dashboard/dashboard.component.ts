@@ -15,7 +15,10 @@ export class DashboardComponent {
   menuLinks = [
     { route: '/e-driver/users/my-addresses', icon: 'home', label: 'Meus Endereços' },
     { route: '/e-driver/users/my-vehicles', icon: 'directions_car', label: 'Meus Carros' },
-    { route: '/e-driver/users/plan-trip', icon: 'map', label: 'Planejar Viagem' }
+    { route: '/e-driver/users/plan-trip', icon: 'map', label: 'Planejar Viagem' },
+    { route: '/e-driver/admin/vehicles', icon: 'directions_car', label: 'Cadastrar Veículos' },
+    { route: '/e-driver/admin/brands', icon: 'emoji_flags', label: 'Cadastrar Marcas' },
+    { route: '/e-driver/admin/models', icon: 'view_carousel', label: 'Cadastrar Modelos' },
   ];
 
   // Calcula a classe da coluna com base no índice do item

@@ -6,9 +6,7 @@ import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 
 // essa importação esta causando um warning corrigir depois
 // import * as jwt_decode from 'jwt-decode'; // Importe a biblioteca para decodificar o JWT
-import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { Token } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +17,7 @@ export class AuthService {
 
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient) {
     this.apiUrl = `${environment.apiUrl}/auth`;
   }
 

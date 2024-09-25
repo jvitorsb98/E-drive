@@ -9,11 +9,12 @@
 .menu-links a, span {
   text-decoration: none;
   margin-inline: 1rem;
+  margin-bottom: 1rem; /* Espaço vertical abaixo de cada ícone */
   color: #777777;
 }
 
 .menu-links a:hover {
-  color: #007bff;
+  color: #19B6DD;
 }
 
 @media (max-width: 767px) {

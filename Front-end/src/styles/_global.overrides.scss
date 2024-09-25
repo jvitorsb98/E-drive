@@ -19,6 +19,11 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   justify-content: space-between; /* Distribui os ícones com espaço entre eles */
 }
 
+.arrow-back-icon{
+  cursor: pointer;
+  color: $icon-arrow-back;
+}
+
 .address-card {
   width: 100%;
   height: 100%;
