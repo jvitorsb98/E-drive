@@ -5,12 +5,12 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { catchError, of } from 'rxjs';
-import Swal from 'sweetalert2';
 import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
 import { Vehicle } from '../../../../../core/models/vehicle';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
 import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
 import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-details-vehicle.component';
+import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-vehicle-list',
@@ -27,13 +27,15 @@ export class VehicleListComponent {
   List: Vehicle[] = [];
   isFilterActive: boolean = false;
   filteredData: Vehicle[] = [];
+  searchKey: any;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private vehicleService: VehicleService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private alert: AlertasService
   ) {
     this.dataSource = new MatTableDataSource(this.List);
   }
@@ -64,7 +66,7 @@ export class VehicleListComponent {
             this.dataSource.sort = this.sort;
             this.totalVehicles = response.totalElements;
           } else {
-            this.showAlert("Erro !!", "Ocorreu um erro ao obter a lista de veículos");
+            this.alert.showError("Erro !!", "Ocorreu um erro ao obter a lista de veículos");
           }
         },
         error: (error: any) => {
@@ -84,7 +86,7 @@ export class VehicleListComponent {
     this.vehicleService.deactivate(Data.id).subscribe({
       next: () => {
         this.handleSuccess("Desativado com sucesso")
-        this.getList(this.pageIndex, this.pageSize);
+        this.searchKey? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
       },
       error: (error: HttpErrorResponse) => this.handleError(error)
     });
@@ -94,25 +96,25 @@ export class VehicleListComponent {
     this.vehicleService.activate(Data.id).subscribe({
       next: () => {
         this.handleSuccess("Ativado com sucesso")
-        this.getList(this.pageIndex, this.pageSize);
+        this.searchKey? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
       },
       error: (error: HttpErrorResponse) => this.handleError(error)
     });
   }
 
   handleError(error: HttpErrorResponse) {
-    this.showAlert("Erro !!", error.message);
+    this.alert.showError("Erro !!",error.message);
   }
 
   handleSuccess(text: string = "Operação realizada com sucesso") {
-    this.showAlert("Sucesso !!", text, true);
+    this.alert.showSuccess("Sucesso !!", text)
   }
 
-  // TODO: O Filtro esta com bug quando pula para proximo paginacao
   applyFilter(event: Event) {
     try {
       this.isFilterActive = true;
       const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.searchKey = event;
 
       if (this.dataSource.paginator) {
         this.dataSource.paginator.firstPage();
@@ -150,24 +152,6 @@ export class VehicleListComponent {
     } catch (error) {
       this.handleError(new HttpErrorResponse({ error: error }));
     }
-  }
-
-
-  private showAlert(title: string = 'Erro', text: string = 'Algo deu errado', success: boolean = false): void {
-    const icon = success ? 'success' : 'error';
-    const popup = success ? 'custom-swal-popup-success' : 'custom-swal-popup-error';
-    const confirmButton = success ? 'custom-swal-confirm-button-success' : 'custom-swal-confirm-button-error';
-
-    Swal.fire({
-      icon: icon,
-      title: title,
-      text: text,
-      confirmButtonText: 'Ok',
-      customClass: {
-        popup: popup,
-        confirmButton: confirmButton
-      }
-    });
   }
 
   // LOGICA DO MODAL

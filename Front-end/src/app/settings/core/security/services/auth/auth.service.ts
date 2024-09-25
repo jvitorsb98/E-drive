@@ -3,12 +3,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { ILoginRequest, ILoginResponse, IRecoverPasswordRequest, IRecoverPasswordResponse, IResetPasswordRequest } from '../../../models/inter-Login';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
-
-// essa importação esta causando um warning corrigir depois
-// import * as jwt_decode from 'jwt-decode'; // Importe a biblioteca para decodificar o JWT
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
-import { Token } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root'
@@ -38,18 +34,16 @@ export class AuthService {
   }
 
   logout(): void {
-    const token = this.getToken();
-    if (token) {
-      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      this.http.post(this.apiUrl + '/logout', {}, { headers })
-        .pipe(tap(() => {
-          localStorage.removeItem('token');
-          this.isLoggedInSubject.next(false);
-          localStorage.clear();
-        }),
-          catchError(this.handleError)
-        ).subscribe(); // Assinatura necessária para executar o request
-    }
+    //TODO - Udo temporario emquando não resolve o back-end
+    const token = this.getToken(); // Retrieve stored token
+    localStorage.removeItem('token'); // Clear token from storage
+    this.isLoggedInSubject.next(false); // Update logged-in state
+    localStorage.clear();
+    this.router.navigate(['/login']);
+    //TODO - Notificar o back-end Só retorna bad request tem que resolver esse erro de logout
+    // Notifica ao back-end que o usuário deslogou
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    this.http.post<any>(this.apiUrl + '/logout', {}, { headers })
   }
 
   isLoggedIn(): boolean {
@@ -76,11 +70,6 @@ export class AuthService {
     return localStorage.getItem('token-reset-password');
   }
 
-  // TODO: Implemente a lógica de envio de e-mail para redefinição de senha
-  // o back-end deve mandar um e-mail com um link para redefinição de senha
-  // o link deve redirecionar para a rota "reset-password" com o token de troca de senha
-  // o token deve expirar em 1 hora
-
   //TODO - Padronizar o retorno de Erros do back-end
 
   recoverPasswordRequest(email: IRecoverPasswordRequest): Observable<IRecoverPasswordResponse> {
@@ -89,7 +78,7 @@ export class AuthService {
 
   resetPassword(request: IResetPasswordRequest): Observable<any> {
     const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
-    return this.http.put(`${this.apiUrl}/reset-password/reset`,request ,{ headers: header })
+    return this.http.put(`${this.apiUrl}/reset-password/reset`, request, { headers: header })
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
