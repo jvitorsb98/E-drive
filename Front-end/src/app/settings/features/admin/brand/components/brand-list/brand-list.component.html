@@ -28,7 +28,7 @@
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
   <div class="row">
     <div class="container-table">
-      <table class="mat-elevation-z2" mat-table [dataSource]="dataSource" matSort>
+      <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
             <mat-icon
@@ -75,8 +75,6 @@
           </td>
         </tr>
       </table>
-      <!-- <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]"
-    aria-label="Selecione veículos por página"></mat-paginator> -->
     </div>
   </div>
 </div>

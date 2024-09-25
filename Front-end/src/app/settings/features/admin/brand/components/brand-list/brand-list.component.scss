@@ -23,8 +23,8 @@
   border-radius: 10px;
   margin: 1% auto;
   overflow-x: auto;
-  height: 68vh;
-  max-height: 36vh;
+  height: 70vh;
+  max-height: 35vh;
 }
 
 /* Centraliza o contêiner da tabela e ajusta a largura para 100% da tela. */
@@ -39,6 +39,16 @@
 table {
   width: 100%;
   border-collapse: collapse;
+}
+
+/* 
+   Este estilo define que o cabeçalho da tabela (elementos <th>) 
+   ficará fixo no topo ao rolar a página. 
+*/
+.fixed-header th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
 /* Estilos para os cabeçalhos da tabela (th), com padding, 
@@ -113,7 +123,7 @@ tr {
 .custom-button {
   display: flex;
   width: 100%;
-  margin: 0% auto;
+  margin: 10% auto;
 }
 
 /* Estilos para o ícone de sucesso (check), com cor verde. */
