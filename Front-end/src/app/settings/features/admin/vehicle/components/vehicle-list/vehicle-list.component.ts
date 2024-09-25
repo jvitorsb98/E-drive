@@ -35,7 +35,7 @@ export class VehicleListComponent {
   constructor(
     private vehicleService: VehicleService,
     private dialog: MatDialog,
-    private alert: AlertasService
+    private alertServise: AlertasService
   ) {
     this.dataSource = new MatTableDataSource(this.List);
   }
@@ -66,7 +66,7 @@ export class VehicleListComponent {
             this.dataSource.sort = this.sort;
             this.totalVehicles = response.totalElements;
           } else {
-            this.alert.showError("Erro !!", "Ocorreu um erro ao obter a lista de veículos");
+            this.alertServise.showError("Erro !!", "Ocorreu um erro ao obter a lista de veículos");
           }
         },
         error: (error: any) => {
@@ -103,11 +103,11 @@ export class VehicleListComponent {
   }
 
   handleError(error: HttpErrorResponse) {
-    this.alert.showError("Erro !!",error.message);
+    this.alertServise.showError("Erro !!",error.message);
   }
 
   handleSuccess(text: string = "Operação realizada com sucesso") {
-    this.alert.showSuccess("Sucesso !!", text)
+    this.alertServise.showSuccess("Sucesso !!", text);
   }
 
   applyFilter(event: Event) {
