@@ -139,6 +139,7 @@ export class UserVehicleListComponent {
 
   // Formata os dados do veículo
   formatVehicleData(vehicle: Vehicle): Vehicle {
+    Todo: // verificar se é necessário manter essa função
     vehicle.model.name = this.userDataService.capitalizeWords(vehicle.model.name);
     vehicle.version = this.userDataService.capitalizeWords(vehicle.version);
     vehicle.motor = this.userDataService.capitalizeWords(vehicle.motor);

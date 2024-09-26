@@ -10,14 +10,14 @@ import { SharedModule } from '../../shared/shared.module';
 // Components
 import { MapStationsComponent } from './components/map-stations/map-stations.component';
 import { ModalSetupTripComponent } from './components/modal-setup-trip/modal-setup-trip.component';
-import { ModalVehicleBatteryComponent } from './components/modal-vehicle-battery/modal-vehicle-battery.component';
+import { ModalFormVehicleBatteryComponent } from './components/modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 
 @NgModule({
   declarations: [
     // MapStations component
     MapStationsComponent,
     ModalSetupTripComponent,
-    ModalVehicleBatteryComponent,
+    ModalFormVehicleBatteryComponent,
   ],
   imports: [
     CommonModule,             // Modulo comum
