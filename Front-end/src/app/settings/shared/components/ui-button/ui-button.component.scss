@@ -75,13 +75,16 @@ button[type="outline-primary"] {
 }
 
 button[type="outline-secondary"] {
-  background: red;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+  background: #19B6DD;
   border: 0px;
   color: white;
   transition: 600ms;
 
   &:hover {
-    background: #f6dbdb;
+    background: red;
   }
 }
 

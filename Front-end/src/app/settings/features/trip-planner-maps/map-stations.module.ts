@@ -5,15 +5,17 @@ import { CommonModule } from '@angular/common';
 import { MapStationsRoutingModule } from './map-stations-routing.module';
 
 // Modules
-import { SharedModule } from '../../../shared/shared.module';
+import { SharedModule } from '../../shared/shared.module';
 
 // Components
-import { MapStationsComponent } from '../map-stations.component';
+import { MapStationsComponent } from './components/map-stations/map-stations.component';
+import { ModalSetupTripComponent } from './components/modal-setup-trip/modal-setup-trip.component';
 
 @NgModule({
   declarations: [
     // MapStations component
-    MapStationsComponent
+    MapStationsComponent,
+    ModalSetupTripComponent,
   ],
   imports: [
     CommonModule,             // Modulo comum

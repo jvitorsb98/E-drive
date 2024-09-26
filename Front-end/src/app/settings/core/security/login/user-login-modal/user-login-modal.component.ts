@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, AbstractControl, AsyncValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../../core/services/modal/modal.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
@@ -9,9 +9,6 @@ import { Router } from '@angular/router';
 import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
 import Swal from 'sweetalert2';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserService } from '../../../services/user/user.service';
-import { of, map, catchError } from 'rxjs';
-import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-user-login-modal',
@@ -27,7 +24,6 @@ export class UserLoginModalComponent implements OnInit {
     private dialog: MatDialog,
     private modal: ModalService,
     private auth: AuthService,
-    private userService: UserService,
     private router: Router,
   ) {}
 
