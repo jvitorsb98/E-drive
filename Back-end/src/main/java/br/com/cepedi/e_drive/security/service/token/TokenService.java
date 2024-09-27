@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -201,4 +203,22 @@ public class TokenService {
             throw new RuntimeException("Erro ao gerar o token JWT", exception);
         }
     }
+
+    public String generateTokenForReactivation(User user) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            String token = JWT.create()
+                    .withIssuer(ISSUER)
+                    .withSubject(user.getEmail()) // Usa o e-mail como subject
+                    .withClaim("id", user.getId())
+                    .withClaim("email", user.getEmail())
+                    .withExpiresAt(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // O token expira em 1 hora
+                    .sign(algorithm);
+            registerToken(token, user);  // Registra o token na base de dados
+            return token;
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar o token JWT", exception); // Exceção customizada
+        }
+    }
+
 }
