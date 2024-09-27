@@ -91,6 +91,30 @@ public class AuthService implements UserDetailsService {
         }
     }
 
+    /**
+     * Reativa um usuário com base no token fornecido.
+     *
+     * @param token O token de confirmação de ativação do usuário.
+     * @throws UsernameNotFoundException Se nenhum usuário for encontrado com o email associado ao token.
+     * @throws IllegalStateException Se o usuário já estiver ativo.
+     */
+    public void reactivateUser(String token) {
+        String email = JWT.decode(token).getClaim("email").asString();
+        User user = repository.findByEmail(email);
+
+        if (user != null) {
+            if (!user.isActive()) {
+                user.activate();
+                repository.save(user);
+            } else {
+                throw new IllegalStateException("User is already active.");
+            }
+        } else {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+    }
+
+
 
     /**
      * Realiza o logout do usuário com base no token fornecido.
@@ -126,6 +150,24 @@ public class AuthService implements UserDetailsService {
         repository.save(user);
     }
 
+
+    /**
+     * Recupera um usuário a partir de um token JWT fornecido.
+     *
+     * Este método extrai o email associado ao token JWT, que é utilizado para buscar
+     * o usuário correspondente no repositório.
+     *
+     * @param token O token JWT fornecido, que pode ou não conter o prefixo "Bearer ".
+     *              Se o prefixo "Bearer " estiver presente, ele será removido antes de processar o token.
+     * @return O {@link User} associado ao email extraído do token.
+     *         Se nenhum usuário for encontrado com o email extraído, este método retornará {@code null}.
+     */
+    public User getUserByToken(String token) {
+        String tokenWithoutBearer = token.replace("Bearer ", "");
+        String email = tokenService.getEmailByToken(tokenWithoutBearer);
+
+        return repository.findByEmail(email);
+    }
 
 }
 
