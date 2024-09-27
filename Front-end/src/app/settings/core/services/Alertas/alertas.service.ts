@@ -10,44 +10,59 @@ export class AlertasService {
 
   showSwal(icon: 'success' | 'error' | 'warning' | 'info', title: string, text?: string, confirmButtonText?: string, customClass?: any ) {
     confirmButtonText = confirmButtonText? confirmButtonText : 'Ok';
-    Swal.fire({
+
+    return Swal.fire({
       icon,
       title,
       text,
       confirmButtonText,
       customClass
+    }).then((result) => {
+      return result.isConfirmed;
     });
   }
 
-  showSuccess(title: string, text?: string, confirmButtonText?: string ,customClass?: any) {
+  showSuccess(title: string, text?: string, confirmButtonText?: string ,customClass?: any) : Promise<boolean>{
     customClass = customClass? customClass : {
       popup: 'custom-swal-popup-success',
       confirmButton: 'custom-swal-confirm-button-success',
     };
-    this.showSwal('success', title, text, confirmButtonText, customClass);
+    return this.showSwal('success', title, text, confirmButtonText, customClass)
   }
 
-  showError(title: string, text?: string, confirmButtonText?: string , customClass?: any) {
+  showError(title: string, text?: string, confirmButtonText?: string , customClass?: any) : Promise<boolean>{
     customClass = customClass? customClass : {
       popup: 'custom-swal-popup-error',
       confirmButton: 'custom-swal-confirm-button-error',
     };
-    this.showSwal('error', title, text, confirmButtonText, customClass);
+    return this.showSwal('error', title, text, confirmButtonText, customClass)
   }
 
-  showInfo(title: string, text?: string, confirmButtonText?: string , customClass?: any) {
+  showInfo(title: string, text?: string, confirmButtonText?: string , customClass?: any) : Promise<boolean> {
     customClass = customClass? customClass : {
       popup: 'custom-swal-popup-success',
       confirmButton: 'custom-swal-confirm-button-success',
     };
-    this.showSwal('info', title, text, confirmButtonText, customClass);
+    return this.showSwal('info', title, text, confirmButtonText, customClass)
   }
 
-  showWarning(title: string, text?: string, confirmButtonText?: string , customClass?: any) {
-    customClass = customClass? customClass : {
+  showWarning(title: string, text?: string, confirmButtonText?: string, cancelButtonText?: string , customClass?: any): Promise<boolean> {
+    customClass = customClass ? customClass : {
       popup: 'custom-swal-popup-success',
       confirmButton: 'custom-swal-confirm-button-success',
+      cancelButton: 'custom-swal-confirm-button-error',
     };
-    this.showSwal('warning', title, text, confirmButtonText, customClass);
+
+    return Swal.fire({
+      icon: 'warning',
+      title,
+      text,
+      confirmButtonText: confirmButtonText ? confirmButtonText : 'Ok',
+      showCancelButton: true,  // Adiciona o botão de cancelar
+      cancelButtonText: cancelButtonText ? cancelButtonText : 'Cancelar',
+      customClass
+    }).then((result) => {
+      return result.isConfirmed;  // Retorna true se o usuário clicou em "Ok", false se clicou em "Cancelar"
+    });
   }
 }
