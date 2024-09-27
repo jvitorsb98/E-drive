@@ -39,7 +39,7 @@ export class AuthService {
     localStorage.removeItem('token'); // Clear token from storage
     this.isLoggedInSubject.next(false); // Update logged-in state
     localStorage.clear();
-    this.router.navigate(['/login']);
+    this.router.navigate(['']);
     //TODO - Notificar o back-end Só retorna bad request tem que resolver esse erro de logout
     // Notifica ao back-end que o usuário deslogou
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -60,6 +60,34 @@ export class AuthService {
       console.error('Erro ao decodificar o token:', error);
       return false;
     }
+  }
+  // Metodo para obter os detalhes do usuário autenticado via token
+  getUserID(): Number | undefined {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return undefined;
+    }
+    const decodedToken: any = (jwtDecode as any)(token);
+    return decodedToken.id;
+  }
+
+  getUserEmail(): String | undefined {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return undefined;
+    }
+    const decodedToken: any = (jwtDecode as any)(token);
+    return decodedToken.email;
+  }
+
+  getUserDetails(): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token inválido. Por favor, tente novamente.'));
+    }
+    const decodedToken: any = (jwtDecode as any)(token);
+    return decodedToken;
+
   }
 
   getToken(): string | null {

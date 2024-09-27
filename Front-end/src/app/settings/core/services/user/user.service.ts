@@ -59,8 +59,21 @@ export class UserService {
 
   //TODO - Finalizar esse metodo de desativar o usuário
   // Método para desativar o usuário
-  deactivate(id: number): Observable<any> {
-    return this.http.delete(`${this.usersUrl}/user/deactivate/${id}`);
+  deactivate(id: Number): Observable<any> {
+    return this.http.delete(`${this.usersUrl}/${id}`);
+  }
+
+  // pega ID do Usuario logado
+  getUserID(): Number | undefined {
+    return this.authServise.getUserID();
+  }
+
+  getUserEmail(): String | undefined {
+    return this.authServise.getUserEmail();
+  }
+
+  getUserDetails(): Observable<any> {
+    return this.authServise.getUserDetails();
   }
 
   logout(): void {

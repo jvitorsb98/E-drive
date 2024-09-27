@@ -12,6 +12,7 @@ import { map, startWith } from 'rxjs/operators';
 import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-user-update',
@@ -43,7 +44,8 @@ export class UserUpdateComponent implements OnInit {
   constructor(
     private userService: UserService,
     private countryService: CountryService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private alertService: AlertasService
   ) { }
 
   // Método chamado ao inicializar o componente
@@ -178,8 +180,20 @@ export class UserUpdateComponent implements OnInit {
 
   // Método para excluir a conta do usuário (implementação futura)
   deleteAccount() {
-    // TODO: Implementar o método para excluir a conta
-    console.log('Excluir conta do usuário');
+    this.alertService.showWarning('Desativar conta do usuário', "Deseja realmente desativar a sua conta '" + this.userService.getUserEmail() +"' ?", 'Desativar' ,'Cancelar').then((result) => {
+      if (result) {
+        const id = this.userService.getUserID() || 0;
+        this.userService.deactivate(id).subscribe({
+          next: () => {
+            this.alertService.showSuccess('Conta desativada com sucesso', 'Agora você pode criar novas contas.');
+            this.onLogout();
+          },
+          error: (err) => {
+            this.alertService.showError('Erro ao desativar a conta', err.message);
+          }
+        })
+      }
+    });
   }
 
   onLogout(): void {
