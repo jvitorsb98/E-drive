@@ -24,7 +24,6 @@ export class NavbarComponent {
   // Faz logout e redireciona para a página inicial
   logout() {
     this.auth.logout();
-    this.router.navigate(['']);
   }
 
   // Pesquisa e exibe o local no mapa

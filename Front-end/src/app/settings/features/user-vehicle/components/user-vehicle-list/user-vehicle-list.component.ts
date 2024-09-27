@@ -23,6 +23,7 @@ import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-det
 // Importa funções e classes auxiliares
 import Swal from 'sweetalert2';
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-user-vehicle-list',
@@ -40,10 +41,12 @@ export class UserVehicleListComponent {
 
   constructor(
     private userVehicleService: UserVehicleService,
+    private alertasService: AlertasService,
     private vehicleService: VehicleService,
     private userDataService: UserDataService,
     private dialog: MatDialog) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
+
   }
 
   ngOnInit() {
@@ -83,7 +86,6 @@ export class UserVehicleListComponent {
             });
 
             this.dataSource.data = this.userVehicleDetails;
-            console.log(this.dataSource);
           });
         } else {
           console.error('Expected an array in response.content but got:', response.content);
@@ -97,42 +99,17 @@ export class UserVehicleListComponent {
 
   // Deleta um veículo do usuário
   deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
-    Swal.fire({
-      title: 'Tem certeza?',
-      text: `Deseja realmente deletar o veículo? Esta ação não poderá ser desfeita.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#19B6DD',
-      cancelButtonColor: '#ff6b6b',
-      confirmButtonText: 'Sim, deletar!',
-      cancelButtonText: 'Cancelar',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log('Deletando veículo:', vehicleData);
+    this.alertasService.showWarning('Tem certeza?', `Deseja realmente deletar o veículo? Esta ação não poderá ser desfeita.`, 'Sim, deletar!', 'Cancelar').then((result) => {
+      if (result) {
         this.userVehicleService.deleteUserVehicle(vehicleData.userVehicle.id).pipe(
           catchError(() => {
-            Swal.fire({
-              title: 'Erro!',
-              icon: 'error',
-              text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
-              showConfirmButton: true,
-              confirmButtonColor: 'red',
-            });
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.');
             return of(null);
           })
         ).subscribe(() => {
-          Swal.fire({
-            title: 'Sucesso!',
-            icon: 'success',
-            text: 'O veículo foi deletado com sucesso!',
-            showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
-          }).then((result) => {
-            if (result.isConfirmed || result.isDismissed) {
-              this.getListUserVehicles();
-            }
-          });
-        });
+          this.alertasService.showSuccess('Sucesso!', 'Veículo deletado com sucesso!');
+          this.getListUserVehicles();
+        })
       }
     });
   }

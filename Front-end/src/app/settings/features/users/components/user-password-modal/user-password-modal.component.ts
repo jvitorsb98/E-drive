@@ -10,9 +10,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 // RxJS
 import { filter, take } from 'rxjs';
 
-// Bibliotecas de terceiros
-import Swal from 'sweetalert2';
-
 // Serviços e Modelos
 import { UserService } from '../../../../core/services/user/user.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
@@ -28,6 +25,7 @@ import { PasswordFieldValidator } from '../../../../shared/validators/password-f
 // Angular Router
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { IResetPasswordRequest } from '../../../../core/models/inter-Login';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-user-password-modal',
@@ -50,6 +48,7 @@ export class UserPasswordModalComponent implements OnInit {
     private formBuilder: FormBuilder,
     private renderer: Renderer2,
     private el: ElementRef,
+    private alertService: AlertasService,
     @Inject(MAT_DIALOG_DATA) private userData: User,
     public dialogRef: MatDialogRef<UserPasswordModalComponent>,
   ) { }
@@ -94,21 +93,13 @@ export class UserPasswordModalComponent implements OnInit {
 
       this.userService.register(this.userData).subscribe({
         next: (response) => {
-          console.log('Usuário cadastrado', response);
-
           this.userPassword.reset();
           this.closeModal();
-
-          Swal.fire({
-            title: 'Cadastro bem-sucedido!',
-            icon: 'success',
-            text: `${this.userData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`,
-            showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
-          }).then((result) => {
-            if (result.isConfirmed) {
-              // Primeiro inscreva-se no evento de navegação para abrir o modal
-              this.router.events.pipe(
+          this.alertService.showSuccess('Cadastro bem-sucedido!', `${this.userData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`)
+          .then((result) => {
+            if (result) {
+               // Primeiro inscreva-se no evento de navegação para abrir o modal
+               this.router.events.pipe(
                 filter(event => event instanceof NavigationEnd),
                 take(1) // Certifica-se de que o evento de navegação seja emitido apenas uma vez para evitar vazamentos de memória.
               ).subscribe(() => {
@@ -121,19 +112,14 @@ export class UserPasswordModalComponent implements OnInit {
           });
         },
         error: (e) => {
-          Swal.fire({
-            title: 'Erro!',
-            icon: 'error',
-            text: `Houve um problema ao cadastrar ${this.userData.name}. Tente novamente mais tarde.`,
-            showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
-          });
+          this.alertService.showError('Erro!', `Houve um problema ao cadastrar ${this.userData.name}. Tente novamente mais tarde.`)
         }
       });
     }
   }
 
   // função para troca de senha
+  //NOTE - Acho que esse metodo não esta sendo usado
   changePassword(): void {
     if (this.userPassword.valid) {
       //NOTE - fiz essa alteração para usar a IResetPasswordRequest que não estava sendo usada
@@ -144,27 +130,15 @@ export class UserPasswordModalComponent implements OnInit {
       if (request.token) {
         this.auth.resetPassword(request).subscribe({
           next: (response) => {
-            Swal.fire({
-              title: 'Senha alterada com sucesso!',
-              icon: 'success',
-              text: `Sua senha foi alterada com sucesso. `,
-              showConfirmButton: true,
-              confirmButtonColor: '#19B6DD',
-            }).then((result) => {
-              if (result.isConfirmed) {
+            this.alertService.showSuccess('sucesso !!', `Sua senha foi alterada com sucesso. `).then((result) => {
+              if (result) {
                 this.closeModal();
                 this.router.navigate(['/login']);
               }
             })
           },
           error: (e) => {
-            Swal.fire({
-              title: 'Erro!',
-              icon: 'error',
-              text: `Houve um problema ao alterar sua senha. Tente novamente mais tarde.`,
-              showConfirmButton: true,
-              confirmButtonColor: '#19B6DD',
-            });
+            this.alertService.showError('Erro !!', `Houve um problema ao alterar sua senha. Tente novamente mais tarde.`)
           }
         });
       }
