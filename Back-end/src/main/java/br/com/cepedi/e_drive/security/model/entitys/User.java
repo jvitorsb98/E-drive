@@ -172,4 +172,13 @@ public class User implements UserDetails {
     public void setAuthorities(Set<SimpleGrantedAuthority> roleUser) {
         // Método vazio
     }
+
+    /**
+     * Verifica se o usuário está ativo.
+     *
+     * @return true se o usuário estiver ativo, false caso contrário.
+     */
+    public boolean isActive() {
+        return this.activated;
+    }
 }
