@@ -42,8 +42,8 @@ export class ModalFormVehicleBatteryComponent {
       brand: new FormControl(null, [Validators.required]),
       model: new FormControl({ value: '', disabled: true }), // Campo desabilitado
       version: new FormControl({ value: '', disabled: true }), // Campo desabilitado
-      bateriaRestante: new FormControl(null, [Validators.required]),
-      saudeBateria: new FormControl(null, [Validators.required]),
+      bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100)]),
+      saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100)])
     });
   }
 

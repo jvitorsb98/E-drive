@@ -17,13 +17,8 @@
         <div class="col-12 col-md-6 mb-2 w-100">
           <mat-form-field class="custom-select">
             <mat-label>Marca do veículo:</mat-label>
-            <input 
-              type="text" 
-              matInput 
-              formControlName="brand"
-              [matAutocomplete]="autoBrand"
-              [value]="vehicleStatusBatteryForm.get('brand')?.value?.name || ''" 
-              aria-describedby="Help">
+            <input type="text" matInput formControlName="brand" [matAutocomplete]="autoBrand"
+              [value]="vehicleStatusBatteryForm.get('brand')?.value?.name || ''" aria-describedby="Help">
             <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
               <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
                 {{ brand.name }}
@@ -55,16 +50,35 @@
         <div class="col-12 col-md-6 mb-2 w-100">
           <mat-form-field class="custom-select w-100">
             <mat-label>Bateria restante:</mat-label>
-            <input type="text" matInput formControlName="bateriaRestante" [mask]="'000'" aria-describedby="Help">
+            <input type="text" matInput formControlName="bateriaRestante" aria-describedby="Help">
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
+
+            <!-- Exibe mensagens de erro -->
+            <mat-error *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
+              Bateria restante é obrigatória
+            </mat-error>
+            <mat-error *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('min')">
+              O valor mínimo é 0%
+            </mat-error>
+            <mat-error *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('max')">
+              O valor máximo é 100%
+            </mat-error>
           </mat-form-field>
         </div>
 
         <div class="col-12 col-md-6 mb-2 w-100">
           <mat-form-field class="custom-select w-100">
             <mat-label>Saúde da bateria:</mat-label>
-            <input type="text" matInput formControlName="saudeBateria" [mask]="'000'" aria-describedby="Help">
+            <input type="text" matInput formControlName="saudeBateria" aria-describedby="Help">
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
+
+            <!-- Exibe mensagens de erro -->
+            <mat-error *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('min')">
+              O valor mínimo é 0%
+            </mat-error>
+            <mat-error *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('max')">
+              O valor máximo é 100%
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
