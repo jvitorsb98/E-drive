@@ -1,16 +1,29 @@
+<!-- <mat-card-title>
+    <div class="top-bar pt-3">
+        <div class="d-flex justify-content-between container-fluid">
+            <div class="justify-content-start">
+                <mat-icon class="arrow-back-icon" (click)="goBack()">arrow_back</mat-icon>
+            </div>
+            <div class="flex-grow-1 text-center">
+                <h1 class="text-white">Entre em sua conta</h1>
+            </div>
+            <mat-icon class="arrow-back-icon" (click)="openFAQModal()">help_outline</mat-icon>
+        </div>
+    </div>
+</mat-card-title> -->
+
 <div class="login-container">
     <mat-card class="login-card">
         <div class="icon-row">
             <button mat-icon-button aria-label="Back" (click)="goBack()">
                 <mat-icon>arrow_back</mat-icon>
             </button>
+            <mat-card-title>Entre em sua conta</mat-card-title>
             <button mat-icon-button aria-label="Help" (click)="openFAQModal()">
                 <mat-icon>help_outline</mat-icon>
             </button>
         </div>
-        <mat-card-title>
-            Entre em sua conta
-        </mat-card-title>
+        <br><br>
         <mat-card-content>
             <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                 <mat-form-field>

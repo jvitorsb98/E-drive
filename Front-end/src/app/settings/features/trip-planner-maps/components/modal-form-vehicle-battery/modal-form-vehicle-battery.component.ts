@@ -176,8 +176,6 @@ export class ModalFormVehicleBatteryComponent {
           }
         ]
       },
-      width: '400px',
-      height: '400px'
     });
   }
   
