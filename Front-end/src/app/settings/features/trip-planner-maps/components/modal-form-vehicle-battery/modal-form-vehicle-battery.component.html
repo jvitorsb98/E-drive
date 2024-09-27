@@ -1,1 +1,79 @@
-<p>modal-form-vehicle-battery works!</p>
+<div class="container-fluid pt-3">
+  <div class="col-12">
+    <div class="header-container">
+      <div class="ps-2">
+        <mat-icon (click)="closeModal()">arrow_back</mat-icon>
+      </div>
+
+      <h1 class="titulo">Adicionar status da bateria</h1>
+
+      <button (click)="openFAQModal()" class="btn">
+        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+      </button>
+    </div>
+
+    <form [formGroup]="vehicleStatusBatteryForm">
+      <div class="content">
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select">
+            <mat-label>Marca do veículo:</mat-label>
+            <input 
+              type="text" 
+              matInput 
+              formControlName="brand"
+              [matAutocomplete]="autoBrand"
+              [value]="vehicleStatusBatteryForm.get('brand')?.value?.name || ''" 
+              aria-describedby="Help">
+            <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
+              <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
+                {{ brand.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
+            <mat-error
+              *ngIf="vehicleStatusBatteryForm.get('brand')?.hasError('required') && vehicleStatusBatteryForm.get('brand')?.touched">
+              <strong>Marca</strong> é obrigatória
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select">
+            <mat-label>Modelo do veículo:</mat-label>
+            <input type="text" matInput formControlName="model">
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select">
+            <mat-label>Versão do veículo:</mat-label>
+            <input type="text" matInput formControlName="version">
+          </mat-form-field>
+        </div>
+
+        <!-- Campos adicionais -->
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select w-100">
+            <mat-label>Bateria restante:</mat-label>
+            <input type="text" matInput formControlName="bateriaRestante" [mask]="'000'" aria-describedby="Help">
+            <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 mb-2 w-100">
+          <mat-form-field class="custom-select w-100">
+            <mat-label>Saúde da bateria:</mat-label>
+            <input type="text" matInput formControlName="saudeBateria" [mask]="'000'" aria-describedby="Help">
+            <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="buttons-container py-3">
+        <app-ui-button class="w-100 mb-3" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
+          text="Adicionar status "></app-ui-button>
+        <app-ui-button class="w-100 mb-3" typeBtn="outline-secondary" (click)="closeModal()"
+          text="Cancelar"></app-ui-button>
+      </div>
+    </form>
+  </div>
+</div>
