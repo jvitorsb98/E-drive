@@ -27,9 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -272,21 +269,32 @@ public class AuthController {
 
 
     /**
-     * Solicita a reativação da conta enviando um e-mail para o usuário com instruções.
+     * Endpoint para solicitar a reativação de uma conta de usuário.
      *
-     * @return Uma resposta indicando se o e-mail foi enviado com sucesso.
-     * @throws MessagingException Se houver um erro ao enviar o e-mail.
+     * Este método envia um e-mail de reativação para o endereço de e-mail fornecido, contendo instruções
+     * sobre como reativar a conta do usuário. Se o e-mail não estiver associado a uma conta desativada,
+     * uma resposta de erro será retornada.
+     *
+     * @param dataReactivateAccount Objeto {@link DataDetailsUser} contendo os detalhes da solicitação de reativação, incluindo o e-mail do usuário.
+     * @return Um {@link ResponseEntity} contendo uma mensagem de sucesso ou erro.
+     *         <ul>
+     *           <li>200 OK: E-mail de reativação enviado com sucesso.</li>
+     *           <li>404 Not Found: Se o e-mail fornecido não for encontrado ou o usuário não estiver desativado.</li>
+     *           <li>500 Internal Server Error: Se houver um erro no envio do e-mail.</li>
+     *         </ul>
      */
     @PutMapping("/reactivate-account/request")
     @Transactional
-    @Operation(summary = "Request account reactivation", description = "Sends an account reactivation email to the user with instructions on how to reactivate their account.")
+    @Operation(summary = "Request account reactivation",
+            description = "Sends an account reactivation email to the user with instructions on how to reactivate their account.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account reactivation email sent successfully"),
-            @ApiResponse(responseCode = "400", description = "Email not found", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "404", description = "Email not found", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<Map<String, String>> reactivateAccountRequest(@RequestBody @Validated DataDetailsUser dataReactivateAccount) {
-        // Verifica se o usuário está desativado
+    public ResponseEntity<Map<String, String>> reactivateAccountRequest(
+            @RequestBody @Validated DataDetailsUser dataReactivateAccount) {
+
         User user = userService.getUserDesctivatedByEmail(dataReactivateAccount.email());
 
         if (user == null) {
@@ -295,11 +303,9 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        // Gera um token para reativação
         String token = tokenService.generateTokenForReactivation(user);
 
         try {
-            // Envia o e-mail de reativação
             emailService.sendReactivationEmail(user.getName(), dataReactivateAccount.email(), token);
             Map<String, String> response = new HashMap<>();
             response.put("message", "A reactivation email has been sent to " + dataReactivateAccount.email());
@@ -312,11 +318,21 @@ public class AuthController {
         }
     }
 
+
+
     /**
-     * Reativa a conta do usuário usando o token fornecido.
+     * Endpoint para reativar a conta de um usuário utilizando um token de reativação.
      *
-     * @param token O token de reativação recebido por e-mail.
-     * @return Uma resposta indicando se a conta do usuário foi reativada com sucesso.
+     * @param token O token de reativação fornecido pelo usuário. Este token é usado para verificar se o
+     *              usuário tem o direito de reativar sua conta.
+     * @return Um {@link ResponseEntity} contendo:
+     *         <ul>
+     *             <li>Uma mensagem de sucesso com o status HTTP 200 se a conta for reativada com sucesso.</li>
+     *             <li>Uma mensagem de conflito com o status HTTP 409 se a conta do usuário já estiver ativa.</li>
+     *             <li>Uma mensagem de erro com o status HTTP 500 se houver uma falha interna no servidor.</li>
+     *         </ul>
+     * @throws Exception Caso ocorra um erro ao tentar reativar a conta do usuário, uma exceção será capturada
+     *                   e uma mensagem de erro será retornada com o status HTTP 500.
      */
     @PutMapping("/reactivate")
     @Transactional
@@ -324,23 +340,22 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User reactivated successfully.", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "400", description = "Invalid token or user not found.", content = @Content),
+            @ApiResponse(responseCode = "409", description = "User is already active.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content)
     })
     public ResponseEntity<String> reactivateAccount(@RequestParam String token) {
         try {
-            // Aqui você deve obter o usuário com base no token
             User user = authService.getUserByToken(token);
 
-            // Verifique se o usuário já está ativo
             if (user.isActive()) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("User is already active.");
             }
 
-            // Se o usuário não estiver ativo, tente reativá-lo
             authService.reactivateUser(token);
-            tokenService.revokeToken(token);
-            return ResponseEntity.ok("User account reactivated successfully.");
 
+            tokenService.revokeToken(token);
+
+            return ResponseEntity.ok("User account reactivated successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to reactivate user account.");

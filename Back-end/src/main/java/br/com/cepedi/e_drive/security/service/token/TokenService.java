@@ -204,21 +204,40 @@ public class TokenService {
         }
     }
 
+    /**
+     * Gera um token JWT para reativação de conta de usuário.
+     *
+     * Este método cria um token JWT contendo o e-mail e o ID do usuário como claims e registra
+     * o token gerado no banco de dados. O token tem uma validade de 1 hora.
+     *
+     * @param user O objeto {@link User} para o qual o token será gerado.
+     * @return O token JWT gerado como uma {@link String}.
+     * @throws RuntimeException Se ocorrer um erro durante a criação do token JWT.
+     */
     public String generateTokenForReactivation(User user) {
         try {
+            // Define o algoritmo HMAC256 usando o segredo fornecido
             Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            // Cria o token JWT com claims e expiração de 1 hora
             String token = JWT.create()
                     .withIssuer(ISSUER)
-                    .withSubject(user.getEmail()) // Usa o e-mail como subject
-                    .withClaim("id", user.getId())
-                    .withClaim("email", user.getEmail())
-                    .withExpiresAt(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // O token expira em 1 hora
+                    .withSubject(user.getEmail()) // Define o e-mail do usuário como subject do token
+                    .withClaim("id", user.getId()) // Adiciona o ID do usuário como claim
+                    .withClaim("email", user.getEmail()) // Adiciona o e-mail do usuário como claim
+                    .withExpiresAt(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // Define a expiração para 1 hora
                     .sign(algorithm);
-            registerToken(token, user);  // Registra o token na base de dados
+
+            // Registra o token gerado na base de dados
+            registerToken(token, user);
+
+            // Retorna o token gerado
             return token;
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro ao gerar o token JWT", exception); // Exceção customizada
+            // Lança uma exceção se houver falha na criação do token
+            throw new RuntimeException("Erro ao gerar o token JWT", exception);
         }
     }
+
 
 }

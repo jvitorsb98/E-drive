@@ -151,11 +151,24 @@ public class AuthService implements UserDetailsService {
     }
 
 
+    /**
+     * Recupera um usuário a partir de um token JWT fornecido.
+     *
+     * Este método extrai o email associado ao token JWT, que é utilizado para buscar
+     * o usuário correspondente no repositório.
+     *
+     * @param token O token JWT fornecido, que pode ou não conter o prefixo "Bearer ".
+     *              Se o prefixo "Bearer " estiver presente, ele será removido antes de processar o token.
+     * @return O {@link User} associado ao email extraído do token.
+     *         Se nenhum usuário for encontrado com o email extraído, este método retornará {@code null}.
+     */
     public User getUserByToken(String token) {
         String tokenWithoutBearer = token.replace("Bearer ", "");
         String email = tokenService.getEmailByToken(tokenWithoutBearer);
+
         return repository.findByEmail(email);
     }
+
 }
 
 
