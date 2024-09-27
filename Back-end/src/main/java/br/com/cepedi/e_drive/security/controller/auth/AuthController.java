@@ -3,6 +3,7 @@ package br.com.cepedi.e_drive.security.controller.auth;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
+import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
@@ -26,6 +27,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -264,6 +268,83 @@ public class AuthController {
     ) {
         authService.disableUser(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    /**
+     * Solicita a reativação da conta enviando um e-mail para o usuário com instruções.
+     *
+     * @return Uma resposta indicando se o e-mail foi enviado com sucesso.
+     * @throws MessagingException Se houver um erro ao enviar o e-mail.
+     */
+    @PutMapping("/reactivate-account/request")
+    @Transactional
+    @Operation(summary = "Request account reactivation", description = "Sends an account reactivation email to the user with instructions on how to reactivate their account.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Account reactivation email sent successfully"),
+            @ApiResponse(responseCode = "400", description = "Email not found", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content(mediaType = "text/plain"))
+    })
+    public ResponseEntity<Map<String, String>> reactivateAccountRequest(@RequestBody @Validated DataDetailsUser dataReactivateAccount) {
+        // Verifica se o usuário está desativado
+        User user = userService.getUserDesctivatedByEmail(dataReactivateAccount.email());
+
+        if (user == null) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "E-mail not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        // Gera um token para reativação
+        String token = tokenService.generateTokenForReactivation(user);
+
+        try {
+            // Envia o e-mail de reativação
+            emailService.sendReactivationEmail(user.getName(), dataReactivateAccount.email(), token);
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "A reactivation email has been sent to " + dataReactivateAccount.email());
+            return ResponseEntity.ok(response);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Failed to send email");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * Reativa a conta do usuário usando o token fornecido.
+     *
+     * @param token O token de reativação recebido por e-mail.
+     * @return Uma resposta indicando se a conta do usuário foi reativada com sucesso.
+     */
+    @PutMapping("/reactivate")
+    @Transactional
+    @Operation(summary = "Reactivate a user", description = "Reactivates a user account using a provided token.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User reactivated successfully.", content = @Content(mediaType = "text/plain")),
+            @ApiResponse(responseCode = "400", description = "Invalid token or user not found.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content)
+    })
+    public ResponseEntity<String> reactivateAccount(@RequestParam String token) {
+        try {
+            // Aqui você deve obter o usuário com base no token
+            User user = authService.getUserByToken(token);
+
+            // Verifique se o usuário já está ativo
+            if (user.isActive()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("User is already active.");
+            }
+
+            // Se o usuário não estiver ativo, tente reativá-lo
+            authService.reactivateUser(token);
+            tokenService.revokeToken(token);
+            return ResponseEntity.ok("User account reactivated successfully.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to reactivate user account.");
+        }
     }
 
 }
