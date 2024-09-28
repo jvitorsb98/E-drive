@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { AuthService } from '../../security/services/auth/auth.service';
-import { ModalService } from '../../services/modal/modal.service';
 
 @Component({
   selector: 'app-navbar-intro',
@@ -14,7 +13,6 @@ export class NavbarIntroComponent {
 
   constructor(
     public dialog: MatDialog,
-    private modal: ModalService,
     private router: Router,
     private authService: AuthService
 
@@ -23,7 +21,7 @@ export class NavbarIntroComponent {
   openLoginModal() {
     this.closeMenu();
     // this.modal.openModal(UserLoginModalComponent)
-    this.router.navigate(['/login']);
+    this.router.navigate(['/e-driver/login']);
   }
 
   openRegisterModal() {

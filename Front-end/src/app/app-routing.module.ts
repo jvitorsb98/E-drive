@@ -3,29 +3,20 @@ import { RouterModule, Routes } from '@angular/router';
 import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { authGuard } from './settings/core/security/guards/auth.guard';
 import { canMatchGuard } from './settings/core/security/guards/can-match.guard';
-import { ResetPasswordComponent } from './settings/core/security/login/recover-password/components/reset-password/reset-password.component';
-
 
 const routes: Routes = [
   {
-    path: 'admin',
-    loadChildren: () => import('./settings/features/admin/admin.module').then(m => m.AdminModule)
-  },
-  {
-    path: 'intro-page', component: IntroPageComponent
-  },
-  {
-    path: 'login',
-    loadChildren: () => import('./settings/core/security/login/login.module').then(m => m.LoginModule)
-  },
-  {
-    path: 'reset-password', component: ResetPasswordComponent
-  },
-  {
-    path: 'e-driver/users',
+    path: 'e-driver',
     children: [
       {
-        path: 'registration',
+        path: 'intro-page', component: IntroPageComponent
+      },
+      {
+        path: 'login',
+        loadChildren: () => import('./settings/core/security/login/login.module').then(m => m.LoginModule)
+      },
+      {
+        path: 'users/registration',
         loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
       },
     ]
@@ -40,10 +31,6 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
-          },
-          {
-            path: 'myinfo',
             loadChildren: () => import('./settings/features/users/users.module').then(m => m.UsersModule),
           },
           {
@@ -63,11 +50,15 @@ const routes: Routes = [
       },
       {
         path: 'map',
-        loadChildren: () => import('./settings/features/map-stations/module/map-stations.module').then(m => m.MapStationsModule),
+        loadChildren: () => import('./settings/features/trip-planner-maps/map-stations.module').then(m => m.MapStationsModule),
+      },
+      {
+        path: 'admin',
+        loadChildren: () => import('./settings/features/admin/admin.module').then(m => m.AdminModule)
       },
     ]
   },
-  { path: '', redirectTo: '/intro-page', pathMatch: 'full' },
+  { path: '', redirectTo: 'e-driver/intro-page', pathMatch: 'full' },
 ];
 
 @NgModule({

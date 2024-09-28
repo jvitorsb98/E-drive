@@ -40,6 +40,15 @@ public class UserService {
     public User getUserActivatedByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+    /**
+     * Busca um usuário desatativado pelo e-mail.
+     *
+     * @param email O e-mail do usuário a ser buscado.
+     * @return O usuário correspondente ao e-mail fornecido.
+     */
+    public User getUserDesctivatedByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
 
     /**
      * Atualiza a senha de um usuário.

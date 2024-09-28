@@ -161,10 +161,10 @@ export class UserUpdateComponent implements OnInit {
           console.error('Erro ao atualizar usuário', err);
         }
       });
-      
+
     this.isButtonVisible = true;
     }
-    
+
   }
 
   // Função para formatar o número de telefone
@@ -178,6 +178,7 @@ export class UserUpdateComponent implements OnInit {
 
   // Método para excluir a conta do usuário (implementação futura)
   deleteAccount() {
+    // TODO: Implementar o método para excluir a conta
     console.log('Excluir conta do usuário');
   }
 

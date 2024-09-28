@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterU
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.validations.disabled.ValidationDisabledUser;
 import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
 import com.auth0.jwt.JWT;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private List<ValidationRegisterUser> validationRegisterUserList;
+
+    @Autowired
+    private List<ValidationDisabledUser> validationDisabledUserList;
+
 
     /**
      * Carrega um {@link UserDetails} com base no email fornecido.
@@ -87,6 +92,31 @@ public class AuthService implements UserDetailsService {
     }
 
     /**
+     * Reativa um usuário com base no token fornecido.
+     *
+     * @param token O token de confirmação de ativação do usuário.
+     * @throws UsernameNotFoundException Se nenhum usuário for encontrado com o email associado ao token.
+     * @throws IllegalStateException Se o usuário já estiver ativo.
+     */
+    public void reactivateUser(String token) {
+        String email = JWT.decode(token).getClaim("email").asString();
+        User user = repository.findByEmail(email);
+
+        if (user != null) {
+            if (!user.isActive()) {
+                user.activate();
+                repository.save(user);
+            } else {
+                throw new IllegalStateException("User is already active.");
+            }
+        } else {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+    }
+
+
+
+    /**
      * Realiza o logout do usuário com base no token fornecido.
      *
      * @param token O token de logout.
@@ -100,4 +130,45 @@ public class AuthService implements UserDetailsService {
             throw new IllegalArgumentException("Invalid or expired token.");
         }
     }
+
+
+    /**
+     * Desativa um usuário com o ID fornecido.
+     *
+     * Este método executa as validações definidas na lista de validações de usuários desativados
+     * antes de desativar o usuário. Se todas as validações forem bem-sucedidas, o usuário será
+     * marcado como desativado e salvo no repositório.
+     *
+     * @param id O ID do usuário a ser desativado.
+     * @throws IllegalArgumentException Se alguma validação falhar, indicando que o usuário não pode ser desativado.
+     * @throws EntityNotFoundException Se não houver um usuário com o ID fornecido no repositório.
+     */
+    public void disableUser(Long id) {
+        validationDisabledUserList.forEach(v -> v.validation(id));
+        User user = repository.getReferenceById(id);
+        user.disabled();
+        repository.save(user);
+    }
+
+
+    /**
+     * Recupera um usuário a partir de um token JWT fornecido.
+     *
+     * Este método extrai o email associado ao token JWT, que é utilizado para buscar
+     * o usuário correspondente no repositório.
+     *
+     * @param token O token JWT fornecido, que pode ou não conter o prefixo "Bearer ".
+     *              Se o prefixo "Bearer " estiver presente, ele será removido antes de processar o token.
+     * @return O {@link User} associado ao email extraído do token.
+     *         Se nenhum usuário for encontrado com o email extraído, este método retornará {@code null}.
+     */
+    public User getUserByToken(String token) {
+        String tokenWithoutBearer = token.replace("Bearer ", "");
+        String email = tokenService.getEmailByToken(tokenWithoutBearer);
+
+        return repository.findByEmail(email);
+    }
+
 }
+
+

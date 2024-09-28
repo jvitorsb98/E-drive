@@ -137,7 +137,6 @@ export class ModelListComponent {
 
   // Abre o modal para editar um modelo existente
   openModalEditModel(model: Model) {
-    console.log('Objeto Model enviado ao modal:', model);
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
       height: '320px',

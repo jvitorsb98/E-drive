@@ -149,4 +149,46 @@ public class EmailService {
 
         return tokenForActivate;
     }
+    /**
+     * Envia um e-mail de reativação de conta.
+     *
+     * @param name O nome do destinatário.
+     * @param email O e-mail do destinatário.
+     * @param tokenForReactivation O token para reativação da conta.
+     * @return O token de reativação enviado.
+     * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
+     */
+    public String sendReactivationEmail(String name, String email, String tokenForReactivation) throws MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
+
+        helper.setTo(email);
+        helper.setSubject("Reativação de Conta");
+
+        // Contexto para o template
+        Context context = new Context();
+        context.setVariable("nome", name);
+        context.setVariable("titulo", "Bem-vindo de volta ao e-Drive, " + name + "!");
+        context.setVariable("texto", "Estamos felizes que você deseja reativar sua conta. Para reativá-la e voltar a usar o e-Drive, clique no link abaixo.");
+        context.setVariable("linkConfirmacao", "http://localhost:8080/auth/reactivate?token=" + tokenForReactivation);
+
+        // Processa o template Thymeleaf
+        String htmlBody = templateEngine.process("reactivate_user_by_email_template", context);
+        helper.setText(htmlBody, true);
+        helper.setFrom("nao-responder@park.com.br");
+
+        // Adiciona a imagem inline
+        helper.addInline("logo", new ClassPathResource("/static/image/spring-security.png"));
+
+        // Envia o e-mail
+        emailSender.send(message);
+
+        // Registra o e-mail enviado
+        DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Reactivation Email");
+        mailService.register(dataRegisterMail);
+
+        return tokenForReactivation;
+    }
+
+
 }

@@ -1,3 +1,4 @@
+import { AuthService } from './../../security/services/auth/auth.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
@@ -12,7 +13,7 @@ export class UserService {
 
   private usersUrl: string;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient, private authServise: AuthService) {
     this.usersUrl = `${environment.apiUrl}/auth`;
   }
 
@@ -56,10 +57,14 @@ export class UserService {
     );
   }
 
+  //TODO - Finalizar esse metodo de desativar o usuário
+  // Método para desativar o usuário
+  deactivate(id: number): Observable<any> {
+    return this.http.delete(`${this.usersUrl}/user/deactivate/${id}`);
+  }
+
   logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.clear();
-    this.router.navigate(['/login']);
+    this.authServise.logout();
   }
 
 }
