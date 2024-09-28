@@ -25,7 +25,7 @@
               </mat-option>
             </mat-autocomplete>
             <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
-            <mat-error
+            <mat-error class="mat-error-text"
               *ngIf="vehicleStatusBatteryForm.get('brand')?.hasError('required') && vehicleStatusBatteryForm.get('brand')?.touched">
               <strong>Marca</strong> é obrigatória
             </mat-error>
@@ -54,15 +54,16 @@
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
             <!-- Exibe mensagens de erro -->
-            <mat-error *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
-              Bateria restante é obrigatória
-            </mat-error>
-            <mat-error *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('min')">
-              O valor mínimo é 0%
-            </mat-error>
-            <mat-error *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('max')">
-              O valor máximo é 100%
-            </mat-error>
+           
+              <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
+              <strong>Bateria restante</strong> é obrigatória
+              </mat-error>
+              <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('min')">
+                O valor <strong>mínimo é 0%</strong>
+              </mat-error>
+              <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('max')">
+                O valor <strong>máximo é 100%</strong>
+              </mat-error>
           </mat-form-field>
         </div>
 
@@ -73,11 +74,11 @@
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
             <!-- Exibe mensagens de erro -->
-            <mat-error *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('min')">
-              O valor mínimo é 0%
+            <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('min')">
+              O valor <strong>mínimo é 0%</strong>
             </mat-error>
-            <mat-error *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('max')">
-              O valor máximo é 100%
+            <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('max')">
+              O valor <strong>máximo é 100%</strong>
             </mat-error>
           </mat-form-field>
         </div>

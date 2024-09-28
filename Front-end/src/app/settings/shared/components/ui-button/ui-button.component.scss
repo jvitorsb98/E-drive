@@ -34,7 +34,7 @@ button[type="vivid-sky-blue"] {
   }
 }
 
-.btn i{
+.btn i {
   width: 30px;
   font-size: 1.2rem;
   margin-left: -50px;
@@ -77,13 +77,13 @@ button[type="outline-secondary"] {
   width: 100%;
   cursor: pointer;
   position: relative;
-  background: red;
+  background: rgb(155, 59, 59);
   border: 0px;
   color: white;
   transition: 600ms;
 
   &:hover {
-    background: rgb(231, 132, 132);
+    background: red;
   }
 }
 
