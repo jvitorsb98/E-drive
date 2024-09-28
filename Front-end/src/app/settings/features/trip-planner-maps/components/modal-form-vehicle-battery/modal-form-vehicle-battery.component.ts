@@ -10,6 +10,7 @@ import { Vehicle } from '../../../../core/models/vehicle';
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { IVehicleDetails } from '../../../../core/models/vehicleDetails';
 import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
+import { numberValidator } from '../../../../shared/validators/number-validator';
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
@@ -42,8 +43,8 @@ export class ModalFormVehicleBatteryComponent {
       brand: new FormControl(null, [Validators.required]),
       model: new FormControl({ value: '', disabled: true }), // Campo desabilitado
       version: new FormControl({ value: '', disabled: true }), // Campo desabilitado
-      bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100)]),
-      saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100)])
+      bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator]),
+      saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator])
     });
   }
 
@@ -178,7 +179,7 @@ export class ModalFormVehicleBatteryComponent {
       },
     });
   }
-  
+
   closeModal() {
     this.dialogRef.close(); // Fecha o modal
   }

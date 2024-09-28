@@ -53,18 +53,32 @@
             <input type="text" matInput formControlName="bateriaRestante" aria-describedby="Help">
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
-            <!-- Exibe mensagens de erro -->
-           
-              <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
+            <!-- <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')">
+              O valor deve ser um <strong>número</strong>
+            </mat-error> -->
+            @if(vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('pattern') && vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')){
+              <mat-error class="mat-error-text">
+                O valor deve ser um <strong>número</strong>
+              </mat-error>
+            }
+            <mat-error class="mat-error-text"
+              *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
               <strong>Bateria restante</strong> é obrigatória
-              </mat-error>
-              <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('min')">
-                O valor <strong>mínimo é 0%</strong>
-              </mat-error>
-              <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('max')">
-                O valor <strong>máximo é 100%</strong>
-              </mat-error>
+            </mat-error>
+            <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('min')">
+              O valor <strong>mínimo é 0%</strong>
+            </mat-error>
+            <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('max')">
+              O valor <strong>máximo é 100%</strong>
+            </mat-error>
           </mat-form-field>
+          <div class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('pattern') 
+          && vehicleStatusBatteryForm.get('bateriaRestante')?.dirty
+          && vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')">
+            <mat-error>
+              O valor deve ser um <strong>número</strong>
+            </mat-error>
+          </div>
         </div>
 
         <div class="col-12 col-md-6 mb-2 w-100">
@@ -74,6 +88,9 @@
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
             <!-- Exibe mensagens de erro -->
+            <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('pattern')">
+              O valor deve ser um <strong>número</strong>
+            </mat-error>
             <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('min')">
               O valor <strong>mínimo é 0%</strong>
             </mat-error>

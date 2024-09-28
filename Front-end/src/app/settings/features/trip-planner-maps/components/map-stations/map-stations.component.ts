@@ -2,6 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } fr
 import { environment } from '../../../../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
+import { ModalSetupTripComponent } from '../modal-setup-trip/modal-setup-trip.component';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
@@ -246,11 +247,24 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
+  // openModalAddVehicleBattery() {
+  //   this.closeModal();
+  //   const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
+  //     width: '400px',
+  //     height: '530px',
+  //   });
+
+  //   // Abre o modal principal novamente após o fechamento do modal de adicionar bateria
+  //   chargingStationDialogRef.afterClosed().subscribe(result => {
+  //     this.isModalOpen = true; // Abre o modal principal novamente
+  //   });
+  // }
+
   openModalAddVehicleBattery() {
     this.closeModal();
-    const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
-      width: '400px',
-      height: '530px',
+    const chargingStationDialogRef = this.dialog.open(ModalSetupTripComponent, {
+      width: '450px',
+      height: '540px',
     });
 
     // Abre o modal principal novamente após o fechamento do modal de adicionar bateria

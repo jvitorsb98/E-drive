@@ -1,0 +1,218 @@
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  display: flex;
+  flex-direction: column; // Permite que os campos do formulário sejam empilhados
+}
+
+#Help {
+  color: #b5abab;
+}
+
+.mat-hint-text {
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -14px;
+}
+
+.content {
+  .col-12 {
+    margin-bottom: 0px !important; // Forçar a remoção do espaço
+  }
+
+  mat-form-field {
+    margin-bottom: 0px !important; // Forçar a remoção da margem
+  }
+}
+
+.custom-select {
+  margin-bottom: 0 !important; // Forçar a remoção da margem
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: column; // Empilha os botões verticalmente
+  margin-top: 0; // Remove margem superior se houver
+  padding-top: 0; // Remove padding se houver
+  gap: 0px; // Ajusta o espaço entre os botões
+}
+
+.buttons-container .mb-3 {
+  margin-bottom: 0; // Remove margem inferior para os botões
+}
+
+.custom-select {
+  margin-bottom: 0px; // Ajusta o espaço abaixo do último input
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.back-button {
+  padding-left: 1.5rem;
+}
+
+.titulo {
+  font-size: 1rem;
+  color: #19B6DD;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.filtro {
+  width: 20px;
+}
+
+.hover:hover {
+  cursor: pointer;
+}
+
+.mat-error-text {
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -15px;
+}
+
+.mat-error-text-vehicle{
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 1px;
+}
+
+.custom-icon {
+  color: #19B6DD;
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.custom-form-field {
+  position: relative;
+}
+
+.custom-suffix {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #19B6DD;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.check-icon {
+  color: green; // ou outra cor que preferir
+  margin-left: 8px; // ajuste o espaçamento se necessário
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0% 0%;
+  text-align: left;
+  font-size: 10px;
+}
+
+.custom-filter {
+  display: flex;
+  width: 100%;
+}
+
+.custom-filter mat-form-field {
+  flex: 1;
+}
+
+.no-data {
+  padding: 8px 14px;
+  font-weight: 400;
+  font-size: .8rem;
+  color: #19B6DD;
+}
+
+th {
+  font-size: 11px;
+  font-weight: 350;
+  color: #5a5a5a;
+}
+
+td {
+  font-size: 8px;
+  font-weight: 350;
+  color: #8f8f8f;
+}
+
+.icone-table {
+  font-size: 18px;
+  color: #767676;
+  margin-right: 10;
+  transform: rotate(0deg);
+  transition: 0.3s linear all;
+
+  &:hover {
+    cursor: pointer;
+    color: #19B6DD;
+    transform: rotate(359deg);
+  }
+}
+
+.icone-carro {
+  font-size: 18px;
+  color: #767676;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #19B6DD;
+  }
+}
+
+.th-table mat-icon {
+  font-size: 18px;
+}
+
+.custom-radio {
+  // Estiliza o radio button
+  .form-check-input {
+    width: 15px; // Tamanho do botão
+    height: 15px; // Altura do botão
+    margin-right: 0px; // Espaço à direita do botão, se necessário
+    margin-left: 0px; // Espaço à esquerda do botão para movê-lo para a direita
+  }
+
+  // Se quiser esconder o texto, mas ainda manter acessibilidade
+  .visually-hidden {
+    display: none; // Esconder o texto
+  }
+
+  // Adiciona um fundo ao radio button quando estiver checado
+  &.form-check-input:checked {
+    background-color: #19B6DD; // Cor de fundo quando selecionado
+    border-color: #19B6DD; // Cor da borda quando selecionado
+  }
+}
+
+@media (max-width: 350px) {
+  .mat-autocomplete-panel {
+    top: calc(100% + 4px);
+  }
+}
