@@ -44,10 +44,27 @@ public class SettingsSecurity {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> {
+
+                    //Swagger
+                    req.requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll();
+
+                    // Endpoints públicos de autenticação
                     req.requestMatchers("/auth/login").permitAll();
                     req.requestMatchers("/auth/register").permitAll();
-                    req.requestMatchers("/auth/user/exists").permitAll();
                     req.requestMatchers("/auth/reset-password/request").permitAll();
+                    req.requestMatchers("/auth/reset-password/reset").permitAll();
+                    req.requestMatchers("/auth/activate").permitAll();
+                    req.requestMatchers("/auth/reactivate-account/request").permitAll();
+                    req.requestMatchers("/auth/reactivate").permitAll();
+
+                    // Endpoints que exigem autenticação
+                    req.requestMatchers(HttpMethod.POST, "/auth/logout").authenticated();
+                    req.requestMatchers(HttpMethod.DELETE, "/auth/{id}").hasRole("ADMIN"); // Desabilitar usuário (somente ADMIN)
+
+                    // Endpoints de usuário
+                    req.requestMatchers(HttpMethod.GET, "/auth/user/me").hasAnyRole("USER", "ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/auth/user/update").hasAnyRole("USER", "ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/auth/user/exists").permitAll(); // Endpoint público
 
                     // Endpoints de address
                     req.requestMatchers(HttpMethod.GET, "/api/v1/address/**").hasAnyRole("USER", "ADMIN");
@@ -56,38 +73,51 @@ public class SettingsSecurity {
                     req.requestMatchers(HttpMethod.DELETE, "/api/v1/address/**").hasRole("USER");
                     req.requestMatchers(HttpMethod.PUT, "/api/v1/address/**/enable").hasRole("USER");
 
-
                     // endpoints de marca
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/brands").hasRole("ADMIN"); // Permissão para criar marcas
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/brands/**").hasRole("ADMIN"); // Permissão para atualizar marcas
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/brands/**").hasRole("ADMIN"); // Permissão para desativar marcas
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll(); // Permissão para visualizar marcas
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/brands").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/brands/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/brands/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll();
 
                     // Endpoints de categoria
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/categories").hasRole("ADMIN"); // Criar categorias
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN"); // Atualizar categorias
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN"); // Desativar categorias
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll(); // Visualizar categorias
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/categories").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll();
 
                     // Endpoints de modelo
                     req.requestMatchers(HttpMethod.GET, "/api/v1/models/**").hasAnyRole("USER", "ADMIN");
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/models").hasRole("ADMIN"); // Criar modelos
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**").hasRole("ADMIN"); // Atualizar modelos
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/models/**").hasRole("ADMIN"); // Desativar modelos
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**/activate").hasRole("ADMIN"); // Ativar modelos
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/models").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/models/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**/activate").hasRole("ADMIN");
 
                     // Endpoints de veículos
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicles/**").hasAnyRole("USER", "ADMIN"); // Visualizar veículos
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicles").hasRole("ADMIN"); // Criar veículos
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**").hasRole("ADMIN"); // Atualizar veículos
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicles/**").hasRole("ADMIN"); // Deletar veículos
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**/activate").hasRole("ADMIN"); // Ativar veículos
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicles/**").hasAnyRole("USER", "ADMIN");
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicles").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicles/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**/activate").hasRole("ADMIN");
+
+                    // Endpoints de tipos de veículos
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicleTypes/**").hasAnyRole("USER", "ADMIN");
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicleTypes").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicleTypes/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicleTypes/**").hasRole("ADMIN");
+
+                    // Endpoints de usuários de veículos
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicle-users/**").hasAnyRole("USER", "ADMIN");
+                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicle-users").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicle-users/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicle-users/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicle-users/**/activate").hasRole("ADMIN");
 
                     req.anyRequest().permitAll();
                 })
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     /**
      * Configura o {@link AuthenticationManager} para autenticação.
