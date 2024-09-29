@@ -92,8 +92,6 @@
               </tr>
             </div>
           </table>
-          <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15]"
-            aria-label="Selecione veículos por página"></mat-paginator>
         </div>
         <!-- Campos adicionais -->
         <div class="col-12 col-md-6 mb-2 w-100">
@@ -102,15 +100,10 @@
             <input type="text" matInput formControlName="bateriaRestante" aria-describedby="Help">
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
-            <!-- <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')">
-              O valor deve ser um <strong>número</strong>
-            </mat-error> -->
-            @if(vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('pattern') &&
-            vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')){
-            <mat-error class="mat-error-text">
+            <mat-error class="mat-error-text"
+              *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')">
               O valor deve ser um <strong>número</strong>
             </mat-error>
-            }
             <mat-error class="mat-error-text"
               *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
               <strong>Bateria restante</strong> é obrigatória
@@ -150,7 +143,8 @@
           </mat-form-field>
         </div>
       </div>
-      @if(vehicleStatusBatteryForm.get('bateriaRestante') && vehicleStatusBatteryForm.get('bateriaRestante')?.dirty){
+      @if(vehicleStatusBatteryForm.get('selectedVehicle')?.invalid &&
+      vehicleStatusBatteryForm.get('bateriaRestante')?.dirty){
       <mat-error class="mat-error-text-vehicle">Por favor, <strong>selecione um veículo.</strong></mat-error>
       }
       <div class="buttons-container py-3">

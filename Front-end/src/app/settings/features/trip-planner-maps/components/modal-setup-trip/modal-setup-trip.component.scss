@@ -64,6 +64,12 @@
   padding-left: 1.5rem;
 }
 
+/* Define a altura das linhas da tabela como automática, garantindo 
+     que a altura se ajuste ao conteúdo. */
+tr {
+  height: auto !important;
+}
+
 .titulo {
   font-size: 1rem;
   color: #19B6DD;
@@ -87,7 +93,7 @@
   margin-left: -15px;
 }
 
-.mat-error-text-vehicle{
+.mat-error-text-vehicle {
   font-size: 10px;
   line-height: 1.5;
   text-align: left;
@@ -191,6 +197,7 @@ td {
 }
 
 .custom-radio {
+
   // Estiliza o radio button
   .form-check-input {
     width: 15px; // Tamanho do botão
