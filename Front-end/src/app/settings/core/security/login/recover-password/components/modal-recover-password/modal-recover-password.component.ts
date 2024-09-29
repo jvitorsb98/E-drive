@@ -1,3 +1,4 @@
+import { AlertasService } from './../../../../../services/Alertas/alertas.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
@@ -20,21 +21,20 @@ export class ModalRecoverPasswordComponent {
   recoverPasswordForm!: FormGroup;
   emailControl!: FormControl;
   email!: string;
-
-  response: Observable<IRecoverPasswordResponse> | undefined;
-
+  isPasswordRecovery: boolean = true;  // Nova propriedade
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { email: string },
+    @Inject(MAT_DIALOG_DATA) public data: { email: string, isPasswordRecovery: boolean },  // Recebe a flag
     public dialogRef: MatDialogRef<ModalRecoverPasswordComponent>,
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private alertasService: AlertasService
   ) { }
 
   ngOnInit(): void {
-    this.emailControl = new FormControl ('', {
+    this.emailControl = new FormControl('', {
       validators: [Validators.required, Validators.email],
       asyncValidators: [emailnoExistsValidator(this.userService)],
     });
@@ -46,25 +46,42 @@ export class ModalRecoverPasswordComponent {
     if (this.data.email) {
       this.recoverPasswordForm.get('email')?.setValue(this.data.email);
     }
+
+    if (this.data.isPasswordRecovery !== undefined) {
+      this.isPasswordRecovery = this.data.isPasswordRecovery;  // Define o modo com base no dado recebido
+    }
   }
 
-  onSubmit() {
-    console.log("Ta chegando qui");
-    this.resetPassword();
-  }
-  resetPassword() {
+  resetPasswordOrAccount() {
     if (this.recoverPasswordForm.invalid) {
       return;
     }
-    this.auth.recoverPasswordRequest(this.recoverPasswordForm.value.email).subscribe({
-      next: () => {
-        this.showAlert('Sucesso', 'Um e-mail de redefinicão de senha foi enviado para o e-mail: ' + this.recoverPasswordForm.value.email + '', true);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.showAlert('Erro', error.message);
-      }
 
-    });
+    if (this.isPasswordRecovery) {
+      this.auth.recoverPasswordRequest(this.recoverPasswordForm.value.email).subscribe({
+        next: () => {
+          this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.alertasService.showError("Redefinição de senha", error.message);
+        }
+      });
+    } else {
+      //TODO - descomentar
+      // this.auth.recoverAccountRequest(this.recoverPasswordForm.value.email).subscribe({  // Nova função para recuperação de conta
+      //   next: () => {
+      //     this.alertasService.showSuccess("Recuperação de conta", "Um e-mail de recuperação de conta foi enviado para: " + this.recoverPasswordForm.value.email);
+      //   },
+      //   error: (error: HttpErrorResponse) => {
+      //     this.alertasService.showError("Recuperação de conta", error.message);
+      //   }
+      // });
+    }
+  }
+
+  // Atualiza o método submit
+  onSubmit() {
+    this.resetPasswordOrAccount();
   }
 
   private showAlert(title: string = 'Erro', text: string = 'Algo deu errado', success: boolean = false): void {
@@ -91,3 +108,4 @@ export class ModalRecoverPasswordComponent {
     this.dialogRef.close();
   }
 }
+

@@ -38,15 +38,16 @@ export class UserLoginModalComponent implements OnInit {
     });
   }
 
-  modalResetPassword(): void {
-    this.modal.openModal(ModalRecoverPasswordComponent, {
-      email: this.loginForm.get('email')?.value
-    }, {
-      width: '80%',
-      height: 'auto',
-      disableClose: true
-    });
-  }
+  modalResetPassword(isPasswordRecovery: boolean): void {
+  this.modal.openModal(ModalRecoverPasswordComponent, {
+    email: this.loginForm.get('email')?.value,
+    isPasswordRecovery: isPasswordRecovery  // Passa a flag para definir o modo
+  }, {
+    width: '80%',
+    height: 'auto',
+    disableClose: true
+  });
+}
 
   goBack(): void {
     this.router.navigate(['/']);

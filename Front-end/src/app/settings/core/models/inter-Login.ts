@@ -12,7 +12,15 @@ export interface IRecoverPasswordRequest {
   email: string
 }
 
+export interface IRecoverAccountRequest {
+  email: string
+}
+
 export interface IRecoverPasswordResponse {
+  token: string
+}
+
+export interface IRecoverAccountResponse {
   token: string
 }
 

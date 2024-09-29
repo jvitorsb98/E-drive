@@ -38,11 +38,11 @@
                     <mat-card-actions>
                         <button mat-raised-button color="primary" type="submit" class="full-width-button">Acessar meu
                             E-Drive</button>
-                        <div class="d-flex justify-content-center gap-5">
-                            <a class="forgot-password-link" (click)="modalResetPassword()">Esqueceu a senha?</a>
-                            <a class="forgot-password-link" routerLink="/e-driver/users/registration"
-                                (click)="closeDialog()">Cadastre-se</a>
-                        </div>
+                            <div class="d-flex justify-content-center gap-5">
+                              <a class="forgot-password-link" (click)="modalResetPassword(true)">Esqueceu a senha?</a>
+                              <a class="forgot-password-link" (click)="modalResetPassword(false)">Recuperar conta</a>
+                              <a class="forgot-password-link" routerLink="/e-driver/users/registration" (click)="closeDialog()">Cadastre-se</a>
+                            </div>
                     </mat-card-actions>
                 </div>
             </form>

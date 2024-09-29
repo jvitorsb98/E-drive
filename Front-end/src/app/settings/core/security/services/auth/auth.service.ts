@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
-import { ILoginRequest, ILoginResponse, IRecoverPasswordRequest, IRecoverPasswordResponse, IResetPasswordRequest } from '../../../models/inter-Login';
+import { ILoginRequest, ILoginResponse, IRecoverAccountRequest, IRecoverAccountResponse, IRecoverPasswordRequest, IRecoverPasswordResponse, IResetPasswordRequest } from '../../../models/inter-Login';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
@@ -107,6 +107,10 @@ export class AuthService {
   resetPassword(request: IResetPasswordRequest): Observable<any> {
     const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
     return this.http.put(`${this.apiUrl}/reset-password/reset`, request, { headers: header })
+  }
+
+  recoverAccountRequest(email: IRecoverAccountRequest): Observable<IRecoverAccountResponse> {
+    return this.http.put<IRecoverAccountResponse>(`${this.apiUrl}/recover-account/request`, { email })
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {
