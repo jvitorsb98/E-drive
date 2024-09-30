@@ -151,7 +151,7 @@ export class UserRegistrationFormComponent {
   private openModalPasswordUser() {
     this.dialog.open(UserPasswordModalComponent, {
       width: '430px',
-      height: '650px',
+      height: '500px',
       data: this.user
     });
   }

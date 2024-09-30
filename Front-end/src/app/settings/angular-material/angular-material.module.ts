@@ -20,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule, MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatGridListModule } from '@angular/material/grid-list';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -54,6 +55,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     NgxMaskDirective,
+    MatRadioModule
   ],
   exports: [
     MatCardModule,
@@ -84,6 +86,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     NgxMaskDirective,
+    MatRadioModule
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },

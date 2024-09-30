@@ -1,25 +1,26 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
+import { IApiResponse } from '../../../../core/models/api-response';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
+import { forkJoin, map } from 'rxjs';
+import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
+import { Vehicle } from '../../../../core/models/vehicle';
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
+import { numberValidator } from '../../../../shared/validators/number-validator';
+import { MatTableDataSource } from '@angular/material/table';
 import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
-import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { IApiResponse } from '../../../../core/models/api-response';
-import { Vehicle } from '../../../../core/models/vehicle';
-import { forkJoin, map } from 'rxjs';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { numberValidator } from '../../../../shared/validators/number-validator';
-import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
+import { ModalSetupTripComponent } from '../modal-setup-trip/modal-setup-trip.component';
 
 @Component({
-  selector: 'app-modal-setup-trip',
-  templateUrl: './modal-setup-trip.component.html',
-  styleUrl: './modal-setup-trip.component.scss'
+  selector: 'app-modal-form-vehicle-battery',
+  templateUrl: './modal-form-vehicle-battery.component.html',
+  styleUrl: './modal-form-vehicle-battery.component.scss'
 })
-export class ModalSetupTripComponent {
+export class ModalFormVehicleBatteryComponent {
   vehicleStatusBatteryForm!: FormGroup;
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'choose'];
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
@@ -41,6 +42,12 @@ export class ModalSetupTripComponent {
   ngOnInit() {
     this.buildForm();
     this.getListUserVehicles();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
   buildForm() {
