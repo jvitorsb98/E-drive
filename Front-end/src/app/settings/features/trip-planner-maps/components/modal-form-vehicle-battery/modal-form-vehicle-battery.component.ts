@@ -4,13 +4,16 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { IApiResponse } from '../../../../core/models/api-response';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
-import { forkJoin, map, Observable, of, startWith } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../core/models/vehicle';
-import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { IVehicleDetails } from '../../../../core/models/vehicleDetails';
 import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
 import { numberValidator } from '../../../../shared/validators/number-validator';
+import { MatTableDataSource } from '@angular/material/table';
+import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { ModalSetupTripComponent } from '../modal-setup-trip/modal-setup-trip.component';
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
@@ -18,67 +21,72 @@ import { numberValidator } from '../../../../shared/validators/number-validator'
   styleUrl: './modal-form-vehicle-battery.component.scss'
 })
 export class ModalFormVehicleBatteryComponent {
-  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger; // Referência ao gatilho do autocomplete
   vehicleStatusBatteryForm!: FormGroup;
+  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'choose'];
+  dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
-  userVehicleDetails: IVehicleDetails[] = [];
-  brands: { name: string; id: number }[] = [];
-  filteredBrands: Observable<{ name: string, id: number }[]> = of([]);
+  userVehicleDetails: IVehicleWithUserVehicle[] = [];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private formBuilder: FormBuilder,
-    private vehicleService: VehicleService,
     private userVehicleService: UserVehicleService,
+    private vehicleService: VehicleService,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>) { }
+    public dialogRef: MatDialogRef<ModalSetupTripComponent>) {
+    this.dataSource = new MatTableDataSource(this.userVehicleDetails);
+  }
 
-  ngOnInit(): void {
-    this.getListUserVehicles();
+  ngOnInit() {
     this.buildForm();
-    this.setupAutocomplete();
+    this.getListUserVehicles();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
   buildForm() {
     this.vehicleStatusBatteryForm = this.formBuilder.group({
-      brand: new FormControl(null, [Validators.required]),
-      model: new FormControl({ value: '', disabled: true }), // Campo desabilitado
-      version: new FormControl({ value: '', disabled: true }), // Campo desabilitado
+      selectedVehicle: new FormControl(null, [Validators.required]),
       bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator]),
       saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator])
     });
   }
 
-  setupAutocomplete() {
-    this.filteredBrands = this.vehicleStatusBatteryForm.get('brand')!.valueChanges.pipe(
-      startWith(''),
-      map(value => (typeof value === 'string' ? value : value?.name)),
-      map(name => {
-        const filteredDetails = name ? this.filterBrands(name) : this.userVehicleDetails.slice();
-
-        // Atribui os detalhes filtrados à variável brands
-        this.brands = filteredDetails.map(detail => ({
-          name: detail.vehicleBrand,
-          id: detail.userVehicle.id
-        }));
-
-        // Retorna o array de marcas para o autocomplete
-        return this.brands;
-      })
-    );
-  }
-
-  // Função de filtragem
-  private filterBrands(name: string): IVehicleDetails[] {
-    const filterValue = name.toLowerCase();
-    return this.userVehicleDetails.filter(option => option.vehicleBrand.toLowerCase().includes(filterValue));
-  }
-
+  // Obtém a lista de veículos do usuário
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
+        console.log('Response from getAllUserVehicle:', response);
+
         if (response && response.content && Array.isArray(response.content)) {
           this.userVehicleList = response.content;
-          this.fetchVehicleDetails(this.userVehicleList);
+
+          // Cria um array de observables para buscar detalhes dos veículos
+          const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
+            this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+              map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+            )
+          );
+
+          // Usa forkJoin para esperar até que todas as requisições estejam completas
+          forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+            // Atualiza os dados com veículo e informações de UserVehicle
+            this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
+              return {
+                ...vehicle,
+                userVehicle // Inclui o UserVehicle no veículo
+              };
+            });
+
+            this.dataSource.data = this.userVehicleDetails;
+            console.log(this.dataSource);
+          });
         } else {
           console.error('Expected an array in response.content but got:', response.content);
         }
@@ -89,57 +97,13 @@ export class ModalFormVehicleBatteryComponent {
     });
   }
 
-  fetchVehicleDetails(userVehicleList: UserVehicle[]) {
-    const vehicleDetailsObservables = userVehicleList.map(userVehicle =>
-      this.vehicleService.getVehicleDetails(userVehicle.vehicleId)
-    );
+  // Aplica o filtro na tabela
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
 
-    forkJoin(vehicleDetailsObservables).subscribe((vehicleDetails: Vehicle[]) => {
-      this.userVehicleDetails = this.combineUserVehicleAndDetails(userVehicleList, vehicleDetails);
-      this.setupAutocomplete(); // Configurar o autocomplete após obter os detalhes do veículo
-    });
-  }
-
-  combineUserVehicleAndDetails(userVehicles: UserVehicle[], vehicles: Vehicle[]): IVehicleDetails[] {
-    return userVehicles.map((userVehicle, index) => {
-      const vehicle = vehicles[index];
-      return {
-        vehicleModel: vehicle.model.name,       // Adiciona o modelo do veículo
-        vehicleVersion: vehicle.version,         // Adiciona a versão do veículo
-        vehicleBrand: vehicle.model.brand.name,  // Adiciona a marca do veículo
-        userVehicle                             // Inclui o UserVehicle completo
-      };
-    });
-  }
-
-  onBrandSelected(event: MatAutocompleteSelectedEvent) {
-    const selectedBrand = event.option.value;
-    this.vehicleStatusBatteryForm.get('brand')?.setValue(selectedBrand.name);
-    // Preencher os modelos e versões com base na marca selecionada
-    const selectedUserVehicle = this.userVehicleDetails.find(userVehicle => userVehicle.vehicleBrand === selectedBrand.name);
-
-    if (selectedUserVehicle) {
-      this.vehicleStatusBatteryForm.patchValue({
-        brand: selectedBrand.name, // Armazenando apenas o nome da marca
-        model: selectedUserVehicle.vehicleModel,
-        version: selectedUserVehicle.vehicleVersion
-      });
-    } else {
-      // Se a marca selecionada não tiver um veículo associado, você pode querer lidar com isso
-      this.vehicleStatusBatteryForm.patchValue({
-        model: null,
-        version: null
-      });
-    }
-  }
-
-  // Alterna a abertura do painel de autocomplete
-  toggleAutocomplete(event: Event) {
-    event.stopPropagation(); // Impede que o clique cause conflito com o foco do input
-    if (this.autocompleteTrigger.panelOpen) {
-      this.autocompleteTrigger.closePanel();
-    } else {
-      this.autocompleteTrigger.openPanel();
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
     }
   }
 
@@ -183,4 +147,5 @@ export class ModalFormVehicleBatteryComponent {
   closeModal() {
     this.dialogRef.close(); // Fecha o modal
   }
+
 }

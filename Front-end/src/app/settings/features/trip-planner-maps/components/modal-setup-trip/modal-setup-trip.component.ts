@@ -6,12 +6,10 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
-import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { IApiResponse } from '../../../../core/models/api-response';
 import { Vehicle } from '../../../../core/models/vehicle';
-import { catchError, forkJoin, map, of } from 'rxjs';
-import Swal from 'sweetalert2';
+import { forkJoin, map } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { numberValidator } from '../../../../shared/validators/number-validator';
 import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
@@ -35,7 +33,6 @@ export class ModalSetupTripComponent {
     private formBuilder: FormBuilder,
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
-    private userDataService: UserDataService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalSetupTripComponent>) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
@@ -44,12 +41,6 @@ export class ModalSetupTripComponent {
   ngOnInit() {
     this.buildForm();
     this.getListUserVehicles();
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
   buildForm() {
@@ -97,58 +88,6 @@ export class ModalSetupTripComponent {
         console.error('Error fetching userVehicles:', err);
       }
     });
-  }
-
-  // Deleta um veículo do usuário
-  deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
-    Swal.fire({
-      title: 'Tem certeza?',
-      text: `Deseja realmente deletar o veículo? Esta ação não poderá ser desfeita.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#19B6DD',
-      cancelButtonColor: '#ff6b6b',
-      confirmButtonText: 'Sim, deletar!',
-      cancelButtonText: 'Cancelar',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        console.log('Deletando veículo:', vehicleData);
-        this.userVehicleService.deleteUserVehicle(vehicleData.userVehicle.id).pipe(
-          catchError(() => {
-            Swal.fire({
-              title: 'Erro!',
-              icon: 'error',
-              text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
-              showConfirmButton: true,
-              confirmButtonColor: 'red',
-            });
-            return of(null);
-          })
-        ).subscribe(() => {
-          Swal.fire({
-            title: 'Sucesso!',
-            icon: 'success',
-            text: 'O veículo foi deletado com sucesso!',
-            showConfirmButton: true,
-            confirmButtonColor: '#19B6DD',
-          }).then((result) => {
-            if (result.isConfirmed || result.isDismissed) {
-              this.getListUserVehicles();
-            }
-          });
-        });
-      }
-    });
-  }
-
-  // Formata os dados do veículo
-  formatVehicleData(vehicle: Vehicle): Vehicle {
-    Todo: // verificar se é necessário manter essa função
-    vehicle.model.name = this.userDataService.capitalizeWords(vehicle.model.name);
-    vehicle.version = this.userDataService.capitalizeWords(vehicle.version);
-    vehicle.motor = this.userDataService.capitalizeWords(vehicle.motor);
-    vehicle.type.name = this.userDataService.getVehicleTypeDisplay(vehicle.type.name);
-    return vehicle;
   }
 
   // Aplica o filtro na tabela

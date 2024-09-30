@@ -15,37 +15,84 @@
     <form [formGroup]="vehicleStatusBatteryForm">
       <div class="content">
         <div class="col-12 col-md-6 mb-2 w-100">
-          <mat-form-field class="custom-select">
-            <mat-label>Marca do veículo:</mat-label>
-            <input type="text" matInput formControlName="brand" [matAutocomplete]="autoBrand"
-              [value]="vehicleStatusBatteryForm.get('brand')?.value?.name || ''" aria-describedby="Help">
-            <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
-              <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
-                {{ brand.name }}
-              </mat-option>
-            </mat-autocomplete>
-            <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
-            <mat-error class="mat-error-text"
-              *ngIf="vehicleStatusBatteryForm.get('brand')?.hasError('required') && vehicleStatusBatteryForm.get('brand')?.touched">
-              <strong>Marca</strong> é obrigatória
-            </mat-error>
-          </mat-form-field>
-        </div>
+          <div class="custom-filter">
+            <mat-form-field class="d-flex w-100">
+              <input matInput (keyup)="applyFilter($event)" placeholder="Busca por versão" #input>
+            </mat-form-field>
+          </div>
+          <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="icon">
+              <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+                <mat-icon
+                  matTooltip="Estes ícones representam cada carro listado abaixo. Clique para ver detalhes de cada um.">directions_car
+                </mat-icon>
+              </th>
 
-        <div class="col-12 col-md-6 mb-2 w-100">
-          <mat-form-field class="custom-select">
-            <mat-label>Modelo do veículo:</mat-label>
-            <input type="text" matInput formControlName="model">
-          </mat-form-field>
-        </div>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle">
+                <mat-icon class="icone-carro" [matTooltip]=" 'Autonomia/cidade: ' + userVehicle.autonomy.mileagePerLiterCity + ' km/l'
+                  + '\nAutonomia/estrada: ' + userVehicle.autonomy.mileagePerLiterRoad + ' km/l'
+                  + '\nAno: ' + userVehicle.year" matTooltipClass="multi-line-tooltip"> directions_car
+                </mat-icon>
+              </td>
 
-        <div class="col-12 col-md-6 mb-2 w-100">
-          <mat-form-field class="custom-select">
-            <mat-label>Versão do veículo:</mat-label>
-            <input type="text" matInput formControlName="version">
-          </mat-form-field>
-        </div>
+            </ng-container>
 
+            <ng-container matColumnDef="mark">
+              <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle">
+                <strong>{{userVehicle.model.brand.name}}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="model">
+              <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle">
+                <strong>{{userVehicle.model.name}}</strong>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="version">
+              <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Versão</strong></th>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle"><strong>{{userVehicle.version}}</strong>
+              </td>
+            </ng-container>
+
+            <!-- <ng-container class="custom-radio" matColumnDef="choose">
+              <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Escolher</strong></th>
+              <td class="td-table" mat-cell *matCellDef="let userVehicle">
+                <mat-radio-button class="custom-radio"
+                  [value]="userVehicle" 
+                  aria-label="Selecione o veículo {{ userVehicle.model.name }}">
+                </mat-radio-button>
+              </td>
+            </ng-container> -->
+            <ng-container matColumnDef="choose">
+              <th class="th-table" mat-header-cell *matHeaderCellDef>
+                <strong>Escolher</strong>
+              </th>
+              <td class="custom-radio" mat-cell *matCellDef="let userVehicle">
+                <div class="form-check">
+                  <input class="form-check-input custom-radio" type="radio" formControlName="selectedVehicle"
+                    [value]="userVehicle" id="vehicle{{ userVehicle.id }}">
+                  <label for="vehicle{{ userVehicle.id }}" class="visually-hidden">
+                    Selecione o veículo {{ userVehicle.model.name }}
+                  </label>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+            <div *ngIf="input.value.length != 0">
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-data" colspan="5" *ngIf="input.value && !dataSource.filteredData.length">
+                  Não foram encontrados dados para a pesquisa: "{{ input.value }}"
+                </td>
+              </tr>
+            </div>
+          </table>
+        </div>
         <!-- Campos adicionais -->
         <div class="col-12 col-md-6 mb-2 w-100">
           <mat-form-field class="custom-select w-100">
@@ -53,14 +100,10 @@
             <input type="text" matInput formControlName="bateriaRestante" aria-describedby="Help">
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
-            <!-- <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')">
+            <mat-error class="mat-error-text"
+              *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('notANumber')">
               O valor deve ser um <strong>número</strong>
-            </mat-error> -->
-            @if(vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('pattern') && vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')){
-              <mat-error class="mat-error-text">
-                O valor deve ser um <strong>número</strong>
-              </mat-error>
-            }
+            </mat-error>
             <mat-error class="mat-error-text"
               *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
               <strong>Bateria restante</strong> é obrigatória
@@ -72,13 +115,6 @@
               O valor <strong>máximo é 100%</strong>
             </mat-error>
           </mat-form-field>
-          <div class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('pattern') 
-          && vehicleStatusBatteryForm.get('bateriaRestante')?.dirty
-          && vehicleStatusBatteryForm.get('saudeBateria')!.hasError('notANumber')">
-            <mat-error>
-              O valor deve ser um <strong>número</strong>
-            </mat-error>
-          </div>
         </div>
 
         <div class="col-12 col-md-6 mb-2 w-100">
@@ -100,6 +136,10 @@
           </mat-form-field>
         </div>
       </div>
+      @if(vehicleStatusBatteryForm.get('selectedVehicle')?.invalid &&
+      vehicleStatusBatteryForm.get('bateriaRestante')?.dirty){
+      <mat-error class="mat-error-text-vehicle">Por favor, <strong>selecione um veículo.</strong></mat-error>
+      }
       <div class="buttons-container py-3">
         <app-ui-button class="w-100 mb-3" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
           text="Adicionar status "></app-ui-button>
