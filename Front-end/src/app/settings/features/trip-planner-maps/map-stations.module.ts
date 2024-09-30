@@ -10,14 +10,12 @@ import { AngularMaterialModule } from '../../angular-material/angular-material.m
 
 // Components
 import { MapStationsComponent } from './components/map-stations/map-stations.component';
-import { ModalSetupTripComponent } from './components/modal-setup-trip/modal-setup-trip.component';
 import { ModalFormVehicleBatteryComponent } from './components/modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 
 @NgModule({
   declarations: [
     // MapStations component
     MapStationsComponent,
-    ModalSetupTripComponent,
     ModalFormVehicleBatteryComponent,
   ],
   imports: [

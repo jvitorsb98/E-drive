@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
@@ -11,9 +11,6 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { numberValidator } from '../../../../shared/validators/number-validator';
 import { MatTableDataSource } from '@angular/material/table';
 import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { ModalSetupTripComponent } from '../modal-setup-trip/modal-setup-trip.component';
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
@@ -27,27 +24,18 @@ export class ModalFormVehicleBatteryComponent {
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
-
   constructor(
     private formBuilder: FormBuilder,
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<ModalSetupTripComponent>) {
+    public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
   }
 
   ngOnInit() {
     this.buildForm();
     this.getListUserVehicles();
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
   buildForm() {
