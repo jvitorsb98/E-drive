@@ -87,7 +87,7 @@ public class EmailService {
         context.setVariable("nome", name);
         context.setVariable("token", token);
         context.setVariable("titulo", "Redefinição de Senha");
-        context.setVariable("linkRedefinicao", "http://localhost:4200/reset-password?token=" + token);
+        context.setVariable("linkRedefinicao", "http://localhost:4200/e-driver/login/reset-password?token=" + token);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reset_password_email_template", context);
@@ -170,7 +170,7 @@ public class EmailService {
         context.setVariable("nome", name);
         context.setVariable("titulo", "Bem-vindo de volta ao e-Drive, " + name + "!");
         context.setVariable("texto", "Estamos felizes que você deseja reativar sua conta. Para reativá-la e voltar a usar o e-Drive, clique no link abaixo.");
-        context.setVariable("linkConfirmacao", "http://localhost:8080/auth/reactivate?token=" + tokenForReactivation);
+        context.setVariable("linkConfirmacao", "http://localhost:4200/e-driver/login/recover-account?token=" + tokenForReactivation);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reactivate_user_by_email_template", context);
