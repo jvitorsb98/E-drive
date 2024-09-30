@@ -60,7 +60,10 @@ export class ModalRecoverPasswordComponent {
     if (this.isPasswordRecovery) {
       this.auth.recoverPasswordRequest(this.recoverPasswordForm.value.email).subscribe({
         next: () => {
-          this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email);
+          this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email).then(() => {
+            this.dialogRef.close();
+          });
+
         },
         error: (error: HttpErrorResponse) => {
           this.alertasService.showError("Redefinição de senha", error.message);
@@ -69,7 +72,9 @@ export class ModalRecoverPasswordComponent {
     } else {
       this.auth.recoverAccountRequest(this.recoverPasswordForm.value.email).subscribe({
         next: () => {
-          this.alertasService.showSuccess("Recuperação de conta", "Um e-mail de recuperação de conta foi enviado para: " + this.recoverPasswordForm.value.email);
+          this.alertasService.showSuccess("Recuperação de conta", "Um e-mail de recuperação de conta foi enviado para: " + this.recoverPasswordForm.value.email).then(() => {
+            this.dialogRef.close();
+          });
         },
         error: (error: HttpErrorResponse) => {
           this.alertasService.showError("Recuperação de conta", error.message);
@@ -81,23 +86,6 @@ export class ModalRecoverPasswordComponent {
   // Atualiza o método submit
   onSubmit() {
     this.resetPasswordOrAccount();
-  }
-
-  private showAlert(title: string = 'Erro', text: string = 'Algo deu errado', success: boolean = false): void {
-    const icon = success ? 'success' : 'error';
-    const popup = success ? 'custom-swal-popup-success' : 'custom-swal-popup-error';
-    const confirmButton = success ? 'custom-swal-confirm-button-success' : 'custom-swal-confirm-button-error';
-
-    Swal.fire({
-      icon: icon,
-      title: title,
-      text: text,
-      confirmButtonText: 'Ok',
-      customClass: {
-        popup: popup,
-        confirmButton: confirmButton
-      }
-    });
   }
 
   goBack() {
