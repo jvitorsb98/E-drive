@@ -6,6 +6,7 @@ import { passwordMatchValidator } from '../../../../../../shared/validators/conf
 import { PasswordFieldValidator } from '../../../../../../shared/validators/password-field.validator';
 import { IResetPasswordRequest } from '../../../../../models/inter-Login';
 import { AlertasService } from '../../../../../services/Alertas/alertas.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-reset-password',
@@ -59,8 +60,8 @@ export class ResetPasswordComponent {
             this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
           });
         },
-        error: (error: any) => {
-          this.alertasService.showError('Redefinição de senha', error.message).then(() => {
+        error: (error: HttpErrorResponse) => {
+          this.alertasService.showError('Redefinição de senha', error.error.message).then(() => {
             this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
           });
         }

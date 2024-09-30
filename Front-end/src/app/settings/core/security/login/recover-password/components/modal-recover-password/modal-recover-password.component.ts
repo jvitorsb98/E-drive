@@ -4,9 +4,6 @@ import { Component, Inject } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import Swal from 'sweetalert2';
-import { IRecoverPasswordResponse } from '../../../../../models/inter-Login';
 import { AuthService } from '../../../../services/auth/auth.service';
 import {  emailnoExistsValidator } from '../../../../../../shared/validators/email-exists.validator';
 import { UserService } from '../../../../../services/user/user.service';
@@ -66,7 +63,7 @@ export class ModalRecoverPasswordComponent {
 
         },
         error: (error: HttpErrorResponse) => {
-          this.alertasService.showError("Redefinição de senha", error.message);
+          this.alertasService.showError("Redefinição de senha", error.error.message);
         }
       });
     } else {
@@ -77,7 +74,7 @@ export class ModalRecoverPasswordComponent {
           });
         },
         error: (error: HttpErrorResponse) => {
-          this.alertasService.showError("Recuperação de conta", error.message);
+          this.alertasService.showError("Recuperação de conta", error.error.message);
         }
       });
     }

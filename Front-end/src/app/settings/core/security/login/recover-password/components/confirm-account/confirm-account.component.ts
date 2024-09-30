@@ -38,7 +38,7 @@ export class ConfirmAccountComponent implements OnInit {
         this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
       },
       error: (err) => {
-        this.alertasService.showError('Confirmação de conta', err.message || 'Falha ao confirmar a conta.');
+        this.alertasService.showError('Confirmação de conta', err.error.message || 'Falha ao confirmar a conta.');
         this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
       }
     });
