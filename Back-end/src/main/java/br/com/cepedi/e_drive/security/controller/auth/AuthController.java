@@ -340,41 +340,49 @@ public class AuthController {
     @Transactional
     @Operation(summary = "Reactivate a user", description = "Reactivates a user account using a provided token.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User reactivated successfully.", content = @Content(mediaType = "text/plain")),
-            @ApiResponse(responseCode = "400", description = "Invalid token or user not found.", content = @Content(mediaType = "text/plain")),
-            @ApiResponse(responseCode = "409", description = "User is already active.", content = @Content(mediaType = "text/plain")),
-            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "text/plain"))
+            @ApiResponse(responseCode = "200", description = "User reactivated successfully.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Invalid token or user not found.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "409", description = "User is already active.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> reactivateAccount(@RequestParam String token) {
+    public ResponseEntity<Map<String, String>> reactivateAccount(@RequestParam String token) {
+        Map<String, String> response = new HashMap<>();
+
         try {
             if (!tokenService.isValidToken(token)) {
+                response.put("message", "Invalid or expired token.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("Invalid or expired token.");
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
             }
+
             User user = authService.getUserByToken(token);
             if (user == null) {
+                response.put("message", "User not found.");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("User not found.");
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
             }
 
             if (user.isActive()) {
+                response.put("message", "User is already active.");
                 return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .contentType(MediaType.TEXT_PLAIN)
-                        .body("User is already active.");
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
             }
 
             authService.reactivateUser(token);
             tokenService.revokeToken(token);
 
+            response.put("message", "User account reactivated successfully.");
             return ResponseEntity.ok()
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("User account reactivated successfully.");
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
         } catch (Exception e) {
+            response.put("message", "Failed to reactivate user account.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(MediaType.TEXT_PLAIN)
-                    .body("Failed to reactivate user account.");
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
         }
     }
 }
