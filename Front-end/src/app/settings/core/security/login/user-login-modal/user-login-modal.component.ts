@@ -43,8 +43,8 @@ export class UserLoginModalComponent implements OnInit {
     email: this.loginForm.get('email')?.value,
     isPasswordRecovery: isPasswordRecovery  // Passa a flag para definir o modo
   }, {
-    width: '80%',
-    height: 'auto',
+    width: '500px',
+    height: '280px',
     disableClose: true
   });
 }
