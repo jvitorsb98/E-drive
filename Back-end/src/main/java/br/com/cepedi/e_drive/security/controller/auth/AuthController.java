@@ -23,6 +23,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -321,45 +322,67 @@ public class AuthController {
 
 
     /**
-     * Endpoint para reativar a conta de um usuário utilizando um token de reativação.
+     * Reativa a conta de um usuário utilizando um token fornecido.
      *
-     * @param token O token de reativação fornecido pelo usuário. Este token é usado para verificar se o
-     *              usuário tem o direito de reativar sua conta.
-     * @return Um {@link ResponseEntity} contendo:
+     * Este método valida o token JWT fornecido, verifica se o usuário existe e se está desativado.
+     * Se o token for válido e o usuário estiver desativado, o método reativa a conta e revoga o token.
+     *
+     * @param token O token de reativação fornecido como parâmetro de requisição.
+     * @return {@link ResponseEntity} contendo uma mensagem de status, que pode ser:
      *         <ul>
-     *             <li>Uma mensagem de sucesso com o status HTTP 200 se a conta for reativada com sucesso.</li>
-     *             <li>Uma mensagem de conflito com o status HTTP 409 se a conta do usuário já estiver ativa.</li>
-     *             <li>Uma mensagem de erro com o status HTTP 500 se houver uma falha interna no servidor.</li>
+     *           <li>200 OK: Conta do usuário reativada com sucesso.</li>
+     *           <li>400 BAD_REQUEST: Token inválido ou expirado, ou usuário não encontrado.</li>
+     *           <li>409 CONFLICT: O usuário já está ativo.</li>
+     *           <li>500 INTERNAL_SERVER_ERROR: Falha ao reativar a conta do usuário.</li>
      *         </ul>
-     * @throws Exception Caso ocorra um erro ao tentar reativar a conta do usuário, uma exceção será capturada
-     *                   e uma mensagem de erro será retornada com o status HTTP 500.
      */
     @PutMapping("/reactivate")
     @Transactional
     @Operation(summary = "Reactivate a user", description = "Reactivates a user account using a provided token.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User reactivated successfully.", content = @Content(mediaType = "text/plain")),
-            @ApiResponse(responseCode = "400", description = "Invalid token or user not found.", content = @Content),
-            @ApiResponse(responseCode = "409", description = "User is already active.", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content)
+            @ApiResponse(responseCode = "200", description = "User reactivated successfully.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Invalid token or user not found.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "409", description = "User is already active.", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> reactivateAccount(@RequestParam String token) {
+    public ResponseEntity<Map<String, String>> reactivateAccount(@RequestParam String token) {
+        Map<String, String> response = new HashMap<>();
+
         try {
+            if (!tokenService.isValidToken(token)) {
+                response.put("message", "Invalid or expired token.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
+            }
+
             User user = authService.getUserByToken(token);
+            if (user == null) {
+                response.put("message", "User not found.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
+            }
 
             if (user.isActive()) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("User is already active.");
+                response.put("message", "User is already active.");
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response);
             }
 
             authService.reactivateUser(token);
-
             tokenService.revokeToken(token);
 
-            return ResponseEntity.ok("User account reactivated successfully.");
+            response.put("message", "User account reactivated successfully.");
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
         } catch (Exception e) {
+            response.put("message", "Failed to reactivate user account.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to reactivate user account.");
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
         }
     }
-
 }
