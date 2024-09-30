@@ -13,7 +13,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const token = this.authService.getToken(); // Obtém o token do serviço
 
     // URLs que não precisam do token
-    const nonAuthUrls = ['/auth/login', '/auth/register', '/user/exists', '/reset-password/request'];
+    const nonAuthUrls = ['/auth/login', '/auth/register', '/user/exists', '/reset-password/request', '/reactivate-account/request', '/reactivate'];
 
     // Verifica se a URL da requisição está na lista de URLs sem autenticação
     if (nonAuthUrls.some(url => request.url.includes(url))) {

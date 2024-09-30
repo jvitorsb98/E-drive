@@ -67,15 +67,14 @@ export class ModalRecoverPasswordComponent {
         }
       });
     } else {
-      //TODO - descomentar
-      // this.auth.recoverAccountRequest(this.recoverPasswordForm.value.email).subscribe({  // Nova função para recuperação de conta
-      //   next: () => {
-      //     this.alertasService.showSuccess("Recuperação de conta", "Um e-mail de recuperação de conta foi enviado para: " + this.recoverPasswordForm.value.email);
-      //   },
-      //   error: (error: HttpErrorResponse) => {
-      //     this.alertasService.showError("Recuperação de conta", error.message);
-      //   }
-      // });
+      this.auth.recoverAccountRequest(this.recoverPasswordForm.value.email).subscribe({
+        next: () => {
+          this.alertasService.showSuccess("Recuperação de conta", "Um e-mail de recuperação de conta foi enviado para: " + this.recoverPasswordForm.value.email);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.alertasService.showError("Recuperação de conta", error.message);
+        }
+      });
     }
   }
 
