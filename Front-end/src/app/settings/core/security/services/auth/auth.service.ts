@@ -105,13 +105,23 @@ export class AuthService {
   }
 
   resetPassword(request: IResetPasswordRequest): Observable<any> {
-    const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
-    return this.http.put(`${this.apiUrl}/reset-password/reset`, request, { headers: header })
+    // const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
+    // return this.http.put(`${this.apiUrl}/reset-password/reset`, request, { headers: header })
+    return this.http.put(`${this.apiUrl}/reset-password/reset`, request)
   }
 
   recoverAccountRequest(email: IRecoverAccountRequest): Observable<IRecoverAccountResponse> {
-    return this.http.put<IRecoverAccountResponse>(`${this.apiUrl}/recover-account/request`, { email })
+    return this.http.put<IRecoverAccountResponse>(`${this.apiUrl}/reactivate-account/request`, { email })
   }
+
+  confirmAccount(token: string): Observable<any> {
+    //TODO - corigir o redirecionamento apos sucesso tanto de recover password quanto de reactivar conta
+    // const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put(`${this.apiUrl}/reactivate?token=${token}`, null); // esta funcionando assim
+    // return this.http.put(`${this.apiUrl}/reactivate`, token) // era para funcionar assim
+    // return this.http.put(`${this.apiUrl}/reactivate`, token, { headers }) // ou assim
+  }
+
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     // let errorMessage = 'An unexpected error occurred'; // en-us
