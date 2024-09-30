@@ -249,7 +249,7 @@ export class MapStationsComponent implements AfterViewInit {
   openModalAddVehicleBattery() {
     this.closeModal();
     const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
-      width: '400px',
+      width: '480px',
       height: '530px',
     });
 

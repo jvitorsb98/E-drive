@@ -26,20 +26,6 @@
   margin-left: -14px;
 }
 
-.content {
-  .col-12 {
-    margin-bottom: 0px !important; // Forçar a remoção do espaço
-  }
-
-  mat-form-field {
-    margin-bottom: 0px !important; // Forçar a remoção da margem
-  }
-}
-
-.custom-select {
-  margin-bottom: 0 !important; // Forçar a remoção da margem
-}
-
 .buttons-container {
   display: flex;
   flex-direction: column; // Empilha os botões verticalmente
@@ -64,18 +50,102 @@
   padding-left: 1.5rem;
 }
 
+.titulo {
+  font-size: 1rem;
+  color: #19B6DD;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
+.filtro {
+  width: 20px;
+}
+
+.hover:hover {
+  cursor: pointer;
+}
+
+.mat-error-text {
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -15px;
+}
+
+.mat-error-text-vehicle {
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 1px;
+}
+
+.custom-icon {
+  color: #19B6DD;
+  font-size: 24px;
+  margin-right: 8px;
+}
+
+.custom-form-field {
+  position: relative;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.icone-carro {
+  font-size: 18px;
+  color: #767676;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: #19B6DD;
+  }
+}
+
+.th-table mat-icon {
+  font-size: 18px;
+}
+
+.custom-radio {
+
+  // Estiliza o radio button
+  .form-check-input {
+    width: 15px; // Tamanho do botão
+    height: 15px; // Altura do botão
+    margin-right: 0px; // Espaço à direita do botão, se necessário
+    margin-left: 0px; // Espaço à esquerda do botão para movê-lo para a direita
+    border: 1px solid #19B6DD; // Cor da borda do botão
+  }
+
+  // Se quiser esconder o texto, mas ainda manter acessibilidade
+  .visually-hidden {
+    display: none; // Esconder o texto
+  }
+
+  // Adiciona um fundo ao radio button quando estiver checado
+  &.form-check-input:checked {
+    background-color: #19B6DD; // Cor de fundo quando selecionado
+    border-color: #19B6DD; // Cor da borda quando selecionado
+  }
+}
+
 /* Estiliza o contêiner de filtro personalizado com display flex, 
      ocupando 100% da largura, centralizando-o com margem de 5% e 
      ajustando a margem inferior para -25px para alinhamento. */
 .custom-filter {
   display: flex;
   width: 100%;
-  margin: 0% auto;
-  margin-bottom: -23px;
+  margin: 10% auto;
+  margin-bottom: -25px;
 }
 
 /* Contêiner da tabela com cantos arredondados, centralizado horizontalmente, 
-     com overflow-x ativado para rolagem horizontal e altura definida. */
+         com overflow-x ativado para rolagem horizontal e altura definida. */
 #table-container {
   border-radius: 10px;
   margin: 1% auto;
@@ -129,107 +199,28 @@ table {
 }
 
 /* Define a altura das linhas da tabela como automática, garantindo 
-     que a altura se ajuste ao conteúdo. */
+         que a altura se ajuste ao conteúdo. */
 tr {
   height: auto !important;
 }
 
-.titulo {
-  font-size: 1rem;
-  color: #19B6DD;
-  margin: 0;
-  text-align: center;
-  flex-grow: 1;
-}
-
-.filtro {
-  width: 20px;
-}
-
-.hover:hover {
+/* Estilos para o ícone de emoji (bandeira) ao lado do texto na tabela, 
+         com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
+.icone-emoji-flags {
+  font-size: 20px;
+  color: #767676;
+  margin-right: 10px;
   cursor: pointer;
+  transition: color 0.3s;
+
+  /* Ao passar o mouse, a cor do ícone muda para azul claro. */
+  &:hover {
+    color: #19B6DD;
+  }
 }
 
-.mat-error-text {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: -15px;
-}
-
-.mat-error-text-vehicle {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: 1px;
-}
-
-.custom-icon {
-  color: #19B6DD;
-  font-size: 24px;
-  margin-right: 8px;
-}
-
-.custom-form-field {
-  position: relative;
-}
-
-.custom-suffix {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: #19B6DD;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
-.check-icon {
-  color: green; // ou outra cor que preferir
-  margin-left: 8px; // ajuste o espaçamento se necessário
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  padding: 0% 0%;
-  text-align: left;
-  font-size: 10px;
-}
-
-.custom-filter {
-  display: flex;
-  width: 100%;
-}
-
-.custom-filter mat-form-field {
-  flex: 1;
-}
-
-.no-data {
-  padding: 8px 14px;
-  font-weight: 400;
-  font-size: .8rem;
-  color: #19B6DD;
-}
-
-th {
-  font-size: 11px;
-  font-weight: 350;
-  color: #5a5a5a;
-}
-
-td {
-  font-size: 8px;
-  font-weight: 350;
-  color: #8f8f8f;
-}
-
+/* Estilos para o ícone interativo na tabela, com tamanho de 18px, 
+         cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
 .icone-table {
   font-size: 18px;
   color: #767676;
@@ -237,6 +228,7 @@ td {
   transform: rotate(0deg);
   transition: 0.3s linear all;
 
+  /* Ao passar o mouse, o ícone muda de cor e faz uma rotação de 359 graus. */
   &:hover {
     cursor: pointer;
     color: #19B6DD;
@@ -244,47 +236,30 @@ td {
   }
 }
 
-.icone-carro {
-  font-size: 18px;
-  color: #767676;
-  margin-right: 10px;
-  cursor: pointer;
-  transition: color 0.3s;
-
-  &:hover {
-    color: #19B6DD;
-  }
+/* Estilos para o texto exibido quando não há dados na tabela, 
+         com espaçamento interno, tamanho de fonte maior e cor azul. */
+.no-data {
+  padding: 8px 14px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #19B6DD;
 }
 
+/* Define os botões customizados dentro do formulário, 
+         centralizando-os com display flex e largura de 100%. */
+.custom-button {
+  display: flex;
+  width: 100%;
+  margin: 0% auto;
+}
+
+/* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
 .th-table mat-icon {
-  font-size: 18px;
+  font-size: 20px;
 }
 
-.custom-radio {
-
-  // Estiliza o radio button
-  .form-check-input {
-    width: 15px; // Tamanho do botão
-    height: 15px; // Altura do botão
-    margin-right: 0px; // Espaço à direita do botão, se necessário
-    margin-left: 0px; // Espaço à esquerda do botão para movê-lo para a direita
-    border: 1px solid #19B6DD; // Cor da borda do botão
-  }
-
-  // Se quiser esconder o texto, mas ainda manter acessibilidade
-  .visually-hidden {
-    display: none; // Esconder o texto
-  }
-
-  // Adiciona um fundo ao radio button quando estiver checado
-  &.form-check-input:checked {
-    background-color: #19B6DD; // Cor de fundo quando selecionado
-    border-color: #19B6DD; // Cor da borda quando selecionado
-  }
-}
-
-@media (max-width: 350px) {
-  .mat-autocomplete-panel {
-    top: calc(100% + 4px);
-  }
+/* Define o campo de formulário dentro do filtro personalizado como flexível, 
+         ocupando todo o espaço horizontal disponível. */
+.custom-filter mat-form-field {
+  flex: 1;
 }
