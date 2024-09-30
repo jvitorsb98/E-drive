@@ -1,12 +1,11 @@
 import { Component, ElementRef, Renderer2 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import Swal from 'sweetalert2';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { passwordMatchValidator } from '../../../../../../shared/validators/confirm-password.validators';
 import { PasswordFieldValidator } from '../../../../../../shared/validators/password-field.validator';
-import { HttpErrorResponse } from '@angular/common/http';
 import { IResetPasswordRequest } from '../../../../../models/inter-Login';
+import { AlertasService } from '../../../../../services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-reset-password',
@@ -21,6 +20,7 @@ export class ResetPasswordComponent {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private authService: AuthService,
+    private alertasService: AlertasService,
     private router: Router,
     private renderer: Renderer2,
     private el: ElementRef
@@ -33,8 +33,9 @@ export class ResetPasswordComponent {
     console.log("token aqui: ",this.token);
     // Verifica se o token é valido
     if (!this.token) {
-      this.showAlert('Erro', 'Token inválido. Por favor, tente novamente.');
-      this.router.navigate(['/login']);
+      this.alertasService.showError('Erro', 'Token inválido. Por favor, tente novamente.').then(() => {
+        this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
+      });
     }
 
     // Inicializa o formulário
@@ -54,34 +55,20 @@ export class ResetPasswordComponent {
       // Chama o serviço para redefinir a senha
       this.authService.resetPassword(request).subscribe({
         next: () => {
-          this.showAlert('Sucesso', 'Sua senha foi redefinida com sucesso!', true);
-          this.router.navigate(['/login']);
+          this.alertasService.showSuccess('Redefinição de senha', 'Sua senha foi redefinida com sucesso!').then(() => {
+            this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
+          });
         },
         error: (error: any) => {
-          this.showAlert('Erro', error.message);
+          this.alertasService.showError('Redefinição de senha', error.message).then(() => {
+            this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
+          });
         }
       });
     }
   }
 
   close(): void {
-    this.router.navigate(['/login']);
-  }
-
-  private showAlert(title: string = 'Erro', text: string = 'Algo deu errado', success: boolean = false): void {
-    const icon = success ? 'success' : 'error';
-    const popup = success ? 'custom-swal-popup-success' : 'custom-swal-popup-error';
-    const confirmButton = success ? 'custom-swal-confirm-button-success' : 'custom-swal-confirm-button-error';
-
-    Swal.fire({
-      icon: icon,
-      title: title,
-      text: text,
-      confirmButtonText: 'Ok',
-      customClass: {
-        popup: popup,
-        confirmButton: confirmButton
-      }
-    });
+    this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
   }
 }
