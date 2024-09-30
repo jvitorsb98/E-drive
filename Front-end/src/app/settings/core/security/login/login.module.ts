@@ -14,15 +14,13 @@ import { SharedModule } from '../../../shared/shared.module';
 import { UserLoginModalComponent } from './user-login-modal/user-login-modal.component';
 import { ModalRecoverPasswordComponent } from './recover-password/components/modal-recover-password/modal-recover-password.component';
 import { ResetPasswordComponent } from './recover-password/components/reset-password/reset-password.component';
-import { ConfirmAccountComponent } from './recover-password/components/confirm-account/confirm-account.component';
 
 @NgModule({
   declarations: [
     // Declaração dos componentes que pertencem a este módulo
     UserLoginModalComponent,
     ModalRecoverPasswordComponent,
-    ResetPasswordComponent,
-    ConfirmAccountComponent
+    ResetPasswordComponent
   ],
   imports: [
     // Módulos necessários para o funcionamento deste módulo
