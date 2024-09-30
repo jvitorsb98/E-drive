@@ -1,5 +1,7 @@
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
@@ -48,12 +50,12 @@ export class MapStationsComponent implements AfterViewInit {
   detailsModalOpenStatus: string | null = null; // Status de abertura da estação
 
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private dialog: MatDialog) { }
 
-    /**
-   * Método chamado após a visualização do componente ser inicializada.
-   * Carrega o script do Google Maps e inicializa o mapa.
-   */
+  /**
+ * Método chamado após a visualização do componente ser inicializada.
+ * Carrega o script do Google Maps e inicializa o mapa.
+ */
   ngAfterViewInit() {
     this.loadGoogleMapsScript()
       .then(() => {
@@ -61,7 +63,7 @@ export class MapStationsComponent implements AfterViewInit {
       })
       .catch(error => console.error('Erro ao carregar o script do Google Maps', error));
   }
-  
+
 
   /**
    * Inicializa o mapa do Google Maps com opções específicas.
@@ -78,7 +80,7 @@ export class MapStationsComponent implements AfterViewInit {
           "elementType": "geometry.stroke",
           "stylers": [
             { "visibility": "on" },
-            { "color": "#444444" } 
+            { "color": "#444444" }
           ]
         },
         {
@@ -146,7 +148,7 @@ export class MapStationsComponent implements AfterViewInit {
     }
   }
 
-  
+
   /**
    * Carrega o script do Google Maps se ainda não estiver carregado.
    * @returns Promise que resolve quando o script é carregado.
@@ -156,7 +158,7 @@ export class MapStationsComponent implements AfterViewInit {
       // Google Maps já carregado
       return;
     }
-  
+
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places`;
@@ -187,18 +189,18 @@ export class MapStationsComponent implements AfterViewInit {
     const radius = 30000;
 
     service.textSearch({
-        query: query,
-        location: location,
-        radius: radius
+      query: query,
+      location: location,
+      radius: radius
     }, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-            this.clearMarkers();
-            results.forEach(place => {
-                this.createMarkerForChargingStation(place);
-            });
-        } else {
-            console.error('Erro ao buscar estações de carregamento:', status);
-        }
+      if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+        this.clearMarkers();
+        results.forEach(place => {
+          this.createMarkerForChargingStation(place);
+        });
+      } else {
+        console.error('Erro ao buscar estações de carregamento:', status);
+      }
     });
   }
 
@@ -244,7 +246,18 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
+  openModalAddVehicleBattery() {
+    this.closeModal();
+    const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
+      width: '400px',
+      height: '530px',
+    });
 
+    // Abre o modal principal novamente após o fechamento do modal de adicionar bateria
+    chargingStationDialogRef.afterClosed().subscribe(result => {
+      this.isModalOpen = true; // Abre o modal principal novamente
+    });
+  }
 
   /**
    * Exibe o modal com informações sobre a estação de carregamento.
@@ -254,18 +267,18 @@ export class MapStationsComponent implements AfterViewInit {
     console.log(place)
     this.modalTitle = place.name || 'Estação de carregamento';
     this.modalDistance = ''; // Resetar a distância, se necessário
-  
+
     // Calcule a distância se a localização do usuário e o local estiverem disponíveis
     if (this.userLocation && place.geometry && place.geometry.location) {
       this.calculateRouteDistance(this.userLocation, place.geometry.location);
     }
-  
+
     this.isModalOpen = true; // Defina a variável para abrir o modal
     this.openNow = place.opening_hours; // Defina a variável de abertura
     this.cdr.detectChanges(); // Força a verificação de mudanças
     console.log(this.isModalOpen)
   }
-  
+
 
   /**
    * Fecha o modal principal.
@@ -274,7 +287,6 @@ export class MapStationsComponent implements AfterViewInit {
     this.isModalOpen = false; // Defina a variável para fechar o modal
     this.cdr.detectChanges(); // Força a verificação de mudanças
   }
-  
 
   /**
    * Exibe o modal de detalhes com informações adicionais sobre a estação de carregamento.
@@ -283,17 +295,17 @@ export class MapStationsComponent implements AfterViewInit {
     if (this.currentPlace) {
       this.detailsModalTitle = this.currentPlace.name || 'Detalhes do Posto';
       this.detailsModalAddress = this.currentPlace.vicinity ? `Endereço : ${this.currentPlace.vicinity}` : null;
-      this.detailsModalPhone =  this.currentPlace.formatted_phone_number ? `Telefone : ${this.currentPlace.formatted_phone_number}` : null;
+      this.detailsModalPhone = this.currentPlace.formatted_phone_number ? `Telefone : ${this.currentPlace.formatted_phone_number}` : null;
       this.detailsModalRating = this.currentPlace.rating ? `Avaliação : ${this.currentPlace.rating} estrelas` : null;
       this.detailsModalOpenStatus = this.currentPlace.opening_hours ? "Aberto agora" : "Fechado agora";
-    
+
       this.isDetailsModalOpen = true;
       this.cdr.detectChanges();
     } else {
       console.warn('currentPlace is null, cannot show details.');
     }
   }
-  
+
 
   /**
    * Fecha o modal de detalhes.
@@ -322,7 +334,7 @@ export class MapStationsComponent implements AfterViewInit {
    */
   calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng) {
     const directionsService = new google.maps.DirectionsService();
-  
+
     // Verificar se a rota já foi calculada e armazenada
     const cachedDistance = sessionStorage.getItem(`route_${startLocation}_${destination}`);
     if (cachedDistance) {
@@ -330,7 +342,7 @@ export class MapStationsComponent implements AfterViewInit {
       this.cdr.detectChanges();
       return;
     }
-  
+
     directionsService.route({
       origin: startLocation,
       destination: destination,
@@ -338,10 +350,10 @@ export class MapStationsComponent implements AfterViewInit {
     }).then(response => {
       const distanceText = "Distância: " + response.routes[0].legs[0].distance!.text;
       this.modalDistance = distanceText;
-      
+
       // Armazenar a rota calculada para uso futuro
       sessionStorage.setItem(`route_${startLocation}_${destination}`, distanceText);
-      
+
       this.cdr.detectChanges();
     }).catch(error => {
       console.error('Erro ao calcular a rota:', error);
@@ -349,5 +361,5 @@ export class MapStationsComponent implements AfterViewInit {
       this.cdr.detectChanges();
     });
   }
-  
+
 }

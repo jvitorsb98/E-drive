@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ModalSetupTripComponent } from './modal-setup-trip.component';
+import { ConfirmAccountComponent } from './confirm-account.component';
 
-describe('ModalSetupTripComponent', () => {
-  let component: ModalSetupTripComponent;
-  let fixture: ComponentFixture<ModalSetupTripComponent>;
+describe('ConfirmAccountComponent', () => {
+  let component: ConfirmAccountComponent;
+  let fixture: ComponentFixture<ConfirmAccountComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ModalSetupTripComponent]
+      declarations: [ConfirmAccountComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(ModalSetupTripComponent);
+    fixture = TestBed.createComponent(ConfirmAccountComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

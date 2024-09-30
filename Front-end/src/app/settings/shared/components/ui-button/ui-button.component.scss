@@ -13,14 +13,13 @@ button[type="vivid-sky-blue"] {
   width: 100%;
 
   &:hover {
-    background-color: #32aecd;
-    box-shadow: 0px 0px 5px 3px #6d6e6e;
+    background-color: #5baec2;
   }
 
   &[disabled] {
     background-color: #444444;
     color: white;
-    border: 1px solid #444444;
+    border: 1px solid #32aecd;
     cursor: not-allowed;
     opacity: 0.5;
   }
@@ -35,7 +34,7 @@ button[type="vivid-sky-blue"] {
   }
 }
 
-.btn i{
+.btn i {
   width: 30px;
   font-size: 1.2rem;
   margin-left: -50px;
@@ -78,7 +77,7 @@ button[type="outline-secondary"] {
   width: 100%;
   cursor: pointer;
   position: relative;
-  background: #19B6DD;
+  background: rgb(155, 59, 59);
   border: 0px;
   color: white;
   transition: 600ms;

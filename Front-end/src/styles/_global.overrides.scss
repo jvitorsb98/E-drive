@@ -82,3 +82,20 @@ button[type="button-cancel"] {
 //   border-color: #c3e6cb;
 // }
 
+.custom-radio-button .mat-radio-outer-circle {
+  border-color: #4caf50 !important; /* Cor da borda */
+  width: 24px; /* Tamanho do círculo externo */
+  height: 24px;
+}
+
+.custom-radio-button.mat-radio-checked .mat-radio-outer-circle {
+  background-color: #4caf50 !important; /* Cor do círculo externo quando selecionado */
+}
+
+.custom-radio-button .mat-radio-inner-circle {
+  background-color: #4caf50 !important; /* Cor do círculo interno */
+}
+
+.custom-radio-button {
+  font-size: 18px !important; /* Tamanho do texto ao lado do rádio */
+}

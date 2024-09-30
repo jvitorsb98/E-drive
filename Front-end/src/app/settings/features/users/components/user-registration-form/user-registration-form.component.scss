@@ -1,22 +1,9 @@
 /* Form */
-
-.header-container {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: space-between;
+.top-bar {
+  position: sticky;
   width: 100%;
-  padding: 0 1rem;
-}
-
-.titulo {
-  font-size: 2rem;
-  color: #19B6DD;
-  margin: 0;
-  text-align: center;
-  flex-grow: 1;
-  margin-left: -4rem;
-  margin-bottom: 10px;
+  background-color: #19B6DD;
+  padding: .5rem 0;
 }
 
 .custom-icon-cellfone {
