@@ -24,7 +24,9 @@ export class ConfirmAccountComponent implements OnInit {
     if (token) {
       this.confirmAccount(token);
     } else {
-      this.alertasService.showError('Erro', 'Token de confirmação inválido ou ausente.');
+      this.alertasService.showError('Erro', 'Token de confirmação inválido ou ausente.').then(() => {
+        this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
+      });
     }
   }
 
@@ -32,7 +34,7 @@ export class ConfirmAccountComponent implements OnInit {
   confirmAccount(token: string) {
     this.authService.confirmAccount(token).subscribe({
       next: () => {
-        this.alertasService.showSuccess('Confirmação de conta', 'Sua conta foi confirmada com sucesso.');
+        this.alertasService.showSuccess('Confirmação de conta', 'Sua conta foi recuperada com sucesso.');
         this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
       },
       error: (err) => {
