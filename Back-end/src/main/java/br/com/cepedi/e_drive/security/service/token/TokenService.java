@@ -216,22 +216,15 @@ public class TokenService {
      */
     public String generateTokenForReactivation(User user) {
         try {
-            // Define o algoritmo HMAC256 usando o segredo fornecido
             Algorithm algorithm = Algorithm.HMAC256(secret);
-
-            // Cria o token JWT com claims e expiração de 1 hora
             String token = JWT.create()
                     .withIssuer(ISSUER)
-                    .withSubject(user.getEmail()) // Define o e-mail do usuário como subject do token
-                    .withClaim("id", user.getId()) // Adiciona o ID do usuário como claim
-                    .withClaim("email", user.getEmail()) // Adiciona o e-mail do usuário como claim
-                    .withExpiresAt(Date.from(Instant.now().plus(1, ChronoUnit.HOURS))) // Define a expiração para 1 hora
+                    .withSubject(user.getEmail()) // Usa o e-mail como subject
+                    .withClaim("id", user.getId())
+                    .withClaim("email", user.getEmail())
+                    .withExpiresAt(expirationDateRecoverPassword())
                     .sign(algorithm);
-
-            // Registra o token gerado na base de dados
-            registerToken(token, user);
-
-            // Retorna o token gerado
+            registerToken(token, user);  // Registra o token na base de dados
             return token;
         } catch (JWTCreationException exception) {
             // Lança uma exceção se houver falha na criação do token
