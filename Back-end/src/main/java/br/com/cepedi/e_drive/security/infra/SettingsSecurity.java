@@ -59,7 +59,7 @@ public class SettingsSecurity {
 
                     // Endpoints que exigem autenticação
                     req.requestMatchers(HttpMethod.POST, "/auth/logout").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/auth/{id}").hasRole("ADMIN"); // Desabilitar usuário (somente ADMIN)
+                    req.requestMatchers(HttpMethod.DELETE, "/auth/{id}").authenticated();
 
                     // Endpoints de usuário
                     req.requestMatchers(HttpMethod.GET, "/auth/user/me").authenticated();  // Apenas autenticado
