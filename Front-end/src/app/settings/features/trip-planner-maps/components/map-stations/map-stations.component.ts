@@ -2,6 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } fr
 import { environment } from '../../../../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
+import { Step } from '../../../../core/models/step';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
@@ -48,9 +49,16 @@ export class MapStationsComponent implements AfterViewInit {
   detailsModalPhone: string | null = null; // Telefone da estação
   detailsModalRating: string | null = null; // Avaliação da estação
   detailsModalOpenStatus: string | null = null; // Status de abertura da estação
+  stepsArray: Array<Step> = [];
+  directionsService!: google.maps.DirectionsService;
+  directionsRenderer!: google.maps.DirectionsRenderer;
 
 
-  constructor(private cdr: ChangeDetectorRef, private dialog: MatDialog) { }
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
+  ) {
+  }
 
   /**
  * Método chamado após a visualização do componente ser inicializada.
@@ -124,8 +132,19 @@ export class MapStationsComponent implements AfterViewInit {
       ]
     };
 
+    console.log("OI")
     this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
+
+
+    // Inicializa os serviços de direções
+    this.directionsService = new google.maps.DirectionsService();
+    this.directionsRenderer = new google.maps.DirectionsRenderer();
+    
+    // Define o mapa no DirectionsRenderer
+    this.directionsRenderer.setMap(this.map);
+
     this.getUserLocation();
+    console.log("OI")
     this.map.addListener('idle', () => this.searchNearbyChargingStations());
   }
 
@@ -194,6 +213,8 @@ export class MapStationsComponent implements AfterViewInit {
       radius: radius
     }, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus) => {
       if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+
+
         this.clearMarkers();
         results.forEach(place => {
           this.createMarkerForChargingStation(place);
@@ -242,42 +263,90 @@ export class MapStationsComponent implements AfterViewInit {
 
     marker.addListener('click', () => {
       this.currentPlace = place;
-      this.showModal(place);
+      this.showModal();
     });
   }
 
   openModalAddVehicleBattery() {
-    this.closeModal();
+    this.closeModal(); // Fecha o modal atual
     const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
       width: '480px',
       height: '530px',
+      data: {
+        stepsArray: this.stepsArray, // Passando as informações de distância
+        place: this.currentPlace // Passando informações da estação atual, se necessário
+      },
     });
 
-    // Abre o modal principal novamente após o fechamento do modal de adicionar bateria
     chargingStationDialogRef.afterClosed().subscribe(result => {
-      this.isModalOpen = true; // Abre o modal principal novamente
-    });
+      if (result) {
+          console.log('Dados recebidos do modal:', result);
+          // Inicie a rota no Google Maps
+          const destination = this.currentPlace?.geometry?.location;
+
+              // Configure o DirectionsRenderer para não exibir os marcadores padrão
+          this.directionsRenderer.setOptions({
+              suppressMarkers: true, // Suprime os marcadores padrão
+          });
+
+          // Verifique se o destino não é undefined antes de chamar initiateRoute
+          if (destination) {
+              this.initiateRoute(destination); // Passa apenas o local de destino
+          } else {
+              console.error('Localização do destino não disponível.');
+          }
+      } else {
+          this.isModalOpen = true; // Abre o modal principal novamente
+      }
+  });
+
   }
 
+  initiateRoute(destination: google.maps.LatLng) {
+
+    if (!this.userLocation) {
+      console.error('Localização do usuário não disponível.');
+      return; // Retorne se a localização for nula
+  }
+
+    const request: google.maps.DirectionsRequest = {
+        origin: this.userLocation, // Mantenha esta linha para usar a localização do usuário
+        destination: destination,
+        travelMode: google.maps.TravelMode.DRIVING,
+    };
+
+    this.directionsService.route(request, (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+            this.directionsRenderer.setDirections(result);
+        } else {
+            console.error('Erro ao traçar a rota: ' + status);
+        }
+    });
+  }
   /**
    * Exibe o modal com informações sobre a estação de carregamento.
    * @param place Informações sobre a estação de carregamento.
    */
-  showModal(place: google.maps.places.PlaceResult) {
-    console.log(place)
-    this.modalTitle = place.name || 'Estação de carregamento';
+  showModal() {
+    if (!this.currentPlace) {
+        console.warn('Nenhum lugar selecionado.');
+        return;
+    }
+
+    this.modalTitle = this.currentPlace.name || 'Estação de carregamento';
     this.modalDistance = ''; // Resetar a distância, se necessário
 
     // Calcule a distância se a localização do usuário e o local estiverem disponíveis
-    if (this.userLocation && place.geometry && place.geometry.location) {
-      this.calculateRouteDistance(this.userLocation, place.geometry.location);
+    if (this.userLocation && this.currentPlace.geometry && this.currentPlace.geometry.location) {
+        this.calculateRouteDistance(this.userLocation, this.currentPlace.geometry.location);
     }
 
     this.isModalOpen = true; // Defina a variável para abrir o modal
-    this.openNow = place.opening_hours; // Defina a variável de abertura
+    this.openNow = this.currentPlace.opening_hours; // Defina a variável de abertura
     this.cdr.detectChanges(); // Força a verificação de mudanças
-    console.log(this.isModalOpen)
   }
+
+  
 
 
   /**
@@ -332,28 +401,67 @@ export class MapStationsComponent implements AfterViewInit {
    * @param origin Localização do usuário.
    * @param destination Localização da estação de carregamento.
    */
+ 
   calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng) {
     const directionsService = new google.maps.DirectionsService();
-
-    // Verificar se a rota já foi calculada e armazenada
-    const cachedDistance = sessionStorage.getItem(`route_${startLocation}_${destination}`);
-    if (cachedDistance) {
-      this.modalDistance = cachedDistance;
-      this.cdr.detectChanges();
-      return;
-    }
-
+  
     directionsService.route({
       origin: startLocation,
       destination: destination,
       travelMode: google.maps.TravelMode.DRIVING
     }).then(response => {
-      const distanceText = "Distância: " + response.routes[0].legs[0].distance!.text;
+      const route = response.routes[0];
+      const legs = route.legs[0]; // Pegamos a primeira "leg" da rota
+  
+      // Iterar sobre cada passo (step)
+      legs.steps.forEach((step) => {
+        // Inferir se é estrada ou cidade
+        let roadType = 'cidade'; // Padrão para cidade
+  
+        // Verificar nome da via, se existir
+        const roadName = step.instructions.toLowerCase();
+        if (roadName.includes("rodovia") || roadName.includes("br") || roadName.includes("ba") || roadName.includes("estrada") || roadName.includes("autoestrada") || roadName.includes("via expressa")) {
+          roadType = 'estrada';
+        }
+  
+        // Também verificar a manobra
+        if (step.maneuver && (step.maneuver.includes('merge') || step.maneuver.includes('ramp') || step.maneuver.includes('highway') || step.maneuver.includes('exit'))) {
+          roadType = 'estrada';
+        }
+  
+        // Conversão da distância para quilômetros
+        const distanceText = step.distance?.text; // Ex: "500 m" ou "0.5 km"
+        let distanceInKm: number = 0; // Inicializa a distância como 0
+  
+        if (distanceText) {
+          if (distanceText.includes('km')) {
+            // Remove 'km' e converte para número
+            distanceInKm = parseFloat(distanceText.replace('km', '').trim());
+          } else if (distanceText.includes('m')) {
+            // Remove 'm', converte para número e divide por 1000
+            distanceInKm = parseFloat(distanceText.replace('m', '').trim()) / 1000;
+          }
+        }
+        
+        const stepInfo = {
+          distance: distanceInKm, // Distância em quilômetros
+          duration: step.duration!.text, // Duração desse passo
+          instructions: step.instructions, // Instruções (ex: "Vire à esquerda")
+          travelMode: step.travel_mode, // Modo de viagem (geralmente "DRIVING")
+          path: step.path, // O caminho em coordenadas (polilinhas)
+          maneuver: step.maneuver || 'unknown', // Tipo de manobra
+          roadType: roadType // Adicionar a inferência de estrada/cidade
+        };
+        // Adicionar ao array de passos
+        this.stepsArray.push(stepInfo);
+      });
+  
+      // Exibir a rota calculada (detalhes dos passos)
+      const totalDistanceInKm = legs.distance!.value / 1000; // Distância total em km
+      const distanceText = "Distância total: " + totalDistanceInKm.toFixed(2) + " km"; // Formata para 2 casas decimais
       this.modalDistance = distanceText;
-
-      // Armazenar a rota calculada para uso futuro
-      sessionStorage.setItem(`route_${startLocation}_${destination}`, distanceText);
-
+  
+      // Atualizar a exibição
       this.cdr.detectChanges();
     }).catch(error => {
       console.error('Erro ao calcular a rota:', error);
@@ -361,5 +469,7 @@ export class MapStationsComponent implements AfterViewInit {
       this.cdr.detectChanges();
     });
   }
+  
+  
 
 }

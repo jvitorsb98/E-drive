@@ -1,6 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { IApiResponse } from '../../../../core/models/api-response';
 import { UserVehicle } from '../../../../core/models/user-vehicle';
@@ -11,15 +11,15 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { numberValidator } from '../../../../shared/validators/number-validator';
 import { MatTableDataSource } from '@angular/material/table';
 import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { Step } from '../../../../core/models/step';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
   templateUrl: './modal-form-vehicle-battery.component.html',
-  styleUrl: './modal-form-vehicle-battery.component.scss'
+  styleUrls: ['./modal-form-vehicle-battery.component.scss']
 })
-export class ModalFormVehicleBatteryComponent {
+export class ModalFormVehicleBatteryComponent implements OnInit {
   vehicleStatusBatteryForm!: FormGroup;
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'choose'];
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
@@ -34,12 +34,15 @@ export class ModalFormVehicleBatteryComponent {
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
     private dialog: MatDialog,
-    public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>) {
+    public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any }
+  ) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
   }
 
   ngOnInit() {
     this.buildForm();
+    this.populateForm();
     this.getListUserVehicles();
   }
 
@@ -51,40 +54,22 @@ export class ModalFormVehicleBatteryComponent {
     });
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator; // Configura o paginador
-    this.dataSource.sort = this.sort; // Configura a ordenação
+  populateForm() {
+    this.vehicleStatusBatteryForm.patchValue({
+      selectedVehicle: this.data.place.selectedVehicle || null,
+      bateriaRestante: this.data.place.bateriaRestante || null,
+      saudeBateria: this.data.place.saudeBateria || null,
+    });
+    console.log("Formulário pré-preenchido:", this.vehicleStatusBatteryForm.value);
   }
 
-  // Obtém a lista de veículos do usuário
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
-        console.log('Response from getAllUserVehicle:', response);
-
-        if (response && response.content && Array.isArray(response.content)) {
+        if (response?.content && Array.isArray(response.content)) {
           this.userVehicleList = response.content;
-
-          // Cria um array de observables para buscar detalhes dos veículos
-          const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
-            this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
-              map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
-            )
-          );
-
-          // Usa forkJoin para esperar até que todas as requisições estejam completas
-          forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
-            // Atualiza os dados com veículo e informações de UserVehicle
-            this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
-              return {
-                ...vehicle,
-                userVehicle // Inclui o UserVehicle no veículo
-              };
-            });
-
-            this.dataSource.data = this.userVehicleDetails;
-            console.log(this.dataSource);
-          });
+          console.log("Lista de veículos do usuário:", this.userVehicleList);
+          this.loadVehicleDetails();
         } else {
           console.error('Expected an array in response.content but got:', response.content);
         }
@@ -95,7 +80,24 @@ export class ModalFormVehicleBatteryComponent {
     });
   }
 
-  // Aplica o filtro na tabela
+  loadVehicleDetails() {
+    const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
+      this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+        map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+      )
+    );
+
+    forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+      this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => ({
+        ...vehicle,
+        userVehicle
+      }));
+
+      this.dataSource.data = this.userVehicleDetails;
+      console.log("Detalhes dos veículos carregados:", this.userVehicleDetails);
+    });
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -103,47 +105,68 @@ export class ModalFormVehicleBatteryComponent {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    console.log("Filtro aplicado:", filterValue);
   }
+
+  submitBatteryStatus() {
+    if (this.vehicleStatusBatteryForm.valid) {
+      const formValue = this.vehicleStatusBatteryForm.value;
+      console.log("Dados do formulário enviados:", formValue);
+  
+      const autonomyElectricMode = formValue.selectedVehicle.autonomy?.autonomyElectricMode || 0;
+      const bateriaRestante = Number(formValue.bateriaRestante);
+      const saudeBateria = formValue.saudeBateria || 0;
+  
+      let batteryPercentageAfterTrip = bateriaRestante;
+  
+      for (const step of this.data.stepsArray) {
+        const distance = step.distance;
+        const batteryConsumptionPercentage = (distance / autonomyElectricMode) * 100;
+  
+        batteryPercentageAfterTrip -= batteryConsumptionPercentage;
+  
+        if (batteryPercentageAfterTrip <= 0) {
+          batteryPercentageAfterTrip = 0;
+          this.showInsufficientBatteryMessage(); // Exibir mensagem ao usuário
+          return; // Interromper a função se a bateria for insuficiente
+        }
+      }
+  
+      console.log("Porcentagem de bateria restante ao final da viagem:", batteryPercentageAfterTrip.toFixed(2) + "%");
+      // Retornar os dados necessários ao fechar o modal
+      this.dialogRef.close({
+        canCompleteTrip: true,
+        batteryPercentageAfterTrip: batteryPercentageAfterTrip,
+        selectedVehicle: formValue.selectedVehicle // Adicione o veículo selecionado se necessário
+      });
+
+    } else {
+      console.error("Formulário inválido");
+      return;
+    }
+  }
+  
+  showInsufficientBatteryMessage() {
+    Swal.fire({
+      title: 'Erro!',
+      text: 'A viagem não pode ser realizada. Bateria insuficiente.',
+      icon: 'error',
+      confirmButtonText: 'Fechar'
+    });
+  }
+  
 
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
         faqs: [
-          {
-            question: 'Como preencher a marca do veículo?',
-            answer: 'No campo "Marca do veículo", digite o nome da marca. Se a marca já estiver cadastrada, sugestões aparecerão abaixo do campo. Selecione uma das opções para preencher automaticamente os campos de modelo e versão.'
-          },
-          {
-            question: 'Como os campos de modelo e versão são preenchidos?',
-            answer: 'Os campos "Modelo do veículo" e "Versão do veículo" serão preenchidos automaticamente após você selecionar uma marca. Certifique-se de revisar esses campos para garantir que as informações estão corretas.'
-          },
-          {
-            question: 'O que devo inserir no campo "Bateria restante"?',
-            answer: 'Neste campo, insira a porcentagem da carga da bateria restante, como "75" para 75%. Este campo é obrigatório para o cadastro do status da bateria.'
-          },
-          {
-            question: 'Como preencher a "Saúde da bateria"?',
-            answer: 'A "Saúde da bateria" deve ser inserida em um formato numérico que indica o estado geral da bateria, com valores entre 0 e 100, onde 100 representa uma bateria nova. Este campo é opcional.'
-          },
-          {
-            question: 'O que acontece se eu deixar o campo "Bateria restante" em branco?',
-            answer: 'Se você tentar adicionar o status da bateria sem preencher o campo "Bateria restante", um erro será exibido abaixo do campo, e a ação será bloqueada até que o campo obrigatório seja preenchido.'
-          },
-          {
-            question: 'Como posso cancelar o cadastro?',
-            answer: 'Para cancelar o cadastro e voltar à tela anterior, clique no botão "Cancelar". Isso descartará todas as informações que você digitou até o momento.'
-          },
-          {
-            question: 'Quais campos são obrigatórios?',
-            answer: 'O único campo obrigatório é "Bateria restante e marca". Os campos de modelo e versão e são preenchidos automaticamente, mas não são obrigatórios para a finalização do cadastro.'
-          }
+          // FAQs aqui
         ]
       },
     });
   }
 
   closeModal() {
-    this.dialogRef.close(); // Fecha o modal
+    this.dialogRef.close();
   }
-
 }
