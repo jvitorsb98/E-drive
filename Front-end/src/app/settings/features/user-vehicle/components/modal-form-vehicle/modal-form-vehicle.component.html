@@ -9,8 +9,7 @@
 			<h1 class="titulo" *ngIf="editVehicle">Editar Veículo</h1>
 
 			<button class="btn">
-				<img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg"
-					alt="Filto">
+				<img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
 			</button>
 		</div>
 
@@ -20,7 +19,7 @@
 				<div class="col-12 col-md-6 mb-2 w-100">
 					<mat-form-field class="custom-select">
 						<mat-label>Marca do veículo:</mat-label>
-						<input type="text" matInput formControlName="brand"
+						<input #brandInput type="text" matInput formControlName="brand"
 							[value]="userVehicleForm.get('brand')?.value?.name || ''" [matAutocomplete]="autoBrand"
 							aria-describedby="Help">
 						<mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
@@ -28,7 +27,7 @@
 								{{ brand.name }}
 							</mat-option>
 						</mat-autocomplete>
-						<mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+						<mat-icon class="autocomplete-icon" (click)="toggleAutocomplete('brand', $event)">arrow_drop_down</mat-icon>
 						<mat-error
 							*ngIf="userVehicleForm.get('brand')?.hasError('required') && userVehicleForm.get('brand')?.touched">
 							<strong>Marca </strong> é obrigatória
@@ -40,14 +39,14 @@
 				<div class="col-12 col-md-6 mb-2 w-100" [ngClass]="{'hidden': !userVehicleForm.get('brand')?.value}">
 					<mat-form-field class="custom-select">
 						<mat-label>Modelo do veículo:</mat-label>
-						<input type="text" matInput formControlName="model"
+						<input #modelInput type="text" matInput formControlName="model"
 							[value]="userVehicleForm.get('model')?.value?.name || ''" [matAutocomplete]="autoModel">
 						<mat-autocomplete #autoModel="matAutocomplete" (optionSelected)="onModelSelected($event)">
 							<mat-option *ngFor="let model of filteredModels | async" [value]="model">
 								{{ model.name }}
 							</mat-option>
 						</mat-autocomplete>
-						<mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+						<mat-icon class="autocomplete-icon" (click)="toggleAutocomplete('model', $event)">arrow_drop_down</mat-icon>
 						<mat-error
 							*ngIf="userVehicleForm.get('model')?.hasError('required') && userVehicleForm.get('model')?.touched">
 							<strong>Modelo</strong> é obrigatório
@@ -59,15 +58,15 @@
 				<div class="col-12 col-md-6 mb-2 w-100" [ngClass]="{'hidden': !userVehicleForm.get('model')?.value}">
 					<mat-form-field class="custom-select">
 						<mat-label>Versão do veículo:</mat-label>
-						<input type="text" matInput formControlName="version"
-							[value]="userVehicleForm.get('version')?.value?.version || ''"
-							[matAutocomplete]="autoVersion">
+						<input #versionInput type="text" matInput formControlName="version"
+							[value]="userVehicleForm.get('version')?.value?.version || ''" [matAutocomplete]="autoVersion">
 						<mat-autocomplete #autoVersion="matAutocomplete" (optionSelected)="onVersionSelected($event)">
 							<mat-option *ngFor="let vehicle of filteredVersions | async" [value]="vehicle">
 								{{ vehicle.version }} <!-- Display the version string directly -->
 							</mat-option>
 						</mat-autocomplete>
-						<mat-icon class="autocomplete-icon">arrow_drop_down</mat-icon>
+						<mat-icon class="autocomplete-icon"
+							(click)="toggleAutocomplete('version', $event)">arrow_drop_down</mat-icon>
 						<mat-error
 							*ngIf="userVehicleForm.get('version')?.hasError('required') && userVehicleForm.get('version')?.touched">
 							<strong>Versão</strong> é obrigatória
@@ -164,18 +163,14 @@
 				</div>
 			</div>
 			<div *ngIf="!editVehicle" class="buttons-container py-3">
-				<!-- <button class="btn w-100 mb-3" type="button-confirm" (click)="resetForm()">Redefinir</button> -->
-				<app-ui-button class="w-100 mb-3" typeBtn="vivid-sky-blue" (click)="resetForm()" text="Redefinir"></app-ui-button>
-				<!-- <button class="btn w-100 mb-2" type="button-confirm" (click)="submitForm()"
-					[disabled]="!userVehicleForm.valid">Finalizar cadastro</button> -->
-					<app-ui-button typeBtn="vivid-sky-blue" [disabled]="!userVehicleForm.valid" (click)="submitForm()"
-        text="Finalizar cadastro"></app-ui-button>
+				<app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" (click)="resetForm()"
+					text="Redefinir"></app-ui-button>
+				<app-ui-button typeBtn="vivid-sky-blue" [disabled]="!userVehicleForm.valid" (click)="submitForm()"
+					text="Finalizar cadastro"></app-ui-button>
 			</div>
 			<div *ngIf="editVehicle" class="buttons-container py-3">
-				<!-- <button class="btn w-100 mb-3" type="button-confirm" (click)="submitForm()">Salvar</button> -->
-				<app-ui-button class="w-100 mb-3" typeBtn="vivid-sky-blue" (click)="submitForm()" text="Salvar"></app-ui-button>
-				<!-- <button class="btn w-100 mb-2" type="button-cancel" (click)="closeModal()">Cancelar</button> -->
-				<app-ui-button class="w-100 mb-3" typeBtn="outline-secondary" (click)="closeModal()" text="Cancelar"></app-ui-button>
+				<app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" (click)="submitForm()" text="Salvar"></app-ui-button>
+				<app-ui-button class="w-100" typeBtn="outline-secondary" (click)="closeModal()" text="Cancelar"></app-ui-button>
 			</div>
 		</form>
 	</div>
