@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
@@ -11,6 +11,8 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { numberValidator } from '../../../../shared/validators/number-validator';
 import { MatTableDataSource } from '@angular/material/table';
 import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
@@ -23,6 +25,9 @@ export class ModalFormVehicleBatteryComponent {
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação
+  @ViewChild(MatSort) sort!: MatSort; // Ordenação
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,6 +49,11 @@ export class ModalFormVehicleBatteryComponent {
       bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator]),
       saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator])
     });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator; // Configura o paginador
+    this.dataSource.sort = this.sort; // Configura a ordenação
   }
 
   // Obtém a lista de veículos do usuário

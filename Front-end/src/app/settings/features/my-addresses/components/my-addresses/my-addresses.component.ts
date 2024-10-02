@@ -132,12 +132,14 @@ export class MyAddressesComponent implements OnInit {
   searchPostalCode() {
     // Define o estado de carregamento
     this.isLoading = true;
-    let postalCode = this.addressForm.get('zipCode')?.value;
+    const postalCode = this.addressForm.get('zipCode')?.value;
 
+    // Verifica se o CEP é válido
     if (postalCode && postalCode.length === 8) {
       this.postalCodeService.searchPostalCode(postalCode).subscribe({
-        next: (data: any) => { // Manipula os dados retornados
+        next: (data: any) => {
           if (!data.erro) {
+            // Atualiza o formulário com os dados do CEP
             this.addressForm.patchValue({
               state: data.uf,
               city: data.localidade,
@@ -145,25 +147,30 @@ export class MyAddressesComponent implements OnInit {
               street: data.logradouro
             });
           } else {
-            this.alertasService.showError('CEP', 'CEP não encontrado');
-            // this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 5000 });
+            this.alertasService.showError('CEP não encontrado!', 'O CEP informado não foi encontrado. Verifique se o CEP está correto e tente novamente.');
           }
           // Atualiza o estado de carregamento
           this.isLoading = false;
         },
-        error: (erro: HttpErrorResponse) => { // Manipula o erro ocorrido
-          this.alertasService.showError('CEP', erro.error.message);
-          // this.snackBar.open('Erro ao buscar CEP', 'Fechar', { duration: 5000 });
-          // Atualiza o estado de carregamento
+        error: (erro: HttpErrorResponse) => {
+          // Mensagem de erro se houver falha na requisição
+          this.alertasService.showError('Erro ao buscar CEP!', erro.error.message);
+        },
+        complete: () => {
+          // Atualiza o estado de carregamento ao finalizar a requisição
           this.isLoading = false;
         }
       });
+    } else {
+      // Caso o CEP não seja válido (diferente de 8 caracteres)
+      this.isLoading = false;
+      this.alertasService.showError('CEP inválido!', 'O CEP deve conter 8 caracteres. Verifique o valor informado.');
     }
   }
 
   onSubmit() {
     // Verifica se há dados de endereço para decidir entre criar ou atualizar
-    if (this.addressData) {
+    if (this.data.addressData) {
       this.edit();
     } else {
       this.create();
@@ -173,8 +180,7 @@ export class MyAddressesComponent implements OnInit {
   create() {
     // Cria um novo endereço se o formulário for válido
     if (this.addressForm.valid) {
-      this.address = this.addressForm.value;
-      this.addressService.register(this.address).subscribe({
+      this.addressService.register(this.addressForm.value).subscribe({
         next: () => {
           this.alertasService.showSuccess('Criação de endereço', 'Endereço criado com sucesso!').then(() => {
             this.addressForm.reset();
@@ -183,23 +189,23 @@ export class MyAddressesComponent implements OnInit {
           });
         },
         error: (erro: HttpErrorResponse) => {
-          this.alertasService.showError('Criação de endereço', erro.error.message);
+          this.alertasService.showError('Erro ao criar endereço !!', erro.error.message);
         }
       });
     }
   }
 
+
   edit() {
     // Atualiza um endereço existente se o formulário for válido
     if (this.addressForm.valid) {
-      if (this.addressData) {
-        this.address = this.addressForm.value as IAddressRequest;
-        this.addressService.update(this.addressData.id, this.address).subscribe({
+      if (this.data.addressData) {
+        this.addressService.update(this.data.addressData.id, this.addressForm.value).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Atualização de endereço', 'Endereço atualizado com sucesso!').then(() => {
+            this.alertasService.showSuccess('Atualização de endereço !!', 'Endereço atualizado com sucesso!').then(() => {
               this.addressForm.reset();
               this.subscriptions.forEach(sub => sub.unsubscribe());
-              this.router.navigate(['/meus-enderecos']);
+              this.router.navigate(['e-driver/users/my-addresses']);
             })
           },
           error: (erro: HttpErrorResponse) => {
