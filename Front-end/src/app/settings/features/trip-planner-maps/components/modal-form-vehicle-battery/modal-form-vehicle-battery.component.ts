@@ -26,7 +26,6 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
 
-
   constructor(
     private formBuilder: FormBuilder,
     private userVehicleService: UserVehicleService,
@@ -79,7 +78,6 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       }
     });
   }
-  
 
   loadVehicleDetails() {
     const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
@@ -87,34 +85,32 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
       )
     );
-  
+
     forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
       this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => ({
         ...vehicle,
         userVehicle
       }));
-  
+
       this.dataSource.data = this.userVehicleDetails;
       console.log("Detalhes dos veículos carregados:", this.userVehicleDetails);
-  
+
       // Se houver apenas um veículo disponível, selecione-o automaticamente
       if (this.userVehicleDetails.length === 1) {
         this.vehicleStatusBatteryForm.patchValue({
           selectedVehicle: this.userVehicleDetails[0] // Marca o ID como selecionado
         });
-      
+
         setTimeout(() => {
           const inputElement = document.querySelector('input[formControlName="bateriaRestante"]');
           console.log(inputElement);
           (inputElement as HTMLInputElement).focus(); // Asserção de tipo para HTMLInputElement
         }, 100);
-        
+
       }
-      
+
     });
   }
-  
-  
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -129,7 +125,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   submitBatteryStatus() {
     if (this.vehicleStatusBatteryForm.valid) {
       const formValue = this.vehicleStatusBatteryForm.value;
-  
+
       // Obtém a saúde da bateria
       let batteryHealth = Number(formValue.saudeBateria);
       if (!batteryHealth) {
@@ -138,7 +134,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         const yearsOfUse = currentYear - vehicleYear;
         batteryHealth = Math.max(100 - (yearsOfUse * 2.3), 0); // Garante que a saúde da bateria não fique negativa
       }
-  
+
       const autonomyElectricMode = formValue.selectedVehicle.autonomy?.autonomyElectricMode || 0;
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryPercentageAfterTrip = remainingBattery;
@@ -155,7 +151,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
           return; // Para a função se a bateria for insuficiente
         }
       }
-  
+
       // Alerta sobre a porcentagem de bateria restante
       if (batteryPercentageAfterTrip < 10) {
         Swal.fire({
@@ -202,10 +198,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       return;
     }
   }
-  
-  
-  
-  
+
   showInsufficientBatteryMessage() {
     Swal.fire({
       title: 'Erro!',
@@ -214,7 +207,6 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       confirmButtonText: 'Fechar'
     });
   }
-  
 
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {

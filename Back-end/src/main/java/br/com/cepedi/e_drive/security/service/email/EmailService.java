@@ -87,7 +87,7 @@ public class EmailService {
         context.setVariable("nome", name);
         context.setVariable("token", token);
         context.setVariable("titulo", "Redefinição de Senha");
-        context.setVariable("linkRedefinicao", "http://localhost:4200/e-driver/login/reset-password?token=" + token);
+        context.setVariable("linkConfirmacao", "http://localhost:4200/e-driver/login/reset-password?token=" + token);
 
         // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reset_password_email_template", context);
@@ -95,7 +95,7 @@ public class EmailService {
         helper.setFrom("nao-responder@park.com.br");
 
         // Adiciona a imagem inline
-        helper.addInline("logo", new ClassPathResource("/static/image/spring-security.png"));
+        helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
 
         // Envia o e-mail
         emailSender.send(message);
@@ -138,7 +138,7 @@ public class EmailService {
         helper.setFrom("nao-responder@park.com.br");
 
         // Adiciona a imagem inline
-        helper.addInline("logo", new ClassPathResource("/static/image/spring-security.png"));
+        helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
 
         // Envia o e-mail
         emailSender.send(message);
@@ -178,7 +178,7 @@ public class EmailService {
         helper.setFrom("nao-responder@park.com.br");
 
         // Adiciona a imagem inline
-        helper.addInline("logo", new ClassPathResource("/static/image/spring-security.png"));
+        helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
 
         // Envia o e-mail
         emailSender.send(message);
