@@ -11,11 +11,13 @@
   justify-content: center;
   align-items: center;
   position: relative;
+  margin-top: 20px; /* Ajuste conforme necessário */
 }
 
 .icon-row button {
   position: absolute;
-  left: 0; /* Mantém o botão à esquerda */
+  left: 0;
+  margin-left: 10px; 
 }
 
 .custom-icon-cellfone {
