@@ -1,3 +1,4 @@
+import { AlertasService } from './../../../../core/services/Alertas/alertas.service';
 // Importa o decorador Component, a função Inject, o decorador Input e o ciclo de vida OnInit do Angular core
 import { Component, Inject, Input, OnInit } from '@angular/core';
 
@@ -30,6 +31,7 @@ import { Subscription } from 'rxjs';
 
 // Importa Swal para exibir alertas e notificações bonitos
 import Swal from 'sweetalert2';
+import { HttpErrorResponse } from '@angular/common/http';
 
 // Define o componente 'MyAddressesComponent'
 @Component({
@@ -75,7 +77,7 @@ export class MyAddressesComponent implements OnInit {
     private addressService: AddressService, // Serviço para operações com endereços
     public dialogRef: MatDialogRef<MyAddressesComponent>, // Referência ao diálogo do componente
     private router: Router, // Serviço para navegação e manipulação de rotas
-    private activatRouter: ActivatedRoute, // Serviço para acessar parâmetros de rota
+    private alertasService: AlertasService,
     @Inject(MAT_DIALOG_DATA) public data: { addressData: DataAddressDetails; actionTitle: string } // Dados passados ao diálogo
   ) {
     // Inicializa o formulário com controles e validações
@@ -106,7 +108,7 @@ export class MyAddressesComponent implements OnInit {
       }
     });
 
-    // Inscreve-se para receber dados do endereço selecionado e do título
+    //Inscreve-se para receber dados do endereço selecionado e do título
     const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
       this.addressData = data;
       if (this.addressData) {
@@ -143,13 +145,15 @@ export class MyAddressesComponent implements OnInit {
               street: data.logradouro
             });
           } else {
-            this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 5000 });
+            this.alertasService.showError('CEP', 'CEP não encontrado');
+            // this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 5000 });
           }
           // Atualiza o estado de carregamento
           this.isLoading = false;
         },
-        error: () => { // Manipula o erro ocorrido
-          this.snackBar.open('Erro ao buscar CEP', 'Fechar', { duration: 5000 });
+        error: (erro: HttpErrorResponse) => { // Manipula o erro ocorrido
+          this.alertasService.showError('CEP', erro.error.message);
+          // this.snackBar.open('Erro ao buscar CEP', 'Fechar', { duration: 5000 });
           // Atualiza o estado de carregamento
           this.isLoading = false;
         }
@@ -172,28 +176,16 @@ export class MyAddressesComponent implements OnInit {
       this.address = this.addressForm.value;
       this.addressService.register(this.address).subscribe({
         next: () => {
-            Swal.fire({
-              title: 'Endereço criado com sucesso!',
-              icon: 'success',
-              text: 'O endereço foi criado com sucesso.',
-              showConfirmButton: true,
-              confirmButtonColor: '#19B6DD',
-            }).then(() => {
-              this.addressForm.reset();
-              this.closeModal();
-              this.router.navigate(['/meus-enderecos']);
-            });
-          },
-          error: () => {
-            Swal.fire({
-              title: 'Erro ao criar endereço!',
-              icon: 'error',
-              text: 'Houve um problema ao criar o endereço. Tente novamente mais tarde.',
-              showConfirmButton: true,
-              confirmButtonColor: 'red',
-            });
-          }
-        });
+          this.alertasService.showSuccess('Criação de endereço', 'Endereço criado com sucesso!').then(() => {
+            this.addressForm.reset();
+            this.closeModal();
+            this.router.navigate(['/meus-enderecos']);
+          });
+        },
+        error: (erro: HttpErrorResponse) => {
+          this.alertasService.showError('Criação de endereço', erro.error.message);
+        }
+      });
     }
   }
 
@@ -204,13 +196,14 @@ export class MyAddressesComponent implements OnInit {
         this.address = this.addressForm.value as IAddressRequest;
         this.addressService.update(this.addressData.id, this.address).subscribe({
           next: () => {
-            this.snackBar.open('Endereço atualizado com sucesso', 'Fechar', { duration: 5000 });
-            this.addressForm.reset();
-            this.subscriptions.forEach(sub => sub.unsubscribe());
-            this.router.navigate(['/meus-enderecos']);
+            this.alertasService.showSuccess('Atualização de endereço', 'Endereço atualizado com sucesso!').then(() => {
+              this.addressForm.reset();
+              this.subscriptions.forEach(sub => sub.unsubscribe());
+              this.router.navigate(['/meus-enderecos']);
+            })
           },
-          error: () => {
-            this.snackBar.open('Erro ao atualizar endereço', 'Fechar', { duration: 5000 });
+          error: (erro: HttpErrorResponse) => {
+            this.alertasService.showError('Atualização de endereço falhou', erro.error.message || 'Erro inesperado');
           }
         });
       }
