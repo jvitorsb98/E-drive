@@ -61,12 +61,12 @@ export class MyAddressesComponent implements OnInit {
     // Inicializa o formulário com controles e validações
     this.addressForm = this.fb.group({
       country: new FormControl('Brasil', Validators.required), // Campo obrigatório para o país
-      zipCode: new FormControl('', [Validators.required]), // Campo obrigatório para o CEP
+      zipCode: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]), // Campo obrigatório para o CEP
       state: new FormControl('', Validators.required), // Campo obrigatório para o estado
       city: new FormControl('', Validators.required), // Campo obrigatório para a cidade
       neighborhood: new FormControl('', Validators.required), // Campo obrigatório para o bairro
       street: new FormControl('', Validators.required), // Campo obrigatório para a rua
-      number: new FormControl('', Validators.required), // Campo obrigatório para o número
+      number: new FormControl('', [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9A-Za-z-]+$')]), // Campo obrigatório para o número
       complement: new FormControl(''), // Campo opcional para complemento
       hasChargingStation: new FormControl(false), // Campo para indicar se há estação de carregamento
     });
