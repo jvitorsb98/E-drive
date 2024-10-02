@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
@@ -34,6 +34,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
     private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any }
   ) {
@@ -88,17 +89,34 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
       )
     );
-
+  
     forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
       this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => ({
         ...vehicle,
         userVehicle
       }));
-
+  
       this.dataSource.data = this.userVehicleDetails;
       console.log("Detalhes dos veículos carregados:", this.userVehicleDetails);
+  
+      // Se houver apenas um veículo disponível, selecione-o automaticamente
+      if (this.userVehicleDetails.length === 1) {
+        this.vehicleStatusBatteryForm.patchValue({
+          selectedVehicle: this.userVehicleDetails[0] // Marca o ID como selecionado
+        });
+      
+        setTimeout(() => {
+          const inputElement = document.querySelector('input[formControlName="bateriaRestante"]');
+          console.log(inputElement);
+          (inputElement as HTMLInputElement).focus(); // Asserção de tipo para HTMLInputElement
+        }, 100);
+        
+      }
+      
     });
   }
+  
+  
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
