@@ -30,7 +30,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 // Importa Swal para exibir alertas e notificações bonitos
-import Swal from 'sweetalert2';
 import { HttpErrorResponse } from '@angular/common/http';
 
 // Define o componente 'MyAddressesComponent'
@@ -72,7 +71,6 @@ export class MyAddressesComponent implements OnInit {
   constructor(
     private fb: FormBuilder, // Serviço para construir o formulário
     private postalCodeService: PostalCodeService, // Serviço para buscar informações de CEP
-    private snackBar: MatSnackBar, // Serviço para exibir mensagens de feedback
     private dialog: MatDialog, // Serviço para abrir diálogos
     private addressService: AddressService, // Serviço para operações com endereços
     public dialogRef: MatDialogRef<MyAddressesComponent>, // Referência ao diálogo do componente
@@ -100,6 +98,11 @@ export class MyAddressesComponent implements OnInit {
     }
   }
 
+  /**
+   * Inscreve-se em mudanças no campo 'zipCode' para buscar o CEP automaticamente,
+   * e também inscreve-se para receber dados do endereço selecionado e do título,
+   * salvando as inscrições para gerenciamento.
+   */
   ngOnInit() {
     // Inscreve-se em mudanças no campo 'zipCode' para buscar o CEP automaticamente
     this.addressForm.get('zipCode')?.valueChanges.subscribe(value => {
@@ -107,8 +110,6 @@ export class MyAddressesComponent implements OnInit {
         this.searchPostalCode();
       }
     });
-
-    //TODO: concertar o campo de complemento
 
     //Inscreve-se para receber dados do endereço selecionado e do título
     const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
@@ -126,11 +127,32 @@ export class MyAddressesComponent implements OnInit {
     this.subscriptions.push(addressSubscription, titleSubscription);
   }
 
+
+  /**
+   * Limpa as inscrições em observáveis para evitar vazamentos de memória
+   *
+   * Este método é chamado quando o componente é destruído. Ele percorre a lista
+   * de inscrições e as fecha, impedindo que elas continuem a consumir recursos.
+   *
+   * @returns void
+   */
   ngOnDestroy() {
     // Limpa as inscrições para evitar vazamentos de memória
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
+  /**
+   * Busca o endereço a partir do CEP informado.
+   *
+   * Verifica se o CEP informado é válido e, se sim, busca as informações do
+   * endereço no serviço de CEP. Caso o CEP seja inválido, exibe uma mensagem de
+   * erro.
+   *
+   * Se o CEP for encontrado, atualiza o formulário com as informações do
+   * endereço.
+   *
+   * @returns void
+   */
   searchPostalCode() {
     // Define o estado de carregamento
     this.isLoading = true;
@@ -170,6 +192,11 @@ export class MyAddressesComponent implements OnInit {
     }
   }
 
+  /**
+   * Método responsável por controlar o fluxo de criação ou edição de endereços.
+   * Caso haja dados de endereço, o método edit() será chamado. Caso contrário,
+   * o método create() será chamado.
+   */
   onSubmit() {
     // Verifica se há dados de endereço para decidir entre criar ou atualizar
     if (this.data.addressData) {
@@ -179,6 +206,14 @@ export class MyAddressesComponent implements OnInit {
     }
   }
 
+  /**
+   * Cria um novo endereço se o formulário for válido
+   * Chama o serviço de endereços para criar um novo endereço
+   * com base nos dados do formulário
+   * Se a requisição for bem-sucedida,
+   * exibe uma mensagem de sucesso e fecha o modal
+   * Senão, exibe uma mensagem de erro
+   */
   create() {
     // Cria um novo endereço se o formulário for válido
     if (this.addressForm.valid) {
@@ -198,6 +233,14 @@ export class MyAddressesComponent implements OnInit {
   }
 
 
+  /**
+   * Atualiza um endereço existente se o formulário for válido
+   * Chama o serviço de endereços para atualizar um endereço
+   * com base nos dados do formulário
+   * Se a requisição for bem-sucedida,
+   * exibe uma mensagem de sucesso e fecha o modal
+   * Senão, exibe uma mensagem de erro
+   */
   edit() {
     // Atualiza um endereço existente se o formulário for válido
     if (this.addressForm.valid) {
@@ -218,6 +261,13 @@ export class MyAddressesComponent implements OnInit {
     }
   }
 
+  /**
+   * Abre o modal com FAQs para fornecer informações adicionais ao usuário
+   *
+   * O modal exibe uma lista de perguntas frequentes e suas respostas,
+   * como por exemplo, o que é o CEP, por que é necessário preencher o CEP,
+   * entre outros.
+   */
   openFAQModal() {
     // Abre o modal com FAQs para fornecer informações adicionais ao usuário
     this.dialog.open(FaqPopupComponent, {

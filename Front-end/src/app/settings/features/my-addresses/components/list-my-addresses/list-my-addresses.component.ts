@@ -4,9 +4,6 @@ import { ModalDetailsAddressComponent } from '../modal-details-address/modal-det
 // Componente para listar endereços e editar/adicionar endereços
 import { MyAddressesComponent } from '../my-addresses/my-addresses.component';
 
-// Angular Router para navegação
-import { Router } from '@angular/router';
-
 // Serviço para operações relacionadas a endereços
 import { AddressService } from '../../../../core/services/Address/address.service';
 
@@ -23,13 +20,13 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 
 // Imports de bibliotecas externas
-import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-list-my-addresses',
@@ -48,8 +45,7 @@ export class ListMyAddressesComponent implements OnInit {
   constructor(
     private addressService: AddressService, // Serviço de endereços
     private dialog: MatDialog, // Diálogo para modais
-    private snackBar: MatSnackBar, // Snackbar para mensagens
-    private router: Router // Navegação
+    private alertasService: AlertasService
   ) {
     this.dataSource = new MatTableDataSource<DataAddressDetails>(this.dataAddressDetails); // Inicializa o datasource da tabela
   }
@@ -74,12 +70,11 @@ export class ListMyAddressesComponent implements OnInit {
         if (Array.isArray(addressList)) {
           this.dataSource.data = addressList;
         } else {
-          console.error('Expected an array in response.content, but got:', addressList);
+          this.alertasService.showError('Erro ao carregar endereços', 'Ocorreu um erro ao carregar os endereços.');
         }
       },
-      error: (error) => {
-        console.error('Error on loadAddresses:', error);
-        this.snackBar.open('Erro ao carregar endereços', 'Fechar', { duration: 5000 });
+      error: (error: HttpErrorResponse) => {
+        this.alertasService.showError('Erro ao carregar endereços', error.error.message || 'Ocorreu um erro ao carregar os endereços.');
       }
     });
   }
@@ -88,7 +83,6 @@ export class ListMyAddressesComponent implements OnInit {
   addAddress() {
     this.addressService.selectAddress(null);
     this.addressService.setTitle('Registrar Endereço');
-    this.router.navigate(['/new-address']);
   }
 
   // Aplica filtro na tabela
@@ -103,43 +97,20 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Deleta um endereço e atualiza a lista
   deleteAddress(address: DataAddressDetails) {
-    Swal.fire({
-      title: 'Tem certeza?',
-      text: `Deseja realmente deletar o endereço? Esta ação não poderá ser desfeita.`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#19B6DD',
-      cancelButtonColor: '#ff6b6b',
-      confirmButtonText: 'Sim, deletar!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
+    this.alertasService.showWarning('Deletar endereço', 'Tem certeza que deseja deletar este endereço?', 'Sim', 'Não' ).then((result) => {
+      if (result) {
         this.addressService.disable(address.id).pipe(
           catchError(() => {
-            Swal.fire({
-              title: 'Erro!',
-              icon: 'error',
-              text: 'Ocorreu um erro ao deletar o endereço. Tente novamente mais tarde.',
-              showConfirmButton: true,
-              confirmButtonColor: 'red'
-            });
+            this.alertasService.showError('Erro ao deletar endereço', 'Ocorreu um erro ao deletar o endereço. Tente novamente mais tarde.');
             return of(null);
           })
         ).subscribe(() => {
-          Swal.fire({
-            title: 'Sucesso!',
-            icon: 'success',
-            text: 'O endereço foi deletado com sucesso!',
-            showConfirmButton: true,
-            confirmButtonColor: '#19B6DD'
-          }).then(() => {
-            this.loadAddresses(); // Atualiza a lista de endereços após a exclusão
-          });
+          this.alertasService.showSuccess('Endereço deletado', 'O endereço foi deletado com sucesso.');
+          this.loadAddresses();
         });
       }
     });
   }
-
   // Abre o modal para visualizar detalhes do endereço
   openModalDetailsAddress(address: DataAddressDetails) {
     this.dialog.open(ModalDetailsAddressComponent, {

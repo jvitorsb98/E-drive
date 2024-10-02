@@ -41,6 +41,12 @@ export class VehicleService {
     return this.http.get<Vehicle[]>(`${this.vehicleUrl}/api/v1/vehicles/model/${modelId}`);
   }
 
+  /**
+   * Método para obter todos os veículos com paginação e ordenados por ano
+   * @param page Número da página a ser retornada
+   * @param size Quantidade de veículos por página
+   * @returns Um Observable que emite uma resposta paginada com os veículos
+   */
   getAll(page: number, size: number): Observable<PaginatedResponse<Vehicle>> {
     const params = new HttpParams()
     .set('page', page.toString())
