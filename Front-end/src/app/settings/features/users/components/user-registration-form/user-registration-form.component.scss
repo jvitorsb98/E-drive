@@ -1,17 +1,10 @@
-/* Form */
-.top-bar {
-  position: sticky;
-  width: 100%;
-  background-color: #19B6DD;
-  padding: .5rem 0;
-}
-
 .icon-row {
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 20px; /* Ajuste conforme necessário */
+  margin-top: 15px; /* Ajuste conforme necessário */
+  margin-bottom: 15px;
 }
 
 .icon-row button {
