@@ -108,40 +108,83 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   submitBatteryStatus() {
     if (this.vehicleStatusBatteryForm.valid) {
       const formValue = this.vehicleStatusBatteryForm.value;
-      console.log("Dados do formulário enviados:", formValue);
+  
+      // Obtém a saúde da bateria
+      let batteryHealth = Number(formValue.saudeBateria);
+      if (!batteryHealth) {
+        const currentYear = new Date().getFullYear();
+        const vehicleYear = formValue.selectedVehicle.year;
+        const yearsOfUse = currentYear - vehicleYear;
+        batteryHealth = Math.max(100 - (yearsOfUse * 2.3), 0); // Garante que a saúde da bateria não fique negativa
+      }
   
       const autonomyElectricMode = formValue.selectedVehicle.autonomy?.autonomyElectricMode || 0;
-      const bateriaRestante = Number(formValue.bateriaRestante);
-      const saudeBateria = formValue.saudeBateria || 0;
+      const remainingBattery = Number(formValue.bateriaRestante);
+      let batteryPercentageAfterTrip = remainingBattery;
   
-      let batteryPercentageAfterTrip = bateriaRestante;
-  
+      // Cálculo do consumo de bateria
       for (const step of this.data.stepsArray) {
         const distance = step.distance;
-        const batteryConsumptionPercentage = (distance / autonomyElectricMode) * 100;
-  
+        const batteryConsumptionPercentage = (distance / (autonomyElectricMode * (remainingBattery / 100))) * 100;
         batteryPercentageAfterTrip -= batteryConsumptionPercentage;
   
+        // Se a porcentagem de bateria após a viagem for menor ou igual a 0
         if (batteryPercentageAfterTrip <= 0) {
           batteryPercentageAfterTrip = 0;
-          this.showInsufficientBatteryMessage(); // Exibir mensagem ao usuário
-          return; // Interromper a função se a bateria for insuficiente
+          this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
+          return; // Para a função se a bateria for insuficiente
         }
       }
   
-      console.log("Porcentagem de bateria restante ao final da viagem:", batteryPercentageAfterTrip.toFixed(2) + "%");
-      // Retornar os dados necessários ao fechar o modal
-      this.dialogRef.close({
-        canCompleteTrip: true,
-        batteryPercentageAfterTrip: batteryPercentageAfterTrip,
-        selectedVehicle: formValue.selectedVehicle // Adicione o veículo selecionado se necessário
-      });
-
+      // Alerta sobre a porcentagem de bateria restante
+      if (batteryPercentageAfterTrip < 10) {
+        Swal.fire({
+          title: 'Aviso de Bateria Baixa',
+          text: `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Continue',
+          cancelButtonText: 'Cancelar',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Se o usuário continuar, fecha o modal com os dados
+            this.dialogRef.close({
+              canCompleteTrip: true,
+              batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
+              selectedVehicle: formValue.selectedVehicle
+            });
+          } else {
+            // Se o usuário cancelar, fecha o modal
+            this.dialogRef.close({
+              canCompleteTrip: false,
+              batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
+              selectedVehicle: formValue.selectedVehicle
+            });
+          }
+        });
+      } else {
+        // Se a bateria for suficiente, exibe apenas a porcentagem final
+        Swal.fire({
+          title: 'Status da Bateria',
+          text: `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`,
+          icon: 'info',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          this.dialogRef.close({
+            canCompleteTrip: true,
+            batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
+            selectedVehicle: formValue.selectedVehicle
+          });
+        });
+      }
     } else {
       console.error("Formulário inválido");
       return;
     }
   }
+  
+  
+  
   
   showInsufficientBatteryMessage() {
     Swal.fire({

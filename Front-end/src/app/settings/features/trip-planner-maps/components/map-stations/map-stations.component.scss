@@ -19,3 +19,33 @@ body {
     padding: 1.2rem 0;
     z-index: 1000;
 }
+
+
+.cancel-route-button {
+    position: absolute; /* Para posicionamento absoluto */
+    top: 85%; /* 50% do topo da tela */
+    left: 50%; /* 50% da esquerda da tela */
+    transform: translate(-50%, -20%); /* Ajusta o botão para ficar 20% abaixo do centro */
+    background-color: #FF4C4C; /* Cor de fundo vermelho */
+    color: white; /* Cor do texto */
+    border: none; /* Remove bordas */
+    border-radius: 5px; /* Borda arredondada */
+    padding: 10px 15px; /* Espaçamento interno */
+    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
+    transition: background-color 0.3s; /* Efeito de transição para hover */
+    z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+}
+
+.cancel-route-button:hover {
+    background-color: #D43B3B; /* Cor do botão ao passar o mouse */
+}
+
+.button-active {
+    opacity: 1; /* Totalmente visível quando a rota está ativa */
+}
+
+.button-inactive {
+    opacity: 0.5; /* Menos visível quando a rota não está ativa */
+    cursor: not-allowed; /* Muda o cursor para indicar que não é interativo */
+}
+

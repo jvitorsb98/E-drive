@@ -39,6 +39,7 @@ export class MapStationsComponent implements AfterViewInit {
   userLocation: google.maps.LatLng | null = null;
   currentPlace: google.maps.places.PlaceResult | null = null;
   openNow: any = false; // Status de abertura da estação
+  isRouteActive = false; // Flag para verificar se a rota está ativa
 
   isModalOpen = false; // Estado do modal principal
   isDetailsModalOpen = false; // Estado do modal de detalhes
@@ -189,6 +190,12 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
+  cancelRoute() {
+    this.directionsRenderer.setMap(null); // Remove a rota do mapa
+    this.isRouteActive = false; // Desativa a rota
+    this.cdr.detectChanges(); // Força a verificação de mudanças
+}
+
 
   /**
    * Busca estações de carregamento próximas à localização atual do mapa.
@@ -262,6 +269,9 @@ export class MapStationsComponent implements AfterViewInit {
     this.markers.push(marker);
 
     marker.addListener('click', () => {
+      if (this.isRouteActive) {
+        return; // Não faz nada se a rota estiver ativa
+      }
       this.currentPlace = place;
       this.showModal();
     });
@@ -284,10 +294,14 @@ export class MapStationsComponent implements AfterViewInit {
           // Inicie a rota no Google Maps
           const destination = this.currentPlace?.geometry?.location;
 
-              // Configure o DirectionsRenderer para não exibir os marcadores padrão
+          // Configure o DirectionsRenderer para não exibir os marcadores padrão
           this.directionsRenderer.setOptions({
-              suppressMarkers: true, // Suprime os marcadores padrão
+            suppressMarkers: true, // Suprime os marcadores padrão
+            polylineOptions: {
+              strokeColor: '#19B6DD', // Azul claro para a linha da rota
+            },
           });
+          
 
           // Verifique se o destino não é undefined antes de chamar initiateRoute
           if (destination) {
@@ -318,6 +332,8 @@ export class MapStationsComponent implements AfterViewInit {
     this.directionsService.route(request, (result, status) => {
         if (status === google.maps.DirectionsStatus.OK) {
             this.directionsRenderer.setDirections(result);
+            this.isRouteActive = true; // Define a rota como ativa
+            this.cdr.detectChanges(); // Força a verificação de mudanças
         } else {
             console.error('Erro ao traçar a rota: ' + status);
         }

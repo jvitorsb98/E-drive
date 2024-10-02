@@ -61,4 +61,15 @@
         detailsModalOpenStatus }}</p>
     </div>
   </div>
+
+
+
 </div>
+
+<!-- Botão de Cancelar Rota -->
+<button *ngIf="isRouteActive" 
+        class="cancel-route-button" 
+        [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" 
+        (click)="cancelRoute()">
+  Cancelar Rota
+</button>
