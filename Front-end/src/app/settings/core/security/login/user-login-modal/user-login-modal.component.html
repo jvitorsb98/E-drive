@@ -29,24 +29,29 @@
                 <mat-form-field>
                     <mat-label>E-mail</mat-label>
                     <input matInput formControlName="email" placeholder="Digite seu e-mail" type="email" required>
-                    <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
-                        E-mail obrigatório
+                    <mat-error class="mat-error-text" *ngIf="loginForm.controls['email'].hasError('required')">
+                        E-mail <strong>obrigatório.</strong>
                     </mat-error>
-                    <mat-error *ngIf="loginForm.controls['email'].hasError('email')">
-                        E-mail inválido
+                    <mat-error class="mat-error-text" *ngIf="loginForm.controls['email'].hasError('email')">
+                        E-mail <strong>inválido</strong>
                     </mat-error>
                 </mat-form-field>
 
-                <mat-form-field>
-                    <mat-label>Senha</mat-label>
-                    <input matInput formControlName="password" placeholder="Digite sua senha" type="password" required>
-                    <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
-                        Senha obrigatória
-                    </mat-error>
-                    <mat-error *ngIf="loginForm.controls['password'].hasError('minlength')">
-                        Senha deve ter pelo menos 8 caracteres
-                    </mat-error>
-                </mat-form-field>
+                <div class="pass-field">
+                    <mat-form-field>
+                        <mat-label>Senha</mat-label>
+                        <input matInput formControlName="password" placeholder="Digite sua senha" type="password"
+                            class="password-input hidden-text" required>
+                        <i class="bi bi-eye-slash-fill eye-icon password-eye-icon"></i>
+                        <mat-error class="mat-error-text" *ngIf="loginForm.controls['password'].hasError('required')">
+                            Senha <strong>obrigatória.</strong>
+                        </mat-error>
+                        <mat-error class="mat-error-text" *ngIf="loginForm.controls['password'].hasError('minlength')">
+                            Senha deve ter <strong>pelo menos 6 caracteres.</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
                 <div class="actions">
                     <mat-card-actions>
                         <button mat-raised-button color="primary" type="submit" class="full-width-button">Acessar meu
