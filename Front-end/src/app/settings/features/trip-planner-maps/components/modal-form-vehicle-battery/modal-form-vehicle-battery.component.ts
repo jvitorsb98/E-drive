@@ -67,8 +67,9 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
         if (response?.content && Array.isArray(response.content)) {
-          this.userVehicleList = response.content;
-          console.log("Lista de veículos do usuário:", this.userVehicleList);
+          // Filtra os veículos que estão ativados
+          this.userVehicleList = response.content.filter(vehicle => vehicle.activated === true);
+          console.log("Lista de veículos ativados do usuário:", this.userVehicleList);
           this.loadVehicleDetails();
         } else {
           console.error('Expected an array in response.content but got:', response.content);
@@ -79,6 +80,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       }
     });
   }
+  
 
   loadVehicleDetails() {
     const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
@@ -124,13 +126,12 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       const autonomyElectricMode = formValue.selectedVehicle.autonomy?.autonomyElectricMode || 0;
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryPercentageAfterTrip = remainingBattery;
-  
       // Cálculo do consumo de bateria
       for (const step of this.data.stepsArray) {
         const distance = step.distance;
-        const batteryConsumptionPercentage = (distance / (autonomyElectricMode * (remainingBattery / 100))) * 100;
+        const batteryConsumptionPercentage = (distance / (autonomyElectricMode * (batteryPercentageAfterTrip / 100))) * 100;
         batteryPercentageAfterTrip -= batteryConsumptionPercentage;
-  
+        console.log(batteryPercentageAfterTrip)
         // Se a porcentagem de bateria após a viagem for menor ou igual a 0
         if (batteryPercentageAfterTrip <= 0) {
           batteryPercentageAfterTrip = 0;

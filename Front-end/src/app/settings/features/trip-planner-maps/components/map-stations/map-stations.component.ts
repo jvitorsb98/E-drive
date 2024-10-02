@@ -193,6 +193,7 @@ export class MapStationsComponent implements AfterViewInit {
   cancelRoute() {
     this.directionsRenderer.setMap(null); // Remove a rota do mapa
     this.isRouteActive = false; // Desativa a rota
+    this.stepsArray.splice(0, this.stepsArray.length);
     this.cdr.detectChanges(); // Força a verificação de mudanças
 }
 
@@ -293,7 +294,8 @@ export class MapStationsComponent implements AfterViewInit {
           console.log('Dados recebidos do modal:', result);
           // Inicie a rota no Google Maps
           const destination = this.currentPlace?.geometry?.location;
-
+          this.isRouteActive = true;
+          console.log('oi')
           // Configure o DirectionsRenderer para não exibir os marcadores padrão
           this.directionsRenderer.setOptions({
             suppressMarkers: true, // Suprime os marcadores padrão
@@ -317,26 +319,28 @@ export class MapStationsComponent implements AfterViewInit {
   }
 
   initiateRoute(destination: google.maps.LatLng) {
-
     if (!this.userLocation) {
       console.error('Localização do usuário não disponível.');
       return; // Retorne se a localização for nula
-  }
-
+    }
+  
     const request: google.maps.DirectionsRequest = {
-        origin: this.userLocation, // Mantenha esta linha para usar a localização do usuário
-        destination: destination,
-        travelMode: google.maps.TravelMode.DRIVING,
+      origin: this.userLocation, // Mantenha esta linha para usar a localização do usuário
+      destination: destination,
+      travelMode: google.maps.TravelMode.DRIVING,
     };
-
+  
     this.directionsService.route(request, (result, status) => {
-        if (status === google.maps.DirectionsStatus.OK) {
-            this.directionsRenderer.setDirections(result);
-            this.isRouteActive = true; // Define a rota como ativa
-            this.cdr.detectChanges(); // Força a verificação de mudanças
-        } else {
-            console.error('Erro ao traçar a rota: ' + status);
-        }
+      if (status === google.maps.DirectionsStatus.OK) {
+        this.directionsRenderer.setDirections(result);
+        this.directionsRenderer.setMap(this.map); 
+        this.isRouteActive = true; // Atualiza o estado da rota
+        this.clearMarkers(); // Limpa os marcadores antes de adicionar novos
+        this.searchNearbyChargingStations(); // Adiciona a busca após a rota
+        this.cdr.detectChanges()
+      } else {
+        console.error('Erro ao iniciar a rota:', status);
+      }
     });
   }
   /**
