@@ -106,7 +106,7 @@ export class MyAddressesComponent implements OnInit {
       }
     });
 
-    // Inscreve-se para receber dados do endereço selecionado e do título
+    //Inscreve-se para receber dados do endereço selecionado e do título
     const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
       this.addressData = data;
       if (this.addressData) {
@@ -130,12 +130,14 @@ export class MyAddressesComponent implements OnInit {
   searchPostalCode() {
     // Define o estado de carregamento
     this.isLoading = true;
-    let postalCode = this.addressForm.get('zipCode')?.value;
+    const postalCode = this.addressForm.get('zipCode')?.value;
 
+    // Verifica se o CEP é válido
     if (postalCode && postalCode.length === 8) {
       this.postalCodeService.searchPostalCode(postalCode).subscribe({
-        next: (data: any) => { // Manipula os dados retornados
+        next: (data: any) => {
           if (!data.erro) {
+            // Atualiza o formulário com os dados do CEP
             this.addressForm.patchValue({
               state: data.uf,
               city: data.localidade,
@@ -143,23 +145,29 @@ export class MyAddressesComponent implements OnInit {
               street: data.logradouro
             });
           } else {
-            this.snackBar.open('CEP não encontrado', 'Fechar', { duration: 5000 });
+            // Mensagem se o CEP não for encontrado
+            this.showError('CEP não encontrado!', 'O CEP informado não foi encontrado. Verifique se o CEP está correto e tente novamente.');
           }
-          // Atualiza o estado de carregamento
-          this.isLoading = false;
         },
-        error: () => { // Manipula o erro ocorrido
-          this.snackBar.open('Erro ao buscar CEP', 'Fechar', { duration: 5000 });
-          // Atualiza o estado de carregamento
+        error: () => {
+          // Mensagem de erro se houver falha na requisição
+          this.showError('Erro ao buscar CEP!', 'Houve um problema ao buscar o CEP. Tente novamente mais tarde.');
+        },
+        complete: () => {
+          // Atualiza o estado de carregamento ao finalizar a requisição
           this.isLoading = false;
         }
       });
+    } else {
+      // Caso o CEP não seja válido (diferente de 8 caracteres)
+      this.isLoading = false;
+      this.showError('CEP inválido!', 'O CEP deve conter 8 caracteres. Verifique o valor informado.');
     }
   }
 
   onSubmit() {
     // Verifica se há dados de endereço para decidir entre criar ou atualizar
-    if (this.addressData) {
+    if (this.data.addressData) {
       this.edit();
     } else {
       this.create();
@@ -169,48 +177,70 @@ export class MyAddressesComponent implements OnInit {
   create() {
     // Cria um novo endereço se o formulário for válido
     if (this.addressForm.valid) {
-      this.address = this.addressForm.value;
-      this.addressService.register(this.address).subscribe({
+      this.addressService.register(this.addressForm.value).subscribe({
         next: () => {
-            Swal.fire({
-              title: 'Endereço criado com sucesso!',
-              icon: 'success',
-              text: 'O endereço foi criado com sucesso.',
-              showConfirmButton: true,
-              confirmButtonColor: '#19B6DD',
-            }).then(() => {
-              this.addressForm.reset();
-              this.closeModal();
-              this.router.navigate(['/meus-enderecos']);
-            });
-          },
-          error: () => {
-            Swal.fire({
-              title: 'Erro ao criar endereço!',
-              icon: 'error',
-              text: 'Houve um problema ao criar o endereço. Tente novamente mais tarde.',
-              showConfirmButton: true,
-              confirmButtonColor: 'red',
-            });
-          }
-        });
+          Swal.fire({
+            title: 'Endereço criado com sucesso!',
+            icon: 'success',
+            text: 'O endereço foi criado com sucesso.',
+            showConfirmButton: true,
+            confirmButtonColor: '#19B6DD',
+          }).then(() => {
+            this.addressForm.reset();
+            this.closeModal();
+            this.router.navigate(['e-driver/users/my-addresses']);
+          });
+        },
+        error: () => {
+          Swal.fire({
+            title: 'Erro ao criar endereço!',
+            icon: 'error',
+            text: 'Houve um problema ao criar o endereço. Tente novamente mais tarde.',
+            showConfirmButton: true,
+            confirmButtonColor: 'red',
+          });
+        }
+      });
     }
+  }
+
+  // Função reutilizável para exibir os alertas de erro
+  showError(title: string, message: string) {
+    Swal.fire({
+      title,
+      icon: 'error',
+      text: message,
+      showConfirmButton: true,
+      confirmButtonColor: '#19B6DD'
+    });
   }
 
   edit() {
     // Atualiza um endereço existente se o formulário for válido
     if (this.addressForm.valid) {
-      if (this.addressData) {
-        this.address = this.addressForm.value as IAddressRequest;
-        this.addressService.update(this.addressData.id, this.address).subscribe({
+      if (this.data.addressData) {
+        this.addressService.update(this.data.addressData.id, this.addressForm.value).subscribe({
           next: () => {
-            this.snackBar.open('Endereço atualizado com sucesso', 'Fechar', { duration: 5000 });
-            this.addressForm.reset();
-            this.subscriptions.forEach(sub => sub.unsubscribe());
-            this.router.navigate(['/meus-enderecos']);
+            Swal.fire({
+              title: 'Endereço editado com sucesso!',
+              icon: 'success',
+              text: 'O endereço foi editado com sucesso.',
+              showConfirmButton: true,
+              confirmButtonColor: '#19B6DD',
+            }).then(() => {
+              this.addressForm.reset();
+              this.closeModal();
+              this.router.navigate(['e-driver/users/my-addresses']);
+            });
           },
           error: () => {
-            this.snackBar.open('Erro ao atualizar endereço', 'Fechar', { duration: 5000 });
+            Swal.fire({
+              title: 'Erro ao criar editar!',
+              icon: 'error',
+              text: 'Houve um problema ao editar o endereço. Tente novamente mais tarde.',
+              showConfirmButton: true,
+              confirmButtonColor: 'red',
+            });
           }
         });
       }
