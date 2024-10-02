@@ -26,8 +26,6 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação
-  @ViewChild(MatSort) sort!: MatSort; // Ordenação
 
   constructor(
     private formBuilder: FormBuilder,
