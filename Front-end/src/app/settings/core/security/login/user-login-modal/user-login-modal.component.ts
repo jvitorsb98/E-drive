@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from '../../../../core/services/modal/modal.service';
@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
 import Swal from 'sweetalert2';
 import { HttpErrorResponse } from '@angular/common/http';
+import { PasswordVisibilityToggle } from '../../../../shared/validators/password-visibility-toggle';
 
 @Component({
   selector: 'app-user-login-modal',
@@ -25,7 +26,9 @@ export class UserLoginModalComponent implements OnInit {
     private modal: ModalService,
     private auth: AuthService,
     private router: Router,
-  ) {}
+    private renderer: Renderer2,
+    private el: ElementRef,
+  ) { }
 
   ngOnInit(): void {
     this.initLoginForm();
@@ -36,18 +39,19 @@ export class UserLoginModalComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
+    PasswordVisibilityToggle.togglePasswordVisibility(this.renderer, this.el);
   }
 
   modalResetPassword(isPasswordRecovery: boolean): void {
-  this.modal.openModal(ModalRecoverPasswordComponent, {
-    email: this.loginForm.get('email')?.value,
-    isPasswordRecovery: isPasswordRecovery  // Passa a flag para definir o modo
-  }, {
-    width: '500px',
-    height: '280px',
-    disableClose: true
-  });
-}
+    this.modal.openModal(ModalRecoverPasswordComponent, {
+      email: this.loginForm.get('email')?.value,
+      isPasswordRecovery: isPasswordRecovery  // Passa a flag para definir o modo
+    }, {
+      width: '500px',
+      height: '280px',
+      disableClose: true
+    });
+  }
 
   goBack(): void {
     this.router.navigate(['/']);

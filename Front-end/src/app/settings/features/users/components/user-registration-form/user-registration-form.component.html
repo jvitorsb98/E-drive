@@ -1,22 +1,19 @@
+<div class="icon-row">
+  <button mat-icon-button aria-label="Back" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <mat-card-title>Cadastro</mat-card-title>
+</div>
 <div class="container-fluid p-3">
   <form [formGroup]="userForm">
-    <div class="icon-row">
-      <button mat-icon-button aria-label="Back" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-    </div>
-    <div class="d-flex justify-content-center header-container py-3">
-      <mat-card-title>
-        Cadastro
-      </mat-card-title>
-    </div>
-
     <!-- Nome -->
-    <div class="col-md-12" class="form-floating mb-3">
+    <div class="col-md-12" class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Nome completo:</mat-label>
           <input type="text" name="name" matInput formControlName="name" required aria-describedby="Help" />
+          <mat-error *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.dirty || userForm.get('name')?.touched"
+            class="mat-error-text">O <strong>Nome</strong> é obrigatório.</mat-error>
         </mat-form-field>
 
         <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('hasNumbers')">
@@ -28,11 +25,10 @@
           <mat-error class="mat-error-name-email">O <strong>Nome</strong> deve ter pelo menos {{
             userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
         </div>
-
       </mat-card>
     </div>
     <!-- Email -->
-    <div class="col-md-12" class="form-floating mb-3">
+    <div class="col-md-12" class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Email:</mat-label>
@@ -48,7 +44,7 @@
       </mat-card>
     </div>
     <!-- Data de nascimento -->
-    <div class="col-md-12" class="form-floating mb-3">
+    <div class="col-md-12" class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Data de nascimento:</mat-label>
@@ -65,7 +61,7 @@
       </mat-card>
     </div>
     <!-- Código do país e telefone celular -->
-    <div class="col-md-12 form-floating mb-3">
+    <div class="col-md-12 form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <div class="form-container">
           <mat-form-field class="custom-select">

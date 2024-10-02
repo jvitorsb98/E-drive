@@ -10,12 +10,12 @@ import { UserDataService } from '../../../../core/services/user/userdata/user-da
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 
 // Importa os módulos do Angular
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 // Importa o Swal para alertas
 import Swal from 'sweetalert2';
@@ -26,6 +26,11 @@ import Swal from 'sweetalert2';
   styleUrls: ['./modal-form-vehicle.component.scss']
 })
 export class ModalFormVehicleComponent implements OnInit {
+
+  // Referência para o painel de autocomplete
+  @ViewChild('brandInput', { read: MatAutocompleteTrigger }) autoBrandTrigger!: MatAutocompleteTrigger;
+  @ViewChild('modelInput', { read: MatAutocompleteTrigger }) autoModelTrigger!: MatAutocompleteTrigger;
+  @ViewChild('versionInput', { read: MatAutocompleteTrigger }) autoVersionTrigger!: MatAutocompleteTrigger;
 
   userVehicle!: UserVehicle;
   vehicle!: Vehicle
@@ -327,6 +332,39 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
+  // Alterna a abertura do painel de autocomplete
+  toggleAutocomplete(field: string, event: MouseEvent) {
+    event.stopPropagation();
+
+    let trigger: MatAutocompleteTrigger | undefined;
+
+    // Determine qual trigger usar baseado no campo
+    switch (field) {
+      case 'brand':
+        trigger = this.autoBrandTrigger;
+        break;
+      case 'model':
+        trigger = this.autoModelTrigger;
+        break;
+      case 'version':
+        trigger = this.autoVersionTrigger;
+        break;
+      default:
+        console.error('Campo não reconhecido:', field);
+        return;
+    }
+
+    // Verifica se o trigger é válido antes de chamar os métodos
+    if (trigger) {
+      if (trigger.panelOpen) {
+        trigger.closePanel();
+      } else {
+        trigger.openPanel();
+      }
+    } else {
+      console.error('Trigger não encontrado para o campo:', field);
+    }
+  }
   private isEditMode(): boolean {
     return !!this.data.vehicle && !!this.data.userVehicle;
   }

@@ -35,7 +35,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class ListMyAddressesComponent implements OnInit {
   // Colunas exibidas na tabela
-  displayedColumns: string[] = ['icon', 'postalCode', 'city', 'state', 'actions'];
+  displayedColumns: string[] = ['icon', 'city', 'neighborhood', 'state', 'actions'];
   dataSource = new MatTableDataSource<DataAddressDetails>(); // Fonte de dados para a tabela
   dataAddressDetails: DataAddressDetails[] = []; // Lista de endereços
 

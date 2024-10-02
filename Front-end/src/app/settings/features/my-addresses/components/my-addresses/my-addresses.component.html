@@ -25,6 +25,8 @@
                 <mat-label class="custom-label">CEP</mat-label>
                 <input type="text" name="zipCode" matInput formControlName="zipCode" [mask]="'00000-000'" required
                   aria-describedby="Help" (blur)="searchPostalCode()" />
+
+                <mat-error class="mat-error-text" *ngIf="addressForm.get('zipCode')?.hasError('required')"> O CEP é <strong>obrigatório</strong></mat-error>
               </mat-form-field>
 
               <div *ngIf="addressForm.get('zipCode')?.hasError('minlength') && addressForm.get('zipCode')?.dirty">
@@ -95,13 +97,19 @@
             <mat-card appearance="outlined" class="border-0">
               <mat-form-field>
                 <mat-label class="custom-label">Número</mat-label>
-                <input type="text" name="number" [mask]="'A0*'" matInput formControlName="number" required
+                <input type="text" name="number" matInput formControlName="number" required
                   aria-describedby="Help" (blur)="searchPostalCode()" />
               </mat-form-field>
-              <div *ngIf="addressForm.get('number')?.hasError('minlength') && addressForm.get('number')?.dirty">
-                <mat-error class="mat-error-text-minlength">O <strong>número</strong> deve ter pelo menos {{
-                  addressForm.get('number')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+              <div *ngIf="addressForm.get('number')?.hasError('maxlength') && addressForm.get('number')?.dirty">
+                <mat-error class="mat-error-text-minlength">
+                  O <strong>número</strong> deve ter no máximo {{ addressForm.get('number')?.errors?.['maxlength']?.requiredLength }} caracteres.
+                </mat-error>
               </div>
+              <div *ngIf="addressForm.get('number')?.hasError('pattern') && addressForm.get('number')?.dirty">
+                <mat-error class="mat-error-text-minlength">
+                  O <strong>número</strong> deve conter apenas letras, números e hífens. Você inseriu: "{{ addressForm.get('number')?.value }}"
+                </mat-error>
+              </div>              
             </mat-card>
           </div>
 

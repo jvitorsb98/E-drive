@@ -39,7 +39,8 @@
     </div>
     <div class="col-6">
       <h4 class="titulo-informacao">Tem Estação de Carregamento</h4>
-      <p class="informacao">{{ address.hasChargingStation ? 'Sim' : 'Não' }}</p>
+      <mat-icon class="check" *ngIf="address.hasChargingStation">check</mat-icon>
+      <mat-icon class="error" *ngIf="!address.hasChargingStation">remove</mat-icon>
     </div>
   </div>
 </div>

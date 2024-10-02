@@ -37,19 +37,18 @@
 							</td>
 						</ng-container>
 
-
-						<ng-container matColumnDef="postalCode">
-							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>País</strong>
-							</th>
-							<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.country}}</strong>
-							</td>
-						</ng-container>
-
 						<ng-container matColumnDef="city">
 							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
 								<strong>Cidade</strong>
 							</th>
 							<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.city}}</strong>
+							</td>
+						</ng-container>
+
+						<ng-container matColumnDef="neighborhood">
+							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Bairro</strong>
+							</th>
+							<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.neighborhood}}</strong>
 							</td>
 						</ng-container>
 

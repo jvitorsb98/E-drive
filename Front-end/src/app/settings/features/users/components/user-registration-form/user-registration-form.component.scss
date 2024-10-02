@@ -1,9 +1,16 @@
-/* Form */
-.top-bar {
-  position: sticky;
-  width: 100%;
-  background-color: #19B6DD;
-  padding: .5rem 0;
+.icon-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  margin-top: 30px; /* Ajuste conforme necessário */
+  margin-bottom: 25px;
+}
+
+.icon-row button {
+  position: absolute;
+  left: 0;
+  margin-left: 10px; 
 }
 
 .custom-icon-cellfone {

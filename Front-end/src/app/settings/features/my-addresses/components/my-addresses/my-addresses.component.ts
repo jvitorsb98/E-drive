@@ -5,9 +5,6 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 // Importa as classes FormBuilder, FormControl, FormGroup e Validators para construção e validação de formulários
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-// Importa MatSnackBar para exibir mensagens de feedback ao usuário
-import { MatSnackBar } from '@angular/material/snack-bar';
-
 // Importa MAT_DIALOG_DATA, MatDialog e MatDialogRef para manipulação de diálogos
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
@@ -21,13 +18,10 @@ import { AddressService } from '../../../../core/services/Address/address.servic
 import { PostalCodeService } from '../../../../core/services/apis/postal-code/postal-code.service';
 
 // Importa DataAddressDetails e IAddressRequest para definição dos tipos de dados de endereço
-import { DataAddressDetails, IAddressRequest } from '../../../../core/models/inter-Address';
+import { DataAddressDetails } from '../../../../core/models/inter-Address';
 
 // Importa ActivatedRoute e Router para manipulação de rotas e navegação
 import { ActivatedRoute, Router } from '@angular/router';
-
-// Importa Subscription para gerenciar inscrições em observáveis
-import { Subscription } from 'rxjs';
 
 // Importa Swal para exibir alertas e notificações bonitos
 import { HttpErrorResponse } from '@angular/common/http';
@@ -43,29 +37,17 @@ export class MyAddressesComponent implements OnInit {
   // Input que pode ser passado de um componente pai, usado para reutilização em atualizações
   @Input() addressData: any = null;
 
-  // Input que define o título para o formulário, utilizado em atualizações
-  @Input() title: string = 'Registrar endereço';
-
   // Formulário para manipulação dos dados de endereço
   addressForm: FormGroup;
 
   // Indicador de carregamento durante a busca de CEP
   isLoading: boolean = false;
 
-  // Define a posição do rótulo no formulário
-  labelPosition: "before" | "after" = "before";
-
-  // Dados do endereço a serem manipulados
-  address!: IAddressRequest;
-
   // Flag para indicar se está no modo de edição
   editAddress: boolean = false;
 
   // Título da ação que está sendo realizada
   actionTitle: string = "";
-
-  // Lista de inscrições em observáveis para gerenciar a limpeza
-  private subscriptions: Subscription[] = [];
 
   // Construtor do componente
   constructor(
@@ -81,12 +63,12 @@ export class MyAddressesComponent implements OnInit {
     // Inicializa o formulário com controles e validações
     this.addressForm = this.fb.group({
       country: new FormControl('Brasil', Validators.required), // Campo obrigatório para o país
-      zipCode: new FormControl('', [Validators.required]), // Campo obrigatório para o CEP
+      zipCode: new FormControl('', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]), // Campo obrigatório para o CEP
       state: new FormControl('', Validators.required), // Campo obrigatório para o estado
       city: new FormControl('', Validators.required), // Campo obrigatório para a cidade
       neighborhood: new FormControl('', Validators.required), // Campo obrigatório para o bairro
       street: new FormControl('', Validators.required), // Campo obrigatório para a rua
-      number: new FormControl('', Validators.required), // Campo obrigatório para o número
+      number: new FormControl('', [Validators.required, Validators.maxLength(10), Validators.pattern('^[0-9A-Za-z-]+$')]), // Campo obrigatório para o número
       complement: new FormControl(''), // Campo opcional para complemento
       hasChargingStation: new FormControl(false), // Campo para indicar se há estação de carregamento
     });
@@ -110,35 +92,6 @@ export class MyAddressesComponent implements OnInit {
         this.searchPostalCode();
       }
     });
-
-    //Inscreve-se para receber dados do endereço selecionado e do título
-    const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
-      this.addressData = data;
-      if (this.addressData) {
-        this.addressForm.patchValue(this.addressData);
-      }
-    });
-
-    const titleSubscription = this.addressService.selectedTitle$.subscribe(title => {
-      this.title = title;
-    });
-
-    // Adiciona as inscrições à lista para gerenciamento
-    this.subscriptions.push(addressSubscription, titleSubscription);
-  }
-
-
-  /**
-   * Limpa as inscrições em observáveis para evitar vazamentos de memória
-   *
-   * Este método é chamado quando o componente é destruído. Ele percorre a lista
-   * de inscrições e as fecha, impedindo que elas continuem a consumir recursos.
-   *
-   * @returns void
-   */
-  ngOnDestroy() {
-    // Limpa as inscrições para evitar vazamentos de memória
-    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
   /**
@@ -249,7 +202,6 @@ export class MyAddressesComponent implements OnInit {
           next: () => {
             this.alertasService.showSuccess('Atualização de endereço !!', 'Endereço atualizado com sucesso!').then(() => {
               this.addressForm.reset();
-              this.subscriptions.forEach(sub => sub.unsubscribe());
               this.closeModal();
             })
           },

@@ -229,15 +229,12 @@
           </div>
         </div>
         <div class="buttons-container py-3">
-          <button class="btn w-100 mb-3" type="button-confirm" (click)="resetForm()">Redefinir</button>
-          <button class="btn w-100 mb-2" type="button-confirm" (click)="submitForm()"
-            [disabled]="!vehicleForm.valid">{{ editVehicle ? 'Atualizar Veículo' : 'Cadastrar Veículo' }}</button>
-        </div>
-        <div *ngIf="editVehicle" class="buttons-container py-3">
-          <!-- TODO: Atualizar Todos os Botoes para esse modelo comentado -->
-          <!-- <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAdd()"
-          text="Nova Versão de Veiculo"></app-ui-button> -->
-          <button class="btn w-100 mb-2" type="button-cancel" (click)="closeModal()">Cancelar</button>
+          <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" text="Redefinir"
+            (click)="resetForm()"></app-ui-button>
+          <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="submitForm()"
+            [disabled]="!vehicleForm.valid">{{ editVehicle ? 'Atualizar Veículo' : 'Cadastrar Veículo'
+            }}</app-ui-button>
+            <app-ui-button *ngIf="editVehicle" class="w-100" typeBtn="outline-secondary" text="Cancelar" (click)="closeModal()"></app-ui-button>
         </div>
       </div>
     </form>
