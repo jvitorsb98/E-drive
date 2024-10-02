@@ -59,7 +59,7 @@ export class UserVehicleListComponent {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
-  // Obtém a lista de veículos do usuário
+    // Obtém a lista de veículos do usuário
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
@@ -68,8 +68,11 @@ export class UserVehicleListComponent {
         if (response && response.content && Array.isArray(response.content)) {
           this.userVehicleList = response.content;
 
-          // Cria um array de observables para buscar detalhes dos veículos
-          const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
+          // Filtra os veículos que estão ativados
+          const activeVehicles = this.userVehicleList.filter(vehicle => vehicle.activated);
+
+          // Cria um array de observables para buscar detalhes dos veículos ativados
+          const vehicleDetailsObservables = activeVehicles.map(userVehicle =>
             this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
               map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
             )
@@ -96,6 +99,7 @@ export class UserVehicleListComponent {
       }
     });
   }
+
 
   // Deleta um veículo do usuário
   deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
