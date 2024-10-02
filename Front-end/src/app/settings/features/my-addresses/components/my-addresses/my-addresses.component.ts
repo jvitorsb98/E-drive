@@ -108,6 +108,8 @@ export class MyAddressesComponent implements OnInit {
       }
     });
 
+    //TODO: concertar o campo de complemento
+
     //Inscreve-se para receber dados do endereço selecionado e do título
     const addressSubscription = this.addressService.selectedAddress$.subscribe(data => {
       this.addressData = data;
@@ -205,7 +207,7 @@ export class MyAddressesComponent implements OnInit {
             this.alertasService.showSuccess('Atualização de endereço !!', 'Endereço atualizado com sucesso!').then(() => {
               this.addressForm.reset();
               this.subscriptions.forEach(sub => sub.unsubscribe());
-              this.router.navigate(['e-driver/users/my-addresses']);
+              this.closeModal();
             })
           },
           error: (erro: HttpErrorResponse) => {
