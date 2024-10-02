@@ -6,6 +6,18 @@
   padding: .5rem 0;
 }
 
+.icon-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.icon-row button {
+  position: absolute;
+  left: 0; /* Mantém o botão à esquerda */
+}
+
 .custom-icon-cellfone {
   font-size: 20px;
   color: #19B6DD;

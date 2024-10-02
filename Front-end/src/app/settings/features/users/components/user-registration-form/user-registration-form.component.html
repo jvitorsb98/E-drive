@@ -1,16 +1,11 @@
+<div class="icon-row">
+  <button mat-icon-button aria-label="Back" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <mat-card-title>Cadastro</mat-card-title>
+</div>
 <div class="container-fluid p-3">
   <form [formGroup]="userForm">
-    <div class="icon-row">
-      <button mat-icon-button aria-label="Back" (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-    </div>
-    <div class="d-flex justify-content-center header-container py-3">
-      <mat-card-title>
-        Cadastro
-      </mat-card-title>
-    </div>
-
     <!-- Nome -->
     <div class="col-md-12" class="form-floating mb-3">
       <mat-card appearance="outlined" class="border-0">
