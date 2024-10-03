@@ -177,13 +177,14 @@ public class AddressController {
     })
     public ResponseEntity<Page<DataAddressDetails>> listAllAddresses(
             @Parameter(description = "Pagination and sorting information")
-            @PageableDefault(size = 10, sort = {"city"}) Pageable pageable
+            Pageable pageable
     ) {
         LOGGER.info("Retrieving all addresses");
         Page<DataAddressDetails> addresses = addressService.getAll(pageable);
         LOGGER.info("All addresses retrieved successfully");
         return new ResponseEntity<>(addresses, HttpStatus.OK);
     }
+
 
     /**
      * Atualiza os detalhes de um endereço existente.
