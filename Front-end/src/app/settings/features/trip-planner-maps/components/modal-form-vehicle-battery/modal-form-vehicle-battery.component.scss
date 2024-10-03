@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: -25px;
 }
 
 .container-fluid {
@@ -39,7 +39,11 @@
 }
 
 .custom-select {
-  margin-bottom: 0px; // Ajusta o espaço abaixo do último input
+  margin-bottom: -5px; // Ajusta o espaço abaixo do último input
+}
+
+.custom-select-bater{
+  margin-bottom: -15px; 
 }
 
 .hidden {
@@ -78,6 +82,7 @@
   line-height: 1.5;
   text-align: left;
   margin-left: 1px;
+  margin-bottom: -16px;
 }
 
 .custom-icon {
