@@ -1,3 +1,4 @@
+import { AlertasService } from './../../../services/Alertas/alertas.service';
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,7 +8,6 @@ import { ILoginRequest } from '../../../models/inter-Login';
 import { ModalRecoverPasswordComponent } from '../../login/recover-password/components/modal-recover-password/modal-recover-password.component';
 import { Router } from '@angular/router';
 import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
-import Swal from 'sweetalert2';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordVisibilityToggle } from '../../../../shared/validators/password-visibility-toggle';
 
@@ -28,6 +28,7 @@ export class UserLoginModalComponent implements OnInit {
     private router: Router,
     private renderer: Renderer2,
     private el: ElementRef,
+    private alertasService: AlertasService
   ) { }
 
   ngOnInit(): void {
@@ -37,7 +38,7 @@ export class UserLoginModalComponent implements OnInit {
   private initLoginForm(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
     PasswordVisibilityToggle.togglePasswordVisibility(this.renderer, this.el);
   }
@@ -81,39 +82,19 @@ export class UserLoginModalComponent implements OnInit {
 
   private handleLoginSuccess(): void {
     this.isLoading = false;
-    // TODO: uso de success com o swal this.showAlert('Bem vindo!', 'Login efetuado com sucesso!', true);
     this.router.navigate(['e-driver/dashboard']);
     this.dialog.closeAll();
   }
 
   private handleLoginError(error: HttpErrorResponse): void {
     this.isLoading = false;
-
-    this.showAlert('Erro de Autenticação', error.message);
+    this.alertasService.showError('Erro de Autenticação', error.error.message);
     this.setFormErrors();
   }
 
   private setFormErrors(): void {
     this.loginForm.get('password')?.setErrors({ invalid: true });
     this.loginForm.get('email')?.setErrors({ invalid: true });
-  }
-
-  //TODO - Esse metodo pode ser flexível em uma classe de utilitarios ou em um servico, posivel mudança futura
-  private showAlert(title: string = 'Erro', text: string = 'Algo deu errado', success: boolean = false): void {
-    const icon = success ? 'success' : 'error';
-    const popup = success ? 'custom-swal-popup-success' : 'custom-swal-popup-error';
-    const confirmButton = success ? 'custom-swal-confirm-button-success' : 'custom-swal-confirm-button-error';
-
-    Swal.fire({
-      icon: icon,
-      title: title,
-      text: text,
-      confirmButtonText: 'Ok',
-      customClass: {
-        popup: popup,
-        confirmButton: confirmButton
-      }
-    });
   }
 
   closeDialog(): void {
