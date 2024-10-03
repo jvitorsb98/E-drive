@@ -37,41 +37,63 @@ export class ModalFormModelComponent {
   brands: { name: string; id: number }[] = []; // Lista de marcas disponíveis
   filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Observable para marcas filtradas
 
+  /**
+   * Construtor do componente ModalFormModel.
+   *
+   * @param modelService Serviço para operações relacionadas a modelos.
+   * @param brandService Serviço para operações relacionadas a marcas.
+   * @param formBuilder Construtor de formulários.
+   * @param dialog Serviço de diálogo.
+   * @param dialogRef Referência ao diálogo.
+   * @param data Dados do modelo recebidos no modal.
+   */
   constructor(
-    private modelService: ModelService, // Serviço para modelos
-    private brandService: BrandService, // Serviço para marcas
-    private formBuilder: FormBuilder, // Construtor de formulários
-    private dialog: MatDialog, // Serviço de diálogo
-    public dialogRef: MatDialogRef<ModalFormModelComponent>, // Referência ao diálogo
-    @Inject(MAT_DIALOG_DATA) public data: Model // Dados recebidos para o modal
+    private modelService: ModelService,
+    private brandService: BrandService,
+    private formBuilder: FormBuilder,
+    private dialog: MatDialog,
+    public dialogRef: MatDialogRef<ModalFormModelComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Model
   ) { }
 
+  /**
+   * Método chamado quando o componente é inicializado.
+   *
+   * **Passo a passo de chamada de métodos:**
+   * 1. **ngOnInit**: O modal é aberto com os dados do modelo recebidos via `MAT_DIALOG_DATA`.
+   * 2. **loadBrands**: Carrega as marcas disponíveis.
+   * 3. **buildForm**: Constrói o formulário do modelo.
+   * 4. **fillForm**: Preenche o formulário com os dados do modelo (se em modo de edição).
+   */
   ngOnInit(): void {
-    this.editModel = !!this.data?.name; // Atribui true se data.name existir, indicando que estamos editando
-    this.loadBrands(); // Carrega a lista de marcas
-    this.buildForm(); // Constrói o formulário
+    this.editModel = !!this.data?.name;
+    this.loadBrands();
+    this.buildForm();
     if (this.editModel) {
-      this.fillForm(); // Preenche o formulário com dados existentes, se estiver editando
-      this.modelForm.get('name')?.enable(); // Habilita o campo 'name' para edição
+      this.fillForm();
+      this.modelForm.get('name')?.enable();
     }
   }
 
-  // Constrói o formulário com validação
+  /**
+   * Constrói o formulário com validação.
+   */
   buildForm() {
     this.modelForm = this.formBuilder.group({
       name: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]),
       brand: new FormControl(null, [Validators.required]),
     });
-    this.monitorBrandChanges(); // Monitora alterações no campo 'brand'
+    this.monitorBrandChanges();
   }
 
-  // Preenche o formulário com dados existentes
+  /**
+   * Preenche o formulário com os dados do modelo, se estiver editando.
+   */
   fillForm() {
     if (this.data.name) {
       this.modelForm.patchValue({
         name: this.data.name,
         brand: this.data.brand.name
-        // activated: this.data.activated
       });
       console.log("fillForm", this.modelForm.value);
     } else {
@@ -79,12 +101,14 @@ export class ModalFormModelComponent {
     }
   }
 
-  // Carrega a lista de marcas disponíveis
+  /**
+   * Carrega a lista de marcas disponíveis a partir do serviço.
+   */
   loadBrands() {
     this.brandService.getAll().subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
-        this.filterBrands(); // Inicializa o filtro após carregar as marcas
+        this.filterBrands();
       },
       error: (error) => {
         console.error('Erro ao carregar as marcas', error);
@@ -92,16 +116,15 @@ export class ModalFormModelComponent {
     });
   }
 
-  // Submete o formulário para criar ou atualizar um modelo
+  /**
+   * Submete o formulário para criar ou atualizar um modelo.
+   */
   onSubmit() {
     if (this.modelForm.valid) {
-      console.log('Formulário válido:', this.modelForm.value);
-      const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a ação com base em estar editando ou criando
+      const action = this.isEditing() ? 'atualizada' : 'cadastrada';
 
-      // Obtém o ID da marca selecionada
       const selectedBrandId = this.getSelectedBrandId();
 
-      // Cria o objeto com os dados do modelo e o ID da marca
       const modelData = {
         ...this.data,
         name: this.modelForm.get('name')?.value,
@@ -121,7 +144,7 @@ export class ModalFormModelComponent {
             showConfirmButton: true,
             confirmButtonColor: 'red',
           });
-          return of(null); // Continua a sequência de observáveis com um valor nulo
+          return of(null);
         })
       ).subscribe(() => {
         Swal.fire({
@@ -132,7 +155,7 @@ export class ModalFormModelComponent {
           confirmButtonColor: '#19B6DD',
         }).then((result) => {
           if (result.isConfirmed || result.isDismissed) {
-            this.closeModal(); // Envia os dados atualizados ao fechar o modal
+            this.closeModal();
           }
         });
       });
@@ -141,7 +164,9 @@ export class ModalFormModelComponent {
     }
   }
 
-  // Filtra a lista de marcas com base na entrada do usuário
+  /**
+   * Filtra a lista de marcas com base na entrada do usuário.
+   */
   private filterBrands() {
     this.modelForm.get('brand')!.valueChanges.pipe(
       startWith(''),
@@ -149,32 +174,44 @@ export class ModalFormModelComponent {
         const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
         const filtered = this.brands.filter(brand => brand.name.toLowerCase().includes(filterValue));
 
-        this.noBrandFound = filtered.length === 0; // Atualiza a variável noBrandFound
+        this.noBrandFound = filtered.length === 0;
 
         return filtered;
       })
     ).subscribe(filteredBrands => {
-      this.filteredBrands = of(filteredBrands); // Atualiza o observable para o autocomplete
+      this.filteredBrands = of(filteredBrands);
     });
   }
 
-  // Manipula a seleção de uma marca no autocomplete
+  /**
+   * Manipula a seleção de uma marca no autocomplete.
+   *
+   * @param event O evento de seleção do autocomplete.
+   */
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value;
-    this.modelForm.get('brand')?.setValue(selectedBrand.name); // Atualiza o valor do input
+    this.modelForm.get('brand')?.setValue(selectedBrand.name);
     console.log('Marca selecionada:', selectedBrand);
   }
 
-  // Obtém o ID da marca selecionada
+  /**
+   * Obtém o ID da marca selecionada.
+   *
+   * @returns O ID da marca selecionada ou undefined.
+   */
   private getSelectedBrandId(): number | undefined {
     const selectedBrandName = this.modelForm.get('brand')?.value;
     const selectedBrand = this.brands.find(brand => brand.name === selectedBrandName);
     return selectedBrand?.id;
   }
 
-  // Alterna a abertura do painel de autocomplete
+  /**
+   * Alterna a abertura do painel de autocomplete.
+   *
+   * @param event O evento de clique.
+   */
   toggleAutocomplete(event: Event) {
-    event.stopPropagation(); // Impede que o clique cause conflito com o foco do input
+    event.stopPropagation();
     if (this.autocompleteTrigger.panelOpen) {
       this.autocompleteTrigger.closePanel();
     } else {
@@ -182,40 +219,51 @@ export class ModalFormModelComponent {
     }
   }
 
-  // Monitora alterações no campo 'brand' para habilitar/desabilitar o campo 'name'
+  /**
+   * Monitora alterações no campo 'brand' para habilitar/desabilitar o campo 'name'.
+   */
   monitorBrandChanges(): void {
     this.modelForm.get('brand')?.valueChanges.subscribe((brandValue) => {
       const selectedBrand = this.brands.find(brand => brand.name === brandValue);
 
       if (selectedBrand) {
-        this.modelForm.get('name')?.enable(); // Habilita o campo 'name' se uma marca válida for selecionada
+        this.modelForm.get('name')?.enable();
       } else {
-        this.modelForm.get('name')?.disable(); // Desabilita o campo 'name' se não houver uma marca válida selecionada
+        this.modelForm.get('name')?.disable();
       }
     });
   }
 
-  // Verifica se estamos editando um modelo
+  /**
+   * Verifica se estamos editando um modelo.
+   *
+   * @returns Retorna true se for edição.
+   */
   isEditing(): boolean {
-    return !!this.data; // Retorna true se this.data estiver definido
+    return !!this.data;
   }
 
-  // Fecha o modal
+  /**
+   * Fecha o modal.
+   */
   closeModal() {
     this.dialogRef.close();
   }
 
-  // Abre o modal de FAQ
+  /**
+   * Abre o modal de FAQ.
+   */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
         faqs: [
           {
             question: 'Como cadastrar um novo modelo?',
-            answer: 'Para cadastrar um novo modelo, clique no botão "Novo modelo" localizado na parte inferior direita da tabela. Isso abrirá um formulário onde você poderá inserir os detalhes do novo modelo. Após preencher o formulário, clique em "Finalizar cadastro" para adicionar o novo modelo à lista.'
+            answer: 'Para cadastrar um novo modelo, clique no botão "Novo modelo" localizado na parte inferior direita da tabela.'
           },
           {
             question: 'Como visualizar os detalhes de um modelo?',
+
             answer: 'Para visualizar os detalhes de um modelo existente, localize o modelo desejado na tabela e clique no botão de edição (ícone de lápis) ao lado do modelo. Isso abrirá um formulário com os detalhes do modelo, onde você poderá visualizar e editar as informações conforme necessário.'
           }
         ]
