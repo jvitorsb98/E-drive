@@ -1,5 +1,7 @@
 package br.com.cepedi.e_drive.model.records.address.update;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Record que encapsula os dados necessários para atualizar um endereço existente.
  * Este record é utilizado como objeto de transferência de dados (DTO) nas operações de atualização de endereços.
@@ -29,6 +31,9 @@ public record DataUpdateAddress(
 
         String street,
 
+        String complement,
+
+        @JsonProperty("has_ChargingStation")
         Boolean plugin
 
 ) {

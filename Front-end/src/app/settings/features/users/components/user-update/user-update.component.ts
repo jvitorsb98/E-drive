@@ -132,11 +132,14 @@ export class UserUpdateComponent implements OnInit {
   private loadUserData(): void {
     this.userService.getAuthenticatedUserDetails().subscribe({
       next: (user: User) => {
+        const birthDate = new Date(user.birth!);
+        const userBirthDate = new Date(birthDate.getTime() + birthDate.getTimezoneOffset() * 60000);
+  
         // Preenche o formulário com os dados do usuário
         this.userForm.patchValue({
           name: user.name,
           email: user.email,
-          birth: user.birth,
+          birth: userBirthDate,
           cellPhone: user.cellPhone.replace(/^\+\d{1,3} /, ''), // Remove o código do país para exibição
           countryCode: user.cellPhone.split(' ')[0].replace(/^\+/, '').slice(0, 2) // Extrai o código do país
         });
