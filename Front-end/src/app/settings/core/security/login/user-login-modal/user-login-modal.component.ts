@@ -88,7 +88,7 @@ export class UserLoginModalComponent implements OnInit {
 
   private handleLoginError(error: HttpErrorResponse): void {
     this.isLoading = false;
-    this.alertasService.showError('Erro de Autenticação', error.error.message);
+    this.alertasService.showError('Erro de Autenticação', error.message);
     this.setFormErrors();
   }
 
