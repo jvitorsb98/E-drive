@@ -6,7 +6,7 @@ import { ModalService } from '../../../../core/services/modal/modal.service';
 import { AuthService } from '../../../../core/security/services/auth/auth.service';
 import { ILoginRequest } from '../../../models/inter-Login';
 import { ModalRecoverPasswordComponent } from '../../login/recover-password/components/modal-recover-password/modal-recover-password.component';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordVisibilityToggle } from '../../../../shared/validators/password-visibility-toggle';
@@ -19,6 +19,7 @@ import { PasswordVisibilityToggle } from '../../../../shared/validators/password
 export class UserLoginModalComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
+  successMessage: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -26,6 +27,7 @@ export class UserLoginModalComponent implements OnInit {
     private modal: ModalService,
     private auth: AuthService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private renderer: Renderer2,
     private el: ElementRef,
     private alertasService: AlertasService
@@ -33,6 +35,16 @@ export class UserLoginModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.initLoginForm();
+
+    // Captura o parâmetro 'message' da URL
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.successMessage = params['message'] || null;
+
+      // Verifica se successMessage não é null e então chama o método para processá-la
+      if (this.successMessage) {
+        this.alertasService.showSuccess('Conta ativada', this.successMessage, 'OK');
+      }
+    });
   }
 
   private initLoginForm(): void {

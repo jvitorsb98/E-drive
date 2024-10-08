@@ -215,9 +215,10 @@ public class AuthController {
             authService.activateUser(token);
             tokenService.revokeToken(token);
 
-            // Redireciona para a URL desejada
+            // Inclui a mensagem na URL como um query parameter
+            String redirectUrl = "http://localhost:4200/e-driver/login?message=Conta+ativada+com+sucesso";
             return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create("http://localhost:4200/e-driver/login"))
+                    .location(URI.create(redirectUrl))
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
