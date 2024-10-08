@@ -8,7 +8,10 @@ import br.com.cepedi.e_drive.security.service.token.TokenService;
 import br.com.cepedi.e_drive.security.service.user.validations.disabled.ValidationDisabledUser;
 import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
 import com.auth0.jwt.JWT;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,6 +45,9 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private List<ValidationDisabledUser> validationDisabledUserList;
 
+    @Autowired
+    private MessageSource messageSource;
+
 
     /**
      * Carrega um {@link UserDetails} com base no email fornecido.
@@ -54,7 +60,13 @@ public class AuthService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserDetails user = repository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
+            // Obtém a mensagem traduzida com base na linguagem atual do sistema
+            String errorMessage = messageSource.getMessage(
+                    "user.not.found",
+                    new Object[]{email},
+                    LocaleContextHolder.getLocale()
+            );
+            throw new UsernameNotFoundException(errorMessage);
         }
         return user;
     }

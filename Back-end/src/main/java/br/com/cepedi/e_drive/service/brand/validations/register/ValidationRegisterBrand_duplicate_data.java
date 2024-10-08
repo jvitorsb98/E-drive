@@ -2,8 +2,12 @@ package br.com.cepedi.e_drive.service.brand.validations.register;
 
 import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
 import br.com.cepedi.e_drive.repository.BrandRepository;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Classe responsável por validar se já existe uma marca com o mesmo nome durante o processo de registro.
@@ -16,20 +20,29 @@ public class ValidationRegisterBrand_duplicate_data implements ValidationBrandRe
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se já existe uma marca com o mesmo nome no sistema.
      * <p>
      * Se o nome fornecido para a marca já existir (ignorando maiúsculas e minúsculas), uma exceção será lançada.
      *
      * @param dataRegisterBrand Os dados da marca que estão sendo registrados.
-     * @throws RuntimeException Se o nome da marca já estiver cadastrado no sistema.
+     * @throws ValidationException Se o nome da marca já estiver cadastrado no sistema.
      */
     @Override
     public void validation(DataRegisterBrand dataRegisterBrand) {
         boolean exists = brandRepository.existsByNameIgnoreCase(dataRegisterBrand.name());
 
         if (exists) {
-            throw new RuntimeException("A brand with the name '" + dataRegisterBrand.name() + "' already exists.");
+            // Busca a mensagem internacionalizada e lança a exceção
+            String errorMessage = messageSource.getMessage(
+                    "brand.register.duplicate",
+                    new Object[]{dataRegisterBrand.name()},
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }

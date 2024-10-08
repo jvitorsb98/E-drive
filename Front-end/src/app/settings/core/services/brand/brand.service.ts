@@ -28,6 +28,7 @@ export class BrandService {
   register(brand: Brand): Observable<Brand> {
     return this.http.post<Brand>(this.brandUrl, brand).pipe(
       map(response => {
+        console.log(response + 'O')
         return response;
       }),
       catchError(e => {
