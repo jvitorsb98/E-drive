@@ -47,7 +47,6 @@ public class ModelService {
      *
      * @param data Dados do modelo a ser registrado.
      * @return Detalhes do modelo registrado.
-     * @throws ValidationException Se a validação da marca associada falhar.
      */
     public DataModelDetails register(DataRegisterModel data) {
         validationRegisterModelList.forEach(v -> v.validation(data));
@@ -63,7 +62,6 @@ public class ModelService {
      * @param data Dados atualizados do modelo.
      * @param id ID do modelo a ser atualizado.
      * @return Detalhes do modelo atualizado.
-     * @throws ValidationException Se a validação do modelo falhar.
      */
     public DataModelDetails update(DataUpdateModel data, Long id) {
         modelValidationUpdateList.forEach(v -> v.validation(data, id));

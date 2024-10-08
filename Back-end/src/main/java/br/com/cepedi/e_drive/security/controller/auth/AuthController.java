@@ -72,11 +72,10 @@ public class AuthController {
     @Operation(summary = "User login", description = "Authenticates the user and generates an authentication token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful"),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DataAuth data) {
+    public ResponseEntity<Object> login(@RequestBody @Valid DataAuth data) {
         User user = userService.getUserActivatedByEmail(data.login());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not registered");
