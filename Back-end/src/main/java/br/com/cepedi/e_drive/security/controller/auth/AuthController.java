@@ -31,6 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -213,7 +214,11 @@ public class AuthController {
             }
             authService.activateUser(token);
             tokenService.revokeToken(token);
-            return ResponseEntity.ok("User account activated successfully");
+
+            // Redireciona para a URL desejada
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create("http://localhost:4200/e-driver/login"))
+                    .build();
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate user account.");
