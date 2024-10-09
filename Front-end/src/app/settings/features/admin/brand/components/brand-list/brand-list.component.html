@@ -62,8 +62,8 @@
           <td class="td-table" mat-cell *matCellDef="let brand">
             <mat-icon class="icone-table" (click)="openModalViewBrand(brand)">visibility</mat-icon>
             <mat-icon class="icone-table" (click)="openModalEditBrand(brand)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="deleteBrand(brand)" *ngIf="brand.activated">check</mat-icon>
-            <mat-icon class="icone-table" (click)="deleteBrand(brand)" *ngIf="!brand.activated">close</mat-icon>
+            <mat-icon class="icone-table" (click)="disableBrand(brand)" *ngIf="brand.activated">delete</mat-icon>
+            <mat-icon class="icone-table" (click)="activateBrand(brand)" *ngIf="!brand.activated">check</mat-icon>
           </td>
         </ng-container>
 

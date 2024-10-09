@@ -64,33 +64,40 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteBrand(brandData: Brand) {
-    console.log('Deletando marca:', brandData);
-    this.brandService.delete(brandData.id).pipe(
-      catchError(() => {
-        Swal.fire({
-          title: 'Erro!',
-          icon: 'error',
-          text: 'Ocorreu um erro ao deletar a marca. Tente novamente mais tarde.',
-          showConfirmButton: true,
-          confirmButtonColor: 'red',
+  disableBrand(brand: Brand) {
+    Swal.fire({
+      title: 'Desabilitar Marca',
+      text: `Você tem certeza que deseja desabilitar a marca "${brand.name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#19B6DD',
+      cancelButtonColor: 'red',
+      confirmButtonText: 'Sim, desabilitar!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.brandService.delete(brand.id).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Sucesso!',
+              text: 'A marca foi desabilitada com sucesso!',
+              icon: 'success',
+              confirmButtonColor: '#19B6DD',
+            }).then(() => this.loadBrands()); // Atualiza a lista após desabilitação
+          },
+          error: (error) => {
+            Swal.fire({
+              title: 'Erro!',
+              text: 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.',
+              icon: 'error',
+              confirmButtonColor: 'red',
+            });
+          }
         });
-        return of(null); // Continua a sequência de observáveis com um valor nulo
-      })
-    ).subscribe(() => {
-      Swal.fire({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: 'A marca foi deletada com sucesso!',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      }).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          this.loadBrands(); // Atualiza a lista após exclusão
-        }
-      });
+      }
     });
   }
+  
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -125,4 +132,42 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       data: brandList
     }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
   }
+
+
+  // No arquivo: brand-list.component.ts
+activateBrand(brand: Brand) {
+  Swal.fire({
+    title: 'Ativar Marca',
+    text: `Você tem certeza que deseja ativar a marca "${brand.name}"?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#19B6DD',
+    cancelButtonColor: 'red',
+    confirmButtonText: 'Sim, ativar!',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.brandService.activated(brand.id).subscribe({
+        next: () => {
+          Swal.fire({
+            title: 'Sucesso!',
+            text: 'A marca foi ativada com sucesso!',
+            icon: 'success',
+            confirmButtonColor: '#19B6DD',
+          }).then(() => this.loadBrands()); // Atualiza a lista após ativação
+        },
+        error: (error) => {
+          Swal.fire({
+            title: 'Erro!',
+            text: 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.',
+            icon: 'error',
+            confirmButtonColor: 'red',
+          });
+        }
+      });
+    }
+  });
+}
+
+  
 }
