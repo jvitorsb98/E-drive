@@ -1,27 +1,39 @@
-// Imports do Angular
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Role } from '../../../../core/models/role';
+import { UserService } from '../../../../core/services/user/user.service';
+import { User } from '../../../../core/models/user';
 
-// Componente para o Dashboard
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'] // Corrigido para 'styleUrls'
+  styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+  user: User | null = null;
+  isAdmin: boolean = false; // Adicionando esta propriedade
 
-  constructor() { }
-
-  // Links do menu para navegação
   menuLinks = [
     { route: '/e-driver/users/my-addresses', icon: 'home', label: 'Meus Endereços' },
     { route: '/e-driver/users/my-vehicles', icon: 'directions_car', label: 'Meus Carros' },
     { route: '/e-driver/users/plan-trip', icon: 'map', label: 'Planejar Viagem' },
-    { route: '/e-driver/admin/vehicles', icon: 'directions_car', label: 'Cadastrar Veículos' },
-    { route: '/e-driver/admin/brands', icon: 'emoji_flags', label: 'Cadastrar Marcas' },
-    { route: '/e-driver/admin/models', icon: 'view_carousel', label: 'Cadastrar Modelos' },
   ];
 
-  // Calcula a classe da coluna com base no índice do item
+  adminLinks = [
+    { route: '/e-driver/admin/vehicles', icon: 'directions_car', label: 'Veículos' },
+    { route: '/e-driver/admin/brands', icon: 'emoji_flags', label: 'Marcas' },
+    { route: '/e-driver/admin/models', icon: 'view_carousel', label: 'Modelos' },
+  ];
+
+  constructor(private userService: UserService) { }
+
+  ngOnInit(): void {
+    this.userService.getAuthenticatedUserDetails().subscribe(user => {
+      this.user = user;
+      this.isAdmin = user.roles.some(role => role.name === 'ADMIN'); 
+    });
+  }
+
+
   getColumnClass(index: number): string {
     const totalItems = this.menuLinks.length;
     const itemsPerRow = 3;

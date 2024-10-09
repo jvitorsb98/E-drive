@@ -60,7 +60,6 @@ export class BrandService {
   activated(id: number): Observable<void> {
     return this.http.put<void>(`${this.brandUrl}/${id}/activate`, null).pipe(
       catchError(e => {
-        console.error('Erro ao ativar a marca:', e);
         return throwError(() => e);
       })
     );

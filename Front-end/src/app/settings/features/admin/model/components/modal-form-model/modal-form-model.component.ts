@@ -83,7 +83,11 @@ export class ModalFormModelComponent {
   loadBrands() {
     this.brandService.getAll().subscribe({
       next: (response: any) => {
-        this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+        // Filtra as marcas ativadas
+        this.brands = response.content
+          .filter((brand: any) => brand.activated) // Verifica se activated é true
+          .map((brand: any) => ({ name: brand.name, id: brand.id }));
+        
         this.filterBrands(); // Inicializa o filtro após carregar as marcas
       },
       error: (error) => {
@@ -91,6 +95,7 @@ export class ModalFormModelComponent {
       }
     });
   }
+  
 
   // Submete o formulário para criar ou atualizar um modelo
   onSubmit() {
