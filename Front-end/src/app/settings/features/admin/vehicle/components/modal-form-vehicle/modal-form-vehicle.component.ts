@@ -73,7 +73,9 @@ export class ModalFormVehicleComponent {
     this.vehicleForm.get('brand')?.valueChanges.subscribe(this.onBrandChange.bind(this));
 
     // Inicializa os observadores de campo
-    this.initializeFieldObservers();
+    if (!this.editVehicle) {
+      this.initializeFieldObservers();
+    }
   }
 
   //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetido mais não tem a validação
@@ -81,26 +83,26 @@ export class ModalFormVehicleComponent {
   private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
       brand: new FormControl(null, [Validators.required]),
-      model: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      type: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      category: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      propulsion: new FormControl({ value: null, disabled: true }, [Validators.required]),
-      motor: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(2)]),
-      version: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(2)]),
-      year: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.min(1886)]),
-      mileagePerLiterRoad: new FormControl({ value: null, disabled: true }, [
+      model: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
+      type: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
+      category: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
+      propulsion: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
+      motor: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.minLength(2)]),
+      version: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.minLength(2)]),
+      year: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.min(1886)]),
+      mileagePerLiterRoad: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
         Validators.pattern(/^\d{1,2}(\.\d)?$/),
         Validators.required
       ]),
-      mileagePerLiterCity: new FormControl({ value: null, disabled: true }, [
+      mileagePerLiterCity: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
         Validators.pattern(/^\d+(\.\d{1,2})?$/),
         Validators.required
       ]),
-      consumptionEnergetic: new FormControl({ value: null, disabled: true }, [
+      consumptionEnergetic: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
         Validators.pattern(/^\d+(\.\d{1,2})?$/),
         Validators.required
       ]),
-      autonomyElectricMode: new FormControl({ value: null, disabled: true }, [
+      autonomyElectricMode: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
         Validators.pattern(/^\d+(\d{1,2})?$/),
         Validators.required
       ]),
