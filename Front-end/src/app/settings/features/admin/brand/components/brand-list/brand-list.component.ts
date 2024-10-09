@@ -1,3 +1,4 @@
+import { AlertasService } from './../../../../../core/services/Alertas/alertas.service';
 import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -32,7 +33,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private brandService: BrandService, // Serviço para interagir com a API de marcas
-    private dialog: MatDialog // Serviço para abrir diálogos
+    private dialog: MatDialog, // Serviço para abrir diálogos
+    private alertasService: AlertasService
   ) { }
 
   ngOnInit() {
@@ -64,40 +66,27 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     });
   }
 
+
   disableBrand(brand: Brand) {
-    Swal.fire({
-      title: 'Desabilitar Marca',
-      text: `Você tem certeza que deseja desabilitar a marca "${brand.name}"?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#19B6DD',
-      cancelButtonColor: 'red',
-      confirmButtonText: 'Sim, desabilitar!',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
+    this.alertasService.showWarning(
+      'Desabilitar Marca',
+      `Você tem certeza que deseja desabilitar a marca "${brand.name}"?`,
+      'Sim, desabilitar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
         this.brandService.delete(brand.id).subscribe({
           next: () => {
-            Swal.fire({
-              title: 'Sucesso!',
-              text: 'A marca foi desabilitada com sucesso!',
-              icon: 'success',
-              confirmButtonColor: '#19B6DD',
-            }).then(() => this.loadBrands()); // Atualiza a lista após desabilitação
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!').then(() => this.loadBrands()); // Atualiza a lista após desabilitação
           },
           error: (error) => {
-            Swal.fire({
-              title: 'Erro!',
-              text: 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.',
-              icon: 'error',
-              confirmButtonColor: 'red',
-            });
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.');
           }
         });
       }
     });
   }
-  
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -135,39 +124,25 @@ export class BrandListComponent implements OnInit, AfterViewInit {
 
 
   // No arquivo: brand-list.component.ts
-activateBrand(brand: Brand) {
-  Swal.fire({
-    title: 'Ativar Marca',
-    text: `Você tem certeza que deseja ativar a marca "${brand.name}"?`,
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#19B6DD',
-    cancelButtonColor: 'red',
-    confirmButtonText: 'Sim, ativar!',
-    cancelButtonText: 'Cancelar'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      this.brandService.activated(brand.id).subscribe({
-        next: () => {
-          Swal.fire({
-            title: 'Sucesso!',
-            text: 'A marca foi ativada com sucesso!',
-            icon: 'success',
-            confirmButtonColor: '#19B6DD',
-          }).then(() => this.loadBrands()); // Atualiza a lista após ativação
-        },
-        error: (error) => {
-          Swal.fire({
-            title: 'Erro!',
-            text: 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.',
-            icon: 'error',
-            confirmButtonColor: 'red',
-          });
-        }
-      });
-    }
-  });
-}
-
+  activateBrand(brand: Brand) {
+    this.alertasService.showWarning(
+      'Ativar Marca',
+      `Você tem certeza que deseja ativar a marca "${brand.name}"?`,
+      'Sim, ativar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.brandService.activated(brand.id).subscribe({
+          next: () => {
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!').then(() => this.loadBrands());
+          },
+          error: (error) => {
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');
+          }
+        });
+      }
+    });
+  }
+  
   
 }
