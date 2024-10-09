@@ -69,36 +69,40 @@ export class ModalFormVehicleComponent {
     }
 
     this.vehicleForm.get('brand')?.valueChanges.subscribe(this.onBrandChange.bind(this));
+
+    // Inicializa os observadores de campo
+    this.initializeFieldObservers();
   }
 
   //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetodo mais não tem a validação
 
   private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
-      motor: new FormControl(null, [Validators.required, Validators.minLength(2)]),
-      version: new FormControl(null, [Validators.required, Validators.minLength(2)]),
       brand: new FormControl(null, [Validators.required]),
-      model: new FormControl(null, [Validators.required]),
-      category: new FormControl(null, [Validators.required]),
-      type: new FormControl(null, [Validators.required]),
-      propulsion: new FormControl(null, [Validators.required]),
-      mileagePerLiterRoad: new FormControl(null, [
+      model: new FormControl({ value: null, disabled: true }, [Validators.required]),
+      type: new FormControl({ value: null, disabled: true }, [Validators.required]),
+      category: new FormControl({ value: null, disabled: true }, [Validators.required]),
+      propulsion: new FormControl({ value: null, disabled: true }, [Validators.required]),
+      motor: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(2)]),
+      version: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(2)]),
+      year: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.min(1886)]),
+      mileagePerLiterRoad: new FormControl({ value: null, disabled: true }, [
         Validators.pattern(/^\d{1,2}(\.\d)?$/),
         Validators.required
       ]),
-      mileagePerLiterCity: new FormControl(null, [
+      mileagePerLiterCity: new FormControl({ value: null, disabled: true }, [
         Validators.pattern(/^\d+(\.\d{1,2})?$/),
         Validators.required
       ]),
-      consumptionEnergetic: new FormControl(null, [
+      consumptionEnergetic: new FormControl({ value: null, disabled: true }, [
         Validators.pattern(/^\d+(\.\d{1,2})?$/),
         Validators.required
       ]),
-      autonomyElectricMode: new FormControl(null, [
+      autonomyElectricMode: new FormControl({ value: null, disabled: true }, [
         Validators.pattern(/^\d+(\d{1,2})?$/),
         Validators.required
       ]),
-      year: new FormControl(null, [Validators.required, Validators.min(1886)]),
+
       activated: new FormControl(true, [Validators.required]),
     });
   }
@@ -124,6 +128,37 @@ export class ModalFormVehicleComponent {
       });
     }
   }
+
+  toggleField(fieldName: string, enable: boolean): void {
+    if (enable) {
+      this.vehicleForm.get(fieldName)?.enable();  // Habilita o FormControl
+    } else {
+      this.vehicleForm.get(fieldName)?.disable(); // Desabilita o FormControl
+    }
+  }
+
+  observeFieldChanges(previousField: string, nextField: string): void {
+    this.vehicleForm.get(previousField)?.valueChanges.subscribe(() => {
+      const isValid = this.vehicleForm.get(previousField)?.valid ?? false;
+      this.toggleField(nextField, isValid);
+    });
+  }
+
+  initializeFieldObservers(): void {
+    this.observeFieldChanges('brand', 'model');
+    this.observeFieldChanges('model', 'type');
+    this.observeFieldChanges('type', 'category');
+    this.observeFieldChanges('category', 'propulsion');
+    this.observeFieldChanges('propulsion', 'motor');
+    this.observeFieldChanges('motor', 'version');
+    this.observeFieldChanges('version', 'year');
+    this.observeFieldChanges('year', 'mileagePerLiterRoad');
+    this.observeFieldChanges('mileagePerLiterRoad', 'mileagePerLiterCity');
+    this.observeFieldChanges('mileagePerLiterCity', 'consumptionEnergetic');
+    this.observeFieldChanges('consumptionEnergetic', 'autonomyElectricMode');
+  }
+
+
 
   loadBrands() {
     this.brandService.getAll().subscribe({

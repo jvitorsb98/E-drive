@@ -1,50 +1,23 @@
 <div class="container-fluid pt-3">
-  <div class="col-12">
-
-    <div class="row">
-      <!-- Container para os botões e título -->
-      <div class="col-12 header-container">
-        <button class="icon" mat-icon-button aria-label="Voltar" (click)="closeModal()">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <h1 class="title">{{ editVehicle ? 'Editar Veículo' : 'Cadastrar Veículo' }}</h1>
-        <button class="icon" mat-icon-button (click)="openFAQModal()">
-          <mat-icon>help_outline</mat-icon>
-        </button>
-      </div>
+  <div class="row">
+    <!-- Container para os botões e título -->
+    <div class="col-12 header-container">
+      <button class="icon" mat-icon-button aria-label="Voltar" (click)="closeModal()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="title">{{ editVehicle ? 'Editar Veículo' : 'Cadastrar Veículo' }}</h1>
+      <button class="icon" mat-icon-button (click)="openFAQModal()">
+        <mat-icon>help_outline</mat-icon>
+      </button>
     </div>
+  </div>
 
+  <div class="col-12">
     <form [formGroup]="vehicleForm">
       <div class="content">
-        <!-- Novo campo Motor -->
-        <div class="row">
-          <div class="col-12 col-md-6 mb-3">
-            <mat-form-field class="custom-select">
-              <mat-label>Motor</mat-label>
-              <input matInput formControlName="motor" placeholder="Digite o tipo de motor" required />
-              <mat-error *ngIf="vehicleForm.get('motor')?.hasError('required')">
-                O motor é obrigatório.
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-
-        <!-- Novo campo Versão - Aparece apenas se o campo 'motor' for válido -->
-        <div class="row" *ngIf="vehicleForm.get('motor')?.valid">
-          <div class="col-12 col-md-6 mb-2">
-            <mat-form-field class="custom-select">
-              <mat-label>Versão</mat-label>
-              <input matInput formControlName="version" placeholder="Digite a versão do veículo" required />
-              <mat-error
-                *ngIf="vehicleForm.get('version')?.hasError('required') && vehicleForm.get('version')?.touched">
-                A versão é obrigatória.
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
 
         <!-- Campo Marca - Aparece apenas se o campo 'version' for válido -->
-        <div class="row" *ngIf="vehicleForm.get('version')?.valid">
+        <div class="row">
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Marca</mat-label>
@@ -64,7 +37,7 @@
         </div>
 
         <!-- Campo Modelo - Aparece apenas se o campo 'brand' for válido -->
-        <div class="row" *ngIf="vehicleForm.get('brand')?.valid">
+        <div class="row" >
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Modelo</mat-label>
@@ -84,7 +57,7 @@
         </div>
 
         <!-- Campo Tipo - Aparece apenas se o campo 'model' for válido -->
-        <div class="row" *ngIf="vehicleForm.get('model')?.valid">
+        <div class="row">
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Tipo</mat-label>
@@ -101,7 +74,7 @@
         </div>
 
         <!-- Campo Categoría - Aparece apenas se o campo 'type' for válido -->
-        <div class="row" *ngIf="vehicleForm.get('type')?.valid">
+        <div class="row" >
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Categoria</mat-label>
@@ -118,11 +91,11 @@
           </div>
         </div>
         <!-- Propulsão -->
-        <div class="row" *ngIf="vehicleForm.get('category')?.valid">
+        <div class="row" >
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Propulsão</mat-label>
-              <mat-select formControlName="propulsion">
+              <mat-select formControlName="propulsion" >
                 <mat-option *ngFor="let propulsion of propulsions" [value]="propulsion.name">
                   {{ propulsion.name }}
                 </mat-option>
@@ -134,8 +107,36 @@
             </mat-form-field>
           </div>
         </div>
+
+        <!-- Novo campo Motor -->
+        <div class="row" >
+          <div class="col-12 col-md-6 mb-3">
+            <mat-form-field class="custom-select">
+              <mat-label>Motor</mat-label>
+              <input matInput formControlName="motor" placeholder="Digite o tipo de motor" required />
+              <mat-error *ngIf="vehicleForm.get('motor')?.hasError('required')">
+                O motor é obrigatório.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Novo campo Versão - Aparece apenas se o campo 'motor' for válido -->
+        <div class="row" >
+          <div class="col-12 col-md-6 mb-2">
+            <mat-form-field class="custom-select">
+              <mat-label>Versão</mat-label>
+              <input matInput formControlName="version" placeholder="Digite a versão do veículo" required />
+              <mat-error
+                *ngIf="vehicleForm.get('version')?.hasError('required') && vehicleForm.get('version')?.touched">
+                A versão é obrigatória.
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
         <!-- Ano -->
-        <div class="row" *ngIf="vehicleForm.get('propulsion')?.valid">
+        <div class="row" >
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Ano</mat-label>
@@ -152,7 +153,7 @@
         </div>
 
         <!-- Campos adicionais -->
-        <div class="col-12" [ngClass]="{'hidden': !vehicleForm.get('year')?.value}">
+        <div class="col-12">
           <div class="row">
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
@@ -212,7 +213,7 @@
             <div class="col-12 col-md-6 mb-2">
               <mat-form-field class="custom-select w-100">
                 <mat-label>Autonomia:</mat-label>
-                <input type="text" matInput formControlName="autonomyElectricMode" [mask]="'000'"
+                <input type="text" matInput formControlName="autonomyElectricMode" [mask]="'000'" 
                   aria-describedby="Help">
                 <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
                 <!-- <span matSuffix class="custom-suffix">km</span> -->
