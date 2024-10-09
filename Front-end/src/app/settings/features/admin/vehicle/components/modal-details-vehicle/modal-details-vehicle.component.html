@@ -1,66 +1,93 @@
+<!-- Modal para exibir os detalhes do veículo -->
 <div class="container-fluid p-3">
+  <!-- Ícone para fechar o modal -->
   <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
 
+  <!-- Título e subtítulo do modal -->
   <h1 class="titulo">Detalhes do veículo</h1>
   <h2 class="subtitulo">Tenha uma visão mais detalhada do veículo</h2>
 
+  <!-- Detalhes do veículo organizados em colunas -->
   <div class="row mt-3">
+    
+    <!-- Detalhe do motor -->
     <div class="col-6">
       <h4 class="titulo-informacao">Motor</h4>
       <p class="informacao">{{ vehicle.motor }}</p>
     </div>
+
+    <!-- Detalhe da versão -->
     <div class="col-6">
       <h4 class="titulo-informacao">Versão</h4>
       <p class="informacao">{{ vehicle.version }}</p>
     </div>
+
+    <!-- Detalhe da marca -->
     <div class="col-6">
       <h4 class="titulo-informacao">Marca</h4>
       <p class="informacao">{{ vehicle.model.brand.name }}</p>
     </div>
+
+    <!-- Detalhe do modelo -->
     <div class="col-6">
       <h4 class="titulo-informacao">Modelo</h4>
       <p class="informacao">{{ vehicle.model.name }}</p>
     </div>
+
+    <!-- Detalhe da categoria -->
     <div class="col-6">
       <h4 class="titulo-informacao">Categoria</h4>
       <p class="informacao">{{ vehicle.category.name }}</p>
     </div>
+
+    <!-- Detalhe do tipo -->
     <div class="col-6">
       <h4 class="titulo-informacao">Tipo</h4>
       <p class="informacao">{{ vehicle.type.name }}</p>
     </div>
+
+    <!-- Detalhe da propulsão -->
     <div class="col-6">
-      <h4 class="titulo-informacao">Propução</h4>
+      <h4 class="titulo-informacao">Propulsão</h4>
       <p class="informacao">{{ vehicle.propulsion.name }}</p>
     </div>
+
+    <!-- Detalhe do ano -->
     <div class="col-6">
       <h4 class="titulo-informacao">Ano</h4>
       <p class="informacao">{{ vehicle.year }}</p>
     </div>
+
+    <!-- Detalhe da autonomia no modo elétrico -->
     <div class="col-6">
       <h4 class="titulo-informacao">Autonomia no modo elétrico</h4>
       <p class="informacao">{{ vehicle.autonomy.autonomyElectricMode }} (Km)</p>
     </div>
+
+    <!-- Detalhe do consumo energético -->
     <div class="col-6">
       <h4 class="titulo-informacao">Consumo energético</h4>
       <p class="informacao">{{ vehicle.autonomy.consumptionEnergetic }} (MJ/km)</p>
     </div>
+
+    <!-- Detalhe da quilometragem por litro na cidade -->
     <div class="col-6">
       <h4 class="titulo-informacao">Quilometragem por litro na cidade</h4>
-      <p class="informacao">{{ vehicle.autonomy.mileagePerLiterCity }} (km/l e)</p>
+      <p class="informacao">{{ vehicle.autonomy.mileagePerLiterCity }} (km/l)</p>
     </div>
+
+    <!-- Detalhe da quilometragem por litro na estrada -->
     <div class="col-6">
       <h4 class="titulo-informacao">Quilometragem por litro na estrada</h4>
-      <p class="informacao">{{ vehicle.autonomy.mileagePerLiterRoad }} (km/l e)</p>
+      <p class="informacao">{{ vehicle.autonomy.mileagePerLiterRoad }} (km/l)</p>
     </div>
+
+    <!-- Detalhe do status do veículo -->
     <div class="col-6">
-      <h4 class="titulo-informacao">Status do Veiculo</h4>
-      @if(vehicle.activated || vehicle.activated){
-        <p class="informacao check">Ativo</p>
-        }
-        @if(!vehicle.activated && !vehicle.activated){
-        <p class="informacao error">Desativado</p>
-        }
+      <h4 class="titulo-informacao">Status do Veículo</h4>
+      <!-- Lógica condicional corrigida para exibir o status do veículo -->
+      <p class="informacao check" *ngIf="vehicle.activated">Ativo</p>
+      <p class="informacao error" *ngIf="!vehicle.activated">Desativado</p>
     </div>
   </div>
 </div>
