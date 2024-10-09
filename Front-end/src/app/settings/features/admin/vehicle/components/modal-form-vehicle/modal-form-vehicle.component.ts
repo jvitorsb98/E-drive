@@ -19,6 +19,7 @@ import { Category } from '../../../../../core/models/category';
 import { Propulsion } from '../../../../../core/models/propulsion';
 import { IAutonomyRequest } from '../../../../../core/models/autonomy';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormUtilsService } from '../../../../../shared/services/FormUtils/form-utils.service';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -54,6 +55,7 @@ export class ModalFormVehicleComponent {
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
+    public formutils: FormUtilsService,
     @Inject(MAT_DIALOG_DATA) public data: Vehicle
   ) { }
 
@@ -74,7 +76,7 @@ export class ModalFormVehicleComponent {
     this.initializeFieldObservers();
   }
 
-  //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetodo mais não tem a validação
+  //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetido mais não tem a validação
 
   private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
@@ -129,36 +131,19 @@ export class ModalFormVehicleComponent {
     }
   }
 
-  toggleField(fieldName: string, enable: boolean): void {
-    if (enable) {
-      this.vehicleForm.get(fieldName)?.enable();  // Habilita o FormControl
-    } else {
-      this.vehicleForm.get(fieldName)?.disable(); // Desabilita o FormControl
-    }
-  }
-
-  observeFieldChanges(previousField: string, nextField: string): void {
-    this.vehicleForm.get(previousField)?.valueChanges.subscribe(() => {
-      const isValid = this.vehicleForm.get(previousField)?.valid ?? false;
-      this.toggleField(nextField, isValid);
-    });
-  }
-
   initializeFieldObservers(): void {
-    this.observeFieldChanges('brand', 'model');
-    this.observeFieldChanges('model', 'type');
-    this.observeFieldChanges('type', 'category');
-    this.observeFieldChanges('category', 'propulsion');
-    this.observeFieldChanges('propulsion', 'motor');
-    this.observeFieldChanges('motor', 'version');
-    this.observeFieldChanges('version', 'year');
-    this.observeFieldChanges('year', 'mileagePerLiterRoad');
-    this.observeFieldChanges('mileagePerLiterRoad', 'mileagePerLiterCity');
-    this.observeFieldChanges('mileagePerLiterCity', 'consumptionEnergetic');
-    this.observeFieldChanges('consumptionEnergetic', 'autonomyElectricMode');
+    this.formutils.observeFieldChanges(this.vehicleForm,'brand', 'model');
+    this.formutils.observeFieldChanges(this.vehicleForm,'model', 'type');
+    this.formutils.observeFieldChanges(this.vehicleForm,'type', 'category');
+    this.formutils.observeFieldChanges(this.vehicleForm,'category', 'propulsion');
+    this.formutils.observeFieldChanges(this.vehicleForm,'propulsion', 'motor');
+    this.formutils.observeFieldChanges(this.vehicleForm,'motor', 'version');
+    this.formutils.observeFieldChanges(this.vehicleForm,'version', 'year');
+    this.formutils.observeFieldChanges(this.vehicleForm,'year', 'mileagePerLiterRoad');
+    this.formutils.observeFieldChanges(this.vehicleForm,'mileagePerLiterRoad', 'mileagePerLiterCity');
+    this.formutils.observeFieldChanges(this.vehicleForm,'mileagePerLiterCity', 'consumptionEnergetic');
+    this.formutils.observeFieldChanges(this.vehicleForm,'consumptionEnergetic', 'autonomyElectricMode');
   }
-
-
 
   loadBrands() {
     this.brandService.getAll().subscribe({
