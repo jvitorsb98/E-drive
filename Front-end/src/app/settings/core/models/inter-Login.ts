@@ -1,30 +1,88 @@
-
+/**
+ * Interface que representa a requisição de login.
+ */
 export interface ILoginRequest {
-  login: string
-  password: string
+  /**
+   * Nome de usuário ou e-mail utilizado para login.
+   * @type {string}
+   */
+  login: string;
+
+  /**
+   * Senha do usuário para autenticação.
+   * @type {string}
+   */
+  password: string;
 }
 
+/**
+ * Interface que representa a resposta de login.
+ */
 export interface ILoginResponse {
+  /**
+   * Token de autenticação gerado após um login bem-sucedido.
+   * @type {string}
+   */
   token: string;
 }
 
+/**
+ * Interface que representa a requisição para recuperação de senha.
+ */
 export interface IRecoverPasswordRequest {
-  email: string
+  /**
+   * E-mail do usuário para enviar as instruções de recuperação de senha.
+   * @type {string}
+   */
+  email: string;
 }
 
+/**
+ * Interface que representa a requisição para recuperação de conta.
+ */
 export interface IRecoverAccountRequest {
-  email: string
+  /**
+   * E-mail do usuário para enviar as instruções de recuperação da conta.
+   * @type {string}
+   */
+  email: string;
 }
 
+/**
+ * Interface que representa a resposta para recuperação de senha.
+ */
 export interface IRecoverPasswordResponse {
-  token: string
+  /**
+   * Token gerado para a recuperação de senha.
+   * @type {string}
+   */
+  token: string;
 }
 
+/**
+ * Interface que representa a resposta para recuperação de conta.
+ */
 export interface IRecoverAccountResponse {
-  token: string
+  /**
+   * Token gerado para a recuperação da conta.
+   * @type {string}
+   */
+  token: string;
 }
 
+/**
+ * Interface que representa a requisição para redefinição de senha.
+ */
 export interface IResetPasswordRequest {
-  token: string
-  password: string
+  /**
+   * Token recebido para a redefinição de senha.
+   * @type {string}
+   */
+  token: string;
+
+  /**
+   * Nova senha que será definida.
+   * @type {string}
+   */
+  password: string;
 }
