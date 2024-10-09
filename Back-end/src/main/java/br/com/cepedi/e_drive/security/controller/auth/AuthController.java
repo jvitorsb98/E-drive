@@ -209,13 +209,17 @@ public class AuthController {
     ) {
         try {
             if (!tokenService.isValidToken(token)) {
-                return ResponseEntity.badRequest().body("Token invalid");
+                // Redireciona com a mensagem de token inválido
+                String redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
+                return ResponseEntity.status(HttpStatus.FOUND)
+                        .location(URI.create(redirectUrl))
+                        .build();
             }
             authService.activateUser(token);
             tokenService.revokeToken(token);
 
-            // Inclui a mensagem na URL como um query parameter
-            String redirectUrl = "http://localhost:4200/e-driver/login?message=Conta+ativada+com+sucesso";
+            // Redireciona com a mensagem de sucesso
+            String redirectUrl = "http://localhost:4200/e-driver/login?success=Conta+ativada+com+sucesso";
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(redirectUrl))
                     .build();
