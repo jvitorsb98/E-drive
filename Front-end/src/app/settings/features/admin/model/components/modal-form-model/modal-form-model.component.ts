@@ -23,6 +23,7 @@ import { Model } from '../../../../../core/models/model'; // Modelo de dados par
 
 // Componentes
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para exibir informações úteis
+import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-modal-form-model',
@@ -42,7 +43,9 @@ export class ModalFormModelComponent {
     private brandService: BrandService, // Serviço para marcas
     private formBuilder: FormBuilder, // Construtor de formulários
     private dialog: MatDialog, // Serviço de diálogo
-    public dialogRef: MatDialogRef<ModalFormModelComponent>, // Referência ao diálogo
+    public dialogRef: MatDialogRef<ModalFormModelComponent>,
+    private alertasService: AlertasService, // Injeção do serviço de alertas
+    // Referência ao diálogo
     @Inject(MAT_DIALOG_DATA) public data: Model // Dados recebidos para o modal
   ) { }
 
@@ -98,54 +101,49 @@ export class ModalFormModelComponent {
   
 
   // Submete o formulário para criar ou atualizar um modelo
-  onSubmit() {
-    if (this.modelForm.valid) {
-      console.log('Formulário válido:', this.modelForm.value);
-      const action = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a ação com base em estar editando ou criando
+  // Submete o formulário
+onSubmit() {
+  if (this.modelForm.valid) {
+    console.log('Formulário válido:', this.modelForm.value);
 
-      // Obtém o ID da marca selecionada
-      const selectedBrandId = this.getSelectedBrandId();
+    // Determina a ação com base na edição
+    const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
+    const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';
+    
+    // Obtém o ID da marca selecionada
+    const selectedBrandId = this.getSelectedBrandId();
 
-      // Cria o objeto com os dados do modelo e o ID da marca
-      const modelData = {
-        ...this.data,
-        name: this.modelForm.get('name')?.value,
-        idBrand: selectedBrandId
-      };
+    // Cria o objeto de dados do modelo
+    const modelData = {
+      ...this.data,
+      name: this.modelForm.get('name')?.value,
+      idBrand: selectedBrandId
+    };
 
-      const request$ = this.isEditing()
-        ? this.modelService.update(modelData)
-        : this.modelService.register(modelData);
+    // Definindo a requisição com base na ação (cadastro ou atualização)
+    const request$ = this.isEditing()
+      ? this.modelService.update(modelData) // Atualiza o modelo
+      : this.modelService.register(modelData); // Cadastra um novo modelo
 
-      request$.pipe(
-        catchError(() => {
-          Swal.fire({
-            title: 'Erro!',
-            icon: 'error',
-            text: `Ocorreu um erro ao ${action} o modelo. Tente novamente mais tarde.`,
-            showConfirmButton: true,
-            confirmButtonColor: 'red',
-          });
-          return of(null); // Continua a sequência de observáveis com um valor nulo
-        })
-      ).subscribe(() => {
-        Swal.fire({
-          title: 'Sucesso!',
-          icon: 'success',
-          text: `O modelo ${this.modelForm.value.name} foi ${action} com sucesso.`,
-          showConfirmButton: true,
-          confirmButtonColor: '#19B6DD',
-        }).then((result) => {
-          if (result.isConfirmed || result.isDismissed) {
-            this.closeModal(); // Envia os dados atualizados ao fechar o modal
-          }
-        });
-      });
-    } else {
-      console.warn('Formulário inválido:', this.modelForm);
-    }
+    // Realiza a requisição e separa as ações para sucesso e erro
+    request$.subscribe({
+      next: () => {
+        this.alertasService.showSuccess('Sucesso!', `O modelo ${this.modelForm.value.name} foi ${actionSucess} com sucesso.`);
+        this.closeModal(); // Fecha o modal após a confirmação
+      },
+      error: (response) => {
+        const errorMessage = response.error || `Ocorreu um erro ao tentar ${actionsError} o modelo.`;
+        this.alertasService.showError('Erro!', errorMessage); // Ação de erro
+      }
+    });
+  } else {
+    console.warn('Formulário inválido:', this.modelForm);
+    this.alertasService.showWarning('Atenção', 'Por favor, preencha todos os campos obrigatórios.');
   }
+}
 
+  
+  
   // Filtra a lista de marcas com base na entrada do usuário
   private filterBrands() {
     this.modelForm.get('brand')!.valueChanges.pipe(

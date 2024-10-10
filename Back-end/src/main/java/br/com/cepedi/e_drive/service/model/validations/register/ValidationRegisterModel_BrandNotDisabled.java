@@ -5,7 +5,10 @@ import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Implementação da validação que garante que a marca associada ao modelo
@@ -16,6 +19,9 @@ public class ValidationRegisterModel_BrandNotDisabled implements ValidationRegis
 
     @Autowired
     private BrandRepository brandRepository;
+
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
 
     /**
      * Valida se a marca associada ao modelo está ativada.
@@ -28,7 +34,12 @@ public class ValidationRegisterModel_BrandNotDisabled implements ValidationRegis
         if (brandRepository.existsById(dataRegisterModel.idBrand())) {
             Brand brand = brandRepository.getReferenceById(dataRegisterModel.idBrand());
             if (!brand.getActivated()) {
-                throw new ValidationException("The required brand is disabled.");
+                String errorMessage = messageSource.getMessage(
+                        "model.register.brand.disabled",
+                        new Object[]{brand.getName()},
+                        Locale.getDefault()
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }

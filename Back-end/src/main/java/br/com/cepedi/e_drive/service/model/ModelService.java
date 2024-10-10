@@ -109,7 +109,6 @@ public class ModelService {
      * Ativa um modelo.
      *
      * @param id ID do modelo a ser ativado.
-     * @throws ValidationException Se a validação do modelo falhar.
      */
     public void activated(Long id) {
         modelValidatorActivatedList.forEach(v -> v.validation(id));
@@ -131,7 +130,6 @@ public class ModelService {
      * Desativa um modelo.
      *
      * @param id ID do modelo a ser desativado.
-     * @throws ValidationException Se a validação do modelo falhar.
      */
     public void disable(Long id) {
         modelValidatorDisabledList.forEach(v -> v.validation(id));
