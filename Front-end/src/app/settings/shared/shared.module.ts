@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { AngularMaterialModule } from '../angular-material/angular-material.module';
 
 // Componentes
 import { UiButtonComponent } from './components/ui-button/ui-button.component';
@@ -32,7 +33,8 @@ import { AuthInterceptor } from '../core/security/interceptors/auth.interceptor'
     HttpClientModule,        // Fornece o HttpClient para realizar requisições HTTP
     ReactiveFormsModule,     // Oferece suporte para formulários reativos
     FormsModule,             // Oferece suporte para formulários baseados em template
-    RouterModule             // Fornece diretivas de roteamento como routerLink
+    RouterModule ,            // Fornece diretivas de roteamento como routerLink
+    AngularMaterialModule // Módulo Angular Material
   ],
   exports: [
     CommonModule,            // Reexporta para uso em outros módulos
