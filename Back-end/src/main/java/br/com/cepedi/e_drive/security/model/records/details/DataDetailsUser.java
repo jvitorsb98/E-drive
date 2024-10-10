@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Record que encapsula os detalhes de um usuário.
@@ -29,7 +30,7 @@ public record DataDetailsUser(
         LocalDate birth,
         String cellPhone,
         Boolean activated,
-        Set<Role> roles
+        Set<DataDetailsRole> roles
 ) {
     /**
      * Construtor que cria um record `DataDetailsUser` a partir de uma entidade `User`.
@@ -44,7 +45,9 @@ public record DataDetailsUser(
                 user.getBirth(),
                 user.getCellphone(),
                 user.getActivated(),
-                user.getRoles()
+                user.getRoles().stream()
+                        .map(DataDetailsRole::new) // Converte Role para DataDetailsRole
+                        .collect(Collectors.toSet())
         );
     }
 }

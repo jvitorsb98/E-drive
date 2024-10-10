@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.entitys.Brand;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Classe responsável pela validação se uma marca já está desativada antes de realizar a operação de desativação.
@@ -15,6 +18,9 @@ public class ValidationBrandAlreadyDisabledForDisabled implements BrandValidator
 
     @Autowired
     private BrandRepository brandRepository;
+
+    @Autowired
+    private MessageSource messageSource;
 
     /**
      * Valida se a marca com o ID fornecido já está desativada.
@@ -28,7 +34,12 @@ public class ValidationBrandAlreadyDisabledForDisabled implements BrandValidator
         if (brandRepository.existsById(id)) {
             Brand brand = brandRepository.getReferenceById(id);
             if (!brand.getActivated()) {
-                throw new ValidationException("The brand is already disabled");
+                String errorMessage = messageSource.getMessage(
+                        "brand.disabled.already.disabled",
+                        new Object[]{brand.getName()},
+                        Locale.getDefault()
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }

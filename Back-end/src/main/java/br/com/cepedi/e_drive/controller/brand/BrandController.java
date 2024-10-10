@@ -185,6 +185,35 @@ public class BrandController {
     }
 
     /**
+     * Ativa uma marca pelo ID.
+     * <p>
+     * Marca a marca como ativada com base no ID fornecido.
+     * </p>
+     *
+     * @param id ID da marca a ser ativada.
+     * @return Resposta sem conteúdo (204 No Content).
+     */
+    @PutMapping("/{id}/activate")
+    @Transactional
+    @Operation(summary = "Activate brand by ID", method = "PUT", description = "Activates a brand by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Brand activated successfully"),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Brand not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    public ResponseEntity<Void> activate(
+            @Parameter(description = "ID of the brand to be activated", required = true)
+            @PathVariable Long id
+    ) {
+        LOGGER.info("Activating brand with id: {}", id);
+        brandService.activated(id); // Chame o método activate no BrandService
+        LOGGER.info("Brand activated successfully");
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+    /**
      * Desativa uma marca pelo ID.
      * <p>
      * Marca a marca como desativada com base no ID fornecido.

@@ -42,4 +42,13 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
      */
     boolean existsByNameAndBrandId(String name, Long brandId);
 
+    /**
+     * Verifica se existe um modelo com o mesmo nome (ignorando maiúsculas) associado à marca especificada.
+     *
+     * @param name    O nome do modelo.
+     * @param brandId O ID da marca associada ao modelo.
+     * @return true se existir um modelo com o mesmo nome para a marca; caso contrário, false.
+     */
+    boolean existsByNameIgnoreCaseAndBrandId(String name, Long brandId);
+
 }

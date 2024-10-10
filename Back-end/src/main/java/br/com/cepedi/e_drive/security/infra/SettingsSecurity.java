@@ -67,50 +67,50 @@ public class SettingsSecurity {
                     req.requestMatchers(HttpMethod.GET, "/auth/user/exists").permitAll(); // Endpoint público
 
                     // Endpoints de address
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/address/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/address").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/address/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/address/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/address/**/enable").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.GET, "/api/v1/address/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.POST, "/api/v1/address").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/address/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/address/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/address/**/enable").authenticated();  // Apenas autenticado
 
                     // endpoints de marca
                     req.requestMatchers(HttpMethod.POST, "/api/v1/brands").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/brands/**").hasRole("ADMIN");
+                    req.requestMatchers(HttpMethod.PUT, "/api/v1/brands/{id}").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/api/v1/brands/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll();
+                    req.requestMatchers(HttpMethod.GET, "/api/v1/brands/**").hasRole("ADMIN");
 
                     // Endpoints de categoria
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/categories").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll();
-
-                    // Endpoints de modelo
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/models/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/models").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/models/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**/activate").hasRole("ADMIN");
-
-                    // Endpoints de veículos
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicles/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicles").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicles/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**/activate").hasRole("ADMIN");
-
-                    // Endpoints de tipos de veículos
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicleTypes/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicleTypes").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicleTypes/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicleTypes/**").hasRole("ADMIN");
-
-                    // Endpoints de usuários de veículos
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicle-users/**").authenticated();  // Apenas autenticado
-                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicle-users").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicle-users/**").authenticated();
-                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicle-users/**").authenticated();
-                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicle-users/**/activate").authenticated();
+//                    req.requestMatchers(HttpMethod.POST, "/api/v1/categories").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/categories/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/categories/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll();
+//
+//                    // Endpoints de modelo
+//                    req.requestMatchers(HttpMethod.GET, "/api/v1/models/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.POST, "/api/v1/models").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/models/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/models/**/activate").hasRole("ADMIN");
+//
+//                    // Endpoints de veículos
+//                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicles/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicles").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicles/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicles/**/activate").hasRole("ADMIN");
+//
+//                    // Endpoints de tipos de veículos
+//                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicleTypes/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicleTypes").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicleTypes/**").hasRole("ADMIN");
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicleTypes/**").hasRole("ADMIN");
+//
+//                    // Endpoints de usuários de veículos
+//                    req.requestMatchers(HttpMethod.GET, "/api/v1/vehicle-users/**").authenticated();  // Apenas autenticado
+//                    req.requestMatchers(HttpMethod.POST, "/api/v1/vehicle-users").authenticated();
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicle-users/**").authenticated();
+//                    req.requestMatchers(HttpMethod.DELETE, "/api/v1/vehicle-users/**").authenticated();
+//                    req.requestMatchers(HttpMethod.PUT, "/api/v1/vehicle-users/**/activate").authenticated();
 
                     req.anyRequest().permitAll();
                 })

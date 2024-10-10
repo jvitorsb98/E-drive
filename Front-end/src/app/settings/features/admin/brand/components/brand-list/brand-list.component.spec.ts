@@ -143,7 +143,7 @@ describe('BrandListComponent', () => {
   
     jest.spyOn(component, 'loadBrands'); // Espiona o método loadBrands
   
-    component.deleteBrand(brand);
+    component.disableBrand(brand);
   
     // Verifica se o método delete foi chamado corretamente
     expect(mockBrandService.delete).toHaveBeenCalledWith(brand.id);

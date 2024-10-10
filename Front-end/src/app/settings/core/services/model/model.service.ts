@@ -55,4 +55,14 @@ export class ModelService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.modelUrl}/${id}`);
   }
+
+  activated(id: number): Observable<void> {
+    return this.http.put<void>(`${this.modelUrl}/${id}/activate`, null).pipe(
+      catchError(e => {
+        console.error('Erro ao ativar o modelo:', e);
+        return throwError(() => e);
+      })
+    );
+  }
+
 }

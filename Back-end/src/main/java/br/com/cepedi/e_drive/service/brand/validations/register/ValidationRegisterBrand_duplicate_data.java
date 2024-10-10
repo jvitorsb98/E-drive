@@ -33,13 +33,14 @@ public class ValidationRegisterBrand_duplicate_data implements ValidationBrandRe
      */
     @Override
     public void validation(DataRegisterBrand dataRegisterBrand) {
-        boolean exists = brandRepository.existsByNameIgnoreCase(dataRegisterBrand.name());
+        String trimmedName = dataRegisterBrand.name().trim();
+
+        boolean exists = brandRepository.existsByNameIgnoreCase(trimmedName);
 
         if (exists) {
-            // Busca a mensagem internacionalizada e lança a exceção
             String errorMessage = messageSource.getMessage(
                     "brand.register.duplicate",
-                    new Object[]{dataRegisterBrand.name()},
+                    new Object[]{trimmedName},
                     Locale.getDefault()
             );
             throw new ValidationException(errorMessage);

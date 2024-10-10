@@ -1,6 +1,7 @@
-package br.com.cepedi.e_drive.service.model.validations.activated;
+package br.com.cepedi.e_drive.service.model.validations.update;
 
 import br.com.cepedi.e_drive.model.entitys.Model;
+import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +11,10 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 /**
- * Implementação da interface `ValidationModelActivated` para verificar se um modelo já está ativado.
+ * Valida se o modelo está ativado durante a atualização do modelo.
  */
 @Component
-public class ValidationModelAlreadyDisabledForActivated implements ValidationModelActivated {
+public class ValidationUpdateModel_ModelDisabled implements ValidationModelUpdate {
 
     @Autowired
     private ModelRepository modelRepository;
@@ -22,19 +23,20 @@ public class ValidationModelAlreadyDisabledForActivated implements ValidationMod
     private MessageSource messageSource; // Injeção do MessageSource para internacionalização
 
     /**
-     * Valida se o modelo já está ativado.
+     * Valida se o modelo a ser atualizado está ativado.
      *
-     * @param id O ID do modelo a ser validado.
-     * @throws ValidationException se o modelo já estiver ativado.
+     * @param data Os dados do modelo que estão sendo atualizados.
+     * @param id   O ID do modelo que está sendo atualizado.
+     * @throws ValidationException Se o modelo não estiver ativado.
      */
     @Override
-    public void validation(Long id) {
+    public void validation(DataUpdateModel data, Long id) {
         if (modelRepository.existsById(id)) {
             Model model = modelRepository.getReferenceById(id);
-            if (model.getActivated()) {
+            if (!model.getActivated()) {
                 String errorMessage = messageSource.getMessage(
-                        "model.activated.already.active",
-                        null,
+                        "model.update.disabled",
+                        new Object[]{model.getName()},
                         Locale.getDefault()
                 );
                 throw new ValidationException(errorMessage);

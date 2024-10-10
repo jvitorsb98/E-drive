@@ -56,7 +56,7 @@ public class BrandService {
      * @return Detalhes da marca atualizada.
      */
     public DataBrandDetails update(DataUpdateBrand data, Long id) {
-        brandValidationUpdateList.forEach(v -> v.validation(id));
+        brandValidationUpdateList.forEach(v -> v.validation(id,data));
         Brand brand = brandRepository.getReferenceById(id);
         brand.updateDataBrand(data);
         return new DataBrandDetails(brand);
@@ -104,5 +104,16 @@ public class BrandService {
         brandValidatorDisabledList.forEach(v -> v.validation(id));
         Brand brand = brandRepository.getReferenceById(id);
         brand.deactivated();
+    }
+
+    /**
+     * Ativa uma marca com base no ID fornecido.
+     *
+     * @param id ID da marca a ser ativada.
+     */
+    public void activated(Long id) {
+        Brand brand = brandRepository.getReferenceById(id);
+        brand.activated();
+        brandRepository.save(brand);
     }
 }

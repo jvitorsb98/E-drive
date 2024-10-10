@@ -39,4 +39,21 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
      */
     boolean existsByNameIgnoreCase(String name);
 
+    /**
+     * Verifica se já existe uma marca com o nome especificado (ignorando diferenças de maiúsculas e minúsculas),
+     * excluindo a marca com o ID fornecido.
+     *
+     * @param trimmedName O nome da marca a ser verificado.
+     * @param id O ID da marca que será excluída da verificação.
+     * @return {@code true} se uma marca com o mesmo nome já existir (ignorando o case e o ID),
+     *         {@code false} caso contrário.
+     */
+    boolean existsByNameIgnoreCaseAndIdNot(String trimmedName, Long id);
+
+
+    @Query("SELECT b.name FROM Brand b WHERE b.id = :brandId")
+    String findBrandNameById(@Param("brandId") Long brandId);
+
 }
+
+
