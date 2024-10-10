@@ -23,6 +23,7 @@ export class AuthService {
     return this.http.post<ILoginResponse>(this.apiUrl + '/login', credential)
       .pipe(
         tap((response: ILoginResponse) => {
+          console.log(response)
           if (response && response.token) {
             localStorage.setItem('token', response.token);
 
@@ -126,7 +127,7 @@ export class AuthService {
   private handleError(error: HttpErrorResponse): Observable<never> {
     // let errorMessage = 'An unexpected error occurred'; // en-us
     let errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.'; // pt-br
-
+    console.log(error)
     // Verifica o status do erro e define uma mensagem personalizada
     if (error.status === 400) {
       // errorMessage = 'User is not activated. Please check your email for activation.'; // en-us

@@ -73,11 +73,10 @@ public class AuthController {
     @Operation(summary = "User login", description = "Authenticates the user and generates an authentication token.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Login successful"),
-            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<Object> efetuarLogin(@RequestBody @Valid DataAuth data) {
+    public ResponseEntity<Object> login(@RequestBody @Valid DataAuth data) {
         User user = userService.getUserActivatedByEmail(data.login());
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not registered");
@@ -210,13 +209,17 @@ public class AuthController {
     ) {
         try {
             if (!tokenService.isValidToken(token)) {
-                return ResponseEntity.badRequest().body("Token invalid");
+                // Redireciona com a mensagem de token inválido
+                String redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
+                return ResponseEntity.status(HttpStatus.FOUND)
+                        .location(URI.create(redirectUrl))
+                        .build();
             }
             authService.activateUser(token);
             tokenService.revokeToken(token);
 
-            // Inclui a mensagem na URL como um query parameter
-            String redirectUrl = "http://localhost:4200/e-driver/login?message=Conta+ativada+com+sucesso";
+            // Redireciona com a mensagem de sucesso
+            String redirectUrl = "http://localhost:4200/e-driver/login?success=Conta+ativada+com+sucesso";
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(redirectUrl))
                     .build();

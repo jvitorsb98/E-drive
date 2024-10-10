@@ -36,13 +36,17 @@ export class UserLoginModalComponent implements OnInit {
   ngOnInit(): void {
     this.initLoginForm();
 
-    // Captura o parâmetro 'message' da URL
+    // Captura os parâmetros 'success' ou 'error' da URL diretamente
     this.activatedRoute.queryParams.subscribe(params => {
-      this.successMessage = params['message'] || null;
+      const successMessage = params['success'];
+      const errorMessage = params['error'];
 
-      // Verifica se successMessage não é null e então chama o método para processá-la
-      if (this.successMessage) {
-        this.alertasService.showSuccess('Conta ativada', this.successMessage, 'OK');
+      if (successMessage) {
+        this.alertasService.showSuccess('Sucesso', successMessage, 'OK');
+      }
+
+      if (errorMessage) {
+        this.alertasService.showError('Erro', errorMessage, 'OK');
       }
     });
   }
