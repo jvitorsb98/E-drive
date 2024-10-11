@@ -54,58 +54,34 @@ export class VehicleService {
     .set('sort', 'year');
 
     return this.http.get<PaginatedResponse<Vehicle>>(`${this.vehicleUrl}/api/v1/vehicles`, { params: params }).pipe(
-      catchError(this.handleError)
     );
   }
 
   register(vehicle: IVehicleRequest): Observable<Vehicle> {
     return this.http.post<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles`, vehicle).pipe(
-      catchError(this.handleError)
     );
   }
 
   update(id: number, vehicle: IVehicleRequest): Observable<Vehicle> {
     return this.http.put<Vehicle>(`${this.vehicleUrl}/api/v1/vehicles/${id}`, vehicle).pipe(
-      catchError(this.handleError)
     );
   }
 
   activate(id: number): Observable<any> {
     Todo: // Verificar a necessidade de enviar o token no header para ativar o veículo
     return this.http.put<any>(`${this.vehicleUrl}/api/v1/vehicles/enable/${id}`, { headers: this.headers }).pipe(
-      catchError(this.handleError)
     );
   }
 
   deactivate(id: number): Observable<any> {
     return this.http.delete<any>(`${this.vehicleUrl}/api/v1/vehicles/${id}`).pipe(
-      catchError(this.handleError)
     );
   }
 
   // cadastro de Autonomia
   registerAutonomy(autonomy: any): Observable<any> {
     return this.http.post<any>(`${this.vehicleUrl}/api/v1/vehicles/autonomy`, autonomy).pipe(
-      catchError(this.handleError)
     );
-  }
-
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    //NOTE - Adicione as mensagens de erro personalizadas conforme necessário
-    // let errorMessage = 'An unexpected error occurred'; // en-us
-    let errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.'; // pt-br
-
-     if (error.status === 400) {
-      // errorMessage = 'Unauthorized. Please check your credentials.'; // en-us
-      errorMessage = 'Acesso não autorizado. Verifique suas credenciais.'; // pt-br
-      // errorMessage = error.error.message;
-    } else if (error.status === 500) {
-      // errorMessage = 'Internal server error. Please try again later.'; // en-us
-      errorMessage = 'Erro interno do servidor. Tente novamente mais tarde.'; // pt-br
-      // errorMessage = error.error.message;
-    }
-
-    return throwError(() => new Error(errorMessage));
   }
 
 }

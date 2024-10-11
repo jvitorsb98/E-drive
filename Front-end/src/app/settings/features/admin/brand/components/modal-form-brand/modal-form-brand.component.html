@@ -26,7 +26,7 @@
                   formControlName="name" 
                   required 
                   aria-describedby="Help" />
-                  <mat-hint id="Help" class="mat-hint-text">Informe o nome da <strong>marca.</strong></mat-hint>
+                  <!-- <mat-hint id="Help" class="mat-hint-text">Informe o nome da <strong>marca.</strong></mat-hint> -->
                   <mat-error class="mat-error-text" 
                   *ngIf="brandForm.get('name')?.hasError('required') 
                   && brandForm.get('name')?.touched" class="mat-error-text">O <strong>Nome</strong> é obrigatório.</mat-error>

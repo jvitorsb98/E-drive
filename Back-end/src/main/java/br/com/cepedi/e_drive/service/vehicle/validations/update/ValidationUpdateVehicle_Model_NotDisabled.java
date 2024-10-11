@@ -5,7 +5,10 @@ import br.com.cepedi.e_drive.model.records.vehicle.update.DataUpdateVehicle;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se o modelo associado ao veículo está ativado durante a atualização do veículo.
@@ -16,6 +19,9 @@ public class ValidationUpdateVehicle_Model_NotDisabled implements ValidationUpda
     @Autowired
     private ModelRepository modelRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se o modelo associado ao veículo está ativado.
      *
@@ -23,13 +29,16 @@ public class ValidationUpdateVehicle_Model_NotDisabled implements ValidationUpda
      * @throws ValidationException Se o modelo associado estiver desativado.
      */
     @Override
-    public void validate(DataUpdateVehicle data) {
-        if (data.modelId() != null) {
-            if (modelRepository.existsById(data.modelId())) {
-                Model model = modelRepository.getReferenceById(data.modelId());
-                if (!model.getActivated()) {
-                    throw new ValidationException("The provided model id is disabled");
-                }
+    public void validate(DataUpdateVehicle data, Long id) {
+        if (data.modelId() != null && modelRepository.existsById(data.modelId())) {
+            Model model = modelRepository.getReferenceById(data.modelId());
+            if (!model.getActivated()) {
+                String errorMessage = messageSource.getMessage(
+                        "vehicle.update.model.disabled",
+                        null,
+                        Locale.getDefault()
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }

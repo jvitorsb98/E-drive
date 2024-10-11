@@ -5,7 +5,10 @@ import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se o modelo associado ao veículo não está desativado durante o registro do veículo.
@@ -15,6 +18,9 @@ public class ValidationRegisterVehicle_Model_NotDisabled implements ValidationRe
 
     @Autowired
     private ModelRepository modelRepository;
+
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
 
     /**
      * Valida se o modelo associado ao veículo está ativado.
@@ -27,7 +33,12 @@ public class ValidationRegisterVehicle_Model_NotDisabled implements ValidationRe
         if (modelRepository.existsById(data.modelId())) {
             Model model = modelRepository.getReferenceById(data.modelId());
             if (!model.getActivated()) {
-                throw new ValidationException("The provided model id is disabled.");
+                String errorMessage = messageSource.getMessage(
+                        "vehicle.register.model.disabled",
+                        new Object[]{model.getName()},
+                        Locale.getDefault()
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }
