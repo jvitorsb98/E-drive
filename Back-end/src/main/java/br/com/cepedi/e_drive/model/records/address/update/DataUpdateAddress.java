@@ -33,7 +33,7 @@ public record DataUpdateAddress(
 
         String complement,
 
-        @JsonProperty("has_ChargingStation")
+        @JsonProperty("hasChargingStation")
         Boolean plugin
 
 ) {

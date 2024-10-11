@@ -90,19 +90,19 @@ export class ModalFormVehicleComponent {
       version: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.minLength(2)]),
       year: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.min(1886)]),
       mileagePerLiterRoad: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\.\d+)?$/), 
+        Validators.pattern(/^\d+(\.\d+)?$/),
         Validators.required
       ]),
       mileagePerLiterCity: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\.\d+)?$/), 
+        Validators.pattern(/^\d+(\.\d+)?$/),
         Validators.required
       ]),
       consumptionEnergetic: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\.\d+)?$/), 
+        Validators.pattern(/^\d+(\.\d+)?$/),
         Validators.required
       ]),
       autonomyElectricMode: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\.\d+)?$/), 
+        Validators.pattern(/^\d+(\.\d+)?$/),
         Validators.required
       ]),
 
@@ -112,6 +112,7 @@ export class ModalFormVehicleComponent {
 
   fillForm() {
     if (this.data.motor) {
+      this.loadModels(this.data.model.brand.id);
       this.vehicleForm.patchValue({
         motor: this.data.motor,
         version: this.data.version,
@@ -203,15 +204,15 @@ export class ModalFormVehicleComponent {
       console.warn('Invalid form:', this.vehicleForm);
       return;
     }
-  
+
     const vehicleData = this.buildVehicleRequest();
     const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
-    const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';  
+    const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';
 
     const request$ = this.isEditing()
       ? this.vehicleService.update(this.data.id, vehicleData)
       : this.vehicleService.register(vehicleData);
-  
+
 
       request$.subscribe({
       next: (response) => {
@@ -223,7 +224,7 @@ export class ModalFormVehicleComponent {
       }
     });
   }
-  
+
 
   private buildVehicleRequest(): IVehicleRequest {
     const autonomyData: IAutonomyRequest = {
