@@ -116,34 +116,40 @@ export class MyAddressesComponent implements OnInit {
       this.postalCodeService.searchPostalCode(postalCode).subscribe({
         next: (data: any) => {
           if (!data.erro) {
-            // Atualiza o formulário com os dados do CEP
+            // Obtém os valores atuais do formulário
+            const currentFormValue = this.addressForm.value;
+
+            // Mantém os valores atuais se os campos retornados pela API forem vazios
+            const state = data.uf || currentFormValue.state;
+            const city = data.localidade || currentFormValue.city;
+            const neighborhood = data.bairro || currentFormValue.neighborhood;
+            const street = data.logradouro || currentFormValue.street;
+
+            // Atualiza o formulário com os novos valores
             this.addressForm.patchValue({
-              state: data.uf,
-              city: data.localidade,
-              neighborhood: data.bairro,
-              street: data.logradouro
+              state,
+              city,
+              neighborhood,
+              street
             });
           } else {
-            this.alertasService.showError('CEP não encontrado!', 'O CEP informado não foi encontrado. Verifique se o CEP está correto e tente novamente.');
+            this.alertasService.showError('CEP não encontrado!', 'O CEP informado não existe na base de dados.');
           }
-          // Atualiza o estado de carregamento
-          this.isLoading = false;
         },
         error: (erro: HttpErrorResponse) => {
-          // Mensagem de erro se houver falha na requisição
           this.alertasService.showError('Erro ao buscar CEP!', erro.error.message);
         },
         complete: () => {
-          // Atualiza o estado de carregamento ao finalizar a requisição
           this.isLoading = false;
         }
       });
     } else {
-      // Caso o CEP não seja válido (diferente de 8 caracteres)
       this.isLoading = false;
       this.alertasService.showError('CEP inválido!', 'O CEP deve conter 8 caracteres. Verifique o valor informado.');
     }
   }
+
+
 
   /**
    * Método responsável por controlar o fluxo de criação ou edição de endereços.
