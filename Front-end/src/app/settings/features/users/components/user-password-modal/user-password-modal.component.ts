@@ -106,10 +106,10 @@ export class UserPasswordModalComponent implements OnInit {
                   take(1) // Certifica-se de que o evento de navegação seja emitido apenas uma vez para evitar vazamentos de memória.
                 ).subscribe(() => {
                   // Abre o modal após a navegação
-                  this.router.navigate(['/login'])
+                  this.router.navigate(['e-driver/login'])
                 });
                 // Depois navega para a página de introdução
-                this.router.navigate(['/intro-page']);
+                this.router.navigate(['e-driver/intro-page']);
               }
             });
         },
