@@ -170,7 +170,7 @@ public class VehicleService {
      * @return Detalhes do veículo atualizado.
      */
     public DataVehicleDetails updateVehicle(DataUpdateVehicle data, Long id) {
-        validationUpdateVehicleList.forEach(v -> v.validate(data));
+        validationUpdateVehicleList.forEach(v -> v.validate(data,id));
         Vehicle vehicle = vehicleRepository.getReferenceById(id);
         Category category = data.categoryId() != null ? categoryRepository.getReferenceById(data.categoryId()) : null;
         Propulsion propulsion = data.propulsionId() != null ? propulsionRepository.getReferenceById(data.propulsionId()) : null;

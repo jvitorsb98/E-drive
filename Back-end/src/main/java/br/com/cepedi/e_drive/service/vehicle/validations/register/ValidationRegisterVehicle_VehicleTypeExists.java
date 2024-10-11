@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se o tipo de veículo associado ao veículo existe durante o registro do veículo.
@@ -15,6 +18,9 @@ public class ValidationRegisterVehicle_VehicleTypeExists implements ValidationRe
     @Autowired
     private VehicleTypeRepository vehicleTypeRepository;
 
+    @Autowired
+    private MessageSource messageSource;
+
     /**
      * Verifica se o tipo de veículo associado ao veículo existe.
      *
@@ -24,7 +30,12 @@ public class ValidationRegisterVehicle_VehicleTypeExists implements ValidationRe
     @Override
     public void validate(DataRegisterVehicle data) {
         if (!vehicleTypeRepository.existsById(data.typeId())) {
-            throw new ValidationException("The provided vehicle type id does not exist.");
+            String errorMessage = messageSource.getMessage(
+                    "vehicle.register.type.not.found",
+                    new Object[]{data.typeId()},
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }
