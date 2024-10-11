@@ -4,14 +4,16 @@ import br.com.cepedi.e_drive.model.entitys.Vehicle;
 import br.com.cepedi.e_drive.repository.VehicleRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 /**
- * Valida se um veículo já está desativado antes de realizar operações de desativação.
+ * Validates if a vehicle is not already disabled before performing deactivation operations.
  *
- * Esta implementação da interface {@link ValidationDisabledVehicle} garante que um veículo
- * com o ID fornecido não esteja já desativado. Se o veículo já estiver desativado, uma exceção
- * de validação é lançada.
+ * This implementation of {@link ValidationDisabledVehicle} ensures that the vehicle
+ * with the provided ID is not already disabled. If it is, a validation exception is thrown.
  */
 @Component
 public class ValidationDisabledVehicle_NotDisabled implements ValidationDisabledVehicle {
@@ -19,18 +21,24 @@ public class ValidationDisabledVehicle_NotDisabled implements ValidationDisabled
     @Autowired
     private VehicleRepository vehicleRepository;
 
+    @Autowired
+    private MessageSource messageSource; // For internationalization
+
     /**
-     * Valida se o veículo com o ID fornecido não está desativado.
+     * Validates if the vehicle with the provided ID is not already disabled.
      *
-     * @param id ID do veículo a ser validado.
-     * @throws ValidationException Se o veículo com o ID fornecido já estiver desativado.
+     * @param id ID of the vehicle to be validated.
+     * @throws ValidationException If the vehicle is already disabled.
      */
     @Override
     public void validate(Long id) {
         if (vehicleRepository.existsById(id)) {
             Vehicle vehicle = vehicleRepository.getReferenceById(id);
             if (!vehicle.isActivated()) {
-                throw new ValidationException("The provided vehicle is already disabled.");
+                String message = messageSource.getMessage(
+                        "vehicle.disable.already", new Object[]{id}, Locale.getDefault()
+                );
+                throw new ValidationException(message);
             }
         }
     }

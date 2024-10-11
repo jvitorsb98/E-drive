@@ -113,4 +113,7 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
      */
     Page<Vehicle> findByVersion(String version, Pageable pageable);
 
+    boolean existsByModelIdAndVersionIgnoreCase(Long aLong, String trim);
+
+    boolean existsByModelIdAndVersionIgnoreCaseAndIdNot(Long modelId, String version, Long id);
 }

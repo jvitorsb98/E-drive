@@ -12,5 +12,5 @@ public interface ValidationUpdateVehicle {
      *
      * @param data Dados de atualização do veículo a serem validados.
      */
-    void validate(DataUpdateVehicle data);
+    void validate(DataUpdateVehicle data, Long id);
 }

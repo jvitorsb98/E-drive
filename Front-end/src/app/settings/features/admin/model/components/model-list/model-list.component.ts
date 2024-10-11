@@ -23,6 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 // Imports de bibliotecas externas
 import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
+import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-model-list',
@@ -40,7 +41,8 @@ export class ModelListComponent {
 
   constructor(
     private modelService: ModelService, // Serviço de modelos
-    private dialog: MatDialog // Diálogo para modais
+    private dialog: MatDialog, // Diálogo para modais
+    private alertasService: AlertasService
   ) {
     this.dataSource = new MatTableDataSource(this.modelList); // Inicializa o datasource da tabela
   }
@@ -81,32 +83,49 @@ export class ModelListComponent {
 
   // Deleta um modelo e atualiza a lista
   deleteModel(modelData: Model) {
-    console.log('Deletando veículo:', modelData);
-    this.modelService.delete(modelData.id).pipe(
-      catchError(() => {
-        Swal.fire({
-          title: 'Erro!',
-          icon: 'error',
-          text: 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.',
-          showConfirmButton: true,
-          confirmButtonColor: 'red',
+    this.alertasService.showWarning(
+      'Deletar Modelo',
+      `Você tem certeza que deseja deletar o modelo "${modelData.name}"?`,
+      'Sim, deletar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.modelService.delete(modelData.id).pipe(
+          catchError(() => {
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao deletar o modelo. Tente novamente mais tarde.');
+            return of(null); // Continua a sequência de observáveis com um valor nulo
+          })
+        ).subscribe(() => {
+          this.alertasService.showSuccess('Sucesso!', 'O modelo foi deletado com sucesso!').then(() => {
+            this.loadModels(); // Atualiza a lista de modelos após a exclusão
+          });
         });
-        return of(null); // Continua a sequência de observáveis com um valor nulo
-      })
-    ).subscribe(() => {
-      Swal.fire({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: 'O veículo foi deletado com sucesso!',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      }).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          this.loadModels(); // Atualiza a lista de modelos após a exclusão
-        }
-      });
+      }
     });
   }
+
+
+  // No arquivo: brand-list.component.ts
+  activatedModel(model: Model) {
+    this.alertasService.showWarning(
+      'Ativar Modelo',
+      `Você tem certeza que deseja ativar o modelo  "${model.name}"?`,
+      'Sim, ativar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.modelService.activated(model.id).subscribe({
+          next: () => {
+            this.alertasService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() => this.loadModels());
+          },
+          error: (error) => {
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar o modelo. Tente novamente mais tarde.');
+          }
+        });
+      }
+    });
+  }
+
 
   // Aplica filtro na tabela
   applyFilter(event: Event) {

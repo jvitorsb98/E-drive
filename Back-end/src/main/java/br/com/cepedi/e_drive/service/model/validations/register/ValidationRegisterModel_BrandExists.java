@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se a marca associada ao modelo existe durante o registro do modelo.
@@ -15,6 +18,9 @@ public class ValidationRegisterModel_BrandExists implements ValidationRegisterMo
     @Autowired
     private BrandRepository brandRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se a marca associada ao modelo existe no repositório.
      *
@@ -24,7 +30,12 @@ public class ValidationRegisterModel_BrandExists implements ValidationRegisterMo
     @Override
     public void validation(DataRegisterModel dataRegisterModel) {
         if (!brandRepository.existsById(dataRegisterModel.idBrand())) {
-            throw new ValidationException("The required brand does not exist.");
+            String errorMessage = messageSource.getMessage(
+                    "model.register.brand.not.found",
+                    null,
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }

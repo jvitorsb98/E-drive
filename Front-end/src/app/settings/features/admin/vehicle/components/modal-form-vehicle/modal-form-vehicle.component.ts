@@ -20,6 +20,7 @@ import { Propulsion } from '../../../../../core/models/propulsion';
 import { IAutonomyRequest } from '../../../../../core/models/autonomy';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormUtilsService } from '../../../../../shared/services/FormUtils/form-utils.service';
+import { Brand } from '../../../../../core/models/brand';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -78,8 +79,6 @@ export class ModalFormVehicleComponent {
     }
   }
 
-  //TODO - fazer validação da versão para não cadastrar versões repetidas , já esta causando erro se repetido mais não tem a validação
-
   private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
       brand: new FormControl(null, [Validators.required]),
@@ -91,19 +90,19 @@ export class ModalFormVehicleComponent {
       version: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.minLength(2)]),
       year: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.min(1886)]),
       mileagePerLiterRoad: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d{1,2}(\.\d)?$/),
+        Validators.pattern(/^\d+(\.\d+)?$/), 
         Validators.required
       ]),
       mileagePerLiterCity: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        Validators.pattern(/^\d+(\.\d+)?$/), 
         Validators.required
       ]),
       consumptionEnergetic: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\.\d{1,2})?$/),
+        Validators.pattern(/^\d+(\.\d+)?$/), 
         Validators.required
       ]),
       autonomyElectricMode: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
-        Validators.pattern(/^\d+(\d{1,2})?$/),
+        Validators.pattern(/^\d+(\.\d+)?$/), 
         Validators.required
       ]),
 
@@ -121,12 +120,10 @@ export class ModalFormVehicleComponent {
         category: this.data.category.name,
         type: this.data.type.name,
         propulsion: this.data.propulsion.name,
-        autonomy: {
-          mileagePerLiterCity: this.data.autonomy.mileagePerLiterCity,
-          mileagePerLiterRoad: this.data.autonomy.mileagePerLiterRoad,
-          consumptionEnergetic: this.data.autonomy.consumptionEnergetic,
-          autonomyElectricMode: this.data.autonomy.autonomyElectricMode
-        },
+        mileagePerLiterCity: this.data.autonomy.mileagePerLiterCity,
+        mileagePerLiterRoad: this.data.autonomy.mileagePerLiterRoad,
+        consumptionEnergetic: this.data.autonomy.consumptionEnergetic,
+        autonomyElectricMode: this.data.autonomy.autonomyElectricMode,
         year: this.data.year,
         activated: this.data.activated,
       });
@@ -150,7 +147,7 @@ export class ModalFormVehicleComponent {
   loadBrands() {
     this.brandService.getAll().subscribe({
       next: (response: any) => {
-        this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+        this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
       },
       error: (error) => this.handleError('brands', error),
     });
@@ -206,19 +203,27 @@ export class ModalFormVehicleComponent {
       console.warn('Invalid form:', this.vehicleForm);
       return;
     }
-
+  
     const vehicleData = this.buildVehicleRequest();
-    const action = this.isEditing() ? 'updated' : 'registered';
+    const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
+    const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';  
 
-    const saveOperation = this.isEditing()
+    const request$ = this.isEditing()
       ? this.vehicleService.update(this.data.id, vehicleData)
       : this.vehicleService.register(vehicleData);
+  
 
-    saveOperation.subscribe({
-      next: () => this.showSuccessMessage(action),
-      error: () => this.showErrorMessage(action),
+      request$.subscribe({
+      next: (response) => {
+        console.log('Response received:', response); // Aqui você pega o response no caso de sucesso
+        this.showSuccessMessage(actionSucess);
+      },
+      error: (response) => {
+        this.showErrorMessage(response.error, actionsError);
+      }
     });
   }
+  
 
   private buildVehicleRequest(): IVehicleRequest {
     const autonomyData: IAutonomyRequest = {
@@ -265,11 +270,11 @@ export class ModalFormVehicleComponent {
     this.dialogRef.close(true);
   }
 
-  private showErrorMessage(action: string): void {
+  private showErrorMessage(error:string,action: string): void {
     Swal.fire({
       title: 'Error!',
       icon: 'error',
-      text: `Failed to ${action} vehicle`,
+      text: `${error}`,
     });
   }
 

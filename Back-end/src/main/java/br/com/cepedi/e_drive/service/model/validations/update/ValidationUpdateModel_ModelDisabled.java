@@ -1,7 +1,7 @@
-package br.com.cepedi.e_drive.service.vehicle.validations.register;
+package br.com.cepedi.e_drive.service.model.validations.update;
 
 import br.com.cepedi.e_drive.model.entitys.Model;
-import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
+import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 import java.util.Locale;
 
 /**
- * Valida se o modelo associado ao veículo não está desativado durante o registro do veículo.
+ * Valida se o modelo está ativado durante a atualização do modelo.
  */
 @Component
-public class ValidationRegisterVehicle_Model_NotDisabled implements ValidationRegisterVehicle {
+public class ValidationUpdateModel_ModelDisabled implements ValidationModelUpdate {
 
     @Autowired
     private ModelRepository modelRepository;
@@ -23,18 +23,19 @@ public class ValidationRegisterVehicle_Model_NotDisabled implements ValidationRe
     private MessageSource messageSource; // Injeção do MessageSource para internacionalização
 
     /**
-     * Valida se o modelo associado ao veículo está ativado.
+     * Valida se o modelo a ser atualizado está ativado.
      *
-     * @param data Dados do veículo a serem validados.
-     * @throws ValidationException Se o modelo associado estiver desativado.
+     * @param data Os dados do modelo que estão sendo atualizados.
+     * @param id   O ID do modelo que está sendo atualizado.
+     * @throws ValidationException Se o modelo não estiver ativado.
      */
     @Override
-    public void validate(DataRegisterVehicle data) {
-        if (modelRepository.existsById(data.modelId())) {
-            Model model = modelRepository.getReferenceById(data.modelId());
+    public void validation(DataUpdateModel data, Long id) {
+        if (modelRepository.existsById(id)) {
+            Model model = modelRepository.getReferenceById(id);
             if (!model.getActivated()) {
                 String errorMessage = messageSource.getMessage(
-                        "vehicle.register.model.disabled",
+                        "model.update.disabled",
                         new Object[]{model.getName()},
                         Locale.getDefault()
                 );

@@ -3,7 +3,10 @@ package br.com.cepedi.e_drive.service.model.validations.activated;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Implementação da interface `ValidationModelActivated` para verificar se o modelo existe.
@@ -14,6 +17,9 @@ public class ValidationModelExistsForActivated implements ValidationModelActivat
     @Autowired
     private ModelRepository modelRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se o modelo com o ID fornecido existe no repositório.
      *
@@ -23,7 +29,12 @@ public class ValidationModelExistsForActivated implements ValidationModelActivat
     @Override
     public void validation(Long id) {
         if (!modelRepository.existsById(id)) {
-            throw new ValidationException("The required model does not exist");
+            String errorMessage = messageSource.getMessage(
+                    "model.activated.not.found",
+                    null,
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }

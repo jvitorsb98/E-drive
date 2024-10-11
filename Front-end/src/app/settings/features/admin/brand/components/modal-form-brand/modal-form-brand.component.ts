@@ -94,6 +94,7 @@ export class ModalFormBrandComponent {
           this.handleSuccess(actionSucess); // Ação de sucesso
         },
         error: (response) => {
+          console.log(response.error)
           this.handleError(response.error, actionsError); // Ação de erro
         }
       });

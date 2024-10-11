@@ -1,3 +1,4 @@
+import { AlertasService } from './../../../../../core/services/Alertas/alertas.service';
 import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -32,7 +33,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private brandService: BrandService, // Serviço para interagir com a API de marcas
-    private dialog: MatDialog // Serviço para abrir diálogos
+    private dialog: MatDialog, // Serviço para abrir diálogos
+    private alertasService: AlertasService
   ) { }
 
   ngOnInit() {
@@ -64,33 +66,27 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  deleteBrand(brandData: Brand) {
-    console.log('Deletando marca:', brandData);
-    this.brandService.delete(brandData.id).pipe(
-      catchError(() => {
-        Swal.fire({
-          title: 'Erro!',
-          icon: 'error',
-          text: 'Ocorreu um erro ao deletar a marca. Tente novamente mais tarde.',
-          showConfirmButton: true,
-          confirmButtonColor: 'red',
+
+  disableBrand(brand: Brand) {
+    this.alertasService.showWarning(
+      'Desabilitar Marca',
+      `Você tem certeza que deseja desabilitar a marca "${brand.name}"?`,
+      'Sim, desabilitar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.brandService.delete(brand.id).subscribe({
+          next: () => {
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!').then(() => this.loadBrands()); // Atualiza a lista após desabilitação
+          },
+          error: (error) => {
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.');
+          }
         });
-        return of(null); // Continua a sequência de observáveis com um valor nulo
-      })
-    ).subscribe(() => {
-      Swal.fire({
-        title: 'Sucesso!',
-        icon: 'success',
-        text: 'A marca foi deletada com sucesso!',
-        showConfirmButton: true,
-        confirmButtonColor: '#19B6DD',
-      }).then((result) => {
-        if (result.isConfirmed || result.isDismissed) {
-          this.loadBrands(); // Atualiza a lista após exclusão
-        }
-      });
+      }
     });
   }
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -125,4 +121,28 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       data: brandList
     }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
   }
+
+
+  // No arquivo: brand-list.component.ts
+  activateBrand(brand: Brand) {
+    this.alertasService.showWarning(
+      'Ativar Marca',
+      `Você tem certeza que deseja ativar a marca "${brand.name}"?`,
+      'Sim, ativar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.brandService.activated(brand.id).subscribe({
+          next: () => {
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!').then(() => this.loadBrands());
+          },
+          error: (error) => {
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');
+          }
+        });
+      }
+    });
+  }
+  
+  
 }

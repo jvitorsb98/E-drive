@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se a propulsão associada ao veículo existe durante o registro do veículo.
@@ -15,6 +18,9 @@ public class ValidationRegisterVehicle_PropulsionExists implements ValidationReg
     @Autowired
     private PropulsionRepository propulsionRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Verifica se a propulsão associada ao veículo existe.
      *
@@ -24,7 +30,12 @@ public class ValidationRegisterVehicle_PropulsionExists implements ValidationReg
     @Override
     public void validate(DataRegisterVehicle data) {
         if (!propulsionRepository.existsById(data.propulsionId())) {
-            throw new ValidationException("The provided propulsion id does not exist.");
+            String errorMessage = messageSource.getMessage(
+                    "vehicle.register.propulsion.not.found",
+                    new Object[]{data.propulsionId()},
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }

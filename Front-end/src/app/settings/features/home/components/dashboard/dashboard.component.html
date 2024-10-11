@@ -14,3 +14,16 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="menu-container container-fluid d-flex justify-content-center pt-3" *ngIf="isAdmin">
+	<div class="menu-links row w-100 text-center">
+		<div *ngFor="let link of adminLinks; let i = index" [ngClass]="getColumnClass(i)"
+			class="d-flex flex-column justify-content-center align-items-center py-2">
+			<a [routerLink]="link.route" class="d-flex flex-column align-items-center">
+				<mat-icon class="icon-size">{{ link.icon }}</mat-icon>
+				<span>{{ link.label }}</span>
+			</a>
+		</div>
+	</div>
+</div>

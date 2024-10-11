@@ -23,7 +23,7 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
     private ModelRepository modelRepository;
 
     @InjectMocks
-    private ValidationUpdateModel_ModelNotDisabled validationUpdateModel_ModelNotDisabled;
+    private ValidationUpdateModel_ModelDisabled validationUpdateModel_ModelNotDisabled;
 
     private Faker faker;
 

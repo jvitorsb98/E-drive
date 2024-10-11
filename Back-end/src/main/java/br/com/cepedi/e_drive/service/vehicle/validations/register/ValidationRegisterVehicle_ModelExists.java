@@ -1,10 +1,14 @@
 package br.com.cepedi.e_drive.service.vehicle.validations.register;
 
+import br.com.cepedi.e_drive.model.entitys.Model;
 import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se o modelo associado ao veículo existe durante o registro do veículo.
@@ -15,6 +19,9 @@ public class ValidationRegisterVehicle_ModelExists implements ValidationRegister
     @Autowired
     private ModelRepository modelRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Verifica se o modelo associado ao veículo existe.
      *
@@ -24,7 +31,12 @@ public class ValidationRegisterVehicle_ModelExists implements ValidationRegister
     @Override
     public void validate(DataRegisterVehicle data) {
         if (!modelRepository.existsById(data.modelId())) {
-            throw new ValidationException("The provided model id does not exist.");
+            String errorMessage = messageSource.getMessage(
+                    "vehicle.register.model.not.found",
+                    new Object[]{data.modelId()},
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }
