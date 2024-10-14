@@ -5,13 +5,8 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Observable, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component';
+
 import { IVehicleRequest, Vehicle } from '../../../../../core/models/vehicle';
-import { BrandService } from '../../../../../core/services/brand/brand.service';
-import { CategoryService } from '../../../../../core/services/category/category.service';
-import { ModelService } from '../../../../../core/services/model/model.service';
-import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
-import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
-import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
 import { Model } from '../../../../../core/models/model';
 import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
 import { VehicleType } from '../../../../../core/models/vehicle-type';
@@ -22,30 +17,87 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormUtilsService } from '../../../../../shared/services/FormUtils/form-utils.service';
 import { Brand } from '../../../../../core/models/brand';
 
+import { CategoryService } from '../../../../../core/services/category/category.service';
+import { ModelService } from '../../../../../core/services/model/model.service';
+import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
+import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
+import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
+import { BrandService } from '../../../../../core/services/brand/brand.service';
+
+
+/**
+ * **Passo a passo de chamada de métodos:**
+ *
+ * 1. **loadBrands**: Carrega as marcas disponíveis para preenchimento no formulário.
+ *    Este método é chamado durante a inicialização do componente.
+ *
+ * 2. **loadCategories**: Carrega as categorias disponíveis para preenchimento no formulário.
+ *    Este método é chamado durante a inicialização do componente.
+ *
+ * 3. **loadTypes**: Carrega os tipos de veículos disponíveis para preenchimento no formulário.
+ *    Este método é chamado durante a inicialização do componente.
+ *
+ * 4. **loadPropulsions**: Carrega as propulsões disponíveis para preenchimento no formulário.
+ *    Este método é chamado durante a inicialização do componente.
+ *
+ * 5. **buildForm**: Constrói o formulário reativo para capturar os dados do veículo.
+ *    Este método é chamado durante a inicialização do componente.
+ *
+ * 6. **onBrandChange**: Manipula a alteração da marca selecionada no formulário.
+ *    Carrega os modelos relacionados à marca selecionada.
+ *
+ * 7. **isEditing**: Verifica se o formulário está em modo de edição.
+ *    Retorna `true` se o veículo estiver sendo editado, caso contrário `false`.
+ *
+ * 8. **fillForm**: Preenche o formulário com os dados do veículo existente para edição.
+ *    Este método é chamado quando o componente está no modo de edição.
+ *
+ * 9. **handleError**: Trata erros durante o carregamento de dados e exibe uma mensagem de erro usando SweetAlert2.
+ *
+ * 10. **closeModal**: Fecha o modal atual sem salvar alterações.
+ *
+ * 11. **resetForm**: Reseta os campos do formulário de veículo.
+ *
+ * 12. **openFAQModal**: Abre um modal de FAQ com informações sobre como utilizar o formulário de veículo.
+ */
 @Component({
   selector: 'app-modal-form-vehicle',
   templateUrl: './modal-form-vehicle.component.html',
-  styleUrls: ['./modal-form-vehicle.component.scss'] // Corrigido 'styleUrl' para 'styleUrls'
+  styleUrls: ['./modal-form-vehicle.component.scss']
 })
 export class ModalFormVehicleComponent {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
 
-  vehicleForm!: FormGroup;
-  editVehicle = false;
-  noCategoryFound = false;
-  noBrandFound = false;
+  vehicleForm!: FormGroup; // Formulário reativo
+  editVehicle = false; // Indica se o formulário está em modo de edição
+  noCategoryFound = false; // Indica se nenhuma categoria foi encontrada
+  noBrandFound = false; // Indica se nenhuma marca foi encontrada
 
-  brands: { name: string; id: number }[] = [];
-  filteredBrands: Observable<{ name: string; id: number }[]> = of([]);
-  categories: { name: string; id: number }[] = [];
-  models: { name: string; id: number }[] = [];
-  types: { name: string; id: number }[] = [];
-  propulsions: { name: string; id: number }[] = [];
+  brands: { name: string; id: number }[] = []; // Lista de marcas
+  filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de marcas
+  categories: { name: string; id: number }[] = []; // Lista de categorias
+  models: { name: string; id: number }[] = []; // Lista de modelos
+  types: { name: string; id: number }[] = []; // Lista de tipos
+  propulsions: { name: string; id: number }[] = []; // Lista de propulsões
 
-  filteredCategories: Observable<{ name: string; id: number }[]> = of([]);
-  filteredModels: Observable<{ name: string }[]> = of([]);
-  vehicles: Vehicle[] = [];
+  filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
+  filteredModels: Observable<{ name: string }[]> = of([]); // Lista filtrada de modelos
+  vehicles: Vehicle[] = []; // Lista de veículos
 
+   /**
+   * Construtor do componente ModalFormVehicleComponent
+   *
+   * @param vehicleService - Serviço responsável por operações relacionadas a veículos
+   * @param categoryService - Serviço responsável por operações relacionadas a categorias
+   * @param brandService - Serviço responsável por operações relacionadas a marcas
+   * @param modelService - Serviço responsável por operações relacionadas a modelos
+   * @param propulsionService - Serviço responsável por operações relacionadas a propulsões
+   * @param vehicleTypeService - Serviço responsável por operações relacionadas a tipos de veículos
+   * @param formBuilder - Utilizado para criar formulários reativos
+   * @param dialog - Serviço para abertura de diálogos modais
+   * @param dialogRef - Referência ao diálogo aberto para manipulação de eventos
+   * @param data - Dados injetados no diálogo, contendo informações do veículo
+   */
   constructor(
     private vehicleService: VehicleService,
     private categoryService: CategoryService,
@@ -60,6 +112,10 @@ export class ModalFormVehicleComponent {
     @Inject(MAT_DIALOG_DATA) public data: Vehicle
   ) { }
 
+  /**
+   * Método executado ao inicializar o componente. Define o formulário, carrega as listas
+   * de marcas, categorias, tipos e propulsões, e preenche os dados do formulário se for uma edição.
+   */
   ngOnInit(): void {
     this.editVehicle = !!this.data?.motor;
     this.loadBrands();
@@ -79,6 +135,9 @@ export class ModalFormVehicleComponent {
     }
   }
 
+  /**
+   * Constrói o formulário do veículo com suas validações.
+   */
   private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
       brand: new FormControl(null, [Validators.required]),
@@ -110,6 +169,9 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+   * Preenche o formulário com os dados do veículo quando estiver em modo de edição.
+   */
   fillForm() {
     if (this.data.motor) {
       this.loadModels(this.data.model.brand.id);
@@ -154,6 +216,10 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+   * Carrega a lista de modelos disponíveis de uma marca selecionada.
+   * @param idBrand - Identificador da marca selecionada
+   */
   private loadModels(idBrand: number): void {
     this.modelService.getModelsByBrandId(idBrand).subscribe({
       next: (response: any) => {
@@ -163,6 +229,9 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+   * Carrega a lista de categorias disponíveis chamando o serviço correspondente.
+   */
   private loadCategories(): void {
     this.categoryService.getAll().subscribe({
       next: (response: PaginatedResponse<VehicleType>) => {
@@ -172,6 +241,9 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+   * Carrega a lista de tipos de veículos disponíveis chamando o serviço correspondente.
+   */
   private loadTypes(): void {
     this.vehicleTypeService.getAll().subscribe({
       next: (response: PaginatedResponse<VehicleType>) => {
@@ -181,6 +253,9 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+   * Carrega a lista de propulsões disponíveis chamando o serviço correspondente.
+   */
   private loadPropulsions(): void {
     this.propulsionService.getAll().subscribe({
       next: (response: PaginatedResponse<Propulsion>) => {
@@ -190,6 +265,10 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+   * Executa ação quando uma marca é selecionada, carregando os modelos correspondentes.
+   * @param selectedBrand - Nome da marca selecionada
+   */
   private onBrandChange(selectedBrand: string): void {
     const brand = this.brands.find(b => b.name === selectedBrand);
     if (brand) {
@@ -199,6 +278,12 @@ export class ModalFormVehicleComponent {
     }
   }
 
+  /**
+ * Envia o formulário após validação.
+ *
+ * Se o formulário for inválido, um aviso será registrado e a operação será encerrada.
+ * Caso contrário, a requisição para cadastrar ou atualizar o veículo será construída e enviada.
+ */
   submitForm(): void {
     if (this.vehicleForm.invalid) {
       console.warn('Invalid form:', this.vehicleForm);
@@ -225,7 +310,6 @@ export class ModalFormVehicleComponent {
     });
   }
 
-
   private buildVehicleRequest(): IVehicleRequest {
     const autonomyData: IAutonomyRequest = {
       mileagePerLiterCity: this.vehicleForm.get('mileagePerLiterCity')?.value,
@@ -246,22 +330,48 @@ export class ModalFormVehicleComponent {
     };
   }
 
+  /**
+ * Obtém o ID do modelo selecionado.
+ *
+ * @returns {number | undefined} ID do modelo ou undefined se não encontrado
+ */
   private getSelectedModelId(): number | undefined {
     return this.models.find(model => model.name === this.vehicleForm.get('model')?.value)?.id;
   }
 
+  /**
+ * Obtém o ID da categoria selecionada.
+ *
+ * @returns {number | undefined} ID da categoria ou undefined se não encontrado
+ */
   private getSelectedCategoryId(): number | undefined {
     return this.categories.find(category => category.name === this.vehicleForm.get('category')?.value)?.id;
   }
 
+
+  /**
+ * Obtém o ID do tipo de veículo selecionado.
+ *
+ * @returns {number | undefined} ID do tipo de veículo ou undefined se não encontrado
+ */
   private getSelectedTypeId(): number | undefined {
     return this.types.find(type => type.name === this.vehicleForm.get('type')?.value)?.id;
   }
 
+  /**
+ * Obtém o ID da propulsão selecionada.
+ *
+ * @returns {number | undefined} ID da propulsão ou undefined se não encontrado
+ */
   private getSelectedPropulsionId(): number | undefined {
     return this.propulsions.find(propulsion => propulsion.name === this.vehicleForm.get('propulsion')?.value)?.id;
   }
 
+  /**
+ * Exibe uma mensagem de sucesso após a operação.
+ *
+ * @param {string} action - Ação realizada (cadastrar ou atualizar)
+ */
   private showSuccessMessage(action: string): void {
     Swal.fire({
       title: 'Success!',
@@ -279,6 +389,12 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+ * Manipula erros ao carregar dados.
+ *
+ * @param {string} context - Contexto da operação que falhou
+ * @param {HttpErrorResponse} error - Erro recebido
+ */
   private handleError(context: string, error: HttpErrorResponse): void {
     Swal.fire({
       title: 'Error!',
@@ -287,18 +403,32 @@ export class ModalFormVehicleComponent {
     });
   }
 
+  /**
+ * Verifica se está em modo de edição.
+ *
+ * @returns {boolean} true se estiver editando, false caso contrário
+ */
   isEditing(): boolean {
     return this.editVehicle;
   }
 
+  /**
+ * Fecha o modal atual.
+ */
   closeModal() {
     this.dialogRef.close();
   }
 
+  /**
+ * Reseta o formulário para seu estado inicial.
+ */
   resetForm(): void {
     this.vehicleForm.reset();
   }
 
+  /**
+ * Abre um modal de perguntas frequentes sobre o veículo.
+ */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {

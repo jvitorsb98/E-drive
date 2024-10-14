@@ -1,31 +1,45 @@
+<!-- Barra superior com título e botão de voltar -->
 <div class="top-bar pt-3">
   <div class="d-flex justify-content-between container-fluid">
+    <!-- Botão de voltar para o dashboard -->
     <div class="justify-content-start">
       <mat-icon class="arrow-back-icon" routerLink="/e-driver/dashboard">arrow_back</mat-icon>
     </div>
+    <!-- Título centralizado -->
     <div class="flex-grow-1 text-center">
       <h1 class="text-white">Modelos de Veículos</h1>
     </div>
   </div>
 </div>
 
+<!-- Container principal para a tabela de modelos de veículos -->
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
   <div class="row">
+    
+    <!-- Filtro personalizado para busca por modelo -->
     <div class="custom-filter">
       <mat-form-field>
         <mat-label>Busca por modelo</mat-label>
+        <!-- Campo de input para buscar modelos por nome -->
         <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
       </mat-form-field>
     </div>
+
+    <!-- Container para a tabela -->
     <div class="container">
       <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
+
+        <!-- Coluna para o ícone representando cada modelo -->
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+            <!-- Ícone de carro com tooltip descritivo -->
             <mat-icon
               matTooltip="Este ícone representa cada modelo de carro listada abaixo. Clique para ver os detalhes de cada marca.">
-              view_carousel</mat-icon>
+              view_carousel
+            </mat-icon>
           </th>
           <td class="td-table" mat-cell *matCellDef="let model">
+            <!-- Ícone com tooltip detalhando o ID e o status do modelo -->
             <mat-icon class="icone-emoji-flags" [matTooltip]="'ID: ' + model.id 
               + ' | Status: ' 
               + (model.activated ? 'Ativado' : 'Desativado')"
@@ -33,29 +47,36 @@
           </td>
         </ng-container>
 
+        <!-- Coluna para exibir a marca do veículo -->
         <ng-container matColumnDef="marck">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model"><strong>{{model.brand.name}}</strong></td>
         </ng-container>
 
+        <!-- Coluna para exibir o nome do modelo -->
         <ng-container matColumnDef="name">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model"><strong>{{model.name}}</strong></td>
         </ng-container>
 
+        <!-- Coluna para exibir o status do modelo (Ativado ou Desativado) -->
         <ng-container matColumnDef="activated">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model">
+            <!-- Ícone de check se o modelo estiver ativado -->
             <mat-icon class="check" *ngIf="model.activated">check</mat-icon>
+            <!-- Ícone de remove se o modelo estiver desativado -->
             <mat-icon class="error" *ngIf="!model.activated">remove</mat-icon>
           </td>
         </ng-container>
 
-        <!-- Actions Column -->
+        <!-- Coluna de ações com opções de visualizar, editar ou alterar o status do modelo -->
         <ng-container matColumnDef="actions">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model">
+            <!-- Ícone para visualizar o modelo -->
             <mat-icon class="icone-table" (click)="openModalViewModel(model)">visibility</mat-icon>
+            <!-- Ícone para editar o modelo -->
             <mat-icon class="icone-table" (click)="openModalEditModel(model)">edit</mat-icon>
             <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">delete</mat-icon>
             <mat-icon class="icone-table" (click)="activatedModel(model)" *ngIf="!model.activated">check</mat-icon>
@@ -65,9 +86,11 @@
           </td>
         </ng-container>
 
+        <!-- Cabeçalhos e linhas da tabela -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
+        <!-- Linha de feedback para quando não há dados correspondentes à busca -->
         <tr class="mat-row" *matNoDataRow>
           <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a pesquisa: "{{input.value}}"
           </td>
@@ -75,10 +98,11 @@
       </table>
     </div>
 
+    <!-- Paginação da tabela -->
     <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]"
       aria-label="Selecione modelos por página"></mat-paginator>
 
-    <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAddModel()"
-      text="Novo modelo"></app-ui-button>
+    <!-- Botão para abrir o modal de adicionar um novo modelo -->
+    <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAddModel()" text="Novo modelo"></app-ui-button>
   </div>
 </div>

@@ -1,65 +1,69 @@
+<!-- Top bar de navegação da página -->
 <div class="top-bar pt-3">
   <div class="d-flex justify-content-between container-fluid">
     <div class="justify-content-start">
+      <!-- Ícone de voltar, redireciona para o dashboard -->
       <mat-icon class="arrow-back-icon" routerLink="/e-driver/dashboard">arrow_back</mat-icon>
     </div>
     <div class="flex-grow-1 text-center">
+      <!-- Título da página -->
       <h1 class="text-white">Marcas de Veículos</h1>
     </div>
   </div>
 </div>
 
+<!-- Container para o filtro de busca -->
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
   <div class="custom-filter">
     <mat-form-field class="d-flex w-100">
+      <!-- Label do campo de busca -->
       <mat-label>Busca por marca</mat-label>
+      <!-- Campo de entrada para busca com evento de digitação -->
       <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
     </mat-form-field>
   </div>
 </div>
 
-<!-- <div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
-  <div class="custom-button">
-    <app-ui-button class="w-100" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
-      text="Nova marca"></app-ui-button>
-  </div>
-</div> -->
-
+<!-- Container para a tabela de marcas de veículos -->
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
   <div class="row">
     <div class="container-table">
       <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
+        
+        <!-- Coluna para ícones das marcas -->
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <mat-icon
-              matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">emoji_flags
-            </mat-icon>
+            <mat-icon matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">emoji_flags</mat-icon>
           </th>
 
           <td class="td-table" mat-cell *matCellDef="let brand">
-            <mat-icon class="icone-emoji-flags" [matTooltip]="'ID: ' + brand.id + ' | Ativado: ' + brand.activated"
-              matTooltipClass="multi-line-tooltip"> emoji_flags
-            </mat-icon>
+            <!-- Ícone da marca com tooltip -->
+            <mat-icon class="icone-emoji-flags" [matTooltip]="'ID: ' + brand.id + ' | Ativado: ' + brand.activated" matTooltipClass="multi-line-tooltip"> emoji_flags</mat-icon>
           </td>
         </ng-container>
 
+        <!-- Coluna para o nome das marcas -->
         <ng-container matColumnDef="name">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
           <td class="td-table" mat-cell *matCellDef="let brand"><strong>{{brand.name}}</strong></td>
         </ng-container>
 
+        <!-- Coluna para o status das marcas -->
         <ng-container matColumnDef="activated">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
           <td class="td-table" mat-cell *matCellDef="let brand">
+            <!-- Ícone de verificação se a marca está ativada -->
             <mat-icon class="check" *ngIf="brand.activated">check</mat-icon>
+            <!-- Ícone de remoção se a marca não está ativada -->
             <mat-icon class="error" *ngIf="!brand.activated">remove</mat-icon>
           </td>
         </ng-container>
 
-        <!-- Actions Column -->
+        <!-- Coluna de ações -->
         <ng-container matColumnDef="actions">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
           <td class="td-table" mat-cell *matCellDef="let brand">
+            <!-- Ícones para ações: visualizar, editar e deletar a marca -->
             <mat-icon class="icone-table" (click)="openModalViewBrand(brand)">visibility</mat-icon>
             <mat-icon class="icone-table" (click)="openModalEditBrand(brand)">edit</mat-icon>
             <mat-icon class="icone-table" (click)="disableBrand(brand)" *ngIf="brand.activated">delete</mat-icon>
@@ -67,20 +71,23 @@
           </td>
         </ng-container>
 
+        <!-- Linhas da tabela -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
+        <!-- Mensagem exibida quando não há dados -->
         <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a pesquisa: "{{input.value}}"
-          </td>
+          <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a pesquisa: "{{input.value}}"</td>
         </tr>
       </table>
     </div>
   </div>
 </div>
+
+<!-- Container para o paginador e botão para adicionar nova marca -->
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
-  <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]"
-    aria-label="Selecione veículos por página"></mat-paginator>
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
-    text="Nova marca"></app-ui-button>
+  <!-- Paginador para navegação entre páginas -->
+  <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]" aria-label="Selecione veículos por página"></mat-paginator>
+  <!-- Botão para abrir modal de adição de nova marca -->
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()" text="Nova marca"></app-ui-button>
 </div>

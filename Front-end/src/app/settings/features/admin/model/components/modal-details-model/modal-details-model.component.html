@@ -1,41 +1,57 @@
+<!-- Container principal com padding -->
 <div class="container-fluid p-3">
+
+  <!-- Ícone para fechar o modal, posicionado no canto superior direito -->
   <mat-icon class="float-end hover" (click)="closeModal()">close</mat-icon>
 
+  <!-- Título principal e subtítulo para os detalhes do modelo -->
   <h1 class="titulo">Detalhes do modelo</h1>
   <h2 class="subtitulo">Tenha uma visão mais detalhada do modelo</h2>
 
+  <!-- Linha para organizar os elementos em colunas -->
   <div class="row mt-3">
+
+    <!-- Coluna exibindo a marca do modelo -->
     <div class="col-6">
       <h4 class="titulo-informacao">Marca</h4>
-      <p class="informacao">{{ model.brand.name }}</p>
+      <p class="informacao">{{ model.brand.name }}</p> <!-- Exibe o nome da marca relacionada ao modelo -->
     </div>
+
+    <!-- Coluna exibindo o nome do modelo -->
     <div class="col-6">
       <h4 class="titulo-informacao">Modelo</h4>
-      <p class="informacao">{{ model.name }}</p>
+      <p class="informacao">{{ model.name }}</p> <!-- Exibe o nome do modelo -->
     </div>
+
+    <!-- Coluna exibindo o ID do modelo -->
     <div class="col-6">
       <h4 class="titulo-informacao">ID do Modelo</h4>
-      <p class="informacao">{{ model.id }}</p>
+      <p class="informacao">{{ model.id }}</p> <!-- Exibe o ID único do modelo -->
     </div>
+
+    <!-- Coluna exibindo o status do modelo (ativado ou desativado) -->
     <div class="col-6">
       <h4 class="titulo-informacao">Status do Modelo</h4>
-      <!-- <p class="informacao">{{ model.activated ? 'Ativado' : 'Desativado' }}</p> -->
+      <!-- Verifica se o modelo está ativado ou não e exibe a informação correspondente -->
       @if(model.activated || model.activated){
-        <p class="informacao check">Ativo</p>
-        }
-        @if(!model.activated && !model.activated){
-        <p class="informacao error">Desativado</p>
-        }
+        <p class="informacao check">Ativo</p> <!-- Exibe 'Ativo' caso o modelo esteja ativado -->
+      }
+      @if(!model.activated && !model.activated){
+        <p class="informacao error">Desativado</p> <!-- Exibe 'Desativado' caso o modelo esteja desativado -->
+      }
     </div>
+
+    <!-- Coluna exibindo o status da marca (ativada ou desativada) -->
     <div class="col-6">
       <h4 class="titulo-informacao">Status da Marca</h4>
-      <!-- FORMA NOVA DE FAZER -->
+      <!-- Verifica se a marca está ativada ou não e exibe a informação correspondente -->
       @if(model.brand.activated || model.brand.activated){
-        <p class="informacao check">Ativo</p>
+        <p class="informacao check">Ativo</p> <!-- Exibe 'Ativo' caso a marca esteja ativada -->
       }
       @if(!model.brand.activated && !model.brand.activated){
-        <p class="informacao error">Desativado</p>
+        <p class="informacao error">Desativado</p> <!-- Exibe 'Desativado' caso a marca esteja desativada -->
       }
     </div>
+
   </div>
 </div>

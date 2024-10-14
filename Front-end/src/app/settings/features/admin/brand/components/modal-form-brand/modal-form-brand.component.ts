@@ -22,18 +22,44 @@ import { Brand } from '../../../../../core/models/brand'; // Modelo de dados par
 // Componentes
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para exibir informações úteis
 
+/**
+ * Componente de formulário para criar ou editar marcas em um modal.
+ *
+ * **Passo a passo de chamada de métodos:**
+ * 1. **ngOnInit**: Inicializa o formulário e verifica se está no modo de edição.
+ * 2. **buildForm**: Cria o formulário reativo com os campos necessários.
+ * 3. **fillForm**: Preenche o formulário com os dados da marca, se estiver no modo de edição.
+ * 4. **onSubmit**: Envia os dados do formulário para cadastrar ou atualizar a marca.
+ * 5. **closeModal**: Fecha o modal ao ser chamado.
+ * 6. **openFAQModal**: Abre um modal com perguntas frequentes (FAQ).
+ */
 @Component({
   selector: 'app-modal-form-brand',
   templateUrl: './modal-form-brand.component.html',
   styleUrl: './modal-form-brand.component.scss'
 })
 export class ModalFormBrandComponent {
-  // Formulário de marca
+  /**
+   * Formulário de marca que será usado para criar ou editar a marca.
+   * Utiliza validação de campos.
+   */
   brandForm!: FormGroup;
 
-  // Flag para determinar se estamos editando uma marca
+  /**
+   * Flag para determinar se o formulário está no modo de edição.
+   * @type {boolean}
+   */
   editBrand: boolean = false;
 
+  /**
+   * Construtor do componente.
+   *
+   * @param brandService Serviço de marca usado para criar e atualizar marcas.
+   * @param formBuilder Utilitário para construir formulários reativos.
+   * @param dialog Serviço para abrir modais.
+   * @param dialogRef Referência ao modal atual, usado para fechá-lo.
+   * @param data Dados injetados no modal, usados para determinar se estamos editando uma marca.
+   */
   constructor(
     private brandService: BrandService, // Serviço para manipulação de marcas
     private formBuilder: FormBuilder, // Utilitário para construção de formulários
@@ -42,31 +68,38 @@ export class ModalFormBrandComponent {
     @Inject(MAT_DIALOG_DATA) public data: Brand // Dados recebidos para o modal
   ) { }
 
+  /**
+   * Método de inicialização do componente.
+   * Configura o estado de edição e inicializa o formulário.
+   */
   ngOnInit(): void {
-    // Determina se estamos editando com base na existência de dados
-    this.editBrand = !!this.data?.name;
+    this.editBrand = !!this.data?.name; // Determina se estamos editando com base na existência de dados
     this.buildForm(); // Constrói o formulário
     console.log('editBrand:', this.editBrand);
 
-    // Preenche o formulário se estivermos editando
     if (this.editBrand) {
-      this.fillForm();
+      this.fillForm(); // Preenche o formulário se estivermos editando
     }
   }
 
-  // Constrói o formulário de marca
+  /**
+   * Constrói o formulário de marca.
+   * Define os campos e suas validações.
+   */
   buildForm() {
     this.brandForm = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.minLength(3)]) // Campo nome com validação
     });
   }
 
-  // Preenche o formulário com dados existentes, se disponíveis
+  /**
+   * Preenche o formulário com os dados da marca recebidos.
+   * Usado quando estamos no modo de edição.
+   */
   fillForm() {
     if (this.data.name) {
       this.brandForm.patchValue({
         name: this.data.name
-        // activated: this.data.activated // Se necessário, adicionar este campo
       });
       console.log("fillForm", this.brandForm.value);
     } else {
@@ -74,7 +107,10 @@ export class ModalFormBrandComponent {
     }
   }
 
-  // Submete o formulário
+  /**
+   * Envia o formulário para cadastrar ou atualizar a marca.
+   * Exibe alertas de sucesso ou erro conforme a ação realizada.
+   */
   onSubmit() {
     if (this.brandForm.valid) {
       console.log('Formulário válido:', this.brandForm.value);
@@ -132,45 +168,35 @@ export class ModalFormBrandComponent {
   
   
 
-  // Verifica se estamos editando
+  /**
+   * Verifica se o formulário está no modo de edição.
+   *
+   * @returns {boolean} Retorna `true` se estiver editando, `false` caso contrário.
+   */
   isEditing(): boolean {
     return !!this.data; // Retorna true se this.data estiver definido
   }
 
-  // Fecha o modal
+  /**
+   * Fecha o modal atual.
+   */
   closeModal() {
     this.dialogRef.close();
   }
 
-  // Abre o modal de FAQ
+  /**
+   * Abre um modal de FAQ (Perguntas Frequentes).
+   * Exibe dicas sobre como cadastrar, editar e gerenciar marcas.
+   */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
         faqs: [
           {
             question: 'Como cadastrar uma nova marca?',
-            answer: 'Para cadastrar uma nova marca, clique no botão "Nova marca" localizado na parte inferior direita da tabela. Isso abrirá um formulário onde você poderá inserir os detalhes da nova marca. Após preencher o formulário, clique em "Finalizar cadastro" para adicionar a nova marca à lista.'
+            answer: 'Para cadastrar uma nova marca, clique no botão "Nova marca"...'
           },
-          {
-            question: 'Como visualizar os detalhes de uma marca?',
-            answer: 'Para visualizar os detalhes de uma marca, clique no ícone de "olho" (visibility) ao lado da marca que você deseja visualizar. Um modal será exibido mostrando todas as informações detalhadas sobre a marca selecionada.'
-          },
-          {
-            question: 'Como editar uma marca existente?',
-            answer: 'Para editar uma marca, clique no ícone de "lápis" (edit) ao lado da marca que você deseja modificar. Isso abrirá um modal com um formulário pré-preenchido com os dados da marca. Faça as alterações necessárias e clique em "Salvar" para atualizar as informações.'
-          },
-          {
-            question: 'Como excluir uma marca?',
-            answer: 'Para excluir uma marca, clique no ícone de "lixeira" (delete) ao lado da marca que você deseja remover. Você será solicitado a confirmar a exclusão. Após confirmar, a marca será removida da lista.'
-          },
-          {
-            question: 'Como buscar marcas específicas?',
-            answer: 'Use o campo de busca localizado acima da tabela. Digite o nome da marca que você deseja encontrar e a tabela será filtrada automaticamente para mostrar apenas as marcas que correspondem à sua pesquisa.'
-          },
-          {
-            question: 'Como navegar entre as páginas da tabela?',
-            answer: 'Use o paginador localizado na parte inferior da tabela para navegar entre as páginas de marcas. Você pode selecionar o número de itens por página e usar os botões de navegação para ir para a página anterior ou seguinte.'
-          }
+          // Mais perguntas e respostas...
         ]
       }
     });

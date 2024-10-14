@@ -25,6 +25,19 @@ import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
 import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
+/**
+ * Componente para listar e gerenciar modelos de veículos.
+ *
+ * **Passo a passo de chamada de métodos:**
+ * 1. **ngOnInit**: Carrega a lista de modelos ao iniciar o componente chamando `loadModels()`.
+ * 2. **ngAfterViewInit**: Configura a paginação e ordenação da tabela.
+ * 3. **loadModels**: Faz uma chamada ao serviço para obter todos os modelos e atualiza a tabela.
+ * 4. **deleteModel**: Deleta um modelo específico e atualiza a lista após a confirmação.
+ * 5. **applyFilter**: Aplica um filtro à tabela com base na entrada do usuário.
+ * 6. **openModalViewModel**: Abre um modal para visualizar os detalhes de um modelo específico.
+ * 7. **openModalAddModel**: Abre um modal para adicionar um novo modelo e atualiza a lista após o fechamento.
+ * 8. **openModalEditModel**: Abre um modal para editar um modelo existente e atualiza a lista após o fechamento.
+ */
 @Component({
   selector: 'app-model-list',
   templateUrl: './model-list.component.html',

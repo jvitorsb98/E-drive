@@ -18,6 +18,18 @@ import { BrandService } from '../../../../../core/services/brand/brand.service';
 import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
 import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
 
+/**
+ * Componente para listar e gerenciar marcas.
+ * Utiliza uma tabela com paginação e ordenação, permitindo operações como visualização, adição, edição e exclusão de marcas.
+ *
+ * **Passo a passo de chamada de métodos:**
+ * 1. **ngOnInit**: Carrega as marcas da API quando o componente é inicializado.
+ * 2. **ngAfterViewInit**: Configura o paginador e a ordenação após a visualização do componente ser renderizada.
+ * 3. **loadBrands**: Obtém a lista de marcas da API e atualiza a tabela com os dados recebidos.
+ * 4. **deleteBrand**: Realiza a exclusão de uma marca e, em caso de sucesso, exibe uma notificação e recarrega a lista.
+ * 5. **applyFilter**: Aplica um filtro de pesquisa na tabela.
+ * 6. **openModalViewBrand, openModalAddBrand, openModalEditBrand**: Gerenciam a abertura de modais para visualizar, adicionar e editar marcas.
+ */
 @Component({
   selector: 'app-brand-list',
   templateUrl: './brand-list.component.html',
@@ -34,19 +46,30 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   constructor(
     private brandService: BrandService, // Serviço para interagir com a API de marcas
     private dialog: MatDialog, // Serviço para abrir diálogos
-    private alertasService: AlertasService
+    private alertasService: AlertasService // Serviço para exibir alertas
   ) { }
 
+  /**
+   * Método chamado quando o componente é inicializado.
+   * Carrega a lista de marcas da API.
+   */
   ngOnInit() {
     this.loadBrands(); // Carregar a lista de marcas ao inicializar o componente
   }
 
+  /**
+   * Método chamado após a visualização do componente ser inicializada.
+   * Configura o paginador e a ordenação da tabela.
+   */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator; // Configura o paginador
     this.dataSource.sort = this.sort; // Configura a ordenação
     this.paginator._intl.itemsPerPageLabel = 'Itens por página'; // Label para itens por página
   }
 
+  /**
+   * Carrega a lista de marcas da API e atualiza a tabela.
+   */
   loadBrands() {
     this.brandService.getAll().subscribe({
       next: (response: PaginatedResponse<Brand>) => { // Recebe a resposta paginada
@@ -66,7 +89,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     });
   }
 
-
+  /**
+   * Desabilita uma marca após confirmação do usuário.
+   *
+   * @param brand A marca a ser desabilitada.
+   */
   disableBrand(brand: Brand) {
     this.alertasService.showWarning(
       'Desabilitar Marca',
@@ -87,7 +114,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     });
   }
 
-
+  /**
+   * Aplica um filtro na tabela de marcas.
+   *
+   * @param event O evento de entrada do usuário para busca.
+   */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase(); // Aplica o filtro na tabela
@@ -97,7 +128,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Lógica do Modal
+  /**
+   * Abre o modal de visualização de detalhes da marca.
+   *
+   * @param brand Dados da marca a ser visualizada.
+   */
   openModalViewBrand(brand: Brand) {
     this.dialog.open(ModalDetailsBrandComponent, {
       width: '300px',
@@ -106,6 +141,10 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * Abre o modal para adicionar uma nova marca.
+   * Atualiza a lista de marcas após o fechamento do modal.
+   */
   openModalAddBrand() {
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
@@ -113,6 +152,12 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
   }
 
+  /**
+   * Abre o modal para editar uma marca existente.
+   * Atualiza a lista de marcas após o fechamento do modal.
+   *
+   * @param brandList Dados da marca a ser editada.
+   */
   openModalEditBrand(brandList: Brand) {
     console.log('Objeto Brand enviado ao modal:', brandList);
     this.dialog.open(ModalFormBrandComponent, {
@@ -122,8 +167,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
   }
 
-
-  // No arquivo: brand-list.component.ts
+  /**
+   * Ativa uma marca após confirmação do usuário.
+   *
+   * @param brand A marca a ser ativada.
+   */
   activateBrand(brand: Brand) {
     this.alertasService.showWarning(
       'Ativar Marca',
@@ -143,6 +191,4 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
-  
 }

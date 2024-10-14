@@ -12,26 +12,47 @@ import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehi
 import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-details-vehicle.component';
 import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
+/**
+ * Componente para listar veículos.
+ *
+ * **Passo a passo de chamada de métodos:**
+ * 1. **ngOnInit**: Obtém a lista de veículos quando o componente é inicializado.
+ * 2. **ngAfterViewInit**: Configura o paginator e o sort após a visualização ser inicializada.
+ * 3. **getList**: Obtém a lista de veículos da API, tratando a paginação e filtragem.
+ * 4. **onPageChange**: Trata a mudança de página e obtém novos dados.
+ * 5. **deactivate/activate**: Desativa ou ativa um veículo, respectivamente, e atualiza a lista.
+ * 6. **applyFilter**: Aplica um filtro à lista de veículos com base na entrada do usuário.
+ * 7. **openModalView/openModalAdd/openModalEdit**: Abre modais para visualizar, adicionar ou editar veículos.
+ */
 @Component({
   selector: 'app-vehicle-list',
   templateUrl: './vehicle-list.component.html',
-  styleUrl: './vehicle-list.component.scss'
+  styleUrls: ['./vehicle-list.component.scss']
 })
 export class VehicleListComponent {
-  totalVehicles: number = 0;
-  pageIndex: number = 0;
-  pageSize: number = 5;
-  currentPage: number = 0;
-  displayedColumns: string[] = ['icon', 'motor','version', 'year', 'actions'];
-  dataSource = new MatTableDataSource<Vehicle>();
-  List: Vehicle[] = [];
-  isFilterActive: boolean = false;
-  filteredData: Vehicle[] = [];
-  searchKey: any;
+  totalVehicles: number = 0; // Total de veículos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
+  displayedColumns: string[] = ['icon', 'motor', 'version', 'year', 'actions']; // Colunas a serem exibidas na tabela
+  dataSource = new MatTableDataSource<Vehicle>(); // Fonte de dados da tabela
+  List: Vehicle[] = []; // Lista de veículos
+  isFilterActive: boolean = false; // Indica se o filtro está ativo
+  filteredData: Vehicle[] = []; // Dados filtrados
+  searchKey: any; // Chave de busca para filtro
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginator da tabela
+  @ViewChild(MatSort) sort!: MatSort; // Sort da tabela
 
+  /**
+   * Construtor do componente VehicleList.
+   *
+   * Inicializa a lista de veículos e configura os serviços.
+   *
+   * @param {VehicleService} vehicleService - Serviço para operações com veículos.
+   * @param {MatDialog} dialog - Serviço para gerenciar diálogos modais.
+   * @param {AlertasService} alertServise - Serviço para mostrar alertas ao usuário.
+   */
   constructor(
     private vehicleService: VehicleService,
     private dialog: MatDialog,
@@ -40,25 +61,39 @@ export class VehicleListComponent {
     this.dataSource = new MatTableDataSource(this.List);
   }
 
+  /**
+   * Método do ciclo de vida que é chamado ao inicializar o componente.
+   * Obtém a lista de veículos.
+   */
   ngOnInit() {
-    this.getList(this.currentPage , this.pageSize);
+    this.getList(this.currentPage, this.pageSize);
   }
 
+  /**
+   * Método do ciclo de vida que é chamado após a visualização do componente ser inicializada.
+   * Configura o paginator e o sort da tabela.
+   */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
+  /**
+   * Obtém a lista de veículos da API com base na paginação.
+   *
+   * @param {number} pageIndex - Índice da página atual.
+   * @param {number} pageSize - Tamanho da página.
+   */
   getList(pageIndex: number, pageSize: number) {
     if (this.isFilterActive) {
       this.dataSource.data = this.filteredData;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-    }else {
+    } else {
       this.vehicleService.getAll(pageIndex, pageSize).subscribe({
         next: (response: PaginatedResponse<Vehicle>) => { // Usa a interface tipada
-          // Extrai o array de marcas do campo 'content'
+          // Extrai o array de veículos do campo 'content'
           this.List = response.content;
 
           if (Array.isArray(this.List)) {
@@ -76,12 +111,22 @@ export class VehicleListComponent {
     }
   }
 
+  /**
+   * Trata a mudança de página na tabela e atualiza a lista de veículos.
+   *
+   * @param {any} event - Evento de mudança de página.
+   */
   onPageChange(event: any) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
     this.getList(this.currentPage, this.pageSize);
   }
 
+  /**
+   * Desativa um veículo com base no seu ID.
+   *
+   * @param {Vehicle} Data - Objeto do veículo a ser desativado.
+   */
   deactivate(Data: Vehicle) {
     this.alertServise.showWarning(
       'Desativar Veículo',
@@ -102,6 +147,11 @@ export class VehicleListComponent {
   }
   
 
+  /**
+   * Ativa um veículo com base no seu ID.
+   *
+   * @param {Vehicle} Data - Objeto do veículo a ser ativado.
+   */
   activate(Data: Vehicle) {
     this.alertServise.showWarning(
       'Ativar Veículo',
@@ -121,14 +171,29 @@ export class VehicleListComponent {
     });
   }
 
+  /**
+   * Trata erros de resposta HTTP e exibe um alerta ao usuário.
+   *
+   * @param {HttpErrorResponse} error - Objeto de erro da resposta HTTP.
+   */
   handleError(error: HttpErrorResponse) {
-    this.alertServise.showError("Erro !!",error.message);
+    this.alertServise.showError("Erro !!", error.message);
   }
 
+  /**
+   * Exibe um alerta de sucesso ao usuário.
+   *
+   * @param {string} text - Texto opcional a ser exibido na mensagem de sucesso.
+   */
   handleSuccess(text: string = "Operação realizada com sucesso") {
     this.alertServise.showSuccess("Sucesso !!", text);
   }
 
+  /**
+   * Aplica um filtro na lista de veículos com base na entrada do usuário.
+   *
+   * @param {Event} event - Evento de entrada do usuário.
+   */
   applyFilter(event: Event) {
     try {
       this.isFilterActive = true;
@@ -174,6 +239,12 @@ export class VehicleListComponent {
   }
 
   // LOGICA DO MODAL
+
+  /**
+   * Abre um modal para visualizar os detalhes de um veículo.
+   *
+   * @param {Vehicle} vehicle - Objeto do veículo a ser visualizado.
+   */
   openModalView(vehicle: Vehicle) {
     this.dialog.open(ModalDetailsVehicleComponent, {
       width: '99%',
@@ -182,6 +253,9 @@ export class VehicleListComponent {
     });
   }
 
+  /**
+   * Abre um modal para adicionar um novo veículo.
+   */
   openModalAdd() {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '99%',
@@ -190,6 +264,11 @@ export class VehicleListComponent {
     }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize));
   }
 
+  /**
+   * Abre um modal para editar um veículo existente.
+   *
+   * @param {Vehicle} vehicle - Objeto do veículo a ser editado.
+   */
   openModalEdit(vehicle: Vehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '99%',
@@ -198,4 +277,3 @@ export class VehicleListComponent {
     }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize)); // Atualiza a lista de veículos após fechar o modal
   }
 }
-

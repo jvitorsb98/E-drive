@@ -1,75 +1,104 @@
 <div class="container-fluid pt-3">
   <div class="col-12">
 
+    <!-- Seção de cabeçalho contendo os botões e o título -->
     <div class="row">
-      <!-- Container para os botões e título -->
+      <!-- Container para o botão de voltar, título da página e botão de ajuda -->
       <div class="col-12 header-container">
-        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()"><mat-icon>arrow_back</mat-icon></button>
+        <!-- Botão para fechar o modal -->
+        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <!-- Título que muda conforme o modo (cadastro ou edição de modelo) -->
         <h1 class="titulo" *ngIf="!editModel">Cadastrar Modelo</h1>
-        <h1 class="titulo" *ngIf="editModel">Editar Marca</h1>
-        <button class="icon" mat-icon-button (click)="openFAQModal()"><mat-icon>help_outline</mat-icon></button>
+        <h1 class="titulo" *ngIf="editModel">Editar Modelo</h1>
+        <!-- Botão para abrir o modal de ajuda/FAQ -->
+        <button class="icon" mat-icon-button (click)="openFAQModal()">
+          <mat-icon>help_outline</mat-icon>
+        </button>
       </div>
     </div>
 
+    <!-- Início do formulário reativo com o FormGroup 'modelForm' -->
     <form [formGroup]="modelForm">
       <div class="content">
-          <div class="row">
-            <div class="col-12 col-md-6 mb-2">
-              <mat-form-field class="custom-select">
-                <mat-label>Marca do veículo:</mat-label>
-                <input
+        
+        <!-- Seção para selecionar a marca do veículo -->
+        <div class="row">
+          <div class="col-12 col-md-6 mb-2">
+            <!-- Campo de seleção com autocomplete para escolher a marca -->
+            <mat-form-field class="custom-select">
+              <mat-label>Marca do veículo:</mat-label>
+              <input
                 type="text"
                 matInput
                 formControlName="brand"
                 [value]="modelForm.get('brand')?.value?.name || ''"
                 [matAutocomplete]="autoBrand"
                 aria-describedby="Help">
-                <!-- <mat-hint id="Help" class="mat-hint-text">Selecione a <strong>marca.</strong></mat-hint> -->
-                <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
-                  <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
-                    {{ brand.name }}
-                  </mat-option>
-                </mat-autocomplete>
-                <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
+              <!-- Autocomplete para sugerir marcas disponíveis -->
+              <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
+                <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
+                  {{ brand.name }}
+                </mat-option>
+              </mat-autocomplete>
+              <!-- Ícone para abrir o dropdown do autocomplete -->
+              <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
 
-                @if(modelForm.get('brand')?.hasError('required') && modelForm.get('brand')?.touched){
-                  <mat-error class="mat-error-text"><strong>Marca </strong> é obrigatória</mat-error>
-                }
-              </mat-form-field>
-              <!-- Exibe o erro se nenhuma marca for encontrada -->
-              @if(noBrandFound){
-                <mat-error class="mat-error-no-brand">Nenhuma <strong>marca</strong> encontrada.</mat-error>
+              <!-- Validação para exibir erro caso o campo 'brand' esteja vazio após interação -->
+              @if(modelForm.get('brand')?.hasError('required') && modelForm.get('brand')?.touched){
+                <mat-error class="mat-error-text"><strong>Marca</strong> é obrigatória</mat-error>
               }
-            </div>
+            </mat-form-field>
+            <!-- Exibe mensagem de erro quando nenhuma marca é encontrada -->
+            @if(noBrandFound){
+              <mat-error class="mat-error-no-brand">Nenhuma <strong>marca</strong> encontrada.</mat-error>
+            }
+          </div>
         </div>
 
+        <!-- Seção para inserir o nome do modelo -->
         <div class="row">
           <div class="col-12 col-md-6 mb-2">
+            <!-- Cartão que envolve o campo de inserção do nome do modelo -->
             <mat-card appearance="outlined" class="border-0">
               <mat-form-field>
                 <mat-label class="custom-label">Modelo</mat-label>
+                <!-- Campo de input para o nome do modelo com validação -->
                 <input 
-                type="text" 
-                name="name" 
-                matInput 
-                formControlName="name" 
-                required
-                aria-describedby="Help" />
-                <!-- <mat-hint id="Help" class="mat-hint-text">Informe o nome do <strong>modelo.</strong></mat-hint> -->
+                  type="text" 
+                  name="name" 
+                  matInput 
+                  formControlName="name" 
+                  required
+                  aria-describedby="Help" />
+                <!-- Mensagem de erro se o campo 'name' estiver vazio após interação -->
                 <mat-error class="mat-error-text" 
-                *ngIf="modelForm.get('name')?.hasError('required') 
-                && modelForm.get('name')?.touched" class="mat-error-text">O <strong>modelo</strong> é obrigatório.</mat-error>
+                  *ngIf="modelForm.get('name')?.hasError('required') 
+                  && modelForm.get('name')?.touched" class="mat-error-text">
+                  O <strong>modelo</strong> é obrigatório.
+                </mat-error>
               </mat-form-field>
+              <!-- Mensagem de erro para validação de comprimento mínimo do nome do modelo -->
               <div *ngIf="modelForm.get('name')?.hasError('minlength') && modelForm.get('name')?.dirty">
-                <mat-error class="mat-error-text-minlength">O <strong>Nome</strong> deve ter pelo menos {{
-                modelForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+                <mat-error class="mat-error-text-minlength">
+                  O <strong>Nome</strong> deve ter pelo menos {{ modelForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.
+                </mat-error>
               </div>
             </mat-card>
           </div>
+        </div>
       </div>
-      </div>
+
+      <!-- Botão de envio, desabilitado se o formulário estiver inválido -->
       <div class="buttons-container">
-        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!modelForm.valid" (click)="onSubmit()" text="Finalizar cadastro"></app-ui-button>
+        <app-ui-button 
+          typeBtn="vivid-sky-blue" 
+          [pulseAnimation]="true" 
+          [disabled]="!modelForm.valid" 
+          (click)="onSubmit()" 
+          text="Finalizar cadastro">
+        </app-ui-button>
       </div>
     </form>
   </div>
