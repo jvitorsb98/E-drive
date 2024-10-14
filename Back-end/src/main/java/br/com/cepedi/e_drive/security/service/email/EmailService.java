@@ -5,6 +5,8 @@ import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.mail.MailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -41,6 +43,9 @@ public class EmailService {
     @Autowired
     private MailService mailService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     /**
      * Envia um e-mail de ativação de conta de forma assíncrona.
      *
@@ -50,8 +55,16 @@ public class EmailService {
      * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
      */
     @Async
-    public void sendActivationEmailAsync(String name, String email, String tokenForActivate) throws MessagingException {
+    public String sendActivationEmailAsync(String name, String email, String tokenForActivate) throws MessagingException {
         sendActivationEmail(name, email, tokenForActivate);
+
+        String successMessage = messageSource.getMessage(
+                "auth.register.success",
+                new Object[]{name},
+                LocaleContextHolder.getLocale()
+        );
+
+        return successMessage;
     }
 
     /**

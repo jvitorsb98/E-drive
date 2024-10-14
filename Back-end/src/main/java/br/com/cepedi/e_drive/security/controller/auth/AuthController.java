@@ -40,6 +40,7 @@ import java.util.Map;
  * <p>
  * Este controlador expõe endpoints para login, registro de usuário, redefinição de senha, ativação de conta e logout.
  * </p>
+ * </p>
  */
 @RestController
 @RequestMapping("/auth")
@@ -164,15 +165,13 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid input data.", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content)
     })
-    public ResponseEntity<String> registerUser(
+    public ResponseEntity<String> register(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User data to be registered", required = true)
             @RequestBody @Valid DataRegisterUser data) throws MessagingException {
         DataDetailsRegisterUser dataDetailsRegisterUser = authService.register(data);
         String tokenForActivate = dataDetailsRegisterUser.confirmationToken();
-
         String response = emailService.sendActivationEmailAsync(data.name(), data.email(), tokenForActivate);
-
-        return ResponseEntity.ok("User registered successfully. Activation email sent.");
+        return ResponseEntity.ok(response);
     }
 
     /**

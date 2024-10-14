@@ -3,6 +3,7 @@ package br.com.cepedi.e_drive.security.service.auth;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
+import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
@@ -86,19 +87,15 @@ public class AuthService implements UserDetailsService {
      * @param dataRegisterUser Os dados do usuário a ser registrado.
      * @return Um {@link DataDetailsRegisterUser} contendo os detalhes do usuário registrado e o token de confirmação.
      */
-    public String register(DataRegisterUser dataRegisterUser) {
+    public DataDetailsRegisterUser register(DataRegisterUser dataRegisterUser) {
         validationRegisterUserList.forEach(v -> v.validation(dataRegisterUser));
         User user = new User(dataRegisterUser, passwordEncoder);
         repository.save(user);
         String confirmationToken = tokenService.generateTokenForActivatedEmail(user);
 
-        String successMessage = messageSource.getMessage(
-                "auth.register.success",
-                new Object[]{user.getName()},
-                LocaleContextHolder.getLocale()
-        );
 
-        return successMessage;
+
+        return new DataDetailsRegisterUser(user,confirmationToken);
     }
 
     public DadosTokenJWT login(DataAuth dataAuth) {
