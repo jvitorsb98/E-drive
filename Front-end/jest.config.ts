@@ -1,10 +1,15 @@
 import type {Config} from 'jest';
 
+
 const config: Config = {
+  collectCoverage: true, // Habilita a coleta de cobertura
+  coverageDirectory: 'coverage', // Define o diretório onde os relatórios de cobertura serão gerados
+  coverageReporters: ['html', 'text', 'lcov'], // Define os formatos dos relatórios de cobertura a serem gerados
   collectCoverageFrom: [
-    '**/*.{js,jsx}',
-    '!**/node_modules/**',
-    '!**/vendor/**',
+    "**/*.{js,jsx,ts,tsx}", // Inclua arquivos .ts e .tsx
+    "!**/node_modules/**",
+    "!**/vendor/**",
+    "!**/*.spec.{js,jsx,ts,tsx}", // Exclua os arquivos de teste
   ],
   preset: "jest-preset-angular",
   setupFilesAfterEnv: ["<rootDir>/setup-jest.ts"],
