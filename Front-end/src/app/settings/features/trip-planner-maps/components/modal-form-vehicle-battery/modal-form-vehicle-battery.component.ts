@@ -1,9 +1,9 @@
+import { UserVehicle } from './../../../../core/models/user-vehicle';
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { IApiResponse } from '../../../../core/models/api-response';
-import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { forkJoin, map } from 'rxjs';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../core/models/vehicle';
@@ -135,21 +135,59 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         batteryHealth = Math.max(100 - (yearsOfUse * 2.3), 0); // Garante que a saúde da bateria não fique negativa
       }
 
-      const autonomyElectricMode = formValue.selectedVehicle.autonomy?.autonomyElectricMode || 0;
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryPercentageAfterTrip = remainingBattery;
-      // Cálculo do consumo de bateria
-      for (const step of this.data.stepsArray) {
-        const distance = step.distance;
-        const batteryConsumptionPercentage = (distance / (autonomyElectricMode * (batteryPercentageAfterTrip / 100))) * 100;
-        batteryPercentageAfterTrip -= batteryConsumptionPercentage;
-        console.log(batteryPercentageAfterTrip)
-        // Se a porcentagem de bateria após a viagem for menor ou igual a 0
-        if (batteryPercentageAfterTrip <= 0) {
-          batteryPercentageAfterTrip = 0;
-          this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
-          return; // Para a função se a bateria for insuficiente
+
+      // Verifique se devemos usar a autonomia personalizada
+      const useCustomAutonomy = formValue.selectedVehicle.userVehicle.batteryCapacity != null &&
+        formValue.selectedVehicle.userVehicle.mileagePerLiterCity != null &&
+        formValue.selectedVehicle.userVehicle.mileagePerLiterRoad != null &&
+        formValue.selectedVehicle.userVehicle.consumptionEnergetic != null;
+      let mileage;
+      let autonomy;
+      let distance
+      if (useCustomAutonomy) {
+        const mileagePerLiterCity = Number(formValue.selectedVehicle.userVehicle.mileagePerLiterCity);
+        const mileagePerLiterRoad = Number(formValue.selectedVehicle.userVehicle.mileagePerLiterRoad);
+        const batteryCapacity = Number(formValue.selectedVehicle.userVehicle.batteryCapacity) * 3.6; 
+        const consumptionEnergetic = Number(formValue.selectedVehicle.userVehicle.consumptionEnergetic);
+
+        for (const step of this.data.stepsArray) {
+          distance = step.distance;
+          console.log(step.roadType)
+          mileage = step.roadType === 'cidade' ? mileagePerLiterCity : mileagePerLiterRoad;
+
+          // Calculo da autonomia em km
+          autonomy = batteryCapacity / consumptionEnergetic; // Autonomia em km
+
+          const batteryConsumptionPercentage = (distance / (autonomy * (batteryPercentageAfterTrip / 100))) * 100;
+          batteryPercentageAfterTrip -= batteryConsumptionPercentage;
+          console.log(batteryPercentageAfterTrip);
+
+          if (batteryPercentageAfterTrip <= 0) {
+            batteryPercentageAfterTrip = 0;
+            this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
+            return; // Para a função se a bateria for insuficiente
+          }
         }
+      } else {
+        for (const step of this.data.stepsArray) {
+          distance = step.distance;
+          autonomy = formValue.selectedVehicle.userVehicle.autonomyElectricMode || 0;
+
+
+          const batteryConsumptionPercentage = (distance / (autonomy * (batteryPercentageAfterTrip / 100))) * 100;
+          batteryPercentageAfterTrip -= batteryConsumptionPercentage;
+          console.log(batteryPercentageAfterTrip);
+
+
+          if (batteryPercentageAfterTrip <= 0) {
+            batteryPercentageAfterTrip = 0;
+            this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
+            return; // Para a função se a bateria for insuficiente
+          }
+        }
+
       }
 
       // Alerta sobre a porcentagem de bateria restante
@@ -198,6 +236,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       return;
     }
   }
+
 
   showInsufficientBatteryMessage() {
     Swal.fire({

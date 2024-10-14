@@ -6,5 +6,6 @@ export interface UserVehicle {
   mileagePerLiterCity: number;
   consumptionEnergetic: number;
   autonomyElectricMode: number;
+  batteryCapacity: number;
   activated: boolean;
 }

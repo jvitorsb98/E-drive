@@ -87,7 +87,7 @@ export class UserVehicleListComponent {
                 userVehicle // Inclui o UserVehicle no veículo
               };
             });
-
+            console.log(this.userVehicleDetails)
             this.dataSource.data = this.userVehicleDetails;
           });
         } else {

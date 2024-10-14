@@ -1,17 +1,26 @@
 package br.com.cepedi.e_drive.security.service.auth;
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
+import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
+import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.auth.validations.login.ValidationsLogin;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.UserService;
 import br.com.cepedi.e_drive.security.service.user.validations.disabled.ValidationDisabledUser;
-import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
+import br.com.cepedi.e_drive.security.service.auth.validations.register.ValidationRegisterUser;
 import com.auth0.jwt.JWT;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,13 +49,22 @@ public class AuthService implements UserDetailsService {
     private TokenService tokenService;
 
     @Autowired
+    private UserService userService;
+
+    @Autowired
     private List<ValidationRegisterUser> validationRegisterUserList;
 
     @Autowired
     private List<ValidationDisabledUser> validationDisabledUserList;
 
     @Autowired
+    private List<ValidationsLogin> validationsLoginList;
+
+    @Autowired
     private MessageSource messageSource;
+
+    @Autowired
+    private AuthenticationManager manager;
 
 
     /**
@@ -59,15 +77,6 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserDetails user = repository.findByEmail(email);
-        if (user == null) {
-            // Obtém a mensagem traduzida com base na linguagem atual do sistema
-            String errorMessage = messageSource.getMessage(
-                    "user.not.found",
-                    new Object[]{email},
-                    LocaleContextHolder.getLocale()
-            );
-            throw new UsernameNotFoundException(errorMessage);
-        }
         return user;
     }
 
@@ -77,13 +86,41 @@ public class AuthService implements UserDetailsService {
      * @param dataRegisterUser Os dados do usuário a ser registrado.
      * @return Um {@link DataDetailsRegisterUser} contendo os detalhes do usuário registrado e o token de confirmação.
      */
-    public DataDetailsRegisterUser register(DataRegisterUser dataRegisterUser) {
+    public String register(DataRegisterUser dataRegisterUser) {
         validationRegisterUserList.forEach(v -> v.validation(dataRegisterUser));
         User user = new User(dataRegisterUser, passwordEncoder);
         repository.save(user);
         String confirmationToken = tokenService.generateTokenForActivatedEmail(user);
-        return new DataDetailsRegisterUser(user, confirmationToken);
+
+        String successMessage = messageSource.getMessage(
+                "auth.register.success",
+                new Object[]{user.getName()},
+                LocaleContextHolder.getLocale()
+        );
+
+        return successMessage;
     }
+
+    public DadosTokenJWT login(DataAuth dataAuth) {
+        validationsLoginList.forEach(v -> v.validate(dataAuth));
+
+        try {
+            User user = userService.getUserActivatedByEmail(dataAuth.login());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dataAuth.login(), dataAuth.password());
+            Authentication authentication = manager.authenticate(authenticationToken);
+            String tokenJWT = tokenService.generateToken(user);
+            return new DadosTokenJWT(tokenJWT);
+
+        } catch (BadCredentialsException e) {
+            String errorMessage = messageSource.getMessage(
+                    "auth.login.invalid.credentials",
+                    null,
+                    LocaleContextHolder.getLocale()
+            );
+            throw new ValidationException(errorMessage);
+        }
+    }
+
 
     /**
      * Ativa um usuário com base no token fornecido.

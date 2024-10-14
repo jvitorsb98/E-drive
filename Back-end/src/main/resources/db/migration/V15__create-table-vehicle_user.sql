@@ -6,6 +6,7 @@ CREATE TABLE vehicle_users (
     mileage_per_liter_city DECIMAL(8, 2) ,
     consumption_energetic DECIMAL(8, 2) ,
     autonomy_electric_mode DECIMAL(8, 2) ,
+    battery_capacity DECIMAL(8, 2) ,
     activated BOOLEAN NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (vehicle_id) REFERENCES vehicle(id)

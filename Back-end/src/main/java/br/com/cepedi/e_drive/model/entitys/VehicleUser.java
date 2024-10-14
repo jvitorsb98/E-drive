@@ -74,6 +74,12 @@ public class VehicleUser {
     private BigDecimal autonomyElectricMode;
 
     /**
+     * Capacidade da bateria do veículo.
+     */
+    @Column(name = "battery_capacity")
+    private BigDecimal batteryCapacity;
+
+    /**
      * Indica se a associação entre usuário e veículo está ativada.
      * Este campo é obrigatório.
      */
@@ -94,6 +100,7 @@ public class VehicleUser {
         this.mileagePerLiterCity = dataRegisterAutonomy.mileagePerLiterCity();
         this.consumptionEnergetic = dataRegisterAutonomy.consumptionEnergetic();
         this.autonomyElectricMode = dataRegisterAutonomy.autonomyElectricMode();
+        this.batteryCapacity = dataRegisterAutonomy.batteryCapacity();
         this.activated = true;
     }
 
@@ -128,6 +135,10 @@ public class VehicleUser {
         }
         if (data.autonomyElectricMode() != null) {
             this.autonomyElectricMode = data.autonomyElectricMode();
+        }
+
+        if (data.batteryCapacity() != null) {
+            this.batteryCapacity = data.batteryCapacity();
         }
     }
 }

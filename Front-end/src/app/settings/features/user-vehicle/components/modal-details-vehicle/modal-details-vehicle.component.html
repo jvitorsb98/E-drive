@@ -5,53 +5,82 @@
   <h2 class="subtitulo">Tenha uma visão mais detalhada do veículo</h2>
 
   <div class="row mt-3">
+    <!-- Marca -->
     <div class="col-6">
       <h4 class="titulo-informacao">Marca</h4>
-      <p class="informacao">{{ vehicle.model.brand.name }}</p>
+      <p class="informacao">{{ vehicle.model.brand.name || 'Sem informação' }}</p>
     </div>
+
+    <!-- Modelo -->
     <div class="col-6">
       <h4 class="titulo-informacao">Modelo</h4>
-      <p class="informacao">{{ vehicle.model.name }}</p>
+      <p class="informacao">{{ vehicle.model.name || 'Sem informação' }}</p>
     </div>
+
+    <!-- Versão -->
     <div class="col-6">
       <h4 class="titulo-informacao">Versão</h4>
-      <p class="informacao">{{ vehicle.version }}</p>
+      <p class="informacao">{{ vehicle.version || 'Sem informação' }}</p>
     </div>
+
+    <!-- Categoria -->
     <div class="col-6">
       <h4 class="titulo-informacao">Categoria</h4>
-      <p class="informacao">{{ vehicle.category.name }}</p>
+      <p class="informacao">{{ vehicle.category.name || 'Sem informação' }}</p>
     </div>
+
+    <!-- Motor -->
     <div class="col-6">
       <h4 class="titulo-informacao">Motor</h4>
-      <p class="informacao">{{ vehicle.motor }}</p>
+      <p class="informacao">{{ vehicle.motor || 'Sem informação' }}</p>
     </div>
+
+    <!-- Ano -->
     <div class="col-6">
       <h4 class="titulo-informacao">Ano</h4>
-      <p class="informacao">{{ vehicle.year }}</p>
+      <p class="informacao">{{ vehicle.year || 'Sem informação' }}</p>
     </div>
+
+    <!-- Tipo do veículo -->
     <div class="col-6">
       <h4 class="titulo-informacao">Tipo do veículo</h4>
-      <p class="informacao">{{ vehicle.type.name }}</p>
+      <p class="informacao">{{ vehicle.type.name || 'Sem informação' }}</p>
     </div>
+
+    <!-- Propulsão -->
     <div class="col-6">
       <h4 class="titulo-informacao">Propulsão</h4>
-      <p class="informacao">{{ vehicle.propulsion.name }}</p>
+      <p class="informacao">{{ vehicle.propulsion.name || 'Sem informação' }}</p>
     </div>
+
+    <!-- Autonomia no modo elétrico -->
     <div class="col-6">
       <h4 class="titulo-informacao">Autonomia no modo elétrico</h4>
-      <p class="informacao">{{ userVehicle.autonomyElectricMode }} (Km)</p>
+      <p class="informacao">{{ userVehicle.autonomyElectricMode ? userVehicle.autonomyElectricMode + ' (Km)' : 'Sem informação' }}</p>
     </div>
+
+    <!-- Consumo energético -->
     <div class="col-6">
       <h4 class="titulo-informacao">Consumo energético</h4>
-      <p class="informacao">{{ userVehicle.consumptionEnergetic }} (MJ/km)</p>
+      <p class="informacao">{{ userVehicle.consumptionEnergetic ? userVehicle.consumptionEnergetic + ' (MJ/km)' : 'Sem informação' }}</p>
     </div>
+
+    <!-- Quilometragem por litro na cidade -->
     <div class="col-6">
       <h4 class="titulo-informacao">Quilometragem por litro na cidade</h4>
-      <p class="informacao">{{ userVehicle.mileagePerLiterCity }} (km/l e)</p>
+      <p class="informacao">{{ userVehicle.mileagePerLiterCity ? userVehicle.mileagePerLiterCity + ' (km/l)' : 'Sem informação' }}</p>
     </div>
+
+    <!-- Quilometragem por litro na estrada -->
     <div class="col-6">
       <h4 class="titulo-informacao">Quilometragem por litro na estrada</h4>
-      <p class="informacao">{{ userVehicle.mileagePerLiterRoad }} (km/l e)</p>
+      <p class="informacao">{{ userVehicle.mileagePerLiterRoad ? userVehicle.mileagePerLiterRoad + ' (km/l)' : 'Sem informação' }}</p>
+    </div>
+
+    <!-- Capacidade da bateria -->
+    <div class="col-6">
+      <h4 class="titulo-informacao">Capacidade da bateria</h4>
+      <p class="informacao">{{ userVehicle.batteryCapacity ? userVehicle.batteryCapacity + ' (kWH)' : 'Sem informação' }}</p>
     </div>
   </div>
 </div>

@@ -68,6 +68,9 @@ public record DataVehicleUserDetails(
          */
         BigDecimal autonomyElectricMode,
 
+        BigDecimal batteryCapacity,
+
+
         /**
          * Status de ativação do relacionamento.
          *
@@ -90,6 +93,7 @@ public record DataVehicleUserDetails(
                 vehicleUser.getMileagePerLiterCity(),
                 vehicleUser.getConsumptionEnergetic(),
                 vehicleUser.getAutonomyElectricMode(),
+                vehicleUser.getBatteryCapacity(),
                 vehicleUser.isActivated()
         );
     }

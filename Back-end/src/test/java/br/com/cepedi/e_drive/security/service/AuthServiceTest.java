@@ -3,7 +3,7 @@ package br.com.cepedi.e_drive.security.service;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
-import br.com.cepedi.e_drive.security.service.user.validations.register.ValidationRegisterUser;
+import br.com.cepedi.e_drive.security.service.auth.validations.register.ValidationRegisterUser;
 
 import br.com.cepedi.e_drive.security.service.auth.AuthService;
 import com.auth0.jwt.JWT;

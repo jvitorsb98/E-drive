@@ -1,10 +1,12 @@
-package br.com.cepedi.e_drive.security.service.user.validations.register;
+package br.com.cepedi.e_drive.security.service.auth.validations.register;
 
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 /**
  * Implementação da interface {@link ValidationRegisterUser} para validar se o e-mail fornecido já está registrado.
@@ -19,6 +21,9 @@ public class ValidationRegisterUser_EmailRegistrado implements ValidationRegiste
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se o e-mail fornecido no {@link DataRegisterUser} já está registrado no sistema.
      *
@@ -29,7 +34,12 @@ public class ValidationRegisterUser_EmailRegistrado implements ValidationRegiste
     public void validation(DataRegisterUser dataRegisterUser) {
         if (dataRegisterUser.email() != null) {
             if (userRepository.findByEmail(dataRegisterUser.email()) != null) {
-                throw new ValidationException("O email " + dataRegisterUser.email() + " já está cadastrado em nosso sistema.");
+                String errorMessage = messageSource.getMessage(
+                        "auth.register.email.exists",
+                        new Object[]{dataRegisterUser.email()},
+                        LocaleContextHolder.getLocale()
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }

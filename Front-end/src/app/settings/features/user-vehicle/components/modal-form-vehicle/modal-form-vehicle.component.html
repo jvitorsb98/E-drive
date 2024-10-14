@@ -8,7 +8,7 @@
 			<h1 class="titulo" *ngIf="!editVehicle">Cadastrar Veículo</h1>
 			<h1 class="titulo" *ngIf="editVehicle">Editar Veículo</h1>
 
-			<button class="btn">
+			<button class="btn" (click)="openFAQModal()">
 				<img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
 			</button>
 		</div>
@@ -73,6 +73,22 @@
 						</mat-error>
 					</mat-form-field>
 				</div>
+
+				<!-- Campo para capacidade da bateria -->
+				<div class="col-12" [ngClass]="{'hidden': !userVehicleForm.get('version')?.value}">
+					<mat-form-field class="custom-select w-100">
+					<mat-label>Capacidade da Bateria:</mat-label>
+					<input type="text" matInput formControlName="batteryCapacity" [mask]="'000.0'" aria-describedby="Help">
+					<mat-icon matSuffix class="custom-icon">battery_full</mat-icon>
+					<mat-hint id="Help" class="mat-hint-text">Capacidade da bateria em <strong>KwH.</strong></mat-hint>
+					</mat-form-field>
+					<div *ngIf="userVehicleForm.get('batteryCapacity')?.hasError('pattern') && userVehicleForm.get('batteryCapacity')?.dirty">
+					<mat-error class="mat-error-codigo-text">
+						Insira um número com até uma casa decimal (ex.: 50.0, 75.5).
+					</mat-error>
+					</div>
+				</div>
+				
 
 				<!-- Campos adicionais -->
 				<div class="col-12" [ngClass]="{'hidden': !userVehicleForm.get('version')?.value}">
@@ -153,6 +169,7 @@
 						</div>
 					</div>
 
+					
 					<!-- Mensagem de alerta -->
 					<div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
 						Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Eles podem ser

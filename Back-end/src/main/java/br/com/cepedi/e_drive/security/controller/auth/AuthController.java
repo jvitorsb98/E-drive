@@ -77,22 +77,8 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<Object> login(@RequestBody @Valid DataAuth data) {
-        User user = userService.getUserActivatedByEmail(data.login());
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not registered");
-        }
-        if (!user.getActivated()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User is not activated");
-        }
-        try {
-            var authenticationToken = new UsernamePasswordAuthenticationToken(data.login(), data.password());
-            Authentication authentication = manager.authenticate(authenticationToken);
-
-            var tokenJWT = tokenService.generateToken(user);
-            return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email or password");
-        }
+        DadosTokenJWT dadosTokenJWT = authService.login(data);
+        return ResponseEntity.ok(dadosTokenJWT);
     }
 
 
@@ -184,7 +170,7 @@ public class AuthController {
         DataDetailsRegisterUser dataDetailsRegisterUser = authService.register(data);
         String tokenForActivate = dataDetailsRegisterUser.confirmationToken();
 
-        emailService.sendActivationEmailAsync(data.name(), data.email(), tokenForActivate);
+        String response = emailService.sendActivationEmailAsync(data.name(), data.email(), tokenForActivate);
 
         return ResponseEntity.ok("User registered successfully. Activation email sent.");
     }

@@ -1,4 +1,4 @@
-package br.com.cepedi.e_drive.security.service.user.validations.register;
+package br.com.cepedi.e_drive.security.service.auth.validations.register;
 
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 

@@ -65,8 +65,8 @@
           <td class="td-table" mat-cell *matCellDef="let vehicle">
             <mat-icon class="icone-table" (click)="openModalView(vehicle)">visibility</mat-icon>
             <mat-icon class="icone-table" (click)="openModalEdit(vehicle)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="deactivate(vehicle)" *ngIf="vehicle.activated">check</mat-icon>
-            <mat-icon class="icone-table" (click)="activate(vehicle)" *ngIf="!vehicle.activated">close</mat-icon>
+            <mat-icon class="icone-table" (click)="deactivate(vehicle)" *ngIf="vehicle.activated">delete</mat-icon>
+            <mat-icon class="icone-table" (click)="activate(vehicle)" *ngIf="!vehicle.activated">check</mat-icon>
           </td>
         </ng-container>
 

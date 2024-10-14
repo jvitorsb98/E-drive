@@ -83,22 +83,41 @@ export class VehicleListComponent {
   }
 
   deactivate(Data: Vehicle) {
-    this.vehicleService.deactivate(Data.id).subscribe({
-      next: () => {
-        this.handleSuccess("Desativado com sucesso")
-        this.searchKey? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
-      },
-      error: (error: HttpErrorResponse) => this.handleError(error)
+    this.alertServise.showWarning(
+      'Desativar Veículo',
+      `Você tem certeza que deseja desativar o veículo "${Data.version}"?`,
+      'Sim, desativar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.vehicleService.deactivate(Data.id).subscribe({
+          next: () => {
+            this.handleSuccess('Veículo desativado com sucesso!');
+            this.searchKey ? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
+          },
+          error: (error: HttpErrorResponse) => this.handleError(error)
+        });
+      }
     });
   }
+  
 
   activate(Data: Vehicle) {
-    this.vehicleService.activate(Data.id).subscribe({
-      next: () => {
-        this.handleSuccess("Ativado com sucesso")
-        this.searchKey? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
-      },
-      error: (error: HttpErrorResponse) => this.handleError(error)
+    this.alertServise.showWarning(
+      'Ativar Veículo',
+      `Você tem certeza que deseja ativar o veículo "${Data.version}"?`,
+      'Sim, ativar!',
+      'Cancelar'
+    ).then((isConfirmed) => {
+      if (isConfirmed) {
+        this.vehicleService.activate(Data.id).subscribe({
+          next: () => {
+            this.handleSuccess('Veículo ativado com sucesso!');
+            this.searchKey ? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
+          },
+          error: (error: HttpErrorResponse) => this.handleError(error)
+        });
+      }
     });
   }
 

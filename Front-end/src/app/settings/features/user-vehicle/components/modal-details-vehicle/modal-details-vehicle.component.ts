@@ -46,6 +46,7 @@ export class ModalDetailsVehicleComponent {
 
   // Método para carregar os detalhes do veículo com base no ID do veículo
   loadVehicleDetails(vehicleId: number) {
+    console.log(this.userVehicle)
     this.vehicleService.getVehicleDetails(vehicleId).subscribe({
       next: (vehicle: Vehicle) => {
         // Atualiza a variável de detalhes do veículo e exibe no console

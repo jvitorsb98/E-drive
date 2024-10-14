@@ -12,13 +12,14 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 // Importa os módulos do Angular
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 
 // Importa o Swal para alertas
 import Swal from 'sweetalert2';
+import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -53,6 +54,7 @@ export class ModalFormVehicleComponent implements OnInit {
     private modelService: ModelService,
     private vehicleService: VehicleService,
     private userDataService: UserDataService,
+    private dialog: MatDialog, // Serviço para abrir modais
     private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
@@ -70,6 +72,7 @@ export class ModalFormVehicleComponent implements OnInit {
       version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
+      batteryCapacity: [null, [Validators.pattern(/^\d+(\.\d+)?$/)]], // Validação para aceitar números inteiros ou decimais
       mileagePerLiterRoad: [null, [Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
       mileagePerLiterCity: [null, [Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
       consumptionEnergetic: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
@@ -93,7 +96,8 @@ export class ModalFormVehicleComponent implements OnInit {
         mileagePerLiterRoad: this.data.userVehicle.mileagePerLiterRoad,
         mileagePerLiterCity: this.data.userVehicle.mileagePerLiterCity,
         consumptionEnergetic: this.data.userVehicle.consumptionEnergetic,
-        autonomyElectricMode: this.data.userVehicle.autonomyElectricMode
+        autonomyElectricMode: this.data.userVehicle.autonomyElectricMode,
+        batteryCapacity: this.data.userVehicle.batteryCapacity 
       });
       console.log('Formulário preenchido com:', this.userVehicleForm.value);
     } else {
@@ -237,7 +241,9 @@ export class ModalFormVehicleComponent implements OnInit {
         mileagePerLiterCity: Number(formData.mileagePerLiterCity),
         consumptionEnergetic: Number(formData.consumptionEnergetic),
         autonomyElectricMode: Number(formData.autonomyElectricMode),
+        batteryCapacity: Number(formData.batteryCapacity)
       };
+      
 
       const updateData = {
         dataUpdateAutonomy: dataUpdateAutonomy
@@ -276,8 +282,9 @@ export class ModalFormVehicleComponent implements OnInit {
           mileagePerLiterCity: formData.mileagePerLiterCity,
           consumptionEnergetic: formData.consumptionEnergetic,
           autonomyElectricMode: formData.autonomyElectricMode,
+          batteryCapacity: Number(formData.batteryCapacity)
         };
-
+        
         const dataRegisterVehicleUser = {
           vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
           dataRegisterAutonomy: dataRegisterAutonomy,
@@ -378,4 +385,59 @@ export class ModalFormVehicleComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  openFAQModal() {
+    this.dialog.open(FaqPopupComponent, {
+      data: {
+        faqs: [
+          {
+            question: 'Como cadastrar um novo veículo?',
+            answer: 'Para cadastrar um novo veículo, clique no botão "Novo veículo" localizado na parte inferior direita da tabela. Isso abrirá um formulário onde você poderá inserir os detalhes do veículo. Após preencher o formulário, clique em "Finalizar cadastro" para adicionar o novo veículo à lista.'
+          },
+          {
+            question: 'Como visualizar os detalhes de um veículo?',
+            answer: 'Para visualizar os detalhes de um veículo, clique no ícone de "olho" (visibility) ao lado do veículo que você deseja visualizar. Um modal será exibido mostrando todas as informações detalhadas sobre o veículo selecionado.'
+          },
+          {
+            question: 'Como editar um veículo existente?',
+            answer: 'Para editar um veículo, clique no ícone de "lápis" (edit) ao lado do veículo que você deseja modificar. Isso abrirá um modal com um formulário pré-preenchido com os dados do veículo. Faça as alterações necessárias e clique em "Salvar" para atualizar as informações.'
+          },
+          {
+            question: 'Como excluir um veículo?',
+            answer: 'Para excluir um veículo, clique no ícone de "lixeira" (delete) ao lado do veículo que você deseja remover. Você será solicitado a confirmar a exclusão. Após confirmar, o veículo será removido da lista.'
+          },
+          {
+            question: 'Como buscar veículos específicos?',
+            answer: 'Use o campo de busca localizado acima da tabela. Digite o nome ou detalhes do veículo que você deseja encontrar e a tabela será filtrada automaticamente para mostrar apenas os veículos que correspondem à sua pesquisa.'
+          },
+          {
+            question: 'Como navegar entre as páginas da tabela?',
+            answer: 'Use o paginador localizado na parte inferior da tabela para navegar entre as páginas de veículos. Você pode selecionar o número de itens por página e usar os botões de navegação para ir para a página anterior ou seguinte.'
+          },
+          {
+            question: 'O que significa "Quilometragem por litro em Estrada"?',
+            answer: 'Este valor indica a quantidade de quilômetros que o veículo pode percorrer com um litro de elétrico em estrada. É importante para estimar o custo de viagens em rodovias.'
+          },
+          {
+            question: 'O que significa "Quilometragem por litro em Cidade "?',
+            answer: 'Este valor representa a quantidade de quilômetros que o veículo pode percorrer com um litro de elétrico em condições urbanas. Ele ajuda a entender a eficiência do veículo em ambientes com tráfego intenso.'
+          },
+          {
+            question: 'O que é "Consumo energetico"?',
+            answer: 'Refere-se ao consumo energético do veículo, geralmente expresso em kWh por 100 km. Esse dado é crucial para veículos elétricos, pois ajuda a calcular a autonomia com base na capacidade da bateria.'
+          },
+          {
+            question: 'O que é "Autonomia em modo elétrico"?',
+            answer: 'Este valor indica a distância máxima que o veículo pode percorrer em modo elétrico. É fundamental para os motoristas que utilizam veículos híbridos ou elétricos e desejam saber a eficiência do modo elétrico.'
+          },
+          {
+            question: 'A capacidade da bateria é obrigatória?',
+            answer: 'A capacidade da bateria não é um campo obrigatório, mas se inserido, proporcionará informações mais fidedignas sobre o uso da bateria em trajetos, permitindo um cálculo mais preciso da autonomia do veículo.'
+          }
+        ]
+      }
+    });
+  }
+  
+  
 }
+

@@ -50,7 +50,9 @@ public record DataUpdateAutonomy(
          *
          * @return Autonomia em modo elétrico.
          */
-        BigDecimal autonomyElectricMode
+        BigDecimal autonomyElectricMode,
+
+        BigDecimal batteryCapacity
 
 ) {
 }
