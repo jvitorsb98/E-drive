@@ -101,13 +101,14 @@ export class AuthService {
 
 
   recoverPasswordRequest(email: IRecoverPasswordRequest): Observable<string> {
-    return this.http.put<string>(`${this.apiUrl}/reset-password/request`, { email });
-} 
+    return this.http.put(`${this.apiUrl}/reset-password/request`, { email }, { responseType: 'text' });
+  }
+  
 
   resetPassword(request: IResetPasswordRequest): Observable<any> {
     // const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
     // return this.http.put(`${this.apiUrl}/reset-password/reset`, request, { headers: header })
-    return this.http.put(`${this.apiUrl}/reset-password/reset`, request)
+    return this.http.put(`${this.apiUrl}/reset-password/reset`, request , { responseType: 'text' });
   }
 
   recoverAccountRequest(email: IRecoverAccountRequest): Observable<IRecoverAccountResponse> {
@@ -128,7 +129,7 @@ export class AuthService {
     let errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.'; // pt-br
     // Verifica o status do erro e define uma mensagem personalizada
     if (error.status === 400) {
-      errorMessage = error.error; // pt-br
+      errorMessage = error.error; 
     } else if (error.status === 401) {
       // errorMessage = 'Unauthorized. Please check your credentials.'; // en-us
       errorMessage = 'Acesso não autorizado. Verifique suas credenciais.'; // pt-br

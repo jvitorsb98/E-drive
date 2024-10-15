@@ -16,10 +16,8 @@ import jakarta.validation.constraints.NotBlank;
  */
 public record DataResetPassword(
 
-        @NotBlank(message = "{notblank.token}")
         String token,
 
-        @Password(message = "{password.reset}")
         String password
 
 ) {

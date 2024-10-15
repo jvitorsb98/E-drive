@@ -207,6 +207,7 @@ public class AuthService implements UserDetailsService {
 
         User user = repository.findByEmail(dataResetPassword.email());
         String token = tokenService.generateTokenRecoverPassword(user);
+        System.out.println("TOken" + token);
         try {
             emailService.sendResetPasswordEmailAsync(user.getName(), dataResetPassword.email(), token);
         } catch (MessagingException e) {
@@ -226,7 +227,7 @@ public class AuthService implements UserDetailsService {
         userService.updatePassword(email, dataResetPassword.password());
         tokenService.revokeToken(dataResetPassword.token());
         String successMessage = messageSource.getMessage(
-                "request.reset.password.success",
+                "auth.reset.password.success",
                 new Object[]{email},
                 Locale.getDefault()
         );

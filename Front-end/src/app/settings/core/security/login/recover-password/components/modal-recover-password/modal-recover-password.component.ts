@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth/auth.service';
 import {  emailnoExistsValidator } from '../../../../../../shared/validators/email-exists.validator';
 import { UserService } from '../../../../../services/user/user.service';
+import { IRecoverPasswordResponse } from '../../../../../models/inter-Login';
 
 
 @Component({
@@ -53,19 +54,23 @@ export class ModalRecoverPasswordComponent {
     if (this.recoverPasswordForm.invalid) {
       return;
     }
-
     if (this.isPasswordRecovery) {
       this.auth.recoverPasswordRequest(this.recoverPasswordForm.value.email).subscribe({
         next: (response: string) => {
-          this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email).then(() => {
-            this.dialogRef.close();
-            
-          });
-
+          console.log('Response:', response);
+    
+          // Exibir mensagem de sucesso com a resposta
+          this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email)
+            .then(() => {
+              this.dialogRef.close(); // Fecha o modal após o sucesso
+            });
         },
         error: (error) => {
-          console.log(error)
-          this.alertasService.showError("Redefinição de senha", error.error);
+          console.log('Erro:', error);
+    
+          // Exibe o erro retornado pelo servidor
+          const errorMessage = error.error ? error.error : 'Ocorreu um erro ao tentar enviar o e-mail de redefinição.';
+          this.alertasService.showError("Redefinição de senha", errorMessage);
         }
       });
     } else {
