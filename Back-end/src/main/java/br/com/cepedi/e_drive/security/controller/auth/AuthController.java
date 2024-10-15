@@ -31,7 +31,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,9 +50,6 @@ public class AuthController {
     private AuthService authService;
 
     @Autowired
-    private AuthenticationManager manager;
-
-    @Autowired
     private TokenService tokenService;
 
     @Autowired
@@ -61,6 +57,10 @@ public class AuthController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private AuthenticationManager manager;
+
 
     /**
      * Realiza o login do usuário e gera um token de autenticação.
@@ -77,9 +77,12 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    public ResponseEntity<Object> login(@RequestBody @Valid DataAuth data) {
-        DadosTokenJWT dadosTokenJWT = authService.login(data);
-        return ResponseEntity.ok(dadosTokenJWT);
+    public ResponseEntity<DadosTokenJWT> login(@RequestBody @Valid DataAuth data) {
+        UsernamePasswordAuthenticationToken authenticationToken = authService.login(data);
+        User user = userService.getUserActivatedByEmail(data.login());
+        Authentication authentication = manager.authenticate(authenticationToken);
+        String tokenJWT = tokenService.generateToken(user);
+        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }
 
 
@@ -97,28 +100,9 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Email not found", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<Map<String, String>> resetPasswordRequest(@RequestBody @Validated DataRequestResetPassword dataResetPassword) {
-        User user = userService.getUserActivatedByEmail(dataResetPassword.email());
-
-        if (user == null) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "E-mail not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        String token = tokenService.generateTokenRecoverPassword(user);
-
-        try {
-            emailService.sendResetPasswordEmailAsync(user.getName(), dataResetPassword.email(), token);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "A password reset email has been sent to " + dataResetPassword.email());
-            return ResponseEntity.ok(response);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Failed to send email");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody @Validated DataRequestResetPassword dataResetPassword) {
+        String response = authService.resetPasswordRequest(dataResetPassword);
+        return ResponseEntity.ok(response);
     }
 
 
@@ -134,20 +118,9 @@ public class AuthController {
             @ApiResponse(responseCode = "200", description = "Password updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody @Validated DataResetPassword dataResetPassword) {
-        Map<String, String> response = new HashMap<>();
-
-        if (tokenService.isValidToken(dataResetPassword.token())) {
-            String email = tokenService.getEmailByToken(dataResetPassword.token());
-            userService.updatePassword(email, dataResetPassword.password());
-            tokenService.revokeToken(dataResetPassword.token());
-
-            response.put("message", "Password updated successfully");
-            return ResponseEntity.ok(response);
-        } else {
-            response.put("message", "Invalid or expired token");
-            return ResponseEntity.badRequest().body(response);
-        }
+    public ResponseEntity<String> resetPassword(@RequestBody @Validated DataResetPassword dataResetPassword) {
+        String response = authService.resetPassword(dataResetPassword);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -192,26 +165,7 @@ public class AuthController {
             @Parameter(description = "Activation token received by email", required = true)
             @RequestParam("token") String token
     ) {
-        try {
-            if (!tokenService.isValidToken(token)) {
-                // Redireciona com a mensagem de token inválido
-                String redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
-                return ResponseEntity.status(HttpStatus.FOUND)
-                        .location(URI.create(redirectUrl))
-                        .build();
-            }
-            authService.activateUser(token);
-            tokenService.revokeToken(token);
-
-            // Redireciona com a mensagem de sucesso
-            String redirectUrl = "http://localhost:4200/e-driver/login?success=Conta+ativada+com+sucesso";
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(redirectUrl))
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate user account.");
-        }
+            return authService.activateAccount(token);
     }
 
     /**
@@ -228,12 +182,8 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content)
     })
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
-        try {
-            authService.logout(token);
-            return ResponseEntity.ok("Logout successful");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        String response = authService.logout(token);
+        return ResponseEntity.ok(response);
     }
 
     /**
