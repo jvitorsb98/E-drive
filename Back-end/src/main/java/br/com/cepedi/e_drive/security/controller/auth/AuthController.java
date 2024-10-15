@@ -65,7 +65,6 @@ public class AuthController {
     private EmailService emailService;
 
     @Autowired
-    private List<ValidationResetPasswordRequest> validationResetPasswordRequestList;
 
     /**
      * Realiza o login do usuário e gera um token de autenticação.
@@ -103,7 +102,6 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<String> resetPasswordRequest(@RequestBody @Validated DataRequestResetPassword dataResetPassword) {
-        validationResetPasswordRequestList.forEach(v -> v.validate(dataResetPassword));
         String response = authService.resetPasswordRequest(dataResetPassword);
         return ResponseEntity.ok(response);
     }
@@ -122,9 +120,8 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<String> resetPassword(@RequestBody @Validated DataResetPassword dataResetPassword) {
-        authService.resetPassword(dataResetPassword);
-
-
+        String response = authService.resetPassword(dataResetPassword);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -169,25 +166,7 @@ public class AuthController {
             @Parameter(description = "Activation token received by email", required = true)
             @RequestParam("token") String token
     ) {
-        try {
-            if (!tokenService.isValidToken(token)) {
-                // Redireciona com a mensagem de token inválido
-                String redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
-                return ResponseEntity.status(HttpStatus.FOUND)
-                        .location(URI.create(redirectUrl))
-                        .build();
-            }
-            authService.activateUser(token);
-            tokenService.revokeToken(token);
-
-            String redirectUrl = "http://localhost:4200/e-driver/login?success=Conta+ativada+com+sucesso";
-            return ResponseEntity.status(HttpStatus.FOUND)
-                    .location(URI.create(redirectUrl))
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to activate user account.");
-        }
+            return authService.activateAccount(token);
     }
 
     /**
@@ -204,12 +183,8 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content)
     })
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
-        try {
-            authService.logout(token);
-            return ResponseEntity.ok("Logout successful");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        String response = authService.logout(token);
+        return ResponseEntity.ok(response);
     }
 
     /**

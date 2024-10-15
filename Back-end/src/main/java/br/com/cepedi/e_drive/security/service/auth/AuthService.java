@@ -9,7 +9,11 @@ import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
 import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.auth.validations.activatedAccount.ValidationsActivatedAccount;
 import br.com.cepedi.e_drive.security.service.auth.validations.login.ValidationsLogin;
+import br.com.cepedi.e_drive.security.service.auth.validations.logout.ValidationLogout;
+import br.com.cepedi.e_drive.security.service.auth.validations.resetPassword.ValidationResetPassword;
+import br.com.cepedi.e_drive.security.service.auth.validations.resetPasswordRequest.ValidationResetPasswordRequest;
 import br.com.cepedi.e_drive.security.service.email.EmailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
 import br.com.cepedi.e_drive.security.service.user.UserService;
@@ -22,6 +26,7 @@ import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,6 +38,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -55,10 +61,17 @@ public class AuthService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private List<ValidationLogout> validationLogoutList;
+
+    @Autowired
     private TokenService tokenService;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private List<ValidationResetPasswordRequest> validationResetPasswordRequestList;
+
 
     @Autowired
     private List<ValidationRegisterUser> validationRegisterUserList;
@@ -68,6 +81,12 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private List<ValidationsLogin> validationsLoginList;
+
+    @Autowired
+    private List<ValidationResetPassword> validationResetPasswords;
+
+    @Autowired
+    private List<ValidationsActivatedAccount> validationsActivatedAccountList;
 
     @Autowired
     private MessageSource messageSource;
@@ -129,23 +148,7 @@ public class AuthService implements UserDetailsService {
     }
 
 
-    /**
-     * Ativa um usuário com base no token fornecido.
-     *
-     * @param token O token de confirmação de ativação do usuário.
-     * @throws UsernameNotFoundException Se nenhum usuário for encontrado com o email associado ao token.
-     */
-    public void activateUser(String token) {
-        String email = JWT.decode(token).getClaim("email").asString();
-        User user = repository.findByEmail(email);
 
-        if (user != null) {
-            user.activate();
-            repository.save(user);
-        } else {
-            throw new UsernameNotFoundException("User not found with email: " + email);
-        }
-    }
 
     /**
      * Reativa um usuário com base no token fornecido.
@@ -178,14 +181,19 @@ public class AuthService implements UserDetailsService {
      * @param token O token de logout.
      * @throws IllegalArgumentException Se o token for inválido ou expirado.
      */
-    public void logout(String token) {
+    public String logout(String token) {
         String tokenWithoutBearer = token.replace("Bearer ", "");
-        if (tokenService.isValidToken(tokenWithoutBearer)) {
-            tokenService.revokeToken(tokenWithoutBearer);
-        } else {
-            throw new IllegalArgumentException("Invalid or expired token.");
-        }
+        validationLogoutList.forEach(v -> v.validate(tokenWithoutBearer));
+        tokenService.revokeToken(tokenWithoutBearer);
+        String successMessage = messageSource.getMessage(
+                "auth.logout.success",
+                null,
+                Locale.getDefault()
+        );
+
+        return successMessage;
     }
+
 
 
     /**
@@ -226,6 +234,9 @@ public class AuthService implements UserDetailsService {
     }
 
     public String resetPasswordRequest(DataRequestResetPassword dataResetPassword) {
+        validationResetPasswordRequestList.forEach(v -> v.validate(dataResetPassword));
+
+
         User user = repository.findByEmail(dataResetPassword.email());
         String token = tokenService.generateTokenRecoverPassword(user);
         try {
@@ -241,19 +252,42 @@ public class AuthService implements UserDetailsService {
         return successMessage;
     }
 
-    public void resetPassword(DataResetPassword dataResetPassword) {
+    public String resetPassword(DataResetPassword dataResetPassword) {
+        validationResetPasswords.forEach(v -> v.validate(dataResetPassword));
+        String email = tokenService.getEmailByToken(dataResetPassword.token());
+        userService.updatePassword(email, dataResetPassword.password());
+        tokenService.revokeToken(dataResetPassword.token());
+        String successMessage = messageSource.getMessage(
+                "request.reset.password.success",
+                new Object[]{email},
+                Locale.getDefault()
+        );
 
-        if (tokenService.isValidToken(dataResetPassword.token())) {
-            String email = tokenService.getEmailByToken(dataResetPassword.token());
-            userService.updatePassword(email, dataResetPassword.password());
-            tokenService.revokeToken(dataResetPassword.token());
+        return successMessage;
 
-            response.put("message", "Password updated successfully");
-            return ResponseEntity.ok(response);
-        } else {
-            response.put("message", "Invalid or expired token");
-            return ResponseEntity.badRequest().body(response);
+    }
+
+    public ResponseEntity<String> activateAccount(String token) {
+
+        if (!tokenService.isValidToken(token)) {
+            String  redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
+            return ResponseEntity.status(HttpStatus.FOUND)
+                    .location(URI.create(redirectUrl))
+                    .build();
         }
+
+        validationsActivatedAccountList.forEach(v -> v.validate(token));
+
+
+        String email = JWT.decode(token).getClaim("email").asString();
+        User user = repository.findByEmail(email);
+        user.activate();
+        tokenService.revokeToken(token);
+
+        String redirectUrl = "http://localhost:4200/e-driver/login?success=Conta+ativada+com+sucesso";
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .location(URI.create(redirectUrl))
+                .build();
     }
 }
 
