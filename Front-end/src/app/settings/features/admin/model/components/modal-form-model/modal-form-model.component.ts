@@ -105,7 +105,7 @@ export class ModalFormModelComponent {
         this.brands = response.content
           .filter((brand: any) => brand.activated) // Filtra marcas ativas
           .map((brand: any) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
-        
+
         this.filterBrands(); // Configura o filtro de marcas
       },
       error: (error) => {
@@ -123,7 +123,7 @@ export class ModalFormModelComponent {
 
       const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a mensagem de sucesso
       const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar'; // Determina a mensagem de erro
-      
+
       const selectedBrandId = this.getSelectedBrandId(); // Obtém o ID da marca selecionada
 
       const modelData = {
@@ -189,6 +189,19 @@ export class ModalFormModelComponent {
     const selectedBrandName = this.modelForm.get('brand')?.value; // Nome da marca selecionada
     const selectedBrand = this.brands.find(brand => brand.name === selectedBrandName); // Busca a marca correspondente na lista
     return selectedBrand ? selectedBrand.id : undefined; // Retorna o ID da marca ou undefined
+  }
+
+  /**
+   * @description Alternar a visibilidade do autocomplete.
+   * @param event Evento disparado pelo clique do botão.
+   */
+  toggleAutocomplete(event: Event) {
+    event.stopPropagation();
+    if (this.autocompleteTrigger.panelOpen) {
+      this.autocompleteTrigger.closePanel();
+    } else {
+      this.autocompleteTrigger.openPanel();
+    }
   }
 
   /**
