@@ -37,7 +37,7 @@ public class ValidationLoginUserActive implements ValidationsLogin {
         String email = dataAuth.login().trim();
 
         User user = userRepository.findByEmail(email);
-
+        System.out.println(user);
 
         if (user != null && !user.isActive()) {
             String errorMessage = messageSource.getMessage(

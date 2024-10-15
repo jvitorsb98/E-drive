@@ -23,6 +23,5 @@ public record DataAuth(
         String login,
 
         @NonNull
-        @Password
         String password) {
 }
