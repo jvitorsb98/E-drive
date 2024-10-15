@@ -91,8 +91,7 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private MessageSource messageSource;
 
-    @Autowired
-    private AuthenticationManager manager;
+
 
     @Autowired
     private EmailService emailService;
@@ -127,24 +126,11 @@ public class AuthService implements UserDetailsService {
         return new DataDetailsRegisterUser(user,confirmationToken);
     }
 
-    public DadosTokenJWT login(DataAuth dataAuth) {
+    public UsernamePasswordAuthenticationToken login(DataAuth dataAuth) {
         validationsLoginList.forEach(v -> v.validate(dataAuth));
+        User user = userService.getUserActivatedByEmail(dataAuth.login());
+        return new UsernamePasswordAuthenticationToken(dataAuth.login(), dataAuth.password());
 
-        try {
-            User user = userService.getUserActivatedByEmail(dataAuth.login());
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(dataAuth.login(), dataAuth.password());
-            Authentication authentication = manager.authenticate(authenticationToken);
-            String tokenJWT = tokenService.generateToken(user);
-            return new DadosTokenJWT(tokenJWT);
-
-        } catch (BadCredentialsException e) {
-            String errorMessage = messageSource.getMessage(
-                    "auth.login.invalid.credentials",
-                    null,
-                    LocaleContextHolder.getLocale()
-            );
-            throw new ValidationException(errorMessage);
-        }
     }
 
 

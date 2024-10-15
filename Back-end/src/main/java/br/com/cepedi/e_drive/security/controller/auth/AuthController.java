@@ -9,7 +9,6 @@ import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
 import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
 import br.com.cepedi.e_drive.security.service.auth.AuthService;
-import br.com.cepedi.e_drive.security.service.auth.validations.resetPasswordRequest.ValidationResetPasswordRequest;
 import br.com.cepedi.e_drive.security.service.email.EmailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
 import br.com.cepedi.e_drive.security.service.user.UserService;
@@ -32,9 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,9 +50,6 @@ public class AuthController {
     private AuthService authService;
 
     @Autowired
-    private AuthenticationManager manager;
-
-    @Autowired
     private TokenService tokenService;
 
     @Autowired
@@ -65,6 +59,8 @@ public class AuthController {
     private EmailService emailService;
 
     @Autowired
+    private AuthenticationManager manager;
+
 
     /**
      * Realiza o login do usuário e gera um token de autenticação.
@@ -82,8 +78,11 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     public ResponseEntity<DadosTokenJWT> login(@RequestBody @Valid DataAuth data) {
-        DadosTokenJWT dadosTokenJWT = authService.login(data);
-        return ResponseEntity.ok(dadosTokenJWT);
+        UsernamePasswordAuthenticationToken authenticationToken = authService.login(data);
+        User user = userService.getUserActivatedByEmail(data.login());
+        Authentication authentication = manager.authenticate(authenticationToken);
+        String tokenJWT = tokenService.generateToken(user);
+        return ResponseEntity.ok(new DadosTokenJWT(tokenJWT));
     }
 
 
