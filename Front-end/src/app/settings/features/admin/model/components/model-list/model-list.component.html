@@ -12,22 +12,23 @@
   </div>
 </div>
 
+<!-- Container para o filtro de busca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+  <div class="custom-filter">
+    <mat-form-field class="d-flex w-100">
+      <!-- Label do campo de busca -->
+      <mat-label>Busca por modelo</mat-label>
+      <!-- Campo de input para buscar modelos por nome -->
+      <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+    </mat-form-field>
+  </div>
+</div>
+
 <!-- Container principal para a tabela de modelos de veículos -->
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
   <div class="row">
-    
-    <!-- Filtro personalizado para busca por modelo -->
-    <div class="custom-filter">
-      <mat-form-field>
-        <mat-label>Busca por modelo</mat-label>
-        <!-- Campo de input para buscar modelos por nome -->
-        <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
-      </mat-form-field>
-    </div>
-
-    <!-- Container para a tabela -->
-    <div class="container">
-      <table class="mat-elevation-z8" mat-table [dataSource]="dataSource" matSort>
+    <div class="container-table">
+      <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
 
         <!-- Coluna para o ícone representando cada modelo -->
         <ng-container matColumnDef="icon">
@@ -97,12 +98,13 @@
         </tr>
       </table>
     </div>
-
-    <!-- Paginação da tabela -->
-    <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]"
-      aria-label="Selecione modelos por página"></mat-paginator>
-
-    <!-- Botão para abrir o modal de adicionar um novo modelo -->
-    <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAddModel()" text="Novo modelo"></app-ui-button>
   </div>
+</div>
+
+<!-- Container para o paginador e botão para adicionar nova marca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+  <!-- Paginação da tabela -->
+  <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]" aria-label="Selecione modelos por página"></mat-paginator>
+  <!-- Botão para abrir o modal de adicionar um novo modelo -->
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddModel()" text="Novo modelo"></app-ui-button>
 </div>
