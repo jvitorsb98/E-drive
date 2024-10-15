@@ -33,8 +33,7 @@ export class ModalRecoverPasswordComponent {
 
   ngOnInit(): void {
     this.emailControl = new FormControl('', {
-      validators: [Validators.required, Validators.email],
-      asyncValidators: [emailnoExistsValidator(this.userService)],
+      validators: [Validators.required, Validators.email]
     });
 
     this.recoverPasswordForm = this.fb.group({
@@ -57,18 +56,15 @@ export class ModalRecoverPasswordComponent {
     if (this.isPasswordRecovery) {
       this.auth.recoverPasswordRequest(this.recoverPasswordForm.value.email).subscribe({
         next: (response: string) => {
-          console.log('Response:', response);
     
           // Exibir mensagem de sucesso com a resposta
-          this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email)
+          this.alertasService.showSuccess("Redefinição de senha", response)
             .then(() => {
               this.dialogRef.close(); // Fecha o modal após o sucesso
             });
         },
         error: (error) => {
-          console.log('Erro:', error);
-    
-          // Exibe o erro retornado pelo servidor
+  
           const errorMessage = error.error ? error.error : 'Ocorreu um erro ao tentar enviar o e-mail de redefinição.';
           this.alertasService.showError("Redefinição de senha", errorMessage);
         }
