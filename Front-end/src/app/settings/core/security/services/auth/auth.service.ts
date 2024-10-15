@@ -99,11 +99,10 @@ export class AuthService {
     return localStorage.getItem('token-reset-password');
   }
 
-  //TODO - Padronizar o retorno de Erros do back-end
 
-  recoverPasswordRequest(email: IRecoverPasswordRequest): Observable<IRecoverPasswordResponse> {
-    return this.http.put<IRecoverPasswordResponse>(`${this.apiUrl}/reset-password/request`, { email })
-  }
+  recoverPasswordRequest(email: IRecoverPasswordRequest): Observable<string> {
+    return this.http.put<string>(`${this.apiUrl}/reset-password/request`, { email });
+} 
 
   resetPassword(request: IResetPasswordRequest): Observable<any> {
     // const header = new HttpHeaders().set('Authorization', `Bearer ${request.token}`);
@@ -127,11 +126,9 @@ export class AuthService {
   private handleError(error: HttpErrorResponse): Observable<never> {
     // let errorMessage = 'An unexpected error occurred'; // en-us
     let errorMessage = 'Ocorreu um erro inesperado. Tente novamente mais tarde.'; // pt-br
-    console.log(error)
     // Verifica o status do erro e define uma mensagem personalizada
     if (error.status === 400) {
-      // errorMessage = 'User is not activated. Please check your email for activation.'; // en-us
-      errorMessage = 'O usuário não foi ativado. Verifique seu e-mail para ativar o usuário.'; // pt-br
+      errorMessage = error.error; // pt-br
     } else if (error.status === 401) {
       // errorMessage = 'Unauthorized. Please check your credentials.'; // en-us
       errorMessage = 'Acesso não autorizado. Verifique suas credenciais.'; // pt-br

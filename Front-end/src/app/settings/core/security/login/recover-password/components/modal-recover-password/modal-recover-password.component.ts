@@ -56,14 +56,16 @@ export class ModalRecoverPasswordComponent {
 
     if (this.isPasswordRecovery) {
       this.auth.recoverPasswordRequest(this.recoverPasswordForm.value.email).subscribe({
-        next: () => {
+        next: (response: string) => {
           this.alertasService.showSuccess("Redefinição de senha", "Um e-mail de redefinição de senha foi enviado para: " + this.recoverPasswordForm.value.email).then(() => {
             this.dialogRef.close();
+            
           });
 
         },
-        error: (error: HttpErrorResponse) => {
-          this.alertasService.showError("Redefinição de senha", error.error.message);
+        error: (error) => {
+          console.log(error)
+          this.alertasService.showError("Redefinição de senha", error.error);
         }
       });
     } else {

@@ -62,7 +62,7 @@ export class UserLoginModalComponent implements OnInit {
   modalResetPassword(isPasswordRecovery: boolean): void {
     this.modal.openModal(ModalRecoverPasswordComponent, {
       email: this.loginForm.get('email')?.value,
-      isPasswordRecovery: isPasswordRecovery  // Passa a flag para definir o modo
+      isPasswordRecovery: isPasswordRecovery  
     }, {
       width: '500px',
       height: '280px',
@@ -103,6 +103,7 @@ export class UserLoginModalComponent implements OnInit {
   }
 
   private handleLoginError(error: HttpErrorResponse): void {
+    console.log(error)
     this.isLoading = false;
     this.alertasService.showError('Erro de Autenticação', error.message);
     this.setFormErrors();
