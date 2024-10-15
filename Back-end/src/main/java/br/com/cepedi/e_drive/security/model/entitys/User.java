@@ -34,8 +34,10 @@ public class User implements UserDetails {
     private String email;
     private String name;
     private String password;
-    private LocalDate birth; // Data de nascimento do usuário
-    private String cellphone; // Número de celular do usuário
+    private LocalDate birth;
+    private String cellphone;
+
+    @Column(name = "activated")
     private Boolean activated;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
