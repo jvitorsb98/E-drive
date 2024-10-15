@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.security.service.auth.validations.reactivated;
 
-import br.com.cepedi.e_drive.security.service.TokenService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -19,11 +20,11 @@ public class ValidationTokenValidForReactivated implements ValidationReactivate 
     public void validate(String token) {
         if (!tokenService.isValidToken(token)) {
             String errorMessage = messageSource.getMessage(
-                    "auth.reactivated.token.invalid",  // Chave da mensagem no arquivo de mensagens
-                    null,  // Não há parâmetros adicionais para a mensagem
-                    LocaleContextHolder.getLocale()  // Idioma atual
+                    "auth.reactivated.token.invalid",
+                    null,
+                    LocaleContextHolder.getLocale()
             );
-            throw new IllegalArgumentException(errorMessage);
+            throw new ValidationException(errorMessage);
         }
     }
 }

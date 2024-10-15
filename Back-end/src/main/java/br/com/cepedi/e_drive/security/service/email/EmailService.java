@@ -55,16 +55,10 @@ public class EmailService {
      * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
      */
     @Async
-    public String sendActivationEmailAsync(String name, String email, String tokenForActivate) throws MessagingException {
+    public void sendActivationEmailAsync(String name, String email, String tokenForActivate) throws MessagingException {
         sendActivationEmail(name, email, tokenForActivate);
 
-        String successMessage = messageSource.getMessage(
-                "auth.register.success",
-                new Object[]{name},
-                LocaleContextHolder.getLocale()
-        );
 
-        return successMessage;
     }
 
     /**
@@ -128,7 +122,7 @@ public class EmailService {
      * @return O token de ativação enviado.
      * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
      */
-    public String sendActivationEmail(String name, String email, String tokenForActivate) throws MessagingException {
+    public void sendActivationEmail(String name, String email, String tokenForActivate) throws MessagingException {
 
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
@@ -160,7 +154,6 @@ public class EmailService {
         DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Activation Email");
         mailService.register(dataRegisterMail);
 
-        return tokenForActivate;
     }
     /**
      * Envia um e-mail de reativação de conta.

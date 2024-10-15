@@ -4,10 +4,7 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
-import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
-import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
-import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
-import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
+import br.com.cepedi.e_drive.security.model.records.register.*;
 import br.com.cepedi.e_drive.security.service.auth.AuthService;
 import br.com.cepedi.e_drive.security.service.email.EmailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
@@ -22,6 +19,7 @@ import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -100,7 +98,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Email not found", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<String> resetPasswordRequest(@RequestBody @Validated DataRequestResetPassword dataResetPassword) {
+    public ResponseEntity<String> resetPasswordRequest(@RequestBody @Valid DataRequestResetPassword dataResetPassword) {
         String response = authService.resetPasswordRequest(dataResetPassword);
         return ResponseEntity.ok(response);
     }
@@ -143,8 +141,9 @@ public class AuthController {
             @RequestBody @Valid DataRegisterUser data) throws MessagingException {
         DataDetailsRegisterUser dataDetailsRegisterUser = authService.register(data);
         String tokenForActivate = dataDetailsRegisterUser.confirmationToken();
-        String response = emailService.sendActivationEmailAsync(data.name(), data.email(), tokenForActivate);
-        return ResponseEntity.ok(response);
+        emailService.sendActivationEmailAsync(data.name(), data.email(), tokenForActivate);
+
+        return ResponseEntity.ok(dataDetailsRegisterUser.successMessage());
     }
 
     /**
@@ -237,30 +236,10 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "Email not found", content = @Content(mediaType = "text/plain")),
             @ApiResponse(responseCode = "500", description = "Failed to send email", content = @Content(mediaType = "text/plain"))
     })
-    public ResponseEntity<Map<String, String>> reactivateAccountRequest(
-            @RequestBody @Validated DataDetailsUser dataReactivateAccount) {
-
-        User user = userService.getUserDesctivatedByEmail(dataReactivateAccount.email());
-
-        if (user == null) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "E-mail not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        String token = tokenService.generateTokenForReactivation(user);
-
-        try {
-            emailService.sendReactivationEmail(user.getName(), dataReactivateAccount.email(), token);
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "A reactivation email has been sent to " + dataReactivateAccount.email());
-            return ResponseEntity.ok(response);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Failed to send email");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
+    public ResponseEntity<String> reactivateAccountRequest(
+            @RequestBody @Validated DataReactivateAccount dataReactivateAccount) {
+        String message = authService.reactivateAccountRequest(dataReactivateAccount);
+        return ResponseEntity.ok(message);
     }
 
 
@@ -289,44 +268,8 @@ public class AuthController {
             @ApiResponse(responseCode = "409", description = "User is already active.", content = @Content(mediaType = "application/json")),
             @ApiResponse(responseCode = "500", description = "Internal server error.", content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<Map<String, String>> reactivateAccount(@RequestParam String token) {
-        Map<String, String> response = new HashMap<>();
-
-        try {
-            if (!tokenService.isValidToken(token)) {
-                response.put("message", "Invalid or expired token.");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(response);
-            }
-
-            User user = authService.getUserByToken(token);
-            if (user == null) {
-                response.put("message", "User not found.");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(response);
-            }
-
-            if (user.isActive()) {
-                response.put("message", "User is already active.");
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(response);
-            }
-
-            authService.reactivateUser(token);
-            tokenService.revokeToken(token);
-
-            response.put("message", "User account reactivated successfully.");
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(response);
-        } catch (Exception e) {
-            response.put("message", "Failed to reactivate user account.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(response);
-        }
+    public ResponseEntity<String> reactivateAccount(@RequestParam String token) {
+        String message = authService.reactivateAccount(token);
+        return ResponseEntity.ok(message);
     }
 }
