@@ -6,18 +6,23 @@ import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterU
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
+import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
+import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.auth.validations.login.ValidationsLogin;
+import br.com.cepedi.e_drive.security.service.email.EmailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
 import br.com.cepedi.e_drive.security.service.user.UserService;
 import br.com.cepedi.e_drive.security.service.user.validations.disabled.ValidationDisabledUser;
 import br.com.cepedi.e_drive.security.service.auth.validations.register.ValidationRegisterUser;
 import com.auth0.jwt.JWT;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +33,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Serviço responsável pela autenticação e gerenciamento de usuários.
@@ -67,6 +75,11 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private AuthenticationManager manager;
 
+    @Autowired
+    private EmailService emailService;
+
+
+
 
     /**
      * Carrega um {@link UserDetails} com base no email fornecido.
@@ -92,9 +105,6 @@ public class AuthService implements UserDetailsService {
         User user = new User(dataRegisterUser, passwordEncoder);
         repository.save(user);
         String confirmationToken = tokenService.generateTokenForActivatedEmail(user);
-
-
-
         return new DataDetailsRegisterUser(user,confirmationToken);
     }
 
@@ -215,6 +225,36 @@ public class AuthService implements UserDetailsService {
         return repository.findByEmail(email);
     }
 
+    public String resetPasswordRequest(DataRequestResetPassword dataResetPassword) {
+        User user = repository.findByEmail(dataResetPassword.email());
+        String token = tokenService.generateTokenRecoverPassword(user);
+        try {
+            emailService.sendResetPasswordEmailAsync(user.getName(), dataResetPassword.email(), token);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+        String successMessage = messageSource.getMessage(
+                "auth.request.reset.password.success",
+                new Object[]{dataResetPassword.email()},
+                Locale.getDefault()
+        );
+        return successMessage;
+    }
+
+    public void resetPassword(DataResetPassword dataResetPassword) {
+
+        if (tokenService.isValidToken(dataResetPassword.token())) {
+            String email = tokenService.getEmailByToken(dataResetPassword.token());
+            userService.updatePassword(email, dataResetPassword.password());
+            tokenService.revokeToken(dataResetPassword.token());
+
+            response.put("message", "Password updated successfully");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "Invalid or expired token");
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }
 
 
