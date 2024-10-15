@@ -117,6 +117,7 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Invalid or expired token", content = @Content(mediaType = "text/plain"))
     })
     public ResponseEntity<String> resetPassword(@RequestBody @Validated DataResetPassword dataResetPassword) {
+        System.out.println(dataResetPassword.token());
         String response = authService.resetPassword(dataResetPassword);
         return ResponseEntity.ok(response);
     }

@@ -55,13 +55,13 @@ export class ResetPasswordComponent {
       }
       // Chama o serviço para redefinir a senha
       this.authService.resetPassword(request).subscribe({
-        next: () => {
-          this.alertasService.showSuccess('Redefinição de senha', 'Sua senha foi redefinida com sucesso!').then(() => {
+        next: (response) => {
+          this.alertasService.showSuccess('Redefinição de senha', response).then(() => {
             this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
           });
         },
         error: (error: HttpErrorResponse) => {
-          this.alertasService.showError('Redefinição de senha', error.error.message).then(() => {
+          this.alertasService.showError('Redefinição de senha', error.error).then(() => {
             this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
           });
         }

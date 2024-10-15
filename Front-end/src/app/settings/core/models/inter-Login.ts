@@ -86,3 +86,12 @@ export interface IResetPasswordRequest {
    */
   password: string;
 }
+
+
+export interface IRecoverPasswordResponse {
+  /**
+   * Mensagem após uma solicitação bem-sucedida.
+   * @type {string}
+   */
+  message: string;
+}

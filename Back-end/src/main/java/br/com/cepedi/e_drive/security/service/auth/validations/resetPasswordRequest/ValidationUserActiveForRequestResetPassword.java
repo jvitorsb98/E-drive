@@ -1,5 +1,6 @@
 package br.com.cepedi.e_drive.security.service.auth.validations.resetPasswordRequest;
 
+import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import jakarta.validation.ValidationException;
@@ -34,10 +35,8 @@ public class ValidationUserActiveForRequestResetPassword implements ValidationRe
     @Override
     public void validate(DataRequestResetPassword dataRequestResetPassword) {
         String email = dataRequestResetPassword.email().trim();
-
-        boolean isActive = userRepository.findByEmail(email).isActive();
-
-        if (!isActive) {
+        User user = userRepository.findByEmail(email);
+        if(user != null && user.isActive()){
             String errorMessage = messageSource.getMessage(
                     "auth.request.reset.password.inactive",
                     new Object[]{email},

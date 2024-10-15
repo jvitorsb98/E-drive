@@ -33,12 +33,12 @@ export class ConfirmAccountComponent implements OnInit {
   // Chama o serviço de autenticação para confirmar a conta
   confirmAccount(token: string) {
     this.authService.confirmAccount(token).subscribe({
-      next: () => {
-        this.alertasService.showSuccess('Confirmação de conta', 'Sua conta foi recuperada com sucesso.');
+      next: (response) => {
+        this.alertasService.showSuccess('Confirmação de conta', response);
         this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
       },
       error: (err) => {
-        this.alertasService.showError('Confirmação de conta', err.error.message || 'Falha ao confirmar a conta.');
+        this.alertasService.showError('Confirmação de conta', err.error || 'Falha ao confirmar a conta.');
         this.router.navigate(['/e-driver/login']); // Redireciona para a tela de login
       }
     });
