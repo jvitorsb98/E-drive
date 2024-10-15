@@ -4,14 +4,13 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
-import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
-import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
-import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
-import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
+import br.com.cepedi.e_drive.security.model.records.register.*;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.auth.validations.activatedAccount.ValidationsActivatedAccount;
 import br.com.cepedi.e_drive.security.service.auth.validations.login.ValidationsLogin;
 import br.com.cepedi.e_drive.security.service.auth.validations.logout.ValidationLogout;
+import br.com.cepedi.e_drive.security.service.auth.validations.reactivateAccountRequest.ValidationReactivateAccountRequest;
+import br.com.cepedi.e_drive.security.service.auth.validations.reactivated.ValidationReactivate;
 import br.com.cepedi.e_drive.security.service.auth.validations.resetPassword.ValidationResetPassword;
 import br.com.cepedi.e_drive.security.service.auth.validations.resetPasswordRequest.ValidationResetPasswordRequest;
 import br.com.cepedi.e_drive.security.service.email.EmailService;
@@ -92,12 +91,14 @@ public class AuthService implements UserDetailsService {
     private MessageSource messageSource;
 
 
-
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private List<ValidationReactivateAccountRequest> validationReactivateAccountRequestList;
 
-
+    @Autowired
+    private List<ValidationReactivate> validationReactivateList;
 
     /**
      * Carrega um {@link UserDetails} com base no email fornecido.
@@ -123,7 +124,12 @@ public class AuthService implements UserDetailsService {
         User user = new User(dataRegisterUser, passwordEncoder);
         repository.save(user);
         String confirmationToken = tokenService.generateTokenForActivatedEmail(user);
-        return new DataDetailsRegisterUser(user,confirmationToken);
+        String successMessage = messageSource.getMessage(
+                "auth.register.success",
+                new Object[]{user.getName()},
+                LocaleContextHolder.getLocale()
+        );
+        return new DataDetailsRegisterUser(user, confirmationToken,successMessage);
     }
 
     public UsernamePasswordAuthenticationToken login(DataAuth dataAuth) {
@@ -134,30 +140,13 @@ public class AuthService implements UserDetailsService {
     }
 
 
-
-
     /**
      * Reativa um usuário com base no token fornecido.
      *
      * @param token O token de confirmação de ativação do usuário.
      * @throws UsernameNotFoundException Se nenhum usuário for encontrado com o email associado ao token.
-     * @throws IllegalStateException Se o usuário já estiver ativo.
+     * @throws IllegalStateException     Se o usuário já estiver ativo.
      */
-    public void reactivateUser(String token) {
-        String email = JWT.decode(token).getClaim("email").asString();
-        User user = repository.findByEmail(email);
-
-        if (user != null) {
-            if (!user.isActive()) {
-                user.activate();
-                repository.save(user);
-            } else {
-                throw new IllegalStateException("User is already active.");
-            }
-        } else {
-            throw new UsernameNotFoundException("User not found with email: " + email);
-        }
-    }
 
 
 
@@ -181,17 +170,16 @@ public class AuthService implements UserDetailsService {
     }
 
 
-
     /**
      * Desativa um usuário com o ID fornecido.
-     *
+     * <p>
      * Este método executa as validações definidas na lista de validações de usuários desativados
      * antes de desativar o usuário. Se todas as validações forem bem-sucedidas, o usuário será
      * marcado como desativado e salvo no repositório.
      *
      * @param id O ID do usuário a ser desativado.
      * @throws IllegalArgumentException Se alguma validação falhar, indicando que o usuário não pode ser desativado.
-     * @throws EntityNotFoundException Se não houver um usuário com o ID fornecido no repositório.
+     * @throws EntityNotFoundException  Se não houver um usuário com o ID fornecido no repositório.
      */
     public void disableUser(Long id) {
         validationDisabledUserList.forEach(v -> v.validation(id));
@@ -203,21 +191,15 @@ public class AuthService implements UserDetailsService {
 
     /**
      * Recupera um usuário a partir de um token JWT fornecido.
-     *
+     * <p>
      * Este método extrai o email associado ao token JWT, que é utilizado para buscar
      * o usuário correspondente no repositório.
      *
-     * @param token O token JWT fornecido, que pode ou não conter o prefixo "Bearer ".
      *              Se o prefixo "Bearer " estiver presente, ele será removido antes de processar o token.
      * @return O {@link User} associado ao email extraído do token.
-     *         Se nenhum usuário for encontrado com o email extraído, este método retornará {@code null}.
+     * Se nenhum usuário for encontrado com o email extraído, este método retornará {@code null}.
      */
-    public User getUserByToken(String token) {
-        String tokenWithoutBearer = token.replace("Bearer ", "");
-        String email = tokenService.getEmailByToken(tokenWithoutBearer);
 
-        return repository.findByEmail(email);
-    }
 
     public String resetPasswordRequest(DataRequestResetPassword dataResetPassword) {
         validationResetPasswordRequestList.forEach(v -> v.validate(dataResetPassword));
@@ -256,7 +238,7 @@ public class AuthService implements UserDetailsService {
     public ResponseEntity<String> activateAccount(String token) {
 
         if (!tokenService.isValidToken(token)) {
-            String  redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
+            String redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(redirectUrl))
                     .build();
@@ -274,6 +256,34 @@ public class AuthService implements UserDetailsService {
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(redirectUrl))
                 .build();
+    }
+
+    public String reactivateAccountRequest(DataReactivateAccount dataReactivateAccount) {
+        validationReactivateAccountRequestList.forEach(v -> v.validate(dataReactivateAccount));
+        User user = repository.findByEmail(dataReactivateAccount.email());
+        String token = tokenService.generateTokenForReactivation(user);
+
+        try {
+            emailService.sendReactivationEmail(user.getName(), dataReactivateAccount.email(), token);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+
+        return messageSource.getMessage("auth.request.reactivated.success", new Object[]{user.getName()}, LocaleContextHolder.getLocale());
+    }
+
+    public String reactivateAccount(String token) {
+        validationReactivateList.forEach(v -> v.validate(token));
+        User user = userService.getUserByToken(token);
+        user.activate();
+        tokenService.revokeToken(token);
+
+        return messageSource.getMessage(
+                "auth.reactivated.success",
+                new Object[]{user.getName()},
+                LocaleContextHolder.getLocale()
+        );
+
     }
 }
 

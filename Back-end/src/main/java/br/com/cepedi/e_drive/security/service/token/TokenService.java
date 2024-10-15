@@ -19,6 +19,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Serviço responsável pela geração, verificação e revogação de tokens JWT.
@@ -61,12 +62,17 @@ public class TokenService {
     public String generateToken(User user) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            // Adiciona as roles como uma lista de strings no token
             String token = JWT.create()
                     .withIssuer(ISSUER)
                     .withSubject(user.getEmail()) // Usa o e-mail como subject
                     .withClaim("id", user.getId())
                     .withClaim("email", user.getEmail())
-                    .withExpiresAt(expirationDate())
+                    .withClaim("roles", user.getAuthorities().stream()
+                            .map(role -> role.getAuthority()) // Extrai as roles
+                            .collect(Collectors.toList()))
+                    .withExpiresAt(expirationDate()) // Defina o método de expiração
                     .sign(algorithm);
 
             registerToken(token, user);

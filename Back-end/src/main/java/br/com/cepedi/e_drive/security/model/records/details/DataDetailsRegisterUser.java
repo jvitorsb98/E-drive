@@ -24,7 +24,9 @@ public record DataDetailsRegisterUser(
         LocalDate birth,
         String cellphone,
         Boolean activated,
-        String confirmationToken
+        String confirmationToken,
+
+        String successMessage
 ) {
     /**
      * Construtor que cria um record `DataDetailsRegisterUser` a partir de uma entidade `User`
@@ -33,7 +35,7 @@ public record DataDetailsRegisterUser(
      * @param user              A entidade `User` da qual os detalhes serão extraídos.
      * @param confirmationToken O token de confirmação associado ao usuário.
      */
-    public DataDetailsRegisterUser(User user, String confirmationToken) {
-        this(user.getName(), user.getEmail(), user.getBirth(), user.getCellphone(), user.getActivated(), confirmationToken);
+    public DataDetailsRegisterUser(User user, String confirmationToken, String successMessage) {
+        this(user.getName(), user.getEmail(), user.getBirth(), user.getCellphone(), user.getActivated(), confirmationToken, successMessage);
     }
 }

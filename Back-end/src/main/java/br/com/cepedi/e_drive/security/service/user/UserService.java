@@ -4,6 +4,7 @@ import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import br.com.cepedi.e_drive.security.service.user.validations.update.UserValidationUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Autowired
     private List<UserValidationUpdate> userValidationUpdateList;
@@ -110,5 +114,12 @@ public class UserService {
         }
         user.update(data);
         return new DataDetailsUser(user);
+    }
+
+    public User getUserByToken(String token) {
+        String tokenWithoutBearer = token.replace("Bearer ", "");
+        String email = tokenService.getEmailByToken(tokenWithoutBearer);
+
+        return userRepository.findByEmail(email);
     }
 }

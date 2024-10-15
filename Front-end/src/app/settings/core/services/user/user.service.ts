@@ -26,12 +26,10 @@ export class UserService {
   register(user: User): Observable<any> {
     return this.http.post(`${this.usersUrl}/register`, user, { responseType: 'text' }).pipe(
       map(response => {
+        console.log(response+ 'oi')
         return { message: response };
       }),
       catchError(e => {
-        if (e.status === 400) {
-          return throwError(() => e);
-        }
         return throwError(() => e);
       })
     );

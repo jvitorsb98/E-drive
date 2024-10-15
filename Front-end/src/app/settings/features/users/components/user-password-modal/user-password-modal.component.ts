@@ -114,7 +114,7 @@ export class UserPasswordModalComponent implements OnInit {
             });
         },
         error: (e) => {
-          this.alertService.showError('Erro!', `Houve um problema ao cadastrar ${this.userData.name}. Tente novamente mais tarde.`)
+          this.alertService.showError(e.error)
         }
       });
     }

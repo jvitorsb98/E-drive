@@ -39,7 +39,7 @@ public class ValidationLoginUserExists implements ValidationsLogin {
 
         if (!exists) {
             String errorMessage = messageSource.getMessage(
-                    "auth.login.notfound",
+                    "auth.login.invalid.credentials",
                     new Object[]{email},
                     Locale.getDefault()
             );
