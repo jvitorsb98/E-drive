@@ -170,16 +170,6 @@ export class ModalFormModelComponent {
       this.filteredBrands = of(filteredBrands); // Atualiza o observable de marcas filtradas
     });
   }
-
-  toggleAutocomplete(event: Event) {
-    event.stopPropagation(); // Impede que o clique cause conflito com o foco do input
-    if (this.autocompleteTrigger.panelOpen) {
-      this.autocompleteTrigger.closePanel();
-    } else {
-      this.autocompleteTrigger.openPanel();
-    }
-  }
-
   /**
    * @description Manipula o evento de seleção de uma marca no autocomplete.
    * @param event Evento disparado quando uma marca é selecionada.
