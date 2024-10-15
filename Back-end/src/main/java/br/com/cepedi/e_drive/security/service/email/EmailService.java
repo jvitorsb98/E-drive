@@ -74,14 +74,19 @@ public class EmailService {
         sendResetPasswordEmail(name, email, token);
     }
 
-    /**
-     * Envia um e-mail para redefinição de senha.
-     *
-     * @param name O nome do destinatário.
-     * @param email O e-mail do destinatário.
-     * @param token O token para redefinir a senha.
-     * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
-     */
+    @Async
+    public void sendReactivationEmailAsync(String name, String email, String tokenForReactivation) throws MessagingException {
+        sendReactivationEmail(name,email,tokenForReactivation);
+    }
+
+        /**
+         * Envia um e-mail para redefinição de senha.
+         *
+         * @param name O nome do destinatário.
+         * @param email O e-mail do destinatário.
+         * @param token O token para redefinir a senha.
+         * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
+         */
     public void sendResetPasswordEmail(String name, String email, String token) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
@@ -164,7 +169,7 @@ public class EmailService {
      * @return O token de reativação enviado.
      * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
      */
-    public String sendReactivationEmail(String name, String email, String tokenForReactivation) throws MessagingException {
+    public void sendReactivationEmail(String name, String email, String tokenForReactivation) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
 
@@ -193,7 +198,6 @@ public class EmailService {
         DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Reactivation Email");
         mailService.register(dataRegisterMail);
 
-        return tokenForReactivation;
     }
 
 

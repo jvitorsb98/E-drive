@@ -111,16 +111,14 @@ export class AuthService {
     return this.http.put(`${this.apiUrl}/reset-password/reset`, request , { responseType: 'text' });
   }
 
-  recoverAccountRequest(email: IRecoverAccountRequest): Observable<IRecoverAccountResponse> {
-    return this.http.put<IRecoverAccountResponse>(`${this.apiUrl}/reactivate-account/request`, { email })
+  recoverAccountRequest(email: IRecoverAccountRequest): Observable<string> {
+    return this.http.put(`${this.apiUrl}/reactivate-account/request`, { email }, { responseType: 'text' });
   }
 
   confirmAccount(token: string): Observable<any> {
-    //TODO - corigir o redirecionamento apos sucesso tanto de recover password quanto de reactivar conta
-    // const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.put(`${this.apiUrl}/reactivate?token=${token}`, null); // esta funcionando assim
-    // return this.http.put(`${this.apiUrl}/reactivate`, token) // era para funcionar assim
-    // return this.http.put(`${this.apiUrl}/reactivate`, token, { headers }) // ou assim
+
+    return this.http.put(`${this.apiUrl}/reactivate?token=${token}`, null, { responseType: 'text' });
+
   }
 
 

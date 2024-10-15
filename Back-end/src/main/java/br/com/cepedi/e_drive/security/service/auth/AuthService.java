@@ -265,7 +265,7 @@ public class AuthService implements UserDetailsService {
         String token = tokenService.generateTokenForReactivation(user);
 
         try {
-            emailService.sendReactivationEmail(user.getName(), dataReactivateAccount.email(), token);
+            emailService.sendReactivationEmailAsync(user.getName(), dataReactivateAccount.email(), token);
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
