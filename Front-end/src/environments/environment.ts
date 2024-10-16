@@ -6,5 +6,5 @@
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:8080',
-  googleMapsApiKey: 'AIzaSyBttstn5kDru-LuCZ22fiWR9qTFP6lzk8A' // Substitua pela chave de API
+  googleMapsApiKey: 'AIzaSyCVzPB0CvNAoAR96FJ0pPrlQBXcO4v9yZs' // Substitua pela chave de API
 };
