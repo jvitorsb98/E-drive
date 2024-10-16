@@ -11,7 +11,7 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 
 // Importa os módulos do Angular
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -58,7 +58,11 @@ export class ModalFormVehicleComponent implements OnInit {
     private userVehicleService: UserVehicleService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
-  ) { }
+  ) { 
+
+
+    
+  }
 
   ngOnInit() {
     this.initializeData();
@@ -72,12 +76,16 @@ export class ModalFormVehicleComponent implements OnInit {
       version: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       brand: [{ value: null, disabled: this.isEditMode() }, Validators.required],
       model: [{ value: null, disabled: this.isEditMode() }, Validators.required],
-      batteryCapacity: [null, [Validators.pattern(/^\d+(\.\d+)?$/)]], // Validação para aceitar números inteiros ou decimais
-      mileagePerLiterRoad: [null, [Validators.pattern(/^\d{1,2}(\.\d)?$/)]], // Validação para aceitar números decimais com 1 casa
-      mileagePerLiterCity: [null, [Validators.pattern(/^\d+(\.\d{1})?$/)]], // Validação para aceitar números decimais com 1 casa
-      consumptionEnergetic: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],  // Validação para aceitar números decimais com 1 ou 2 casas
-      autonomyElectricMode: [null, [Validators.pattern(/^\d+$/)]]  // Validação para aceitar somente números inteiros
-    });
+      batteryCapacity: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      mileagePerLiterRoad: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      mileagePerLiterCity: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      consumptionEnergetic: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      autonomyElectricMode: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+    },
+    { validators: this.batteryOrautonomyElectricModeRequiredValidator }  // Aplica o validador ao grupo
+  );
+    console.log('Validadores do formulário:', this.userVehicleForm.errors);
+
     if (this.data.userVehicle && this.data.vehicle) {
       this.editVehicle = true;
       this.fillForm();
@@ -99,11 +107,23 @@ export class ModalFormVehicleComponent implements OnInit {
         autonomyElectricMode: this.data.userVehicle.autonomyElectricMode,
         batteryCapacity: this.data.userVehicle.batteryCapacity 
       });
+
+
       console.log('Formulário preenchido com:', this.userVehicleForm.value);
     } else {
       console.warn('Dados do veículo ou autonomia não encontrados para preenchimento.');
     }
   }
+
+  batteryOrautonomyElectricModeRequiredValidator: ValidatorFn = (control: AbstractControl) => {
+    const batteryCapacity = control.get('batteryCapacity')?.value;
+    const autonomyElectricMode = control.get('autonomyElectricMode')?.value;
+  
+    if (!batteryCapacity && !autonomyElectricMode) {
+      return { batteryOrAutonomyElectricModeRequired: true };
+    }
+    return null;
+  };
 
   loadBrands() {
     this.brandService.getAll().subscribe({
@@ -211,6 +231,14 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
+  private calculateBatteryCapacity(consumptionEnergetic: number, autonomyElectricMode: number): string | null {
+    if(consumptionEnergetic != null && autonomyElectricMode!= null){
+      const capacity = (consumptionEnergetic * autonomyElectricMode) / 3.6; 
+      return capacity.toFixed(2); // Formata o número com 2 casas decimais
+    }
+    return null
+}
+
   onVersionSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedVehicle = event.option.value as Vehicle;
     this.selectedVehicle = selectedVehicle;
@@ -220,6 +248,15 @@ export class ModalFormVehicleComponent implements OnInit {
       this.userVehicleForm.get('mileagePerLiterCity')?.setValue(selectedVehicle.autonomy.mileagePerLiterCity);
       this.userVehicleForm.get('consumptionEnergetic')?.setValue(selectedVehicle.autonomy.consumptionEnergetic);
       this.userVehicleForm.get('autonomyElectricMode')?.setValue(selectedVehicle.autonomy.autonomyElectricMode);
+    }
+
+    const consumptionEnergetic = Number(selectedVehicle.autonomy.consumptionEnergetic); 
+    const autonomyElectricMode = Number(selectedVehicle.autonomy.autonomyElectricMode); 
+    
+
+    if(selectedVehicle.autonomy.consumptionEnergetic!= null && selectedVehicle.autonomy.autonomyElectricMode!= null){
+      const batteryCapacity = this.calculateBatteryCapacity(consumptionEnergetic, autonomyElectricMode);
+      this.userVehicleForm.get('batteryCapacity')?.setValue(batteryCapacity);
     }
 
     this.isAutonomyDataMissing = !(
