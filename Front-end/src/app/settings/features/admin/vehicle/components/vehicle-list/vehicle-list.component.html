@@ -11,23 +11,23 @@
   </div>
 </div>
 
-<div class="container-fluid">
-  <div class="row">
-    <!-- Campo de busca para filtrar as versões -->
-    <div class="custom-filter">
-      <mat-form-field>
-        <mat-label>Busca por versão</mat-label>
-        <!-- Campo de entrada que chama a função applyFilter ao digitar -->
-        <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
-      </mat-form-field>
-    </div>
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+  <!-- Campo de busca para filtrar as versões -->
+  <div class="custom-filter">
+    <mat-form-field class="d-flex w-100">
+      <mat-label>Busca por versão</mat-label>
+      <!-- Campo de entrada que chama a função applyFilter ao digitar -->
+      <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+    </mat-form-field>
   </div>
+</div>
 
-  <!-- Contêiner da tabela -->
-  <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
+<!-- Contêiner da tabela -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
+  <div class="row">
     <div class="container-table">
-      <table class="mat-elevation-z8 fixed-header" mat-table [dataSource]="dataSource" matSort>
-        
+      <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
+
         <!-- Coluna para o ícone do veículo -->
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -38,7 +38,7 @@
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
             <!-- Exibe o ícone do veículo com tooltip informativo -->
-            <mat-icon class="icone-emoji-flags" 
+            <mat-icon class="icone-emoji-carro"
               [matTooltip]="'ID: ' + vehicle.id + ' | Status: ' + (vehicle.activated ? 'Ativado' : 'Desativado')"
               matTooltipClass="multi-line-tooltip">directions_car
             </mat-icon>
@@ -97,12 +97,13 @@
       </table>
     </div>
   </div>
+</div>
 
-  <!-- Paginador para a tabela -->
-  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
-    aria-label="Selecione modelos por página"></mat-paginator>
-
-  <!-- Botão para adicionar nova versão de veículo -->
-  <app-ui-button typeBtn="vivid-sky-blue" (click)="openModalAdd()" text="Nova Versão de Veiculo"></app-ui-button>
+<!-- Container para o paginador e botão de adicionar nova versão de veículo -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+  <!-- Paginador para navegação entre páginas -->
+  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
+    aria-label="Selecione veículos por página"></mat-paginator>
+    <!-- Botão para abrir modal de adição de novo veículo-->
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()" text="Nova Versão de Veiculo"></app-ui-button>
 </div>

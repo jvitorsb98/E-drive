@@ -9,89 +9,92 @@
 	</div>
 </div>
 
+<!-- Container para o filtro de busca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+	<div class="custom-filter">
+		<mat-form-field class="d-flex w-100">
+			<!-- Label do campo de busca -->
+			<mat-label>Busca por bairro</mat-label>
+			<!-- Campo de entrada para busca com evento de digitação -->
+			<input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+		</mat-form-field>
+	</div>
+</div>
+
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
-	<div class="container-table">
-		<div class="container-fluid">
-			<div class="row d-flex">
-				<div class="custom-filter">
-					<mat-form-field>
-						<mat-label>Busca por bairro</mat-label>
-						<input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
-					</mat-form-field>
+	<div class="row">
+		<div class="container-table">
+			<table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
+				<ng-container matColumnDef="icon">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+						<mat-icon
+							matTooltip="Este ícone representa o endereço listado abaixo. Clique para ver os detalhes do endereço.">location_on</mat-icon>
+					</th>
+
+					<td class="td-table" mat-cell *matCellDef="let element">
+						<mat-icon class="icone-locale"
+							[matTooltip]=" 'Endereço: ' + element.number + ' - ' + element.neighborhood + ' - ' + element.city + ' - ' + element.state + ' - ' + element.country"
+							matTooltipClass="multi-line-tooltip">
+							location_on
+						</mat-icon>
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="city">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+						<strong>Cidade</strong>
+					</th>
+					<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.city}}</strong>
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="neighborhood">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Bairro</strong>
+					</th>
+					<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.neighborhood}}</strong>
+					</td>
+				</ng-container>
+
+				<ng-container matColumnDef="state">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+						<strong>Estado</strong>
+					</th>
+					<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.state}}</strong>
+					</td>
+				</ng-container>
+
+				<!-- Actions Column -->
+				<ng-container matColumnDef="actions">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+						<strong>Ações</strong>
+					</th>
+					<td class="td-table" mat-cell *matCellDef="let element">
+						<mat-icon class="icone-table" (click)="openModalDetailsAddress(element)">visibility</mat-icon>
+						<mat-icon class="icone-table" (click)="openModalEditAddress(element)">edit</mat-icon>
+						<mat-icon class="icone-table" (click)="deleteAddress(element)">delete</mat-icon>
+					</td>
+				</ng-container>
+
+				<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+				<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+				<div *ngIf="input.value.length != 0">
+					<tr class="mat-row" *matNoDataRow>
+						<td class="mat-cell no-data py-3" colspan="4">Não foram encontrados dados para a
+							pesquisa:
+							"{{input.value}}"
+						</td>
+					</tr>
 				</div>
-
-				<div class="container">
-					<table mat-table [dataSource]="dataSource" matSort>
-						<ng-container matColumnDef="icon">
-							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-								<mat-icon
-									matTooltip="Este ícone representa o endereço listado abaixo. Clique para ver os detalhes do endereço.">location_on</mat-icon>
-							</th>
-
-							<td class="td-table" mat-cell *matCellDef="let element">
-								<mat-icon
-									[matTooltip]=" 'Endereço: ' + element.number + ' - ' + element.neighborhood + ' - ' + element.city + ' - ' + element.state + ' - ' + element.country"
-									matTooltipClass="multi-line-tooltip">
-									location_on
-								</mat-icon>
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="city">
-							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-								<strong>Cidade</strong>
-							</th>
-							<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.city}}</strong>
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="neighborhood">
-							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Bairro</strong>
-							</th>
-							<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.neighborhood}}</strong>
-							</td>
-						</ng-container>
-
-						<ng-container matColumnDef="state">
-							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-								<strong>Estado</strong>
-							</th>
-							<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.state}}</strong>
-							</td>
-						</ng-container>
-
-						<!-- Actions Column -->
-						<ng-container matColumnDef="actions">
-							<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-								<strong>Ações</strong>
-							</th>
-							<td class="td-table" mat-cell *matCellDef="let element">
-								<mat-icon class="icone-table" (click)="openModalDetailsAddress(element)">visibility</mat-icon>
-								<mat-icon class="icone-table" (click)="openModalEditAddress(element)">edit</mat-icon>
-								<mat-icon class="icone-table" (click)="deleteAddress(element)">delete</mat-icon>
-							</td>
-						</ng-container>
-
-						<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-						<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-						<div *ngIf="input.value.length != 0">
-							<tr class="mat-row" *matNoDataRow>
-								<td class="mat-cell no-data py-3" colspan="4">Não foram encontrados dados para a
-									pesquisa:
-									"{{input.value}}"
-								</td>
-							</tr>
-						</div>
-					</table>
-				</div>
-
-				<mat-paginator class="shadow-sn py-2" [pageSizeOptions]="[5, 10]"
-					aria-label="Selecione endereços por página"></mat-paginator>
-				<!-- <button mat-raised-button class="btn-primary" (click)="addAddress()">Novo endereço</button> -->
-
-				<button class="btn text-white" type="button" (click)="openModalAddAddress()">Novo Endereço</button>
-			</div>
+			</table>
 		</div>
 	</div>
+</div>
+
+<!-- Container para o paginador e botão para adicionar nova marca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+	<!-- Paginador para navegação entre páginas -->
+	<mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10]" aria-label="Selecione veículos por página"></mat-paginator>
+	<!-- Botão para abrir modal de adição de nova marca -->
+	<app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddAddress()" text="Novo Endereço"></app-ui-button>
 </div>
