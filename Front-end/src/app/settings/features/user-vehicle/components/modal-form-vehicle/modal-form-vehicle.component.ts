@@ -273,6 +273,12 @@ export class ModalFormVehicleComponent implements OnInit {
     if (this.data && this.data.userVehicle) {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
+
+      if(formData.batteryCapacity == null){
+        formData.batteryCapacity = (Number(formData.consumptionEnergetic)*3.6)/Number(formData.autonomyElectricMode)
+      }else if(formData.autonomyElectricMode == null){
+        formData.autonomyElectricMode = Number(formData.batteryCapacity)/(Number(formData.consumptionEnergetic)*3.6)
+      }
       const dataUpdateAutonomy = {
         mileagePerLiterRoad: Number(formData.mileagePerLiterRoad),
         mileagePerLiterCity: Number(formData.mileagePerLiterCity),
@@ -314,6 +320,11 @@ export class ModalFormVehicleComponent implements OnInit {
     } else {
       if (this.userVehicleForm.valid) {
         const formData = this.userVehicleForm.value;
+        if(formData.batteryCapacity == null){
+          formData.batteryCapacity = (Number(formData.consumptionEnergetic)*3.6)/Number(formData.autonomyElectricMode)
+        }else if(formData.autonomyElectricMode == null){
+          formData.autonomyElectricMode = Number(formData.batteryCapacity)/(Number(formData.consumptionEnergetic)*3.6)
+        }
         const dataRegisterAutonomy = {
           mileagePerLiterRoad: formData.mileagePerLiterRoad,
           mileagePerLiterCity: formData.mileagePerLiterCity,
