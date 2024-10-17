@@ -145,11 +145,11 @@ export class UserUpdateComponent implements OnInit {
           email: user.email,
           birth: userBirthDate,
           cellPhone: user.cellPhone.replace(/^\+\d{1,3} /, ''), // Remove o código do país para exibição
-          countryCode: user.cellPhone.split(' ')[0].replace(/^\+/, '').slice(0, 2) // Extrai o código do país
+          countryCode: '+'+user.cellPhone.split(' ')[0].replace(/^\+/, '').slice(0, 2) // Extrai o código do país
         });
       },
       error: (err) => {
-        this.alertService.showError('Erro ao carregar dados do usuário', err.message);
+        console.error('Erro ao carregar dados do usuário', err);
       }
     });
   }
@@ -186,6 +186,6 @@ export class UserUpdateComponent implements OnInit {
     const cleanedPhoneNumber = phoneNumber.replace(/\D/g, '');
 
     // Adiciona o código do país e formata o número
-    return `+${countryCode} (${cleanedPhoneNumber.slice(0, 2)}) ${cleanedPhoneNumber.slice(2, 7)}-${cleanedPhoneNumber.slice(7)}`;
+    return `${countryCode} (${cleanedPhoneNumber.slice(0, 2)}) ${cleanedPhoneNumber.slice(2, 7)}-${cleanedPhoneNumber.slice(7)}`;
   }
 }
