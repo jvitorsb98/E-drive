@@ -149,7 +149,7 @@ export class UserUpdateComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Erro ao carregar dados do usuário', err);
+        this.alertService.showError('Erro ao carregar dados do usuário', err.message);
       }
     });
   }
@@ -164,10 +164,14 @@ export class UserUpdateComponent implements OnInit {
 
       this.userService.update(userData).subscribe({
         next: () => {
-          console.log('Usuário atualizado com sucesso');
+          this.alertService.showSuccess('Atualização bem-sucedida!', 'Os dados do usuário foram atualizados com sucesso.').then((result) => {
+            if (result) {
+              this.cancelEdit();
+            }
+          })
         },
         error: (err) => {
-          console.error('Erro ao atualizar usuário', err);
+          this.alertService.showError('Erro ao atualizar usuário', err.message);
         }
       });
 
@@ -184,27 +188,4 @@ export class UserUpdateComponent implements OnInit {
     // Adiciona o código do país e formata o número
     return `+${countryCode} (${cleanedPhoneNumber.slice(0, 2)}) ${cleanedPhoneNumber.slice(2, 7)}-${cleanedPhoneNumber.slice(7)}`;
   }
-
-  // Método para excluir a conta do usuário (implementação futura)
-  deleteAccount() {
-    this.alertService.showWarning('Desativar conta do usuário', "Deseja realmente desativar a sua conta '" + this.userService.getUserEmail() +"' ?", 'Desativar' ,'Cancelar').then((result) => {
-      if (result) {
-        const id = this.userService.getUserID() || 0;
-        this.userService.deactivate(id).subscribe({
-          next: () => {
-            this.alertService.showSuccess('Conta desativada com sucesso', 'Agora você pode criar novas contas.');
-            this.onLogout();
-          },
-          error: (err) => {
-            this.alertService.showError('Erro ao desativar a conta', err.message);
-          }
-        })
-      }
-    });
-  }
-
-  onLogout(): void {
-    this.userService.logout();
-  }
-
 }
