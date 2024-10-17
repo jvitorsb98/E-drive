@@ -3,60 +3,10 @@
 		<div class="flex-grow-1 text-center">
 			<h1 class="text-white">Perfil</h1>
 		</div>
-		<div class="justify-content-end mb-3" *ngIf="isButtonVisible">
-			<a class="edit-button" (click)="editData()">
-				<img src="../../../../../../assets/images/edit-icon.svg" alt="">
-			</a>
-		</div>
 	</div>
 </div>
 
-
-<div class="container" id="form-container">
-	<!-- Formulário de visualização dos dados do usuário -->
-	<div class="container-form" *ngIf="!isEditing">
-		<form [formGroup]="userForm">
-			<!-- Nome -->
-			<div class="form-group mt-5">
-				<mat-card appearance="outlined" class="border-0">
-					<mat-form-field appearance="fill">
-						<mat-label>Nome completo:</mat-label>
-						<input matInput formControlName="name" readonly />
-					</mat-form-field>
-				</mat-card>
-			</div>
-
-			<!-- Data de nascimento -->
-			<div class="form-group">
-				<mat-card appearance="outlined" class="border-0">
-					<mat-form-field class="border-0" appearance="fill">
-						<mat-label>Data de Nascimento:</mat-label>
-						<input matInput [matDatepicker]="picker" formControlName="birth" readonly />
-						<mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-						<mat-datepicker #picker></mat-datepicker>
-					</mat-form-field>
-				</mat-card>
-			</div>
-
-			<!-- Telefone celular -->
-			<div class="form-group">
-				<mat-card appearance="outlined" class="border-0">
-					<mat-form-field appearance="fill">
-						<mat-label>Telefone:</mat-label>
-						<input matInput formControlName="cellPhone" readonly />
-					</mat-form-field>
-				</mat-card>
-			</div>
-
-			<!-- Botões -->
-			<div class="button-group mt-5 gap-3">
-				<button class="logout-button text-white" mat-raised-button type="button"
-					(click)="onLogout()">Sair</button>
-				<a class="delete-account-button text-center" (click)="deleteAccount()">Desativar Conta</a>
-			</div>
-		</form>
-	</div>
-
+<div class="container">
 	<!-- Formulário de edição dos dados do usuário -->
 	<div class="container-form" *ngIf="isEditing">
 		<h1>Alterar Dados</h1>

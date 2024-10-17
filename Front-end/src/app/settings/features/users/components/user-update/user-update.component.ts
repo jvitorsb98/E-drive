@@ -13,6 +13,7 @@ import { User } from '../../../../core/models/user';
 import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
 import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-update',
@@ -22,7 +23,7 @@ import { AlertasService } from '../../../../core/services/Alertas/alertas.servic
 export class UserUpdateComponent implements OnInit {
 
   // Variável para controlar o modo de edição
-  isEditing: boolean = false;
+  isEditing: boolean = true;
 
   // Formulário do usuário
   userForm!: FormGroup;
@@ -45,7 +46,8 @@ export class UserUpdateComponent implements OnInit {
     private userService: UserService,
     private countryService: CountryService,
     private formBuilder: FormBuilder,
-    private alertService: AlertasService
+    private alertService: AlertasService,
+    private router: Router
   ) { }
 
   // Método chamado ao inicializar o componente
@@ -81,6 +83,8 @@ export class UserUpdateComponent implements OnInit {
     this.userForm.disable();
     this.loadUserData(); // Recarrega os dados originais do usuário
     this.isButtonVisible = true;
+
+    this.router.navigate(['e-driver/users/myinfo']);
   }
 
   // Define as datas mínima e máxima para o campo de data
@@ -134,7 +138,7 @@ export class UserUpdateComponent implements OnInit {
       next: (user: User) => {
         const birthDate = new Date(user.birth!);
         const userBirthDate = new Date(birthDate.getTime() + birthDate.getTimezoneOffset() * 60000);
-  
+
         // Preenche o formulário com os dados do usuário
         this.userForm.patchValue({
           name: user.name,
