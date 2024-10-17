@@ -1,6 +1,6 @@
 CREATE TABLE tokens (
     id BIGSERIAL  PRIMARY KEY,
-    token VARCHAR(255) NOT NULL,
+    token TEXT NOT NULL,
     user_id BIGINT,
     expire_date TIMESTAMP WITH TIME ZONE,
    	disabled BOOLEAN DEFAULT FALSE,

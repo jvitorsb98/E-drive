@@ -9,16 +9,22 @@
 	</div>
 </div>
 
+<!-- Container para o filtro de busca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+	<div class="custom-filter">
+		<mat-form-field class="d-flex w-100">
+			<!-- Label do campo de busca -->
+			<mat-label>Busca por versão</mat-label>
+			<!-- Campo de entrada para busca com evento de digitação -->
+			<input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+		</mat-form-field>
+	</div>
+</div>
+
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
 	<div class="row">
-		<div class="custom-filter">
-			<mat-form-field class="d-flex w-100">
-				<input matInput (keyup)="applyFilter($event)" placeholder="Busca por versão" #input>
-			</mat-form-field>
-		</div>
-
-		<div class="container">
-			<table mat-table [dataSource]="dataSource" matSort>
+		<div class="container-table">
+			<table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
 				<ng-container matColumnDef="icon">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
 						<mat-icon
@@ -32,7 +38,6 @@
               + '\nAno: ' + userVehicle.year" matTooltipClass="multi-line-tooltip"> directions_car
 						</mat-icon>
 					</td>
-					
 				</ng-container>
 
 				<ng-container matColumnDef="mark">
@@ -77,9 +82,13 @@
 				</div>
 			</table>
 		</div>
-		<mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15]"
-			aria-label="Selecione veículos por página"></mat-paginator>
-
-		<button class="btn" type="button" (click)="openModalAddUserVehicle()">Novo Veículo</button>
 	</div>
+</div>
+
+<!-- Container para o paginador e botão para adicionar nova marca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+	<!-- Paginador para navegação entre páginas -->
+	<mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15]" aria-label="Selecione veículos por página"></mat-paginator>
+	<!-- Botão para abrir modal de adição de nova marca -->
+	<app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddUserVehicle()" text="Novo Veículo"></app-ui-button>
 </div>
