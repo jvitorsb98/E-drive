@@ -3,7 +3,10 @@ package br.com.cepedi.e_drive.service.vehicleType.validations.disabled;
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Validação para garantir que um tipo de veículo exista antes de realizar operações de desativação.
@@ -15,6 +18,9 @@ public class ValidationVehicleTypeExistsForDisabled implements VehicleTypeValida
     @Autowired
     private VehicleTypeRepository vehicleTypeRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se o tipo de veículo com o ID fornecido existe no repositório.
      *
@@ -24,7 +30,12 @@ public class ValidationVehicleTypeExistsForDisabled implements VehicleTypeValida
     @Override
     public void validation(Long id) {
         if (!vehicleTypeRepository.existsById(id)) {
-            throw new ValidationException("The required vehicle type does not exist");
+            String errorMessage = messageSource.getMessage(
+                    "vehicleType.disabled.notExist", // Chave da mensagem
+                    new Object[]{id}, // Parâmetros da mensagem
+                    Locale.getDefault() // Locale padrão
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }
