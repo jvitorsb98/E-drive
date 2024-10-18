@@ -1,8 +1,13 @@
+import { GeocodingService } from './../../../../core/services/geocoding/geocoding.service';
+import { AddressService } from './../../../../core/services/Address/address.service';
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 import { Step } from '../../../../core/models/step';
+import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
+import { DataAddressDetails } from '../../../../core/models/inter-Address';
+import { LocationService } from '../../../../core/services/location/location.service';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
@@ -53,10 +58,16 @@ export class MapStationsComponent implements AfterViewInit {
   stepsArray: Array<Step> = [];
   directionsService!: google.maps.DirectionsService;
   directionsRenderer!: google.maps.DirectionsRenderer;
+  addresses: DataAddressDetails[] = []; // Lista para armazenar os endereços
+  addressesWithCoordinates: { address: string; lat: number; lng: number }[] = []; // Array para armazenar endereços com coordenadas
 
 
   constructor(
     private cdr: ChangeDetectorRef,
+    private tripPlannerMapsService: TripPlannerMapsService, 
+    private addressService:AddressService,
+    private geocodingService:GeocodingService,
+    private locationService: LocationService,
     private dialog: MatDialog
   ) {
   }
@@ -135,6 +146,7 @@ export class MapStationsComponent implements AfterViewInit {
 
     console.log("OI")
     this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
+    this.getAllAddresses();
 
 
     // Inicializa os serviços de direções
@@ -423,73 +435,108 @@ export class MapStationsComponent implements AfterViewInit {
    */
  
   calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng) {
-    const directionsService = new google.maps.DirectionsService();
-  
-    directionsService.route({
-      origin: startLocation,
-      destination: destination,
-      travelMode: google.maps.TravelMode.DRIVING
-    }).then(response => {
-      const route = response.routes[0];
-      const legs = route.legs[0]; // Pegamos a primeira "leg" da rota
-  
-      // Iterar sobre cada passo (step)
-      legs.steps.forEach((step) => {
-        // Inferir se é estrada ou cidade
-        let roadType = 'cidade'; // Padrão para cidade
-  
-        // Verificar nome da via, se existir
-        const roadName = step.instructions.toLowerCase();
-        if (roadName.includes("rodovia") || roadName.includes("br") || roadName.includes("ba") || roadName.includes("estrada") || roadName.includes("autoestrada") || roadName.includes("via expressa")) {
-          roadType = 'estrada';
-        }
-  
-        // Também verificar a manobra
-        if (step.maneuver && (step.maneuver.includes('merge') || step.maneuver.includes('ramp') || step.maneuver.includes('highway') || step.maneuver.includes('exit'))) {
-          roadType = 'estrada';
-        }
-  
-        // Conversão da distância para quilômetros
-        const distanceText = step.distance?.text; // Ex: "500 m" ou "0.5 km"
-        let distanceInKm: number = 0; // Inicializa a distância como 0
-  
-        if (distanceText) {
-          if (distanceText.includes('km')) {
-            // Remove 'km' e converte para número
-            distanceInKm = parseFloat(distanceText.replace('km', '').trim());
-          } else if (distanceText.includes('m')) {
-            // Remove 'm', converte para número e divide por 1000
-            distanceInKm = parseFloat(distanceText.replace('m', '').trim()) / 1000;
-          }
-        }
-        
-        const stepInfo = {
-          distance: distanceInKm, // Distância em quilômetros
-          duration: step.duration!.text, // Duração desse passo
-          instructions: step.instructions, // Instruções (ex: "Vire à esquerda")
-          travelMode: step.travel_mode, // Modo de viagem (geralmente "DRIVING")
-          path: step.path, // O caminho em coordenadas (polilinhas)
-          maneuver: step.maneuver || 'unknown', // Tipo de manobra
-          roadType: roadType // Adicionar a inferência de estrada/cidade
-        };
-        // Adicionar ao array de passos
-        this.stepsArray.push(stepInfo);
+    this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
+      .then(({ steps, totalDistance }) => {
+        this.stepsArray = steps; // Atualiza o array de passos
+        this.modalDistance = totalDistance; // Exibe a distância total
+        this.cdr.detectChanges(); // Atualiza a exibição
+      })
+      .catch(error => {
+        this.modalDistance = "Erro ao calcular a distância.";
+        console.error(error);
+        this.cdr.detectChanges();
       });
+  }
+
+  getAllAddresses() {
+    this.addressService.getAll().subscribe({
+      next: (response) => {
+        this.addresses = response.content;
+        console.log('Endereços do usuário:', this.addresses); // Para verificar os endereços
+        this.getCoordinatesForAddresses(this.addresses); // Chama o método para geocodificar endereços
+      },
+      error: (error) => {
+        console.error('Erro ao buscar endereços:', error);
+      }
+    });
+  }
+
+  getCoordinatesForAddresses(addresses: DataAddressDetails[]) {
+    const promises = addresses.map(address => {
+      return this.geocodeAddress(address); // Chama a função que geocodifica cada endereço
+    });
+    Promise.all(promises)
+      .then(results => {
+        this.addressesWithCoordinates = results; // Armazena os resultados no array
+        console.log('Endereços com coordenadas:', this.addressesWithCoordinates);
+      })
+      .catch(error => {
+        console.error('Erro ao geocodificar endereços:', error);
+      });
+  }
+
+ 
+  geocodeAddress(address: DataAddressDetails): Promise<{ address: string; lat: number; lng: number }> {
+    return new Promise((resolve, reject) => {
+      // Constrói o endereço a partir dos campos da interface DataAddressDetails
+      const fullAddress = `${address.number} ${address.street}, ${address.neighborhood}, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}`;
+      
+      this.geocodingService.geocode(fullAddress).subscribe(
+        (response) => {
+          // Log detalhado da resposta
+          console.log('Resposta do serviço de geocodificação:', response);
   
-      // Exibir a rota calculada (detalhes dos passos)
-      const totalDistanceInKm = legs.distance!.value / 1000; // Distância total em km
-      const distanceText = "Distância total: " + totalDistanceInKm.toFixed(2) + " km"; // Formata para 2 casas decimais
-      this.modalDistance = distanceText;
-  
-      // Atualizar a exibição
-      this.cdr.detectChanges();
-    }).catch(error => {
-      console.error('Erro ao calcular a rota:', error);
-      this.modalDistance = "Erro ao calcular a distância.";
-      this.cdr.detectChanges();
+          if (response && response.results && response.results.length > 0) {
+            const location = response.results[0].geometry.location;
+            resolve({ 
+              address: fullAddress, 
+              lat: location.lat, 
+              lng: location.lng 
+            });
+          } else {
+            // Caso não encontre resultados
+            reject(`Geocoding failed for address: ${fullAddress}. No results found.`);
+          }
+        },
+        (error) => {
+          // Log detalhado do erro
+          console.error(`Erro ao chamar o serviço de geocodificação para ${fullAddress}:`, error);
+          reject(`Geocoding error for address ${fullAddress}: ${error.message || error}`);
+        }
+      );
     });
   }
   
+  
+
+  
+
+  async calculateReturnHomeRoute() {
+    if (!this.userLocation) {
+      console.error('Localização do usuário não disponível.');
+      return;
+    }
+  
+    // Coordenadas da residência do usuário (substitua pelas coordenadas reais)
+    const homeLocation = new google.maps.LatLng(this.addressesWithCoordinates[0].lat,this.addressesWithCoordinates[0].lng); // Exemplo: coordenadas fictícias
+    const request: google.maps.DirectionsRequest = {
+      origin: this.userLocation, // Localização atual do usuário
+      destination: homeLocation, // Localização da residência
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+  
+    this.directionsService.route(request, (result, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        this.directionsRenderer.setDirections(result);
+        this.directionsRenderer.setMap(this.map);
+        this.isRouteActive = true;
+        this.clearMarkers(); // Limpa os marcadores enquanto a rota está ativa
+        this.cdr.detectChanges();
+      } else {
+        console.error('Erro ao calcular a rota para casa:', status);
+      }
+    });
+  }
   
 
 }
