@@ -1,7 +1,6 @@
 package br.com.cepedi.e_drive.service.model.validations.activated;
 
 import br.com.cepedi.e_drive.repository.ModelRepository;
-import br.com.cepedi.e_drive.service.model.validations.activated.ValidationModelExistsForActivated;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

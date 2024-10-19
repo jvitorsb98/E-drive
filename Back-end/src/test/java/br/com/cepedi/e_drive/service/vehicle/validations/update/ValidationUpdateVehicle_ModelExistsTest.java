@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
 import com.github.javafaker.Faker;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -16,10 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+import java.util.Locale;
+
 class ValidationUpdateVehicle_ModelExistsTest {
 
     @Mock
     private ModelRepository modelRepository;
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationUpdateVehicle_ModelExists validation;
@@ -41,16 +47,18 @@ class ValidationUpdateVehicle_ModelExistsTest {
 
         when(data.modelId()).thenReturn(modelId);
         when(modelRepository.existsById(modelId)).thenReturn(false);
+         when(messageSource.getMessage("vehicle.update.model.not.found", null, Locale.getDefault()))
+        .thenReturn("The provided model ID does not exist.");
 
         // Act & Assert
         ValidationException thrown = assertThrows(
             ValidationException.class,
-            () -> validation.validate(data),
+            () -> validation.validate(data, modelId),
             "Expected ValidationException to be thrown when model does not exist"
         );
 
         // Assert
-        assertEquals("The provided model id does not exist", thrown.getMessage());
+        assertEquals("The provided model ID does not exist.", thrown.getMessage());
         verify(modelRepository).existsById(modelId);
     }
 
@@ -65,7 +73,7 @@ class ValidationUpdateVehicle_ModelExistsTest {
         when(modelRepository.existsById(modelId)).thenReturn(true);
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        assertDoesNotThrow(() -> validation.validate(data, modelId));
 
         // Assert
         verify(modelRepository).existsById(modelId);

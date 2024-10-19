@@ -2,7 +2,6 @@ package br.com.cepedi.e_drive.service.vehicle.validations.disabled;
 
 import br.com.cepedi.e_drive.model.entitys.Vehicle;
 import br.com.cepedi.e_drive.repository.VehicleRepository;
-import br.com.cepedi.e_drive.service.vehicle.validations.disabled.ValidationDisabledVehicle_NotDisabled;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
 import com.github.javafaker.Faker;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,6 +20,8 @@ public class ValidationBrandIsActivatedForUpdateTest {
 
     @Mock
     private BrandRepository brandRepository;
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationBrandIsActivatedForUpdate validationBrand;
@@ -42,7 +46,7 @@ public class ValidationBrandIsActivatedForUpdateTest {
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> validationBrand.validation(brandId),
+        assertThrows(ValidationException.class, () -> validationBrand.validation(brandId, null),
         		() ->"Expected validation() to throw ValidationException when brand is disabled");
     }
 
@@ -58,6 +62,6 @@ public class ValidationBrandIsActivatedForUpdateTest {
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
 
         // Act & Assert
-        validationBrand.validation(brandId); 
+        validationBrand.validation(brandId, null); 
     }
 }

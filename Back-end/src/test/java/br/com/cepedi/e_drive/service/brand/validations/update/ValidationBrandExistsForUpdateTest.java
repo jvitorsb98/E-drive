@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
 import com.github.javafaker.Faker;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,6 +19,8 @@ public class ValidationBrandExistsForUpdateTest {
 
     @Mock
     private BrandRepository brandRepository;
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationBrandExistsForUpdate validationBrand;
@@ -37,7 +41,7 @@ public class ValidationBrandExistsForUpdateTest {
         when(brandRepository.existsById(brandId)).thenReturn(false);
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> validationBrand.validation(brandId),
+        assertThrows(ValidationException.class, () -> validationBrand.validation(brandId, null),
         		() ->"Expected validation() to throw ValidationException when brand does not exist");
     }
 
@@ -49,6 +53,6 @@ public class ValidationBrandExistsForUpdateTest {
         when(brandRepository.existsById(brandId)).thenReturn(true);
 
         // Act & Assert
-        validationBrand.validation(brandId); 
+        validationBrand.validation(brandId, null); 
     }
 }

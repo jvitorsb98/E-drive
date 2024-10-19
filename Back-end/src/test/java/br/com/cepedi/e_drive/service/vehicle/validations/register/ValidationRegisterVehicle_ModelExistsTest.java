@@ -2,7 +2,6 @@ package br.com.cepedi.e_drive.service.vehicle.validations.register;
 
 import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.ModelRepository;
-import br.com.cepedi.e_drive.service.vehicle.validations.register.ValidationRegisterVehicle_ModelExists;
 import jakarta.validation.ValidationException;
 
 import org.junit.jupiter.api.DisplayName;

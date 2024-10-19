@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuditService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuditService.class);
+
     @Autowired
     private AuditLogRepository auditLogRepository;
 
@@ -38,5 +40,6 @@ public class AuditService {
         User user = userRepository.getReferenceById(data.userId());
         AuditLog log = new AuditLog(data,user);
         auditLogRepository.save(log);
+        logger.info("Evento de auditoria registrado com sucesso.");
     }
 }
