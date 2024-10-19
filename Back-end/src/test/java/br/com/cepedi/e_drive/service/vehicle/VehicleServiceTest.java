@@ -116,7 +116,7 @@ public class VehicleServiceTest {
                 new BigDecimal("12.5"),
                 new BigDecimal("10.0"),
                 new BigDecimal("8.5"),
-                new BigDecimal("100.0")
+                new BigDecimal("100.0"), null
         );
 
         DataRegisterVehicle data = new DataRegisterVehicle(
@@ -546,7 +546,7 @@ public class VehicleServiceTest {
                         new BigDecimal("12.5"),
                         new BigDecimal("10.0"),
                         new BigDecimal("8.5"),
-                        new BigDecimal("100.0")
+                        new BigDecimal("100.0"), null
                 )
         );
 

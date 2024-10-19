@@ -78,7 +78,7 @@ public class VehicleUserServiceTest {
 						BigDecimal.valueOf(10), 
 						BigDecimal.valueOf(8), 
 						BigDecimal.valueOf(0.2), 
-						BigDecimal.valueOf(50)
+						BigDecimal.valueOf(50), null
 						)
 				);
 
@@ -110,7 +110,7 @@ public class VehicleUserServiceTest {
 				BigDecimal.valueOf(15), 
 				BigDecimal.valueOf(12), 
 				BigDecimal.valueOf(1.5), 
-				BigDecimal.valueOf(100)
+				BigDecimal.valueOf(100), null
 				);
 		DataUpdateVehicleUser dataUpdateVehicleUser = new DataUpdateVehicleUser(dataUpdateAutonomy);
 
@@ -122,7 +122,7 @@ public class VehicleUserServiceTest {
 		user.setId(1L); // Set the ID for the user
 
 		VehicleUser vehicleUser = new VehicleUser(user, vehicle, new DataRegisterAutonomy(
-				BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO
+				BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, null
 				));
 		vehicleUser.setId(vehicleUserId); // Set the ID for the vehicleUser
 		vehicleUser.setVehicle(vehicle); // Ensure the vehicle is set

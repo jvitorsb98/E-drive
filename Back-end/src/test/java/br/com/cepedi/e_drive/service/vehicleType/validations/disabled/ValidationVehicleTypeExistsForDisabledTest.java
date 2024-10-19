@@ -1,7 +1,6 @@
 package br.com.cepedi.e_drive.service.vehicleType.validations.disabled;
 
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
-import br.com.cepedi.e_drive.service.vehicleType.validations.disabled.ValidationVehicleTypeExistsForDisabled;
 import com.github.javafaker.Faker;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.DisplayName;

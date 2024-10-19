@@ -9,8 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
 
+import com.github.javafaker.Faker;
+import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +22,9 @@ public class ValidationUpdateVehicle_VehicleTypeExistsTest {
 
     @Mock
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationUpdateVehicle_VehicleTypeExists validation;
@@ -51,16 +56,19 @@ public class ValidationUpdateVehicle_VehicleTypeExistsTest {
 
         // Simula que o typeId não existe
         when(vehicleTypeRepository.existsById(typeId)).thenReturn(false);
+        when(messageSource.getMessage("vehicle.update.type.not.found", null, Locale.getDefault()))
+        .thenReturn("The provided vehicle type id does not exist.");
+
 
         // Act & Assert
         ValidationException thrown = assertThrows(
             ValidationException.class,
-            () -> validation.validate(data),
+            () -> validation.validate(data, typeId),
             "Expected ValidationException to be thrown when vehicleTypeId does not exist"
         );
 
         // Assert
-        assertEquals("The provided vehicle type id does not exist", thrown.getMessage());
+        assertEquals("The provided vehicle type id does not exist.", thrown.getMessage());
     }
 
     @Test
@@ -84,6 +92,6 @@ public class ValidationUpdateVehicle_VehicleTypeExistsTest {
         when(vehicleTypeRepository.existsById(typeId)).thenReturn(true);
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        assertDoesNotThrow(() -> validation.validate(data, typeId));
     }
 }

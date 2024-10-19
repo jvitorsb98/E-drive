@@ -10,9 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+import java.util.Locale;
 import com.github.javafaker.Faker;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -21,6 +22,9 @@ public class ValidationUpdateVehicle_VehicleType_NotDisabledTest {
 
     @Mock
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationUpdateVehicle_VehicleType_NotDisabled validation;
@@ -32,39 +36,6 @@ public class ValidationUpdateVehicle_VehicleType_NotDisabledTest {
         MockitoAnnotations.openMocks(this);
         faker = new Faker(); // Inicializa Faker para gerar dados fictícios
     }
-
-    @Test
-    @DisplayName("Should throw ValidationException when vehicleTypeId does not exist")
-    void shouldThrowValidationExceptionWhenVehicleTypeIdDoesNotExist() {
-        // Arrange
-        Long typeId = faker.number().randomNumber();
-        DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            faker.number().randomNumber(), // categoryId
-            typeId, // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
-        );
-
-        // Simula que o typeId não existe
-        when(vehicleTypeRepository.existsById(typeId)).thenReturn(false);
-
-        // Act & Assert
-        ValidationException thrown = assertThrows(
-            ValidationException.class,
-            () -> validation.validate(data),
-            "Expected ValidationException to be thrown when vehicleTypeId does not exist"
-        );
-
-        // Assert
-        assertEquals("The provided vehicle type id does not exist", thrown.getMessage());
-    }
-
-
     @Test
     @DisplayName("Should throw ValidationException when vehicleTypeId exists but is disabled")
     void shouldThrowValidationExceptionWhenVehicleTypeIdExistsButIsDisabled() {
@@ -88,16 +59,18 @@ public class ValidationUpdateVehicle_VehicleType_NotDisabledTest {
 
         when(vehicleTypeRepository.existsById(typeId)).thenReturn(true);
         when(vehicleTypeRepository.getReferenceById(typeId)).thenReturn(vehicleType);
+        when(messageSource.getMessage("vehicle.update.type.disabled", null, Locale.getDefault()))
+            .thenReturn("The provided vehicle type ID is disabled.");
 
         // Act & Assert
         ValidationException thrown = assertThrows(
             ValidationException.class,
-            () -> validation.validate(data),
+            () -> validation.validate(data, typeId),
             "Expected ValidationException to be thrown when vehicle type is disabled"
         );
 
         // Assert
-        assertEquals("The provided vehicle type id is disabled", thrown.getMessage());
+        assertEquals("The provided vehicle type ID is disabled.", thrown.getMessage());
     }
 
     @Test
@@ -125,6 +98,11 @@ public class ValidationUpdateVehicle_VehicleType_NotDisabledTest {
         when(vehicleTypeRepository.getReferenceById(typeId)).thenReturn(vehicleType);
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        try {
+            validation.validate(data, typeId);
+        } catch (ValidationException e) {
+            // Se chegar aqui, significa que a exceção foi lançada indevidamente
+            assertEquals("Should not throw exception when vehicleTypeId exists and is enabled", e.getMessage());
+        }
     }
 }

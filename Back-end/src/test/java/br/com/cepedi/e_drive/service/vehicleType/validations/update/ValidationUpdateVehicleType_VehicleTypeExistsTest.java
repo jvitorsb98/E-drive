@@ -2,7 +2,6 @@ package br.com.cepedi.e_drive.service.vehicleType.validations.update;
 
 import br.com.cepedi.e_drive.model.entitys.VehicleType;
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
-import br.com.cepedi.e_drive.service.vehicleType.validations.update.ValidationUpdateVehicleType_VehicleTypeExists;
 import com.github.javafaker.Faker;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.DisplayName;

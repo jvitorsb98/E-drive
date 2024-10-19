@@ -10,7 +10,6 @@ import br.com.cepedi.e_drive.service.vehicleType.validations.disabled.VehicleTyp
 import br.com.cepedi.e_drive.service.vehicleType.validations.update.ValidationUpdateVehicleType;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

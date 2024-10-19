@@ -11,15 +11,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+
+import java.util.Locale;
 
 @ExtendWith(MockitoExtension.class)
 public class ValidationUpdateVehicle_PropulsionExistsTest {
 
     @Mock
     private PropulsionRepository propulsionRepository;
+
+    @Mock
+    private MessageSource messageSource;
+
 
     @InjectMocks
     private ValidationUpdateVehicle_PropulsionExists validationUpdateVehiclePropulsionExists;
@@ -44,9 +51,12 @@ public class ValidationUpdateVehicle_PropulsionExistsTest {
         );
 
         when(propulsionRepository.existsById(invalidPropulsionId)).thenReturn(false);
+       // Mockando a mensagem para quando a propulsion não for encontrada
+        when(messageSource.getMessage("vehicle.update.propulsion.not.found", null, Locale.getDefault()))
+        .thenReturn("The provided propulsion ID does not exist.");
 
         // Act & Assert
-        assertThrows(ValidationException.class, () -> validationUpdateVehiclePropulsionExists.validate(data));
+        assertThrows(ValidationException.class, () -> validationUpdateVehiclePropulsionExists.validate(data, invalidPropulsionId));
     }
 
     @Test
@@ -63,6 +73,6 @@ public class ValidationUpdateVehicle_PropulsionExistsTest {
         when(propulsionRepository.existsById(validPropulsionId)).thenReturn(true);
 
         // Act & Assert
-        validationUpdateVehiclePropulsionExists.validate(data);
+        validationUpdateVehiclePropulsionExists.validate(data, validPropulsionId);
     }
 }

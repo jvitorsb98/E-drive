@@ -4,6 +4,9 @@ import br.com.cepedi.e_drive.audit.entitys.AuditLog;
 import br.com.cepedi.e_drive.audit.record.input.DataRegisterAudit;
 import br.com.cepedi.e_drive.audit.repositorys.AuditLogRepository;
 import br.com.cepedi.e_drive.security.model.entitys.User;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class AuditService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuditService.class);
 
     @Autowired
     private AuditLogRepository auditLogRepository;
@@ -31,7 +36,9 @@ public class AuditService {
      * @param user Usuário associado ao evento de auditoria. Pode ser nulo.
      */
     public void logEvent(DataRegisterAudit data, User user) {
+        logger.info("Registrando evento de auditoria: {}", data);
         AuditLog log = new AuditLog(data, user);
         auditLogRepository.save(log);
+        logger.info("Evento de auditoria registrado com sucesso.");
     }
 }

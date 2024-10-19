@@ -2,7 +2,6 @@ package br.com.cepedi.e_drive.service.model.validations.update;
 
 import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
 import br.com.cepedi.e_drive.repository.ModelRepository;
-import br.com.cepedi.e_drive.service.model.validations.update.ValidationUpdateModel_ModelExists;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

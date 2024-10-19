@@ -10,17 +10,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
 import com.github.javafaker.Faker;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
+import java.util.Locale;
 
 public class ValidationUpdateVehicle_Category_NotDisabledTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationUpdateVehicle_Category_NotDisabled validation;
@@ -31,6 +37,9 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         faker = new Faker(); 
+
+        when(messageSource.getMessage("vehicle.update.category.disabled", null, Locale.ENGLISH))
+        .thenReturn("The provided category ID is disabled.");
     }
 
     @Test
@@ -49,23 +58,33 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
             faker.number().randomNumber(), // year
             null // dataRegisterAutonomy
         );
-
+    
         Category category = new Category();
         category.setActivated(false);
-
+    
         // Simula que a categoria existe e está desativada
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
         when(categoryRepository.getReferenceById(categoryId)).thenReturn(category);
-
+    
         // Act & Assert
         ValidationException thrown = assertThrows(
             ValidationException.class,
-            () -> validation.validate(data),
+            () -> validation.validate(data, categoryId),
             "Expected ValidationException to be thrown when category is disabled"
         );
-
-        assertEquals("The provided category id is disabled", thrown.getMessage());
+    
+        // Verifica a mensagem da exceção
+        assertEquals("The provided category ID is disabled.", thrown.getMessage());
     }
+    
+    @Test
+    @DisplayName("Test if message is loaded correctly")
+    void testMessageSource() {
+        String message = messageSource.getMessage("vehicle.update.category.disabled", null, Locale.ENGLISH);
+        System.out.println(message); // Deve imprimir: "The provided category ID is disabled."
+        assertEquals("The provided category ID is disabled.", message); // Verifique se a mensagem está correta
+    }
+
 
     @Test
     @DisplayName("Should not throw exception when categoryId exists and is enabled")
@@ -92,7 +111,7 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
         when(categoryRepository.getReferenceById(categoryId)).thenReturn(category);
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        assertDoesNotThrow(() -> validation.validate(data, categoryId));
     }
 
     @Test
@@ -112,7 +131,7 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
         );
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        assertDoesNotThrow(() -> validation.validate(data, null));
     }
 }
 

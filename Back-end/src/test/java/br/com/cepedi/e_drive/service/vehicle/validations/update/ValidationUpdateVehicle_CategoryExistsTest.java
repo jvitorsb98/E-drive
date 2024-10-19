@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
 import com.github.javafaker.Faker;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -16,10 +18,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import java.util.Locale;
+
 public class ValidationUpdateVehicle_CategoryExistsTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private ValidationUpdateVehicle_CategoryExists validation;
@@ -52,10 +59,13 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
         // Simula que a categoria não existe
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
 
+         when(messageSource.getMessage("vehicle.update.category.not.found", null, Locale.getDefault()))
+            .thenReturn("The provided category id does not exist");
+
         // Act & Assert
         ValidationException thrown = assertThrows(
             ValidationException.class,
-            () -> validation.validate(data),
+            () -> validation.validate(data, categoryId),
             "Expected ValidationException to be thrown when categoryId does not exist"
         );
 
@@ -84,7 +94,7 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        assertDoesNotThrow(() -> validation.validate(data, categoryId));
     }
 
     @Test
@@ -104,7 +114,7 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
         );
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data));
+        assertDoesNotThrow(() -> validation.validate(data, null));
     }
 }
 

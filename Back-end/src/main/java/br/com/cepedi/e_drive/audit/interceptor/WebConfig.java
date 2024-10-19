@@ -52,7 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
 
-        localeResolver.setDefaultLocale(new Locale("en"));
+        localeResolver.setDefaultLocale(Locale.forLanguageTag("en"));
         return localeResolver;
     }
 

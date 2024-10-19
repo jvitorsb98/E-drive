@@ -63,7 +63,7 @@ public class LoggingAspect {
      *
      * @param joinPoint O ponto de junção que fornece informações sobre o método interceptado.
      */
-    @Before("execution(* br.com.cepedi.e_drive.audit.service.*.*(..)) && !target(br.com.cepedi.e_drive.audit.service.AuditService)")
+    @Before("execution(* br.com.cepedi.e_drive.*.*(..)) && !target(br.com.cepedi.e_drive.audit.service.AuditService)")
     public void logServiceAccess(JoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().getName();
         String description = "Method execution";

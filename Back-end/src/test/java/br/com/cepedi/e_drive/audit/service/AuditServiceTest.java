@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,6 +59,9 @@ public class AuditServiceTest {
         assertEquals(dataRegisterAudit.affectedResource(), capturedAuditLog.getAffectedResource(), () -> "AffectedResource should match");
         assertEquals(dataRegisterAudit.origin(), capturedAuditLog.getOrigin(), () -> "Origin should match");
         assertEquals(user, capturedAuditLog.getUser(), "User should match");
+
+        // Verifique o timestamp ou outros campos, se aplicável
+        assertNotNull(capturedAuditLog.getTimestamp(), "Timestamp should not be null");
     }
     
     @Test
@@ -78,6 +82,18 @@ public class AuditServiceTest {
         assertEquals(dataRegisterAudit.origin(), capturedAuditLog.getOrigin(), () -> "Origin should match");
         assertNull(capturedAuditLog.getUser(), () -> "User should be null");
     }
+
+
+    @Test
+    @DisplayName("Should handle exceptions when saving AuditLog")
+    void testLogEvent_Exception() {
+        // Arrange
+        doThrow(new RuntimeException("Database error")).when(auditLogRepository).save(any(AuditLog.class));
+    
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> auditService.logEvent(dataRegisterAudit, user));
+    }
+    
 
  
 

@@ -3,7 +3,6 @@ package br.com.cepedi.e_drive.service.model.validations.register;
 import br.com.cepedi.e_drive.model.entitys.Brand;
 import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import br.com.cepedi.e_drive.repository.BrandRepository;
-import br.com.cepedi.e_drive.service.model.validations.register.ValidationRegisterModel_BrandNotDisabled;
 import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
