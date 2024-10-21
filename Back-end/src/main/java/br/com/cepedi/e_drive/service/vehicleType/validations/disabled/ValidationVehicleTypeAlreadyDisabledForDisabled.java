@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.entitys.VehicleType;
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Validação para garantir que um tipo de veículo não esteja já desativado antes de realizar operações de desativação.
@@ -15,6 +18,9 @@ public class ValidationVehicleTypeAlreadyDisabledForDisabled implements VehicleT
 
     @Autowired
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
 
     /**
      * Valida se o tipo de veículo com o ID fornecido já está desativado.
@@ -27,7 +33,12 @@ public class ValidationVehicleTypeAlreadyDisabledForDisabled implements VehicleT
         if (vehicleTypeRepository.existsById(id)) {
             VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
             if (!vehicleType.isActivated()) {
-                throw new ValidationException("The vehicle type is already disabled");
+                String errorMessage = messageSource.getMessage(
+                        "vehicleType.disabled.alreadyDisabled", // Chave da mensagem
+                        new Object[]{id}, // Parâmetros da mensagem
+                        Locale.getDefault() // Locale padrão
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }

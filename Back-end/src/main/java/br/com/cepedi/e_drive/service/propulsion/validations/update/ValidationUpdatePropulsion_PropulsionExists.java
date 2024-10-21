@@ -2,7 +2,10 @@ package br.com.cepedi.e_drive.service.propulsion.validations.update;
 
 import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida a existência de uma propulsão antes de realizar operações de atualização.
@@ -16,6 +19,9 @@ public class ValidationUpdatePropulsion_PropulsionExists implements ValidationUp
     @Autowired
     private PropulsionRepository propulsionRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se a propulsão com o ID especificado existe no repositório.
      *
@@ -25,7 +31,12 @@ public class ValidationUpdatePropulsion_PropulsionExists implements ValidationUp
     @Override
     public void validate(Long id) {
         if (!propulsionRepository.existsById(id)) {
-            throw new IllegalArgumentException("Propulsion with the given ID does not exist");
+            String errorMessage = messageSource.getMessage(
+                    "propulsion.not.found_1", // Chave da mensagem
+                    new Object[]{id}, // Parâmetros da mensagem
+                    Locale.getDefault() // Locale padrão
+            );
+            throw new IllegalArgumentException(errorMessage);
         }
     }
 }

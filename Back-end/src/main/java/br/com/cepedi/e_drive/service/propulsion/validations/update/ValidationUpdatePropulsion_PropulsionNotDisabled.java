@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.entitys.Propulsion;
 import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Valida se uma propulsão está desativada antes de realizar operações de atualização.
@@ -19,6 +22,9 @@ public class ValidationUpdatePropulsion_PropulsionNotDisabled implements Validat
     @Autowired
     private PropulsionRepository propulsionRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
+
     /**
      * Valida se a propulsão com o ID especificado está desativada.
      *
@@ -30,7 +36,12 @@ public class ValidationUpdatePropulsion_PropulsionNotDisabled implements Validat
         if (propulsionRepository.existsById(id)) {
             Propulsion propulsion = propulsionRepository.getReferenceById(id);
             if (propulsion.getActivated()) {
-                throw new ValidationException("The required propulsion is activated");
+                String errorMessage = messageSource.getMessage(
+                        "propulsion.update.activated", // Chave da mensagem
+                        new Object[]{id}, // Parâmetro da mensagem
+                        Locale.getDefault() // Locale padrão
+                );
+                throw new ValidationException(errorMessage);
             }
         }
     }

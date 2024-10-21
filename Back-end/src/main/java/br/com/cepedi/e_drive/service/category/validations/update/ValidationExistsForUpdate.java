@@ -3,7 +3,10 @@ package br.com.cepedi.e_drive.service.category.validations.update;
 import br.com.cepedi.e_drive.repository.CategoryRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Classe de validação que verifica se uma categoria existe antes de permitir uma atualização.
@@ -16,6 +19,9 @@ public class ValidationExistsForUpdate implements CategoryValidatorUpdate {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private MessageSource messageSource; // Injeção de MessageSource para internacionalização
+
     /**
      * Valida se a categoria com o ID fornecido existe.
      * Se a categoria não existir, lança uma {@link ValidationException}.
@@ -26,7 +32,12 @@ public class ValidationExistsForUpdate implements CategoryValidatorUpdate {
     @Override
     public void validate(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new ValidationException("The required category does not exist.");
+            String errorMessage = messageSource.getMessage(
+                    "category.update.not.found",
+                    new Object[]{id},
+                    Locale.getDefault()
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }
