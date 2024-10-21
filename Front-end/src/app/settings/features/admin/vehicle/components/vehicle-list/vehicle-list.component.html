@@ -30,7 +30,7 @@
         <!-- Coluna para o ícone do veículo -->
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <mat-icon 
+            <mat-icon
               matTooltip="Este ícone representa cada versão de carro listada abaixo. Clique para ver os detalhes de cada versão.">
               directions_car
             </mat-icon>
@@ -51,16 +51,16 @@
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
             <strong>
-              <span *ngIf="vehicle.model.brand.name.split(' ').length > 1; else noEllipsis">
-                {{ vehicle.model.brand.name.split(' ')[0] }}...
+              <span *ngIf="vehicle.model.brand.name.length > 10; else noEllipsisBrand">
+                {{ vehicle.model.brand.name | slice: 0:10 }}...
               </span>
-              <ng-template #noEllipsis>
+              <ng-template #noEllipsisBrand>
                 {{ vehicle.model.brand.name }}
               </ng-template>
             </strong>
           </td>
         </ng-container>
-        
+
         <!-- Coluna para o modelo do veículo -->
         <ng-container matColumnDef="model">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -68,8 +68,8 @@
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
             <strong>
-              <span *ngIf="vehicle.model.name.split(' ').length > 1; else noEllipsisModel">
-                {{ vehicle.model.name.split(' ')[0] }}...
+              <span *ngIf="vehicle.model.name.length > 10; else noEllipsisModel">
+                {{ vehicle.model.name | slice: 0:10 }}...
               </span>
               <ng-template #noEllipsisModel>
                 {{ vehicle.model.name }}
@@ -77,7 +77,7 @@
             </strong>
           </td>
         </ng-container>
-        
+
         <!-- Coluna para a versão do veículo -->
         <ng-container matColumnDef="version">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -85,8 +85,8 @@
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
             <strong>
-              <span *ngIf="vehicle.version.split(' ').length > 1; else noEllipsisVersion">
-                {{ vehicle.version.split(' ')[0] }}...
+              <span *ngIf="vehicle.version.length > 10; else noEllipsisVersion">
+                {{ vehicle.version | slice: 0:10 }}...
               </span>
               <ng-template #noEllipsisVersion>
                 {{ vehicle.version }}
@@ -94,7 +94,8 @@
             </strong>
           </td>
         </ng-container>
-        
+
+
 
         <!-- Coluna para o status de ativação do veículo -->
         <ng-container matColumnDef="activated">
@@ -135,8 +136,10 @@
 <!-- Container para o paginador e botão de adicionar nova versão de veículo -->
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Paginador para navegação entre páginas -->
-  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
+  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
     aria-label="Selecione veículos por página"></mat-paginator>
-    <!-- Botão para abrir modal de adição de novo veículo-->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()" text="Nova Versão de Veiculo"></app-ui-button>
+  <!-- Botão para abrir modal de adição de novo veículo-->
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()"
+    text="Nova Versão de Veiculo"></app-ui-button>
 </div>

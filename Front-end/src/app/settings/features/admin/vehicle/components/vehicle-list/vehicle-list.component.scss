@@ -141,7 +141,6 @@ tr {
   padding: 1% 1%;
   text-align: left;
   font-weight: 350;
-
 }
 
 /* Define o campo de formulário dentro do filtro personalizado como flexível, 
@@ -150,9 +149,10 @@ tr {
   flex: 1;
 }
 
+/* Estilos adicionais para telas de até 768px */
 @media (max-width: 500px) {
   .th-table {
-    font-size: 12px;
+    font-size: 10px;
   }
 
   .td-table {
@@ -177,41 +177,25 @@ tr {
   }
 
   .top-bar {
-    margin-bottom: 10%;
+    margin-bottom: 8%;
   }
 }
 
-/* Aplica o truncamento em telas pequenas */
+/* Estilos adicionais para telas de até 340px */
 @media (max-width: 340px) {
   .th-table {
     font-size: 10px;
   }
 
   .td-table {
-    font-size: 8px;
-  }
-
-  .icone-emoji-carro {
-    font-size: 13px;
+    font-size: 7px;
   }
 
   .icone-table {
     font-size: 13px;
-    margin-right: 0px;
-  }
-
-  .no-data {
-    font-size: 12px;
   }
 
   .th-table mat-icon {
     font-size: 13px;
-  }
-
-  .truncate {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100px;
   }
 }
