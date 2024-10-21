@@ -7,14 +7,23 @@
 <!-- Menu de Navegação -->
 <div class="menu-container container-fluid d-flex justify-content-center pt-3">
   <div class="menu-links row w-100 text-center">
-    <div *ngFor="let link of menuLinks; let i = index"
-         [ngClass]="getColumnClass(i)"
-         class="menu-card d-flex flex-column justify-content-center align-items-center">
+    <div *ngFor="let link of menuLinks; let i = index" [ngClass]="getColumnClass(i)"
+      class="menu-card d-flex flex-column justify-content-center align-items-center">
       <a [routerLink]="link.route" class="menu-link">
         <mat-icon class="icon-size">{{ link.icon }}</mat-icon>
         <span class="menu-label">{{ link.label }}</span>
       </a>
     </div>
+
+    <ng-container *ngIf="isAdmin"> <!-- Se o usuário for um administrador -->
+      <div *ngFor="let link of adminLinks; let i = index" [ngClass]="getColumnClass(i)"
+        class="menu-card d-flex flex-column justify-content-center align-items-center">
+        <a [routerLink]="link.route" class="menu-link">
+          <mat-icon class="icon-size">{{ link.icon }}</mat-icon>
+          <span class="menu-label">{{ link.label }}</span>
+        </a>
+      </div>
+    </ng-container>
   </div>
 </div>
 
