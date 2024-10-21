@@ -1,36 +1,75 @@
+/* Barra superior */
 .top-bar {
-  position: sticky;
-  width: 100%;
   background-color: #19B6DD;
-  padding: .2rem 0;
-  z-index: 1000;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.menu-links a, span {
+/* Container dos cards */
+.menu-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 16px;
+  gap: 16px; /* Espaço entre os cards */
+}
+
+/* Card individual */
+.menu-card {
+  flex: 1 1 calc(33.33% - 32px); /* 3 cards por linha, com espaço entre eles */
+  max-width: 120px; /* Limita a largura máxima para telas maiores */
+  min-width: 120px; /* Mantém uma largura mínima */
+  height: auto;
+  aspect-ratio: 1; /* Mantém proporção quadrada */
+  border-radius: 12px;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.menu-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Link dentro do card */
+.menu-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-decoration: none;
-  margin-inline: 1rem;
-  margin-bottom: 1rem; /* Espaço vertical abaixo de cada ícone */
-  color: #777777;
+  height: 100%;
+  justify-content: center;
+  color: inherit;
 }
 
-.menu-links a:hover {
+/* Ícones */
+.icon-size {
+  font-size: clamp(28px, 100%, 40px); /* Ajuste dinâmico baseado na largura da tela */
   color: #19B6DD;
+  margin-bottom: 8px;
 }
 
-@media (max-width: 767px) {
-  .top-bar {
-    padding: .5rem 0;
-    padding-top: 1rem;
+/* Texto */
+.menu-label {
+  font-size: clamp(14px, 2vw, 16px); /* Texto responsivo */
+  color: #333;
+}
+
+/* Layout responsivo */
+@media (max-width: 768px) {
+  .menu-card {
+    flex: 1 1 calc(50% - 16px); /* 2 cards por linha em telas menores */
   }
-  
-  .menu-links{
-    a{
-      font-size: 1.1rem;
-    }
-    mat-icon{
-        font-size: 2.1rem;
-        width: 2.1rem;
-        height: 2.1rem;
-      }
+}
+
+@media (max-width: 480px) {
+  .menu-card {
+    flex: 1 1 100%; /* 1 card por linha em telas muito pequenas */
   }
 }
