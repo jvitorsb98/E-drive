@@ -152,6 +152,38 @@ tr {
 
 @media (max-width: 500px) {
   .th-table {
+    font-size: 12px;
+  }
+
+  .td-table {
+    font-size: 8px;
+  }
+
+  .icone-emoji-carro {
+    font-size: 13px;
+  }
+
+  .icone-table {
+    font-size: 15px;
+    margin-right: 0px;
+  }
+
+  .no-data {
+    font-size: 12px;
+  }
+
+  .th-table mat-icon {
+    font-size: 15px;
+  }
+
+  .top-bar {
+    margin-bottom: 10%;
+  }
+}
+
+/* Aplica o truncamento em telas pequenas */
+@media (max-width: 340px) {
+  .th-table {
     font-size: 10px;
   }
 
@@ -160,11 +192,11 @@ tr {
   }
 
   .icone-emoji-carro {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .icone-table {
-    font-size: 12px;
+    font-size: 13px;
     margin-right: 0px;
   }
 
@@ -174,5 +206,12 @@ tr {
 
   .th-table mat-icon {
     font-size: 13px;
+  }
+
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
   }
 }
