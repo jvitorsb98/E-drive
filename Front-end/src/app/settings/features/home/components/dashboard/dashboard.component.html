@@ -1,29 +1,48 @@
-<div class="top-bar d-flex justify-content-between align-items-center container-fluid pt-3">
-  <h1 class="text-white text-center flex-grow-1">Menu</h1>
-</div>
-
-<div class="menu-container container-fluid d-flex justify-content-center flex-wrap pt-3">
-  <div
-    *ngFor="let link of menuLinks; let i = index"
-    [ngClass]="getColumnClass(i)"
-    class="menu-card d-flex flex-column align-items-center justify-content-center p-3 m-2 shadow-sm"
-  >
-    <a [routerLink]="link.route" class="menu-link text-center text-decoration-none">
-      <mat-icon class="icon-size mb-2">{{ link.icon }}</mat-icon>
-      <span class="menu-label">{{ link.label }}</span>
-    </a>
+<div class="top-bar d-flex justify-content-between container-fluid pt-3">
+  <div class="flex-grow-1 text-center">
+    <h1 class="text-white">Menu</h1>
   </div>
 </div>
 
-<div class="menu-container container-fluid d-flex justify-content-center pt-3" *ngIf="isAdmin">
-  <div
-    *ngFor="let link of adminLinks; let i = index"
-    [ngClass]="getColumnClass(i)"
-    class="menu-card d-flex flex-column align-items-center justify-content-center p-3 m-2 shadow-sm"
-  >
-    <a [routerLink]="link.route" class="menu-link text-center text-decoration-none">
-      <mat-icon class="icon-size mb-2">{{ link.icon }}</mat-icon>
-      <span class="menu-label">{{ link.label }}</span>
-    </a>
+<!-- Menu de Navegação -->
+<div class="menu-container container-fluid d-flex justify-content-center pt-3">
+  <div class="menu-links row w-100 text-center">
+    <div *ngFor="let link of menuLinks; let i = index"
+         [ngClass]="getColumnClass(i)"
+         class="menu-card d-flex flex-column justify-content-center align-items-center">
+      <a [routerLink]="link.route" class="menu-link">
+        <mat-icon class="icon-size">{{ link.icon }}</mat-icon>
+        <span class="menu-label">{{ link.label }}</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de Conteúdos Adicionais -->
+<div class="content-section container-fluid pt-4">
+  <h2 class="content-title">Conteúdos Recomendados</h2>
+  <div class="content-grid row justify-content-center">
+
+    <!-- Exemplo: Notícias -->
+    <div class="content-card col-md-3 col-sm-6">
+      <img src="assets/img-dashboard/news.png" alt="Notícia" class="content-image" />
+      <h3 class="content-header">Últimas Notícias</h3>
+      <p class="content-text">Acompanhe as novidades do setor de veículos elétricos.</p>
+    </div>
+
+    <!-- Exemplo: Boas Práticas -->
+    <div class="content-card col-md-3 col-sm-6">
+      <img src="assets/img-dashboard/tips.png" alt="Boas Práticas" class="content-image" />
+      <h3 class="content-header">Boas Práticas</h3>
+      <p class="content-text">Saiba como otimizar sua viagem com veículos elétricos.</p>
+    </div>
+
+    <!-- Exemplo: Propaganda -->
+    <div class="content-card col-md-3 col-sm-6">
+      <img src="assets/img-dashboard/ad.png" alt="Propaganda" class="content-image" />
+      <h3 class="content-header">Promoções Imperdíveis</h3>
+      <p class="content-text">Confira descontos exclusivos em pontos de recarga.</p>
+    </div>
+
   </div>
 </div>
