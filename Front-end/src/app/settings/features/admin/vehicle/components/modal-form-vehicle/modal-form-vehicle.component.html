@@ -5,7 +5,7 @@
       <button class="icon" mat-icon-button aria-label="Voltar" (click)="closeModal()">
         <mat-icon>arrow_back</mat-icon>
       </button>
-      <h1 class="title">{{ editVehicle ? 'Editar Veículo' : 'Cadastrar Veículo' }}</h1>
+      <h1 class="titulo">{{ editVehicle ? 'Editar Veículo' : 'Cadastrar Veículo' }}</h1>
       <button class="icon" mat-icon-button (click)="openFAQModal()">
         <mat-icon>help_outline</mat-icon>
       </button>
@@ -18,7 +18,7 @@
 
         <!-- Campo Marca - Aparece apenas se o campo 'version' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-12 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Marca</mat-label>
               <mat-select formControlName="brand">

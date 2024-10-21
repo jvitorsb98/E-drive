@@ -34,7 +34,7 @@ export class VehicleListComponent {
   pageIndex: number = 0; // Índice da página atual
   pageSize: number = 5; // Tamanho da página
   currentPage: number = 0; // Página atual
-  displayedColumns: string[] = ['icon', 'motor', 'version', 'year', 'actions']; // Colunas a serem exibidas na tabela
+  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Vehicle>(); // Fonte de dados da tabela
   List: Vehicle[] = []; // Lista de veículos
   isFilterActive: boolean = false; // Indica se o filtro está ativo
