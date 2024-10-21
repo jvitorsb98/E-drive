@@ -144,7 +144,6 @@ export class MapStationsComponent implements AfterViewInit {
       ]
     };
 
-    console.log("OI")
     this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
     this.getAllAddresses();
 

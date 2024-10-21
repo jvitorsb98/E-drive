@@ -20,6 +20,9 @@ import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/m
 // Importa o Swal para alertas
 import Swal from 'sweetalert2';
 import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
+import { CategoryService } from '../../../../core/services/category/category.service';
+import { CategoryAvgAutonomyStatsService } from '../../../../core/services/category-avg-autonomy-stats-service/category-avg-autonomy-stats.service';
+import { DataCategoryAvgAutonomyStats } from '../../../../core/models/DataCategoryAvgAutonomyStats';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -39,6 +42,7 @@ export class ModalFormVehicleComponent implements OnInit {
   selectedVehicle: Vehicle | null = null;
   isAutonomyDataMissing = false;  // Variável para controlar a exibição do alerta
   editVehicle: boolean = false; // Variável para controlar a exibição do h1 do modal
+  isAutonomyGeneratedByAverage: boolean = false;
 
   brands: { name: string; id: number }[] = [];
   models: { name: string; id: number }[] = [];
@@ -56,6 +60,8 @@ export class ModalFormVehicleComponent implements OnInit {
     private userDataService: UserDataService,
     private dialog: MatDialog, // Serviço para abrir modais
     private userVehicleService: UserVehicleService,
+    private categoryService: CategoryService, // Adicione o serviço
+    private categoryAvgAutonomyStatsService: CategoryAvgAutonomyStatsService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
   ) { 
@@ -81,9 +87,8 @@ export class ModalFormVehicleComponent implements OnInit {
       mileagePerLiterCity: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       consumptionEnergetic: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       autonomyElectricMode: [null, [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
-    },
-    { validators: this.batteryOrautonomyElectricModeRequiredValidator }  // Aplica o validador ao grupo
-  );
+    }
+    );
     console.log('Validadores do formulário:', this.userVehicleForm.errors);
 
     if (this.data.userVehicle && this.data.vehicle) {
@@ -92,6 +97,25 @@ export class ModalFormVehicleComponent implements OnInit {
     } else {
       console.warn('@Inject(MAT_DIALOG_DATA) public data Dados estão incompletos:', this.data);
     }
+  }
+
+
+  loadAverageAutonomy(selectedVehicle: Vehicle) {
+    const category = selectedVehicle.category; // Ou como você obtém a categoria do veículo
+
+    this.categoryAvgAutonomyStatsService.getAvgAutonomyStats(category.id).subscribe({
+      next: (averageStats: DataCategoryAvgAutonomyStats) => {
+        console.log(selectedVehicle)
+        this.userVehicleForm.patchValue({
+          autonomyElectricMode: averageStats.avgAutonomyElectricMode,
+          batteryCapacity: Number(((averageStats.avgAutonomyElectricMode * 3.6) / Number(this.userVehicleForm.get('consumptionEnergetic')?.value)).toFixed(2))
+        });
+        this.isAutonomyGeneratedByAverage = true;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar a média de autonomia:', error);
+      }
+    });
   }
 
   //Preenche o formulário com os dados do veículo para edição
@@ -115,15 +139,7 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
-  batteryOrautonomyElectricModeRequiredValidator: ValidatorFn = (control: AbstractControl) => {
-    const batteryCapacity = control.get('batteryCapacity')?.value;
-    const autonomyElectricMode = control.get('autonomyElectricMode')?.value;
-  
-    if (!batteryCapacity && !autonomyElectricMode) {
-      return { batteryOrAutonomyElectricModeRequired: true };
-    }
-    return null;
-  };
+
 
   loadBrands() {
     this.brandService.getAll().subscribe({
@@ -253,11 +269,10 @@ export class ModalFormVehicleComponent implements OnInit {
     const consumptionEnergetic = Number(selectedVehicle.autonomy.consumptionEnergetic); 
     const autonomyElectricMode = Number(selectedVehicle.autonomy.autonomyElectricMode); 
     
-
-    if(selectedVehicle.autonomy.consumptionEnergetic!= null && selectedVehicle.autonomy.autonomyElectricMode!= null){
-      const batteryCapacity = this.calculateBatteryCapacity(consumptionEnergetic, autonomyElectricMode);
-      this.userVehicleForm.get('batteryCapacity')?.setValue(batteryCapacity);
+    if(Number(selectedVehicle.autonomy.autonomyElectricMode)!= null){
+      this.loadAverageAutonomy(selectedVehicle);
     }
+
 
     this.isAutonomyDataMissing = !(
       selectedVehicle.autonomy.mileagePerLiterRoad &&
@@ -426,6 +441,7 @@ export class ModalFormVehicleComponent implements OnInit {
 
   resetForm() {
     this.userVehicleForm.reset();
+    this.isAutonomyGeneratedByAverage = false;
     this.isAutonomyDataMissing = false;
   }
 
