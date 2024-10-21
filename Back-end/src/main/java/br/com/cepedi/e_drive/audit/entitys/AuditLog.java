@@ -32,7 +32,8 @@ public class AuditLog {
      * </p>
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "audit_log_seq")
+    @SequenceGenerator(name = "audit_log_seq", sequenceName = "audit_log_seq", allocationSize = 1)
     private Long id;
 
     /**
@@ -68,7 +69,7 @@ public class AuditLog {
      * </p>
      */
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     /**
@@ -101,4 +102,11 @@ public class AuditLog {
         this.affectedResource = data.affectedResource();
         this.origin = data.origin();
     }
+
+    public Long getUserId() {
+        return user != null ? user.getId() : null; // Retorna o ID do usuário, se disponível
+    }
+
+  
+    
 }

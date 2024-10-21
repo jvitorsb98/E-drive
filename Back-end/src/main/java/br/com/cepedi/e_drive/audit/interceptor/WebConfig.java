@@ -16,7 +16,7 @@ import java.util.Locale;
  * Configuração do Web MVC para registrar interceptadores.
  * <p>
  * A classe {@link WebConfig} implementa a interface {@link WebMvcConfigurer} para configurar os interceptadores
- * utilizados na aplicação. Neste caso, a configuração inclui o {@link IpAddressInterceptor}, que é responsável
+ * utilizados na aplicação. Neste caso, a configuração inclui o {@link AuditInterceptor}, que é responsável
  * por capturar e registrar o endereço IP do cliente para auditoria.
  * </p>
  */
@@ -24,12 +24,12 @@ import java.util.Locale;
 public class WebConfig implements WebMvcConfigurer {
 
     @Autowired
-    private IpAddressInterceptor ipAddressInterceptor;
+    private AuditInterceptor auditInterceptor;
 
     /**
      * Adiciona interceptadores à configuração do Spring MVC.
      * <p>
-     * Este método é usado para registrar o {@link IpAddressInterceptor}, que intercepta as requisições HTTP
+     * Este método é usado para registrar o {@link AuditInterceptor}, que intercepta as requisições HTTP
      * para capturar e armazenar o endereço IP do cliente antes que a requisição seja processada pelos controladores.
      * </p>
      *
@@ -37,7 +37,8 @@ public class WebConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(ipAddressInterceptor); // Adiciona o interceptor para captura do IP do cliente
+        registry.addInterceptor(auditInterceptor);       //para a opção via Interceptor
+        //registry.addInterceptor(ipAddressInterceptor); //para a opção via AOP
     }
 
     @Bean
