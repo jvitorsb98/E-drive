@@ -26,9 +26,7 @@ public record DataAutonomyDetails(
 
         BigDecimal consumptionEnergetic,
 
-        BigDecimal autonomyElectricMode,
-
-        BigDecimal batteryCapacity
+        BigDecimal autonomyElectricMode
 
 ) {
     /**
@@ -42,8 +40,7 @@ public record DataAutonomyDetails(
                 autonomy.getMileagePerLiterRoad(),
                 autonomy.getMileagePerLiterCity(),
                 autonomy.getConsumptionEnergetic(),
-                autonomy.getAutonomyElectricMode(),
-                autonomy.getBatteryCapacity()
+                autonomy.getAutonomyElectricMode()
         );
     }
 }
