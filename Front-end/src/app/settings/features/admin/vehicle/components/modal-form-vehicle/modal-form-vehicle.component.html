@@ -116,11 +116,24 @@
           <div class="col-12 col-md-6 mb-3">
             <mat-form-field class="custom-select">
               <mat-label>Motor</mat-label>
-              <input matInput formControlName="motor" placeholder="Digite o tipo de motor" required />
+              <input matInput formControlName="motor" placeholder="Digite o tipo de motor" maxlength="20" required />
               <mat-error class="mat-error-text" *ngIf="vehicleForm.get('motor')?.hasError('required')">
                 <strong>O motor</strong> é obrigatório.
               </mat-error>
             </mat-form-field>
+            <!-- Erro: Motor com tamanho inválido -->
+            <div *ngIf="vehicleForm.get('motor')?.hasError('invalidLength') && vehicleForm.get('motor')?.dirty">
+              <!-- Erro: Motor com tamanho inválido -->
+              <mat-error class="mat-error-text-casa-decimal">
+                <strong>O motor</strong> deve ter entre 2 e 20 caracteres.
+              </mat-error>
+            </div>
+            <!-- Erro: Motor com formato inválido -->
+            <div *ngIf="vehicleForm.get('motor')?.hasError('invalidMotor') && vehicleForm.get('motor')?.dirty">
+              <mat-error class="mat-error-text-casa-decimal">
+                <strong>O motor</strong> deve conter apenas letras, números e espaços.
+              </mat-error>
+            </div>
           </div>
         </div>
 
@@ -149,10 +162,12 @@
                 *ngIf="vehicleForm.get('year')?.hasError('required') && vehicleForm.get('year')?.touched">
                 <strong>O ano</strong> é obrigatório.
               </mat-error>
-              <mat-error class="mat-error-text" *ngIf="vehicleForm.get('year')?.hasError('min')">
-                <strong>O ano</strong> deve ser um número válido.
-              </mat-error>
             </mat-form-field>
+            <!-- Erro: Ano inválido -->
+            <div *ngIf="vehicleForm.get('year')?.hasError('invalidYear') && vehicleForm.get('year')?.dirty">
+              <mat-error class="mat-error-text-casa-decimal"><strong>O ano</strong> deve ser entre 1901 e o próximo
+                ano.</mat-error>
+            </div>
           </div>
         </div>
 
