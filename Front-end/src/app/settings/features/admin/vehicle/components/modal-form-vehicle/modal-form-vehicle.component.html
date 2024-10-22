@@ -72,11 +72,15 @@
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Tipo</mat-label>
-              <mat-select formControlName="type">
-                <mat-option *ngFor="let type of types" [value]="type.name">
+              <input #typeInput type="text" matInput formControlName="type"
+                [value]="vehicleForm.get('type')?.value?.name || ''" [matAutocomplete]="autoType">
+              <mat-autocomplete #autoType="matAutocomplete" (optionSelected)="onTypeSelected($event)">
+                <mat-option *ngFor="let type of filteredTypes | async" [value]="type">
                   {{ type.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('type', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('type')?.hasError('required') && vehicleForm.get('type')?.touched">
                 <strong>O tipo</strong> é obrigatório.
@@ -90,11 +94,15 @@
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Categoria</mat-label>
-              <mat-select formControlName="category">
-                <mat-option *ngFor="let category of categories" [value]="category.name">
+              <input #categoryInput type="text" matInput formControlName="category"
+                [value]="vehicleForm.get('category')?.value?.name || ''" [matAutocomplete]="autoCategory">
+              <mat-autocomplete #autoCategory="matAutocomplete" (optionSelected)="onCategorySelected($event)">
+                <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
                   {{ category.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('category', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('category')?.hasError('required') && vehicleForm.get('category')?.touched">
                 <strong>A categoria</strong> é obrigatória.

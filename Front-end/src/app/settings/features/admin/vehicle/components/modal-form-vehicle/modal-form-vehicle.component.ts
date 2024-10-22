@@ -71,6 +71,8 @@ export class ModalFormVehicleComponent {
   // Referência para o painel de autocomplete
   @ViewChild('brandInput', { read: MatAutocompleteTrigger }) autoBrandTrigger!: MatAutocompleteTrigger;
   @ViewChild('modelInput', { read: MatAutocompleteTrigger }) autoModelTrigger!: MatAutocompleteTrigger;
+  @ViewChild('typeInput', { read: MatAutocompleteTrigger }) autoTypeTrigger!: MatAutocompleteTrigger;
+  @ViewChild('categoryInput', { read: MatAutocompleteTrigger }) autoCategoryTrigger!: MatAutocompleteTrigger;
   @ViewChild('versionInput', { read: MatAutocompleteTrigger }) autoVersionTrigger!: MatAutocompleteTrigger;
 
   vehicleForm!: FormGroup; // Formulário reativo
@@ -86,6 +88,7 @@ export class ModalFormVehicleComponent {
 
   filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de marcas
   filteredModels: Observable<{ name: string }[]> = of([]); // Lista filtrada de modelos
+  filteredTypes: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de tipos
   filteredVersions: Observable<Vehicle[]> = of([]); // Now filtering vehicles based on version name
   filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
 
@@ -222,9 +225,7 @@ export class ModalFormVehicleComponent {
         this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
-      error: (error) => {
-        console.error('Erro ao carregar as marcas', error);
-      }
+      error: (error) => this.handleError('models', error),
     });
   }
 
@@ -232,26 +233,13 @@ export class ModalFormVehicleComponent {
    * Carrega a lista de modelos disponíveis de uma marca selecionada.
    * @param idBrand - Identificador da marca selecionada
    */
-  loadModels(brandId: number) {
-    this.modelService.getModelsByBrandId(brandId).subscribe({
+  loadModels(idBrand: number) {
+    this.modelService.getModelsByBrandId(idBrand).subscribe({
       next: (response: any) => {
-        const models = response.content || [];
-        console.log('Models loaded:', response);
-
-        if (Array.isArray(models)) {
-          this.models = models.map(model => ({
-            name: this.userDataService.capitalizeWords(model.name),
-            id: model.id,
-            brandId: model.brand.id
-          }));
-          this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
-        } else {
-          console.error('Expected an array but got:', models);
-        }
+        this.models = response.content.map((model: Model) => ({ name: model.name, id: model.id }));
+        this.setupAutocomplete();
       },
-      error: (error) => {
-        console.error('Erro ao carregar os modelos', error);
-      }
+      error: (error) => this.handleError('models', error),
     });
   }
 
@@ -262,6 +250,7 @@ export class ModalFormVehicleComponent {
     this.categoryService.getAll().subscribe({
       next: (response: PaginatedResponse<VehicleType>) => {
         this.categories = response.content.map((category: Category) => ({ name: category.name, id: category.id }));
+        this.setupAutocomplete();
       },
       error: (error) => this.handleError('categories', error),
     });
@@ -274,6 +263,7 @@ export class ModalFormVehicleComponent {
     this.vehicleTypeService.getAll().subscribe({
       next: (response: PaginatedResponse<VehicleType>) => {
         this.types = response.content.map((type: VehicleType) => ({ name: type.name, id: type.id }));
+        this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
       error: (error) => this.handleError('types', error),
     });
@@ -288,6 +278,28 @@ export class ModalFormVehicleComponent {
         this.propulsions = response.content.map((propulsion: Propulsion) => ({ name: propulsion.name, id: propulsion.id }));
       },
       error: (error) => this.handleError('propulsions', error),
+    });
+  }
+
+  loadVehiclesByModel(modelId: number) {
+    this.vehicleService.getVehiclesByModel(modelId).subscribe({
+      next: (response: any) => {
+        const vehicles = response.content || [];
+
+        if (Array.isArray(vehicles)) {
+          this.vehicles = vehicles.map(vehicle => ({
+            ...vehicle,
+            version: this.userDataService.capitalizeWords(vehicle.version),
+          }));
+
+          this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
+        } else {
+          console.error('Expected an array but got:', vehicles);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar os veículos', error);
+      }
     });
   }
 
@@ -318,6 +330,22 @@ export class ModalFormVehicleComponent {
       map(value => {
         const filterValue = typeof value === 'string' ? value : (value?.name || '');
         return this._filter(this.models, filterValue);
+      })
+    );
+
+    this.filteredTypes = this.vehicleForm.get('type')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.types, filterValue);
+      })
+    );
+
+    this.filteredCategories = this.vehicleForm.get('category')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.categories, filterValue);
       })
     );
 
@@ -405,7 +433,6 @@ export class ModalFormVehicleComponent {
     return this.categories.find(category => category.name === this.vehicleForm.get('category')?.value)?.id;
   }
 
-
   /**
  * Obtém o ID do tipo de veículo selecionado.
  *
@@ -422,28 +449,6 @@ export class ModalFormVehicleComponent {
  */
   private getSelectedPropulsionId(): number | undefined {
     return this.propulsions.find(propulsion => propulsion.name === this.vehicleForm.get('propulsion')?.value)?.id;
-  }
-
-  loadVehiclesByModel(modelId: number) {
-    this.vehicleService.getVehiclesByModel(modelId).subscribe({
-      next: (response: any) => {
-        const vehicles = response.content || [];
-
-        if (Array.isArray(vehicles)) {
-          this.vehicles = vehicles.map(vehicle => ({
-            ...vehicle,
-            version: this.userDataService.capitalizeWords(vehicle.version),
-          }));
-
-          this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
-        } else {
-          console.error('Expected an array but got:', vehicles);
-        }
-      },
-      error: (error) => {
-        console.error('Erro ao carregar os veículos', error);
-      }
-    });
   }
 
   /**
@@ -465,6 +470,24 @@ export class ModalFormVehicleComponent {
 
     if (selectedModel.id) {
       this.loadVehiclesByModel(selectedModel.id);
+    }
+  }
+
+  onTypeSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedType = event.option.value;
+    this.vehicleForm.get('type')?.setValue(selectedType.name);
+
+    if (selectedType.id) {
+      this.loadVehiclesByModel(selectedType.id);
+    }
+  }
+
+  onCategorySelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedCategory = event.option.value;
+    this.vehicleForm.get('category')?.setValue(selectedCategory.name);
+
+    if (selectedCategory.id) {
+      this.loadVehiclesByModel(selectedCategory.id);
     }
   }
 
@@ -517,6 +540,12 @@ export class ModalFormVehicleComponent {
         break;
       case 'model':
         trigger = this.autoModelTrigger;
+        break;
+      case 'type':
+        trigger = this.autoTypeTrigger;
+        break;
+      case 'category':
+        trigger = this.autoCategoryTrigger;
         break;
       case 'version':
         trigger = this.autoVersionTrigger;
