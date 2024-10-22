@@ -73,6 +73,7 @@ export class ModalFormVehicleComponent {
   @ViewChild('modelInput', { read: MatAutocompleteTrigger }) autoModelTrigger!: MatAutocompleteTrigger;
   @ViewChild('typeInput', { read: MatAutocompleteTrigger }) autoTypeTrigger!: MatAutocompleteTrigger;
   @ViewChild('categoryInput', { read: MatAutocompleteTrigger }) autoCategoryTrigger!: MatAutocompleteTrigger;
+  @ViewChild('propulsionInput', { read: MatAutocompleteTrigger }) autoPropulsionTrigger!: MatAutocompleteTrigger;
   @ViewChild('versionInput', { read: MatAutocompleteTrigger }) autoVersionTrigger!: MatAutocompleteTrigger;
 
   vehicleForm!: FormGroup; // Formulário reativo
@@ -91,6 +92,7 @@ export class ModalFormVehicleComponent {
   filteredTypes: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de tipos
   filteredVersions: Observable<Vehicle[]> = of([]); // Now filtering vehicles based on version name
   filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
+  filteredPropulsions: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de propulsões
 
   vehicles: Vehicle[] = []; // Lista de veículos
 
@@ -276,6 +278,7 @@ export class ModalFormVehicleComponent {
     this.propulsionService.getAll().subscribe({
       next: (response: PaginatedResponse<Propulsion>) => {
         this.propulsions = response.content.map((propulsion: Propulsion) => ({ name: propulsion.name, id: propulsion.id }));
+        this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
       error: (error) => this.handleError('propulsions', error),
     });
@@ -346,6 +349,14 @@ export class ModalFormVehicleComponent {
       map(value => {
         const filterValue = typeof value === 'string' ? value : (value?.name || '');
         return this._filter(this.categories, filterValue);
+      })
+    );
+
+    this.filteredPropulsions = this.vehicleForm.get('propulsion')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.propulsions, filterValue);
       })
     );
 
@@ -491,6 +502,15 @@ export class ModalFormVehicleComponent {
     }
   }
 
+  onPropulsionSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedPropulsion = event.option.value;
+    this.vehicleForm.get('propulsion')?.setValue(selectedPropulsion.name);
+
+    if (selectedPropulsion.id) {
+      this.loadVehiclesByModel(selectedPropulsion.id);
+    }
+  }
+
   /**
  * Exibe uma mensagem de sucesso após a operação.
  *
@@ -546,6 +566,9 @@ export class ModalFormVehicleComponent {
         break;
       case 'category':
         trigger = this.autoCategoryTrigger;
+        break;
+      case 'propulsion':
+        trigger = this.autoPropulsionTrigger;
         break;
       case 'version':
         trigger = this.autoVersionTrigger;

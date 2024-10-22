@@ -115,11 +115,15 @@
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Propulsão</mat-label>
-              <mat-select formControlName="propulsion">
-                <mat-option *ngFor="let propulsion of propulsions" [value]="propulsion.name">
+              <input #propulsionInput type="text" matInput formControlName="propulsion"
+                [value]="vehicleForm.get('propulsion')?.value?.name || ''" [matAutocomplete]="autoPropulsion">
+              <mat-autocomplete #autoPropulsion="matAutocomplete" (optionSelected)="onPropulsionSelected($event)">
+                <mat-option *ngFor="let propulsion of filteredPropulsions | async" [value]="propulsion">
                   {{ propulsion.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('propulsion', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('propulsion')?.hasError('required') && vehicleForm.get('propulsion')?.touched">
                 <strong>A propulsão</strong> é obrigatória.
