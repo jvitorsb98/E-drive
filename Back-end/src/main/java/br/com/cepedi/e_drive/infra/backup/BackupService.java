@@ -21,7 +21,7 @@ public class BackupService {
 
     private final String backupDirectory = "/home/joao/Documentos/backup";
 
-    @Scheduled(cron = "0 0 2 * * ?") // Executa diariamente às 10:23 AM
+    @Scheduled(cron = "0 0 2 * * ?") // Executa diariamente às 02:00
     public void performBackup() {
         try {
             String command = String.format(

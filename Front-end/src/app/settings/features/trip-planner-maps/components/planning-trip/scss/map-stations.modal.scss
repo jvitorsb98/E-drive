@@ -1,0 +1,124 @@
+/* Modal Container Styles */
+.modal {
+    display: none; /* Initially hidden */
+    position: fixed; /* Fixed position on screen */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust position for centering */
+    width: 90vw; /* Responsive width */
+    height: 38vh;
+    max-height: 40vh;
+    max-width: 240px; /* Max width for desktop */
+    background-color: white; /* White background */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    border-top: 4px solid #19B6DD; /* Top border */
+    border-bottom: 4px solid #19B6DD; /* Bottom border */
+    padding: 10px; /* Internal spacing */
+    box-sizing: border-box; /* Include border in size calculation */
+    align-items: center;
+}
+
+/* Modal Visibility */
+.modal-show {
+    display: block; /* Make modal visible */
+}
+
+/* Modal Content Styles */
+.modal-content {
+    border: none; /* Remove border */
+    box-shadow: none; /* Remove shadow */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white; /* Maintain white background */
+    border-radius: 8px; /* Keep rounded corners */
+}
+
+/* Modal Header */
+.modal-header {
+    font-size: 1em; /* Title font size */
+    font-weight: bold; /* Bold title */
+    width: 100%;
+    margin-bottom: 10px; /* Space below title */
+    text-align: center; /* Center title */
+}
+
+/* Modal Body */
+.modal-body {
+    font-size: 0.9em; /* Body font size */
+    margin-bottom: 10px; /* Space below body */
+    text-align: center; /* Center body text */
+}
+
+/* Modal Distance */
+.modalDistance {
+    text-align: center;
+}
+
+/* Modal Buttons */
+.modal-buttons {
+    display: flex; /* Flexible layout for buttons */
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 10px; /* Space between buttons */
+    margin-top: 10px; /* Space above buttons */
+}
+
+/* Button Styles */
+.button {
+    background-color: #19B6DD; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    padding: 10px 15px; /* Increased size */
+    cursor: pointer; /* Pointer cursor */
+    font-size: 1em; /* Increased font size */
+    transition: background-color 0.3s; /* Smooth transition */
+    width: 100%; /* Full width */
+    display: flex; /* Flexbox for icon and text alignment */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+/* Button Hover Effects */
+.button:hover {
+    background-color: #138AB0; /* Background color on hover */
+}
+
+/* Secondary Button Styles */
+.button-secondary {
+    background-color: #f5f5f5; /* Secondary button background */
+    color: #333; /* Secondary button text color */
+}
+
+.button-secondary:hover {
+    background-color: #e0e0e0; /* Secondary button hover color */
+}
+
+/* Closed Modal Styles */
+.modal-closed {
+    border-radius: 8px; /* Rounded corners */
+    border-top: 4px solid #DD4B39; /* Top border for closed modals */
+    border-bottom: 4px solid #DD4B39; /* Bottom border for closed modals */
+}
+
+/* Closed Button Styles */
+.button-closed {
+    background-color: #DD4B39; /* Closed button background */
+    color: white; /* Closed button text color */
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s; /* Smooth transition */
+    width: 100%; /* Full width */
+    display: flex; /* Flexbox for icon and text alignment */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+.button-closed:hover {
+    background-color: #630e05; /* Background color on hover */
+}
