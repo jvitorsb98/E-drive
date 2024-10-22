@@ -1,11 +1,9 @@
 <div class="top-bar">
-	<div class="d-flex justify-content-between container-fluid">
-		<div class="flex-grow-1 text-center">
-			<h1 class="text-white">Perfil</h1>
-		</div>
-
-	</div>
+  <div class="container-fluid">
+    <h1>Perfil</h1>
+  </div>
 </div>
+
 <div class="profile-container">
   <div class="profile-card">
     <div class="profile-header">
@@ -17,7 +15,6 @@
 
     <div class="profile-info">
       <h2>{{ userData.name }}</h2>
-
       <div class="contact-info">
         <div class="contact-item">
           <mat-icon>phone</mat-icon>
@@ -30,9 +27,9 @@
         </div>
 
         <div class="contact-item">
-          <mat-icon>cake</mat-icon> <span>{{ userData.birth | date: 'dd/MM/yyyy' }}</span>
+          <mat-icon>cake</mat-icon>
+          <span>{{ userData.birth | date: 'dd/MM/yyyy' }}</span>
         </div>
-
       </div>
     </div>
 
@@ -40,6 +37,5 @@
       <button mat-raised-button (click)="onLogout()">Sair</button>
       <a class="delete-account" (click)="deleteAccount()">Desativar Conta</a>
     </div>
-
   </div>
 </div>
