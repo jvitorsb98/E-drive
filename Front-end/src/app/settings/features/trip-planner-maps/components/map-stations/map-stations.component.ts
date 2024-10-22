@@ -65,7 +65,6 @@ export class MapStationsComponent implements AfterViewInit {
   constructor(
     private cdr: ChangeDetectorRef,
     private tripPlannerMapsService: TripPlannerMapsService, 
-    private addressService:AddressService,
     private geocodingService:GeocodingService,
     private locationService: LocationService,
     private dialog: MatDialog

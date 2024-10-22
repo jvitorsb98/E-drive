@@ -1,5 +1,6 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
+import { LocationService } from '../location/location.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +11,11 @@ export class MapService {
   directionsService!: google.maps.DirectionsService;
   directionsRenderer!: google.maps.DirectionsRenderer;
 
-  constructor() { }
+  constructor(
+    private locationService:LocationService
+  ) { }
 
-  initMap(mapContainer: ElementRef): google.maps.Map {
+  async initMap(mapContainer: ElementRef): Promise<google.maps.Map> {
     const mapOptions: google.maps.MapOptions = {
       center: { lat: -21.780, lng: -47.534 }, // Coordenadas de exemplo
       zoom: 15,
@@ -75,6 +78,21 @@ export class MapService {
     this.directionsService = new google.maps.DirectionsService();
     this.directionsRenderer = new google.maps.DirectionsRenderer();
     this.directionsRenderer.setMap(this.map); // Define o mapa no DirectionsRenderer
+
+
+    try {
+      const userLocation = await this.locationService.getUserLocation();
+      if (userLocation) {
+        this.map.setCenter(userLocation);
+        new google.maps.Marker({
+          position: userLocation,
+          map: this.map,
+          title: 'Sua Localização'
+        });
+      }
+    } catch (error) {
+      console.error('Não foi possível obter a localização do usuário', error);
+    }
 
     return this.map;
   }
