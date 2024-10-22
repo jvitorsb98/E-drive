@@ -148,6 +148,9 @@ public class Address {
         if (data.plugin() != null) {
             this.plugin = data.plugin();
         }
+        if (data.complement() != null) {
+            this.complement = data.complement();
+        }
     }
 
     /**
