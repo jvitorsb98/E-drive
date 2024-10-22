@@ -3,6 +3,7 @@ package br.com.cepedi.e_drive;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Classe principal para a aplicação Spring Boot E-Drive.
@@ -14,6 +15,7 @@ import org.springframework.cache.annotation.EnableCaching;
  */
 @EnableCaching
 @SpringBootApplication
+@EnableScheduling
 public class EDriveApplication {
 
 	/**

@@ -23,6 +23,7 @@ import { PropusionService } from '../../../../../core/services/propusion/propusi
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
 import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { futureYearValidator } from '../../../../../shared/validators/future-year-validator';import { genericTextValidator } from '../../../../../shared/validators/generic-text-validator';
 
 
 /**
@@ -145,9 +146,9 @@ export class ModalFormVehicleComponent {
       type: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
       category: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
       propulsion: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
-      motor: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.minLength(2)]),
-      version: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.minLength(2)]),
-      year: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, Validators.min(1886)]),
+      motor: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, genericTextValidator(2, 20)]),
+      version: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, genericTextValidator(2, 20)]),
+      year: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, futureYearValidator]),
       mileagePerLiterRoad: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
         Validators.pattern(/^\d+(\.\d+)?$/),
         Validators.required

@@ -1,7 +1,9 @@
 package br.com.cepedi.e_drive.audit.interceptor;
 
+import br.com.cepedi.e_drive.security.service.token.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -16,6 +18,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 @Component
 public class IpAddressInterceptor implements HandlerInterceptor {
+
 
     /**
      * Intercepta a requisição antes de ser processada pelo manipulador.
@@ -32,11 +35,12 @@ public class IpAddressInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         if (ipAddress == null) {
             ipAddress = request.getRemoteAddr();
         }
-        LoggingAspect.setClientIpAddress(ipAddress);
+        System.out.println("IP Capturado: " + ipAddress);
         return true;
     }
 
@@ -54,6 +58,6 @@ public class IpAddressInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        LoggingAspect.clearClientIpAddress();
+        LoggingAspect.clearhttpServletRequestThreadLocal();
     }
 }

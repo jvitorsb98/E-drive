@@ -14,43 +14,27 @@ import jakarta.validation.constraints.Positive;
  * @param eventDescription  A descrição do evento. Este campo pode ser nulo.
  * @param affectedResource  O recurso que foi afetado pelo evento. Este campo pode ser nulo.
  * @param origin            A origem do evento, que deve ser um valor positivo. Este campo não pode ser nulo.
- */
+ */import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
 public record DataRegisterAudit(
 
-        /**
-         * O nome do evento a ser registrado.
-         * <p>
-         * Este campo é obrigatório e não pode ser nulo.
-         * </p>
-         */
         @NotNull
         String eventName,
 
-        /**
-         * A descrição do evento.
-         * <p>
-         * Este campo é opcional e pode ser nulo.
-         * </p>
-         */
         String eventDescription,
 
-        /**
-         * O recurso que foi afetado pelo evento.
-         * <p>
-         * Este campo é opcional e pode ser nulo.
-         * </p>
-         */
+        @NotNull
+        Long userId,
+
+        @NotNull
+        String userName,
+
         String affectedResource,
 
-        /**
-         * A origem do evento, que deve ser um valor positivo.
-         * <p>
-         * Este campo é obrigatório e não pode ser nulo.
-         * </p>
-         */
         @NotNull
-        @Positive
         String origin
+
 
 ) {
 }

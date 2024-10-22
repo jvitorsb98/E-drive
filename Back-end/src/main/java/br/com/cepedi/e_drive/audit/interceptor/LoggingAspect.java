@@ -2,22 +2,19 @@ package br.com.cepedi.e_drive.audit.interceptor;
 
 import br.com.cepedi.e_drive.audit.record.input.DataRegisterAudit;
 import br.com.cepedi.e_drive.audit.service.AuditService;
-import br.com.cepedi.e_drive.security.model.entitys.User;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 
 /**
  * Aspecto responsável por registrar eventos de acesso aos serviços para auditoria.
- * <p>
- * O {@link LoggingAspect} utiliza Aspect-Oriented Programming (AOP) para interceptar chamadas de métodos
- * em serviços de auditoria, registrar informações relevantes como o nome do método, descrição, origem
- * da requisição e informações do usuário autenticado.
- * </p>
  */
 @Aspect
 @Component
@@ -26,58 +23,55 @@ public class LoggingAspect {
     @Autowired
     private AuditService auditService;
 
-    private static ThreadLocal<String> clientIpAddress = new ThreadLocal<>();
+    @Autowired
+    private TokenService tokenService;
 
-    /**
-     * Define o endereço IP do cliente no contexto da thread atual.
-     * <p>
-     * Este método é utilizado para definir o endereço IP do cliente que está fazendo a requisição,
-     * que será registrado durante a execução dos métodos interceptados.
-     * </p>
-     *
-     * @param ipAddress O endereço IP do cliente.
-     */
-    public static void setClientIpAddress(String ipAddress) {
-        clientIpAddress.set(ipAddress);
+    private static ThreadLocal<HttpServletRequest> httpServletRequestThreadLocal = new ThreadLocal<>();
+
+
+    public static void sethttpServletRequestThreadLocal(HttpServletRequest httpServletRequest) {
+        httpServletRequestThreadLocal.set(httpServletRequest);
+    }
+
+    public static void clearhttpServletRequestThreadLocal() {
+        httpServletRequestThreadLocal.remove();
     }
 
     /**
-     * Remove o endereço IP do cliente do contexto da thread atual.
-     * <p>
-     * Este método é utilizado para limpar o endereço IP do cliente após a execução dos métodos
-     * interceptados.
-     * </p>
+     * Intercepta a execução de métodos em serviços da aplicação.
      */
-    public static void clearClientIpAddress() {
-        clientIpAddress.remove();
-    }
-
-    /**
-     * Intercepta a execução de métodos em serviços de auditoria, exceto o próprio serviço de auditoria.
-     * <p>
-     * Este método é executado antes da chamada do método alvo. Ele coleta informações sobre o método
-     * executado, a descrição do evento, o nome da classe do alvo, a origem da requisição (endereço IP do cliente)
-     * e o usuário autenticado, se disponível. Essas informações são então usadas para registrar o evento
-     * no serviço de auditoria.
-     * </p>
-     *
-     * @param joinPoint O ponto de junção que fornece informações sobre o método interceptado.
-     */
-    @Before("execution(* br.com.cepedi.e_drive.audit.service.*.*(..)) && !target(br.com.cepedi.e_drive.audit.service.AuditService)")
+    @Before("execution(* br.com.cepedi.e_drive.service..*(..))")
     public void logServiceAccess(JoinPoint joinPoint) {
+        // Obtendo a requisição diretamente do RequestContextHolder
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        System.out.println("Request aaaa" + request);
+        String authorizationHeader = request.getHeader("Authorization");
+        Long userId = null;
+
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            userId = tokenService.getIdUSerByToken(token); // Extrai o ID do usuário do token
+        }
+        System.out.println(userId);
+
+        // Coleta informações para auditoria
         String methodName = joinPoint.getSignature().getName();
         String description = "Method execution";
-        User user = null;
-        String origin = clientIpAddress.get();
-
-        // Recupera informações do usuário autenticado
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof User) {
-            user = (User) authentication.getPrincipal();
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            ipAddress = request.getRemoteAddr();
         }
 
-        DataRegisterAudit dataRegisterAudit = new DataRegisterAudit(methodName, description, joinPoint.getTarget().getClass().getSimpleName(), origin);
 
-        auditService.logEvent(dataRegisterAudit, user);
+        // Se o userId for null, não registra o evento
+        if (userId == null) {
+            return;
+        }
+
+        // Criação do registro de auditoria
+        DataRegisterAudit dataRegisterAudit = new DataRegisterAudit(methodName, description, userId, null, joinPoint.getTarget().getClass().getSimpleName(), ipAddress);
+
+        // Log do evento
+        auditService.logEvent(dataRegisterAudit);
     }
 }

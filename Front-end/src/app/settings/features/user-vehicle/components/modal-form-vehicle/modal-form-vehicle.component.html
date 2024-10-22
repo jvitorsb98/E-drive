@@ -169,17 +169,18 @@
 						</div>
 					</div>
 
-					<mat-error *ngIf="userVehicleForm.hasError('batteryOrAutonomyElectricModeRequired')">
-						É obrigatório fornecer a <strong>capacidade da bateria</strong> ou a <strong>autonomia em modo elétrico</strong>.
-					  </mat-error>
-					  
-					  <!-- Mensagem de alerta -->
-					  <div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
-						Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Eles podem ser inseridos,
-						mas não é recomendado, pois isso pode impactar nos cálculos de rotas. 
-						É aconselhável inserir apenas as informações solicitadas para garantir resultados precisos.
-					  </div>
-					  
+
+			<!-- Mensagem de alerta -->
+			<div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
+				Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Insira apenas os dados do manual, pois isso pode impactar os cálculos de rotas.
+			</div>
+			<!-- Mensagem de alerta quando a autonomia é gerada pela média -->
+			<div *ngIf="isAutonomyGeneratedByAverage" class="alert alert-warning mt-2">
+				O valor da autonomia foi gerado com base em médias estatísticas, e a capacidade da bateria foi criada automaticamente. 
+				Recomenda-se verificar seu manual e editar os valores corretos para garantir precisão nas informações.
+			</div>
+
+											
 					  
 
 

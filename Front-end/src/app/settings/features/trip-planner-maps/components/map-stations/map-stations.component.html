@@ -3,9 +3,13 @@
     <h1 class="text-white">Mapa</h1>
   </div>
 </div>
-
+<button *ngIf="!isRouteActive && !isModalOpen && !isAddressOpen" 
+(click)="openSelectAddressModal()" class="return-home-btn">
+  Retorno à Residência
+</button>
 <!-- Container do Mapa -->
-<div #mapContainer id="map"></div>
+<div #mapContainer id="map">
+</div>
 
 <!-- Modal Principal -->
 <div id="myModal" class="modal" [ngClass]="{
@@ -73,3 +77,5 @@
         (click)="cancelRoute()">
   Cancelar Rota
 </button>
+
+

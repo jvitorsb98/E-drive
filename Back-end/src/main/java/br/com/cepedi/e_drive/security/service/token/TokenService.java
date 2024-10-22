@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -166,6 +167,10 @@ public class TokenService {
      */
     public String getEmailByToken(String token) {
         return JWT.decode(token).getClaim("email").asString();
+    }
+
+    public Long getIdUSerByToken(String token) {
+        return JWT.decode(token).getClaim("id").asLong();
     }
 
     /**

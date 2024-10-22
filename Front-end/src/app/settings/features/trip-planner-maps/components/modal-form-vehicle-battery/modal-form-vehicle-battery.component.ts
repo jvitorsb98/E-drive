@@ -13,6 +13,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
 import { Step } from '../../../../core/models/step';
 import Swal from 'sweetalert2';
+import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service'; 
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
@@ -25,6 +27,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
+  isStation: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -32,6 +35,8 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private vehicleService: VehicleService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private alertasService: AlertasService,
+    private tripPlannerMapsService: TripPlannerMapsService, 
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any }
   ) {
@@ -58,7 +63,6 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       bateriaRestante: this.data.place.bateriaRestante || null,
       saudeBateria: this.data.place.saudeBateria || null,
     });
-    console.log("Formulário pré-preenchido:", this.vehicleStatusBatteryForm.value);
   }
 
   getListUserVehicles() {
@@ -125,59 +129,34 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   submitBatteryStatus() {
     if (this.vehicleStatusBatteryForm.valid) {
       const formValue = this.vehicleStatusBatteryForm.value;
-
-      // Obtém a saúde da bateria
-      let batteryHealth = Number(formValue.saudeBateria);
-      if (!batteryHealth) {
-        const currentYear = new Date().getFullYear();
-        const vehicleYear = formValue.selectedVehicle.year;
-        const yearsOfUse = currentYear - vehicleYear;
-        batteryHealth = Math.max(100 - (yearsOfUse * 2.3), 0); // Garante que a saúde da bateria não fique negativa
-      }
       const remainingBattery = Number(formValue.bateriaRestante);
-      let batteryPercentageAfterTrip = remainingBattery;
+      let batteryHealth = Number(formValue.saudeBateria);
 
-      // Verifique se devemos usar a autonomia personalizada
-      const batteryCapacity = (Number(formValue.selectedVehicle.userVehicle.batteryCapacity) * 3.6) * (batteryHealth/100); // kWh para MJ
-      const consumptionEnergetic = Number(formValue.selectedVehicle.userVehicle.consumptionEnergetic); // MJ/km
-      for (const step of this.data.stepsArray) {
-        const distance = step.distance; // km
-      
-        // Cálculo da autonomia em km com base na capacidade da bateria e no consumo energético
-        const calculatedAutonomy = batteryCapacity / consumptionEnergetic; // Autonomia em km
-      
-        // Cálculo da porcentagem de consumo da bateria
-        const batteryConsumptionPercentage = (distance / calculatedAutonomy) * 100; 
-        batteryPercentageAfterTrip -= batteryConsumptionPercentage;
-        
-        console.log(batteryPercentageAfterTrip);
-      
-        if (batteryPercentageAfterTrip <= 0) {
-          batteryPercentageAfterTrip = 0;
-          this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
-          return; // Para a função se a bateria for insuficiente
-        }
+      // Chama o serviço para calcular o status da bateria
+      const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
+        formValue.selectedVehicle,
+        remainingBattery,
+        batteryHealth,
+        this.data.stepsArray
+      );
+
+      if (!canCompleteTrip) {
+        this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro
+        return;
       }
 
-      // Alerta sobre a porcentagem de bateria restante
       if (batteryPercentageAfterTrip < 10) {
-        Swal.fire({
-          title: 'Aviso de Bateria Baixa',
-          text: `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Continue',
-          cancelButtonText: 'Cancelar',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Se o usuário continuar, fecha o modal com os dados
+         this.alertasService.showWarning(
+        'Aviso de Bateria Baixa',
+        `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`
+      ).then((result) => {
+          if (result) {
             this.dialogRef.close({
               canCompleteTrip: true,
               batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
               selectedVehicle: formValue.selectedVehicle
             });
           } else {
-            // Se o usuário cancelar, fecha o modal
             this.dialogRef.close({
               canCompleteTrip: false,
               batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
@@ -186,13 +165,10 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
           }
         });
       } else {
-        // Se a bateria for suficiente, exibe apenas a porcentagem final
-        Swal.fire({
-          title: 'Status da Bateria',
-          text: `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`,
-          icon: 'info',
-          confirmButtonText: 'OK'
-        }).then(() => {
+        this.alertasService.showInfo(
+          'Status da Bateria',
+          `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
+        ).then(() => {
           this.dialogRef.close({
             canCompleteTrip: true,
             batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
@@ -208,19 +184,14 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
 
 
   showInsufficientBatteryMessage() {
-    Swal.fire({
-      title: 'Erro!',
-      text: 'A viagem não pode ser realizada. Bateria insuficiente.',
-      icon: 'error',
-      confirmButtonText: 'Fechar'
-    });
+
   }
 
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
         faqs: [
-          // FAQs aqui
+
         ]
       },
     });
