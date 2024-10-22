@@ -375,71 +375,79 @@ export class MapStationsComponent implements AfterViewInit {
     const dialogRef = this.dialog.open(ModalSelectAddressComponent, {
       width: '480px',
       height: '530px',
-      data: {
-        // Você pode passar dados para o modal aqui, se necessário
-      },
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log(result);
-        this.geocodeAddress(result).then(geocodedData => {
-          this.currentPlace = {
-            geometry: {
-              location: new google.maps.LatLng(geocodedData.lat, geocodedData.lng),
-            },
-            name: geocodedData.address,
-          };
-          
-          // Chama o método para calcular a distância da rota
-          if (this.userLocation && this.currentPlace.geometry && this.currentPlace.geometry.location) {
-            this.calculateRouteDistance(this.userLocation, this.currentPlace.geometry.location)
-              .then(() => {
-                // Abre o modal de forma após calcular a distância
-                const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
-                  width: '480px',
-                  height: '530px',
-                  data: {
-                    stepsArray: this.stepsArray, // Passando as informações de distância
-                    place: this.currentPlace // Passando informações da estação atual, se necessário
-                  },
-                });
-  
-                // Lógica após o fechamento do modal de bateria
-                chargingStationDialogRef.afterClosed().subscribe(result => {
-                  if (result) {
-                    console.log('Dados recebidos do modal de bateria:', result);
-                    // Inicie a rota no Google Maps
-                    const destination = this.currentPlace?.geometry?.location;
-                    this.isRouteActive = true;
-                    // Configure o DirectionsRenderer para não exibir os marcadores padrão
-                    this.directionsRenderer.setOptions({
-                      suppressMarkers: true, // Suprime os marcadores padrão
-                      polylineOptions: {
-                        strokeColor: '#19B6DD', // Azul claro para a linha da rota
-                      },
-                    });
-  
-                    // Verifique se o destino não é undefined antes de chamar initiateRoute
-                    if (destination) {
-                      this.initiateRoute(destination); // Passa apenas o local de destino
-                    } else {
-                      console.error('Localização do destino não disponível.');
-                    }
-                  } else {
-                  }
-                });
-  
-              })
-              .catch(error => {
-                console.error('Erro ao calcular a distância da rota:', error);
-              });
-          }
-        }).catch(error => {
-          console.error('Erro ao geocodificar o endereço:', error);
-        });
+        this.handleAddressSelection(result);
       }
     });
+  }
+  
+  private handleAddressSelection(address: DataAddressDetails) {
+    console.log(address);
+    this.geocodeAddress(address)
+      .then(geocodedData => {
+        this.setCurrentPlace(geocodedData);
+        this.calculateDistanceToCurrentPlace();
+      })
+      .catch(error => {
+        console.error('Erro ao geocodificar o endereço:', error);
+      });
+  }
+  
+  private setCurrentPlace(geocodedData: { address: string; lat: number; lng: number }) {
+    this.currentPlace = {
+      geometry: {
+        location: new google.maps.LatLng(geocodedData.lat, geocodedData.lng),
+      },
+      name: geocodedData.address,
+    };
+  }
+  
+  private calculateDistanceToCurrentPlace() {
+    if (this.userLocation && this.currentPlace!.geometry && this.currentPlace!.geometry.location) {
+      this.calculateRouteDistance(this.userLocation, this.currentPlace!.geometry.location)
+        .then(() => this.openVehicleBatteryModal())
+        .catch(error => {
+          console.error('Erro ao calcular a distância da rota:', error);
+        });
+    }
+  }
+  
+  private openVehicleBatteryModal() {
+    const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
+      width: '480px',
+      height: '530px',
+      data: {
+        stepsArray: this.stepsArray, // Passando as informações de distância
+        place: this.currentPlace // Passando informações da estação atual, se necessário
+      },
+    });
+  
+    chargingStationDialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.handleVehicleBatteryModalClose();
+      }
+    });
+  }
+  
+  private handleVehicleBatteryModalClose() {
+    const destination = this.currentPlace?.geometry?.location;
+    this.isRouteActive = true;
+  
+    this.directionsRenderer.setOptions({
+      suppressMarkers: true,
+      polylineOptions: {
+        strokeColor: '#19B6DD',
+      },
+    });
+  
+    if (destination) {
+      this.initiateRoute(destination);
+    } else {
+      console.error('Localização do destino não disponível.');
+    }
   }
   
   
