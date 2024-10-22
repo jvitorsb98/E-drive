@@ -3,7 +3,8 @@
     <h1 class="text-white">Mapa</h1>
   </div>
 </div>
-<button (click)="calculateReturnHomeRoute()" class="return-home-btn">
+<button *ngIf="!isRouteActive && !isModalOpen && !isAddressOpen" 
+(click)="openSelectAddressModal()" class="return-home-btn">
   Retorno à Residência
 </button>
 <!-- Container do Mapa -->

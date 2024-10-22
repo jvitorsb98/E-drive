@@ -26,6 +26,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
+  isStation: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,

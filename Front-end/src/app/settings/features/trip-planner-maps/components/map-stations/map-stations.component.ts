@@ -8,6 +8,7 @@ import { Step } from '../../../../core/models/step';
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
 import { DataAddressDetails } from '../../../../core/models/inter-Address';
 import { LocationService } from '../../../../core/services/location/location.service';
+import { ModalSelectAddressComponent } from '../modal-select-address/modal-select-address.component';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
@@ -45,7 +46,7 @@ export class MapStationsComponent implements AfterViewInit {
   currentPlace: google.maps.places.PlaceResult | null = null;
   openNow: any = false; // Status de abertura da estação
   isRouteActive = false; // Flag para verificar se a rota está ativa
-
+  isAddressOpen = false;;
   isModalOpen = false; // Estado do modal principal
   isDetailsModalOpen = false; // Estado do modal de detalhes
   modalTitle = ''; // Título do modal principal
@@ -58,7 +59,6 @@ export class MapStationsComponent implements AfterViewInit {
   stepsArray: Array<Step> = [];
   directionsService!: google.maps.DirectionsService;
   directionsRenderer!: google.maps.DirectionsRenderer;
-  addresses: DataAddressDetails[] = []; // Lista para armazenar os endereços
   addressesWithCoordinates: { address: string; lat: number; lng: number }[] = []; // Array para armazenar endereços com coordenadas
 
 
@@ -145,7 +145,6 @@ export class MapStationsComponent implements AfterViewInit {
     };
 
     this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
-    this.getAllAddresses();
 
 
     // Inicializa os serviços de direções
@@ -204,6 +203,7 @@ export class MapStationsComponent implements AfterViewInit {
   cancelRoute() {
     this.directionsRenderer.setMap(null); // Remove a rota do mapa
     this.isRouteActive = false; // Desativa a rota
+    this.isAddressOpen = false;
     this.stepsArray.splice(0, this.stepsArray.length);
     this.cdr.detectChanges(); // Força a verificação de mudanças
 }
@@ -433,46 +433,25 @@ export class MapStationsComponent implements AfterViewInit {
    * @param destination Localização da estação de carregamento.
    */
  
-  calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng) {
-    this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
-      .then(({ steps, totalDistance }) => {
-        this.stepsArray = steps; // Atualiza o array de passos
-        this.modalDistance = totalDistance; // Exibe a distância total
-        this.cdr.detectChanges(); // Atualiza a exibição
-      })
-      .catch(error => {
-        this.modalDistance = "Erro ao calcular a distância.";
-        console.error(error);
-        this.cdr.detectChanges();
-      });
-  }
-
-  getAllAddresses() {
-    this.addressService.getAll().subscribe({
-      next: (response) => {
-        this.addresses = response.content;
-        console.log('Endereços do usuário:', this.addresses); // Para verificar os endereços
-        this.getCoordinatesForAddresses(this.addresses); // Chama o método para geocodificar endereços
-      },
-      error: (error) => {
-        console.error('Erro ao buscar endereços:', error);
-      }
+  calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
+        .then(({ steps, totalDistance }) => {
+          this.stepsArray = steps; // Atualiza o array de passos
+          this.modalDistance = totalDistance; // Exibe a distância total
+          this.cdr.detectChanges(); // Atualiza a exibição
+          resolve(); // Resolve a promise ao final da execução
+        })
+        .catch(error => {
+          this.modalDistance = "Erro ao calcular a distância.";
+          console.error(error);
+          this.cdr.detectChanges();
+          reject(error); // Rejeita a promise em caso de erro
+        });
     });
   }
 
-  getCoordinatesForAddresses(addresses: DataAddressDetails[]) {
-    const promises = addresses.map(address => {
-      return this.geocodeAddress(address); // Chama a função que geocodifica cada endereço
-    });
-    Promise.all(promises)
-      .then(results => {
-        this.addressesWithCoordinates = results; // Armazena os resultados no array
-        console.log('Endereços com coordenadas:', this.addressesWithCoordinates);
-      })
-      .catch(error => {
-        console.error('Erro ao geocodificar endereços:', error);
-      });
-  }
+
 
  
   geocodeAddress(address: DataAddressDetails): Promise<{ address: string; lat: number; lng: number }> {
@@ -483,7 +462,6 @@ export class MapStationsComponent implements AfterViewInit {
       this.geocodingService.geocode(fullAddress).subscribe(
         (response) => {
           // Log detalhado da resposta
-          console.log('Resposta do serviço de geocodificação:', response);
   
           if (response && response.results && response.results.length > 0) {
             const location = response.results[0].geometry.location;
@@ -536,6 +514,80 @@ export class MapStationsComponent implements AfterViewInit {
       }
     });
   }
+  
+
+  openSelectAddressModal() {
+    this.isAddressOpen = true;
+    const dialogRef = this.dialog.open(ModalSelectAddressComponent, {
+      width: '480px',
+      height: '530px',
+      data: {
+        // Você pode passar dados para o modal aqui, se necessário
+      },
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log(result);
+        this.geocodeAddress(result).then(geocodedData => {
+          this.currentPlace = {
+            geometry: {
+              location: new google.maps.LatLng(geocodedData.lat, geocodedData.lng),
+            },
+            name: geocodedData.address,
+          };
+          
+          // Chama o método para calcular a distância da rota
+          if (this.userLocation && this.currentPlace.geometry && this.currentPlace.geometry.location) {
+            this.calculateRouteDistance(this.userLocation, this.currentPlace.geometry.location)
+              .then(() => {
+                // Abre o modal de forma após calcular a distância
+                const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
+                  width: '480px',
+                  height: '530px',
+                  data: {
+                    stepsArray: this.stepsArray, // Passando as informações de distância
+                    place: this.currentPlace // Passando informações da estação atual, se necessário
+                  },
+                });
+  
+                // Lógica após o fechamento do modal de bateria
+                chargingStationDialogRef.afterClosed().subscribe(result => {
+                  if (result) {
+                    console.log('Dados recebidos do modal de bateria:', result);
+                    // Inicie a rota no Google Maps
+                    const destination = this.currentPlace?.geometry?.location;
+                    this.isRouteActive = true;
+                    // Configure o DirectionsRenderer para não exibir os marcadores padrão
+                    this.directionsRenderer.setOptions({
+                      suppressMarkers: true, // Suprime os marcadores padrão
+                      polylineOptions: {
+                        strokeColor: '#19B6DD', // Azul claro para a linha da rota
+                      },
+                    });
+  
+                    // Verifique se o destino não é undefined antes de chamar initiateRoute
+                    if (destination) {
+                      this.initiateRoute(destination); // Passa apenas o local de destino
+                    } else {
+                      console.error('Localização do destino não disponível.');
+                    }
+                  } else {
+                  }
+                });
+  
+              })
+              .catch(error => {
+                console.error('Erro ao calcular a distância da rota:', error);
+              });
+          }
+        }).catch(error => {
+          console.error('Erro ao geocodificar o endereço:', error);
+        });
+      }
+    });
+  }
+  
   
 
 }
