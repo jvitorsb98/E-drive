@@ -39,6 +39,15 @@ export class ListMyAddressesComponent implements OnInit {
   dataSource = new MatTableDataSource<DataAddressDetails>(); // Fonte de dados para a tabela
   dataAddressDetails: DataAddressDetails[] = []; // Lista de endereços
 
+  // config de paginacao e ordenacao da tabela
+  total: number = 0; // Total de enderecos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
+  isFilterActive: boolean = false; // Indica se o filtro está ativo
+  filteredData: DataAddressDetails[] = []; // Dados filtrados
+  searchKey: any; // Chave de busca para filtro
+
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação da tabela
   @ViewChild(MatSort) sort!: MatSort; // Ordenação da tabela
 
@@ -51,7 +60,7 @@ export class ListMyAddressesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.loadAddresses(); // Carrega os endereços ao iniciar o componente
+    this.getList(this.currentPage, this.pageSize); // Carrega os endereços ao iniciar o componente
   }
 
   ngAfterViewInit() {
@@ -61,23 +70,38 @@ export class ListMyAddressesComponent implements OnInit {
   }
 
   // Carrega a lista de endereços do serviço
-  loadAddresses() {
-    this.addressService.getAll().subscribe({
-      next: (response: PaginatedResponse<DataAddressDetails>) => {
-        // Extrai o array de endereços do campo 'content'
-        const addressList = response.content;
+  getList(pageIndex: number, pageSize: number) {
+    if (this.isFilterActive) {
+      this.dataSource.data = this.filteredData;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    } else {
+      this.addressService.listAll(pageIndex, pageSize).subscribe({
+        next: (response: PaginatedResponse<DataAddressDetails>) => {
+          // Extrai o array de endereços do campo 'content'
+           this.dataAddressDetails = response.content;
 
-        if (Array.isArray(addressList)) {
-          this.dataSource.data = addressList;
-        } else {
-          this.alertasService.showError('Erro ao carregar endereços', 'Ocorreu um erro ao carregar os endereços.');
+          if (Array.isArray(this.dataAddressDetails)) {
+            this.dataSource = new MatTableDataSource(this.dataAddressDetails);
+            this.dataSource.sort = this.sort;
+            this.total = response.totalElements;
+          } else {
+            this.alertasService.showError('Erro ao carregar endereços', 'Ocorreu um erro ao carregar os endereços.');
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.alertasService.showError('Erro ao carregar endereços', error.error.message || 'Ocorreu um erro ao carregar os endereços.');
         }
-      },
-      error: (error: HttpErrorResponse) => {
-        this.alertasService.showError('Erro ao carregar endereços', error.error.message || 'Ocorreu um erro ao carregar os endereços.');
-      }
-    });
+      });
+    }
   }
+
+  onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.getList(this.currentPage, this.pageSize);
+  }
+
 
   // Navega para o formulário de adição de endereço
   addAddress() {
@@ -87,17 +111,52 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Aplica filtro na tabela
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    try {
+      this.isFilterActive = true;
+      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.searchKey = event;
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+
+      this.addressService.listAll(0, this.total)
+        .pipe(
+          catchError((error) => {
+            this.alertasService.showError("Erro !!", error.message);
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<DataAddressDetails> | never[]) => {
+          if (Array.isArray(response)) {
+            // Verifica se o retorno é um array vazio
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            this.filteredData = response.content.filter(anddres =>
+              anddres.city.toLowerCase().includes(filterValue) ||
+              anddres.street.toLowerCase().includes(filterValue)
+            );
+
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+    } catch (error: any) {
+      this.alertasService.showError("Erro !!", error.message);
     }
   }
 
   // Deleta um endereço e atualiza a lista
   deleteAddress(address: DataAddressDetails) {
-    this.alertasService.showWarning('Deletar endereço', 'Tem certeza que deseja deletar este endereço?', 'Sim', 'Não' ).then((result) => {
+    this.alertasService.showWarning('Deletar endereço', 'Tem certeza que deseja deletar este endereço?', 'Sim', 'Não').then((result) => {
       if (result) {
         this.addressService.disable(address.id).pipe(
           catchError(() => {
@@ -106,7 +165,7 @@ export class ListMyAddressesComponent implements OnInit {
           })
         ).subscribe(() => {
           this.alertasService.showSuccess('Endereço deletado', 'O endereço foi deletado com sucesso.');
-          this.loadAddresses();
+          this.searchKey ? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
         });
       }
     });
@@ -128,7 +187,7 @@ export class ListMyAddressesComponent implements OnInit {
       data: {
         actionTitle: 'Cadastrar Endereço'
       }
-    }).afterClosed().subscribe(() => this.loadAddresses()); // Atualiza a lista de endereços após o fechamento do modal
+    }).afterClosed().subscribe(() => this.getList(this.currentPage, this.pageSize)); // Atualiza a lista de endereços após o fechamento do modal
   }
 
   // Abre o modal para editar um endereço existente
@@ -141,7 +200,8 @@ export class ListMyAddressesComponent implements OnInit {
         actionTitle: 'Editar Endereço'
       }
     }).afterClosed().subscribe(() => {
-      this.loadAddresses(); // Atualiza a lista de endereços após o fechamento do modal
+      this.searchKey ? this.applyFilter(this.searchKey):
+      this.getList(this.currentPage, this.pageSize); // Atualiza a lista de endereços após o fechamento do modal
     });
   }
 

@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { DataAddressDetails, IAddressRequest, IAddressResponse } from '../../models/inter-Address';
@@ -49,16 +49,17 @@ export class AddressService {
     return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.addressUrl}/user`);
   }
 
-  listAllAddresses(): Observable<IAddressResponse[]> {
-    Todo: // Método não esta cendo utilizado até o momento
-    return this.http.get<IAddressResponse[]>(this.addressUrl);
+  listAll(page: number, size: number): Observable<PaginatedResponse<DataAddressDetails>> {
+    const params = new HttpParams()
+    .set('page', page.toString())
+    .set('size', size.toString())
+    .set('sort', 'city');
+    return this.http.get<PaginatedResponse<DataAddressDetails>>(`${this.addressUrl}/user`, { params: params });
   }
 
   // Função para atualizar um endereço
   update(id: number, addressData: IAddressRequest): Observable<DataAddressDetails> {
-    return this.http.put<DataAddressDetails>(`${this.addressUrl}/${id}`, addressData).pipe(
-      catchError(this.handleError)
-    );
+    return this.http.put<DataAddressDetails>(`${this.addressUrl}/${id}`, addressData);
   }
 
   // Função para desabilitar um endereço

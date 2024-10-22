@@ -94,7 +94,8 @@
 <!-- Container para o paginador e botão para adicionar nova marca -->
 <div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
 	<!-- Paginador para navegação entre páginas -->
-	<mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10]" aria-label="Selecione veículos por página"></mat-paginator>
+	<mat-paginator class="shadow-sn" [length]="total" [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)" aria-label="Selecione veículos por página"></mat-paginator>
 	<!-- Botão para abrir modal de adição de nova marca -->
 	<app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddAddress()" text="Novo Endereço"></app-ui-button>
 </div>
