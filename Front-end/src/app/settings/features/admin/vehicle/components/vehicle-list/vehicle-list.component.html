@@ -11,7 +11,7 @@
   </div>
 </div>
 
-<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Campo de busca para filtrar as versões -->
   <div class="custom-filter">
     <mat-form-field class="d-flex w-100">
@@ -23,11 +23,10 @@
 </div>
 
 <!-- Contêiner da tabela -->
-<div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12" id="table-container">
   <div class="row">
     <div class="container-table">
       <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
-
         <!-- Coluna para o ícone do veículo -->
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -46,22 +45,57 @@
         </ng-container>
 
         <!-- Coluna para o motor do veículo -->
-        <ng-container matColumnDef="motor">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Motor</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle"><strong>{{vehicle.motor}}</strong></td>
+        <ng-container matColumnDef="mark">
+          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+            <strong>Marca</strong>
+          </th>
+          <td class="td-table" mat-cell *matCellDef="let vehicle">
+            <strong>
+              <span *ngIf="vehicle.model.brand.name.length > 10; else noEllipsisBrand">
+                {{ vehicle.model.brand.name | slice: 0:10 }}...
+              </span>
+              <ng-template #noEllipsisBrand>
+                {{ vehicle.model.brand.name }}
+              </ng-template>
+            </strong>
+          </td>
+        </ng-container>
+
+        <!-- Coluna para o modelo do veículo -->
+        <ng-container matColumnDef="model">
+          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+            <strong>Modelo</strong>
+          </th>
+          <td class="td-table" mat-cell *matCellDef="let vehicle">
+            <strong>
+              <span *ngIf="vehicle.model.name.length > 10; else noEllipsisModel">
+                {{ vehicle.model.name | slice: 0:10 }}...
+              </span>
+              <ng-template #noEllipsisModel>
+                {{ vehicle.model.name }}
+              </ng-template>
+            </strong>
+          </td>
         </ng-container>
 
         <!-- Coluna para a versão do veículo -->
         <ng-container matColumnDef="version">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Versão</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle"><strong>{{vehicle.version}}</strong></td>
+          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+            <strong>Versão</strong>
+          </th>
+          <td class="td-table" mat-cell *matCellDef="let vehicle">
+            <strong>
+              <span *ngIf="vehicle.version.length > 10; else noEllipsisVersion">
+                {{ vehicle.version | slice: 0:10 }}...
+              </span>
+              <ng-template #noEllipsisVersion>
+                {{ vehicle.version }}
+              </ng-template>
+            </strong>
+          </td>
         </ng-container>
 
-        <!-- Coluna para o ano do veículo -->
-        <ng-container matColumnDef="year">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ano</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle"><strong>{{vehicle.year}}</strong></td>
-        </ng-container>
+
 
         <!-- Coluna para o status de ativação do veículo -->
         <ng-container matColumnDef="activated">
@@ -100,10 +134,12 @@
 </div>
 
 <!-- Container para o paginador e botão de adicionar nova versão de veículo -->
-<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Paginador para navegação entre páginas -->
-  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
+  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
     aria-label="Selecione veículos por página"></mat-paginator>
-    <!-- Botão para abrir modal de adição de novo veículo-->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()" text="Nova Versão de Veiculo"></app-ui-button>
+  <!-- Botão para abrir modal de adição de novo veículo-->
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()"
+    text="Nova Versão de Veiculo"></app-ui-button>
 </div>

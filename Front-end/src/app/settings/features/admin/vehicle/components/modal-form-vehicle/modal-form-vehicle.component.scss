@@ -6,6 +6,14 @@
   margin-bottom: 20px;
 }
 
+.titulo {
+  font-size: 1rem;
+  color: #19B6DD;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+}
+
 html,
 body {
   height: 100%;
@@ -26,11 +34,26 @@ body {
   color: #b5abab;
 }
 
-.mat-hint-text {
+.mat-error-text {
   font-size: 10px;
   line-height: 1.5;
   text-align: left;
-  margin-left: -14px;
+  margin-left: -15px;
+}
+
+.mat-label-text {
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 0px;
+}
+
+.mat-error-text-casa-decimal {
+  margin-top: -20px;
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 2px;
 }
 
 .buttons-container {
@@ -41,14 +64,6 @@ body {
 
 .hidden {
   visibility: hidden;
-}
-
-.titulo {
-  font-size: 20px;
-  color: #19B6DD;
-  margin: 0;
-  text-align: center;
-  flex-grow: 1;
 }
 
 .icon {
@@ -62,31 +77,20 @@ body {
   }
 }
 
-.mat-error-text {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: -15px;
+.autocomplete-icon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #19B6DD;
+  pointer-events: none;
+  margin-right: 5px;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .custom-select {
   margin-bottom: 0;
-}
-
-.mat-error-no-brand {
-  font-size: 12px;
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-  display: block;
-}
-
-
-.mat-error-text-minlength {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: 2px;
 }
 
 .filtro {
@@ -114,18 +118,6 @@ body {
   z-index: 1000;
 }
 
-.autocomplete-icon {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #19B6DD;
-  pointer-events: none;
-  margin-right: 5px;
-  pointer-events: auto;
-  cursor: pointer;
-}
-
 .custom-icon {
   color: #19B6DD;
   font-size: 24px;
@@ -136,19 +128,23 @@ body {
   position: relative;
 }
 
-.custom-suffix {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: #19B6DD;
-  pointer-events: none;
-  white-space: nowrap;
+@media(max-width: 500px) {
+  .mat-label-text {
+    font-size: 11px;
+  }
 }
 
 @media (max-width: 350px) {
   .mat-autocomplete-panel {
     top: calc(100% + 4px);
+  }
+
+  .mat-label-text {
+    font-size: 10px;
+  }
+
+  .custom-icon {
+    font-size: 16px;
+    margin-right: -8px;
   }
 }
