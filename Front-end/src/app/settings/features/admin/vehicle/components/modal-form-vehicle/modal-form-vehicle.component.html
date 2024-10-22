@@ -21,11 +21,16 @@
           <div class="col-12 col-md-12 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Marca</mat-label>
-              <mat-select formControlName="brand">
-                <mat-option *ngFor="let brand of brands" [value]="brand.name">
+              <input #brandInput type="text" matInput formControlName="brand"
+                [value]="vehicleForm.get('brand')?.value?.name || ''" [matAutocomplete]="autoBrand"
+                aria-describedby="Help">
+              <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
+                <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
                   {{ brand.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('brand', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('brand')?.hasError('required') && vehicleForm.get('brand')?.touched">
                 <strong>A marca</strong> é obrigatória.
@@ -42,11 +47,15 @@
           <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Modelo</mat-label>
-              <mat-select formControlName="model">
-                <mat-option *ngFor="let model of models" [value]="model.name">
+              <input #modelInput type="text" matInput formControlName="model"
+                [value]="vehicleForm.get('model')?.value?.name || ''" [matAutocomplete]="autoModel">
+              <mat-autocomplete #autoModel="matAutocomplete" (optionSelected)="onModelSelected($event)">
+                <mat-option *ngFor="let model of filteredModels | async" [value]="model">
                   {{ model.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('model', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('model')?.hasError('required') && vehicleForm.get('model')?.touched">
                 <strong>O modelo</strong> é obrigatório.

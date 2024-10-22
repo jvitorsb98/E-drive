@@ -1,8 +1,8 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of, startWith } from 'rxjs';
 import Swal from 'sweetalert2';
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component';
 
@@ -23,7 +23,8 @@ import { PropusionService } from '../../../../../core/services/propusion/propusi
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
 import { BrandService } from '../../../../../core/services/brand/brand.service';
-import { futureYearValidator } from '../../../../../shared/validators/future-year-validator';import { genericTextValidator } from '../../../../../shared/validators/generic-text-validator';
+import { futureYearValidator } from '../../../../../shared/validators/future-year-validator'; import { genericTextValidator } from '../../../../../shared/validators/generic-text-validator';
+import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
 
 
 /**
@@ -67,7 +68,10 @@ import { futureYearValidator } from '../../../../../shared/validators/future-yea
   styleUrls: ['./modal-form-vehicle.component.scss']
 })
 export class ModalFormVehicleComponent {
-  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
+  // Referência para o painel de autocomplete
+  @ViewChild('brandInput', { read: MatAutocompleteTrigger }) autoBrandTrigger!: MatAutocompleteTrigger;
+  @ViewChild('modelInput', { read: MatAutocompleteTrigger }) autoModelTrigger!: MatAutocompleteTrigger;
+  @ViewChild('versionInput', { read: MatAutocompleteTrigger }) autoVersionTrigger!: MatAutocompleteTrigger;
 
   vehicleForm!: FormGroup; // Formulário reativo
   editVehicle = false; // Indica se o formulário está em modo de edição
@@ -75,30 +79,32 @@ export class ModalFormVehicleComponent {
   noBrandFound = false; // Indica se nenhuma marca foi encontrada
 
   brands: { name: string; id: number }[] = []; // Lista de marcas
-  filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de marcas
   categories: { name: string; id: number }[] = []; // Lista de categorias
   models: { name: string; id: number }[] = []; // Lista de modelos
   types: { name: string; id: number }[] = []; // Lista de tipos
   propulsions: { name: string; id: number }[] = []; // Lista de propulsões
 
-  filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
+  filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de marcas
   filteredModels: Observable<{ name: string }[]> = of([]); // Lista filtrada de modelos
+  filteredVersions: Observable<Vehicle[]> = of([]); // Now filtering vehicles based on version name
+  filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
+
   vehicles: Vehicle[] = []; // Lista de veículos
 
-   /**
-   * Construtor do componente ModalFormVehicleComponent
-   *
-   * @param vehicleService - Serviço responsável por operações relacionadas a veículos
-   * @param categoryService - Serviço responsável por operações relacionadas a categorias
-   * @param brandService - Serviço responsável por operações relacionadas a marcas
-   * @param modelService - Serviço responsável por operações relacionadas a modelos
-   * @param propulsionService - Serviço responsável por operações relacionadas a propulsões
-   * @param vehicleTypeService - Serviço responsável por operações relacionadas a tipos de veículos
-   * @param formBuilder - Utilizado para criar formulários reativos
-   * @param dialog - Serviço para abertura de diálogos modais
-   * @param dialogRef - Referência ao diálogo aberto para manipulação de eventos
-   * @param data - Dados injetados no diálogo, contendo informações do veículo
-   */
+  /**
+  * Construtor do componente ModalFormVehicleComponent
+  *
+  * @param vehicleService - Serviço responsável por operações relacionadas a veículos
+  * @param categoryService - Serviço responsável por operações relacionadas a categorias
+  * @param brandService - Serviço responsável por operações relacionadas a marcas
+  * @param modelService - Serviço responsável por operações relacionadas a modelos
+  * @param propulsionService - Serviço responsável por operações relacionadas a propulsões
+  * @param vehicleTypeService - Serviço responsável por operações relacionadas a tipos de veículos
+  * @param formBuilder - Utilizado para criar formulários reativos
+  * @param dialog - Serviço para abertura de diálogos modais
+  * @param dialogRef - Referência ao diálogo aberto para manipulação de eventos
+  * @param data - Dados injetados no diálogo, contendo informações do veículo
+  */
   constructor(
     private vehicleService: VehicleService,
     private categoryService: CategoryService,
@@ -106,6 +112,7 @@ export class ModalFormVehicleComponent {
     private modelService: ModelService,
     private propulsionService: PropusionService,
     private vehicleTypeService: TypeVehicleService,
+    private userDataService: UserDataService,
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
@@ -123,6 +130,7 @@ export class ModalFormVehicleComponent {
     this.loadCategories();
     this.loadTypes();
     this.buildForm();
+    this.setupAutocomplete();
     this.loadPropulsions();
     if (this.editVehicle) {
       this.fillForm();
@@ -195,25 +203,28 @@ export class ModalFormVehicleComponent {
   }
 
   initializeFieldObservers(): void {
-    this.formutils.observeFieldChanges(this.vehicleForm,'brand', 'model');
-    this.formutils.observeFieldChanges(this.vehicleForm,'model', 'type');
-    this.formutils.observeFieldChanges(this.vehicleForm,'type', 'category');
-    this.formutils.observeFieldChanges(this.vehicleForm,'category', 'propulsion');
-    this.formutils.observeFieldChanges(this.vehicleForm,'propulsion', 'motor');
-    this.formutils.observeFieldChanges(this.vehicleForm,'motor', 'version');
-    this.formutils.observeFieldChanges(this.vehicleForm,'version', 'year');
-    this.formutils.observeFieldChanges(this.vehicleForm,'year', 'mileagePerLiterRoad');
-    this.formutils.observeFieldChanges(this.vehicleForm,'mileagePerLiterRoad', 'mileagePerLiterCity');
-    this.formutils.observeFieldChanges(this.vehicleForm,'mileagePerLiterCity', 'consumptionEnergetic');
-    this.formutils.observeFieldChanges(this.vehicleForm,'consumptionEnergetic', 'autonomyElectricMode');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'brand', 'model');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'model', 'type');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'type', 'category');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'category', 'propulsion');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'propulsion', 'motor');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'motor', 'version');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'version', 'year');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'year', 'mileagePerLiterRoad');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'mileagePerLiterRoad', 'mileagePerLiterCity');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'mileagePerLiterCity', 'consumptionEnergetic');
+    this.formutils.observeFieldChanges(this.vehicleForm, 'consumptionEnergetic', 'autonomyElectricMode');
   }
 
-  loadBrands() {
+  private loadBrands() {
     this.brandService.getAll().subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
+        this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
-      error: (error) => this.handleError('brands', error),
+      error: (error) => {
+        console.error('Erro ao carregar as marcas', error);
+      }
     });
   }
 
@@ -221,12 +232,26 @@ export class ModalFormVehicleComponent {
    * Carrega a lista de modelos disponíveis de uma marca selecionada.
    * @param idBrand - Identificador da marca selecionada
    */
-  private loadModels(idBrand: number): void {
-    this.modelService.getModelsByBrandId(idBrand).subscribe({
+  loadModels(brandId: number) {
+    this.modelService.getModelsByBrandId(brandId).subscribe({
       next: (response: any) => {
-        this.models = response.content.map((model: Model) => ({ name: model.name, id: model.id }));
+        const models = response.content || [];
+        console.log('Models loaded:', response);
+
+        if (Array.isArray(models)) {
+          this.models = models.map(model => ({
+            name: this.userDataService.capitalizeWords(model.name),
+            id: model.id,
+            brandId: model.brand.id
+          }));
+          this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+        } else {
+          console.error('Expected an array but got:', models);
+        }
       },
-      error: (error) => this.handleError('models', error),
+      error: (error) => {
+        console.error('Erro ao carregar os modelos', error);
+      }
     });
   }
 
@@ -279,6 +304,37 @@ export class ModalFormVehicleComponent {
     }
   }
 
+  setupAutocomplete() {
+    this.filteredBrands = this.vehicleForm.get('brand')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.brands, filterValue);
+      })
+    );
+
+    this.filteredModels = this.vehicleForm.get('model')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.models, filterValue);
+      })
+    );
+
+    this.filteredVersions = this.vehicleForm.get('version')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value || '');
+        return this._filter(this.vehicles, filterValue, 'version');
+      })
+    );
+  }
+
+  private _filter<T extends { version?: string, name?: string }>(array: T[], value: any, field: 'version' | 'name' = 'name'): T[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    return array.filter(item => item[field]?.toLowerCase().includes(filterValue));
+  }
+
   /**
  * Envia o formulário após validação.
  *
@@ -300,7 +356,7 @@ export class ModalFormVehicleComponent {
       : this.vehicleService.register(vehicleData);
 
 
-      request$.subscribe({
+    request$.subscribe({
       next: (response) => {
         console.log('Response received:', response); // Aqui você pega o response no caso de sucesso
         this.showSuccessMessage(actionSucess);
@@ -368,6 +424,50 @@ export class ModalFormVehicleComponent {
     return this.propulsions.find(propulsion => propulsion.name === this.vehicleForm.get('propulsion')?.value)?.id;
   }
 
+  loadVehiclesByModel(modelId: number) {
+    this.vehicleService.getVehiclesByModel(modelId).subscribe({
+      next: (response: any) => {
+        const vehicles = response.content || [];
+
+        if (Array.isArray(vehicles)) {
+          this.vehicles = vehicles.map(vehicle => ({
+            ...vehicle,
+            version: this.userDataService.capitalizeWords(vehicle.version),
+          }));
+
+          this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
+        } else {
+          console.error('Expected an array but got:', vehicles);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar os veículos', error);
+      }
+    });
+  }
+
+  /**
+   * Manipula a seleção de uma marca no campo de autocomplete.
+   * @param event - Evento de seleção de marca
+   */
+  onBrandSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedBrand = event.option.value;
+    this.vehicleForm.get('brand')?.setValue(selectedBrand.name);
+
+    if (selectedBrand.id) {
+      this.loadModels(selectedBrand.id);
+    }
+  }
+
+  onModelSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedModel = event.option.value;
+    this.vehicleForm.get('model')?.setValue(selectedModel.name);
+
+    if (selectedModel.id) {
+      this.loadVehiclesByModel(selectedModel.id);
+    }
+  }
+
   /**
  * Exibe uma mensagem de sucesso após a operação.
  *
@@ -382,7 +482,7 @@ export class ModalFormVehicleComponent {
     this.dialogRef.close(true);
   }
 
-  private showErrorMessage(error:string,action: string): void {
+  private showErrorMessage(error: string, action: string): void {
     Swal.fire({
       title: 'Error!',
       icon: 'error',
@@ -402,6 +502,40 @@ export class ModalFormVehicleComponent {
       icon: 'error',
       text: `Failed to load ${context}. Please try again.`,
     });
+  }
+
+  // Alterna a abertura do painel de autocomplete
+  toggleAutocomplete(field: string, event: MouseEvent) {
+    event.stopPropagation();
+
+    let trigger: MatAutocompleteTrigger | undefined;
+
+    // Determine qual trigger usar baseado no campo
+    switch (field) {
+      case 'brand':
+        trigger = this.autoBrandTrigger;
+        break;
+      case 'model':
+        trigger = this.autoModelTrigger;
+        break;
+      case 'version':
+        trigger = this.autoVersionTrigger;
+        break;
+      default:
+        console.error('Campo não reconhecido:', field);
+        return;
+    }
+
+    // Verifica se o trigger é válido antes de chamar os métodos
+    if (trigger) {
+      if (trigger.panelOpen) {
+        trigger.closePanel();
+      } else {
+        trigger.openPanel();
+      }
+    } else {
+      console.error('Trigger não encontrado para o campo:', field);
+    }
   }
 
   /**

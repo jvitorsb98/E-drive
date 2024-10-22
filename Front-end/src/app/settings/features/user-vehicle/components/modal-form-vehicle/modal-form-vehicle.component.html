@@ -74,21 +74,20 @@
 					</mat-form-field>
 				</div>
 
-		<!-- Campo para capacidade da bateria -->
-		<div class="col-12" [ngClass]="{'hidden': !userVehicleForm.get('version')?.value}">
-			<mat-form-field class="custom-select w-100">
-				<mat-label>Capacidade da Bateria:</mat-label>
-				<input type="text" matInput formControlName="batteryCapacity" aria-describedby="Help">
-				<mat-icon matSuffix class="custom-icon">battery_full</mat-icon>
-				<mat-hint id="Help" class="mat-hint-text">Capacidade da bateria em <strong>KwH.</strong></mat-hint>
-				<mat-error *ngIf="userVehicleForm.get('batteryCapacity')?.hasError('pattern') && userVehicleForm.get('batteryCapacity')?.dirty">
-					<strong>Capacidade da Bateria:</strong> deve ser um número.
-				</mat-error>
+				<!-- Campo para capacidade da bateria -->
+				<div class="col-12" [ngClass]="{'hidden': !userVehicleForm.get('version')?.value}">
+					<mat-form-field class="custom-select w-100">
+						<mat-label>Capacidade da Bateria:</mat-label>
+						<input type="text" matInput formControlName="batteryCapacity" aria-describedby="Help">
+						<mat-icon matSuffix class="custom-icon">battery_full</mat-icon>
+						<mat-hint id="Help" class="mat-hint-text">Capacidade da bateria em <strong>KwH.</strong></mat-hint>
+						<mat-error
+							*ngIf="userVehicleForm.get('batteryCapacity')?.hasError('pattern') && userVehicleForm.get('batteryCapacity')?.dirty">
+							<strong>Capacidade da Bateria:</strong> deve ser um número.
+						</mat-error>
 
-			</mat-form-field>
-		</div>
-
-				
+					</mat-form-field>
+				</div>
 
 				<!-- Campos adicionais -->
 				<div class="col-12" [ngClass]="{'hidden': !userVehicleForm.get('version')?.value}">
@@ -170,18 +169,20 @@
 					</div>
 
 
-			<!-- Mensagem de alerta -->
-			<div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
-				Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Insira apenas os dados do manual, pois isso pode impactar os cálculos de rotas.
-			</div>
-			<!-- Mensagem de alerta quando a autonomia é gerada pela média -->
-			<div *ngIf="isAutonomyGeneratedByAverage" class="alert alert-warning mt-2">
-				O valor da autonomia foi gerado com base em médias estatísticas, e a capacidade da bateria foi criada automaticamente. 
-				Recomenda-se verificar seu manual e editar os valores corretos para garantir precisão nas informações.
-			</div>
+					<!-- Mensagem de alerta -->
+					<div *ngIf="isAutonomyDataMissing" class="alert alert-danger mt-2">
+						Nem todos os dados de autonomia foram fornecidos pelo <strong>INMETRO.</strong> Insira apenas os dados do
+						manual, pois isso pode impactar os cálculos de rotas.
+					</div>
+					<!-- Mensagem de alerta quando a autonomia é gerada pela média -->
+					<div *ngIf="isAutonomyGeneratedByAverage" class="alert alert-warning mt-2">
+						O valor da autonomia foi gerado com base em médias estatísticas, e a capacidade da bateria foi criada
+						automaticamente.
+						Recomenda-se verificar seu manual e editar os valores corretos para garantir precisão nas informações.
+					</div>
 
-											
-					  
+
+
 
 
 				</div>
