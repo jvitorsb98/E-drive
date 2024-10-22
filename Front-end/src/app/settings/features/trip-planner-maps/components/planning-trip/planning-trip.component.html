@@ -1,0 +1,25 @@
+<div class="top-bar d-flex justify-content-between container-fluid">
+  <div class="flex-grow-1 text-center">
+    <h1 class="text-white">Planejamento de Viagem</h1>
+  </div>
+</div>
+
+<!-- Contêiner para os inputs e botões sobre o mapa -->
+<div class="input-overlay">
+  <!-- Botão para escolher localização inicial como localização atual -->
+  <button (click)="useCurrentLocation()" class="use-location-btn">
+    Usar Localização Atual
+  </button>
+
+  <!-- Campo para seleção do local de partida -->
+  <input #startLocationInput id="startLocation" type="text" placeholder="Escolha o local de partida" />
+
+  <!-- Campo para seleção do local de destino -->
+  <input #endLocationInput id="endLocation" type="text" placeholder="Escolha o local de destino" />
+
+  <!-- Botão para traçar rota -->
+  <button (click)="planTrip()">Traçar Rota</button>
+</div>
+
+<!-- Container do Mapa -->
+<div #mapContainer id="map"></div>

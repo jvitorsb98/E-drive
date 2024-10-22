@@ -12,6 +12,7 @@ import { AngularMaterialModule } from '../../angular-material/angular-material.m
 import { MapStationsComponent } from './components/map-stations/map-stations.component';
 import { ModalFormVehicleBatteryComponent } from './components/modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 import { ModalSelectAddressComponent } from './components/modal-select-address/modal-select-address.component';
+import { PlanningTripComponent } from './components/planning-trip/planning-trip.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ModalSelectAddressComponent } from './components/modal-select-address/m
     MapStationsComponent,
     ModalFormVehicleBatteryComponent,
     ModalSelectAddressComponent,
+    PlanningTripComponent,
   ],
   imports: [
     CommonModule,             // Modulo comum
