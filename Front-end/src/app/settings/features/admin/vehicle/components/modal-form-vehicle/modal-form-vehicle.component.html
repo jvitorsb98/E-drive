@@ -147,15 +147,6 @@
                 *ngIf="vehicleForm.get('version')?.hasError('required') && vehicleForm.get('version')?.touched">
                 <strong>A versão</strong> é obrigatória.
               </mat-error>
-
-              <mat-error
-                *ngIf="vehicleForm.get('version')?.hasError('invalidLength') && vehicleForm.get('version')?.touched">
-                <strong>A versão</strong> deve ter entre 2 e 20 caracteres.
-              </mat-error>
-              <mat-error
-                *ngIf="vehicleForm.get('version')?.hasError('invalidFormat') && vehicleForm.get('version')?.touched">
-                <strong>A versão</strong> deve conter apenas letras, números e espaços.
-              </mat-error>
             </mat-form-field>
             <!-- Erro: Versão com tamanho inválido -->
             <div *ngIf="vehicleForm.get('version')?.hasError('invalidLength') && vehicleForm.get('version')?.dirty">
