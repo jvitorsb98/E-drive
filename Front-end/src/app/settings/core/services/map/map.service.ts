@@ -80,20 +80,6 @@ export class MapService {
     this.directionsRenderer.setMap(this.map); // Define o mapa no DirectionsRenderer
 
 
-    try {
-      const userLocation = await this.locationService.getUserLocation();
-      if (userLocation) {
-        this.map.setCenter(userLocation);
-        new google.maps.Marker({
-          position: userLocation,
-          map: this.map,
-          title: 'Sua Localização'
-        });
-      }
-    } catch (error) {
-      console.error('Não foi possível obter a localização do usuário', error);
-    }
-
     return this.map;
   }
 
@@ -113,5 +99,8 @@ export class MapService {
       document.head.appendChild(script);
     });
   }
+
+  
+  
   
 }

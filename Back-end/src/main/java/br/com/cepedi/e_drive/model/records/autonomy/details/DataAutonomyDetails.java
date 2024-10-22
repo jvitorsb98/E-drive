@@ -26,10 +26,7 @@ public record DataAutonomyDetails(
 
         BigDecimal consumptionEnergetic,
 
-        BigDecimal autonomyElectricMode,
-
-        BigDecimal batteryCapacity
-
+        BigDecimal autonomyElectricMode
 ) {
     /**
      * Construtor que cria uma instância de {@code DataAutonomyDetails} com base em um objeto {@link Autonomy}.
@@ -42,8 +39,7 @@ public record DataAutonomyDetails(
                 autonomy.getMileagePerLiterRoad(),
                 autonomy.getMileagePerLiterCity(),
                 autonomy.getConsumptionEnergetic(),
-                autonomy.getAutonomyElectricMode(),
-                autonomy.getBatteryCapacity()
+                autonomy.getAutonomyElectricMode()
         );
     }
 }

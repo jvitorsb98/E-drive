@@ -1,3 +1,4 @@
+import { MapService } from './../../../../core/services/map/map.service';
 import { GeocodingService } from './../../../../core/services/geocoding/geocoding.service';
 import { AddressService } from './../../../../core/services/Address/address.service';
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
@@ -66,6 +67,7 @@ export class MapStationsComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private tripPlannerMapsService: TripPlannerMapsService, 
     private geocodingService:GeocodingService,
+    private mapService:MapService,
     private locationService: LocationService,
     private dialog: MatDialog
   ) {
@@ -75,129 +77,25 @@ export class MapStationsComponent implements AfterViewInit {
  * Método chamado após a visualização do componente ser inicializada.
  * Carrega o script do Google Maps e inicializa o mapa.
  */
-  ngAfterViewInit() {
-    this.loadGoogleMapsScript()
-      .then(() => {
-        this.initMap();
-      })
-      .catch(error => console.error('Erro ao carregar o script do Google Maps', error));
-  }
+  async ngAfterViewInit() {
+    try {
+      await this.mapService.loadGoogleMapsScript();
+      this.map = await this.mapService.initMap(this.mapContainer);
+      this.userLocation = await this.locationService.getUserLocation();
+      if(this.userLocation){
+        this.map.setCenter(this.userLocation);
+      }
+      this.directionsRenderer = new google.maps.DirectionsRenderer();
+      this.directionsService = new google.maps.DirectionsService();
+      this.directionsRenderer.setMap(this.map);
 
-
-  /**
-   * Inicializa o mapa do Google Maps com opções específicas.
-   */
-  initMap() {
-    const mapOptions: google.maps.MapOptions = {
-      center: { lat: -21.780, lng: -47.534 }, // Coordenadas de exemplo
-      zoom: 15,
-      disableDefaultUI: true,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-      styles: [
-        {
-          "featureType": "administrative.country",
-          "elementType": "geometry.stroke",
-          "stylers": [
-            { "visibility": "on" },
-            { "color": "#444444" }
-          ]
-        },
-        {
-          "featureType": "all",
-          "elementType": "geometry",
-          "stylers": [
-            { "visibility": "on" },
-            { "lightness": 5 }
-          ]
-        },
-        {
-          "featureType": "water",
-          "elementType": "geometry",
-          "stylers": [
-            { "color": "#a4c8e1" }
-          ]
-        },
-        {
-          "featureType": "road",
-          "elementType": "geometry",
-          "stylers": [
-            { "color": "#D3D3D3" },
-            { "lightness": 0 }
-          ]
-        },
-        {
-          "featureType": "landscape",
-          "elementType": "geometry",
-          "stylers": [
-            { "lightness": 15 },
-            { "saturation": -10 }
-          ]
-        },
-        {
-          "featureType": "road",
-          "elementType": "geometry",
-          "stylers": [
-            { "lightness": 0 }
-          ]
-        }
-      ]
-    };
-
-    this.map = new google.maps.Map(this.mapContainer.nativeElement, mapOptions);
-
-
-    // Inicializa os serviços de direções
-    this.directionsService = new google.maps.DirectionsService();
-    this.directionsRenderer = new google.maps.DirectionsRenderer();
-    
-    // Define o mapa no DirectionsRenderer
-    this.directionsRenderer.setMap(this.map);
-
-    this.getUserLocation();
-    console.log("OI")
-    this.map.addListener('idle', () => this.searchNearbyChargingStations());
-  }
-
-  /**
-   * Obtém a localização do usuário e centra o mapa nessa localização.
-   * Busca estações de carregamento próximas após obter a localização.
-   */
-  getUserLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          this.userLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-          this.map.setCenter(this.userLocation);
-          this.searchNearbyChargingStations();
-        },
-        () => this.handleLocationError(true, this.map.getCenter()!)
-      );
-    } else {
-      this.handleLocationError(false, this.map.getCenter()!);
+      this.map.addListener('idle', () => this.searchNearbyChargingStations());
+    } catch (error) {
+      console.error('Erro ao carregar o Google Maps', error);
     }
   }
+  
 
-
-  /**
-   * Carrega o script do Google Maps se ainda não estiver carregado.
-   * @returns Promise que resolve quando o script é carregado.
-   */
-  async loadGoogleMapsScript(): Promise<void> {
-    if (window['google'] && window['google'].maps) {
-      // Google Maps já carregado
-      return;
-    }
-
-    return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${environment.googleMapsApiKey}&libraries=places`;
-      script.async = true;
-      script.defer = true;
-      script.onload = () => resolve();
-      script.onerror = (error) => reject(error);
-      document.head.appendChild(script);
-    });
-  }
 
   cancelRoute() {
     this.directionsRenderer.setMap(null); // Remove a rota do mapa
@@ -414,18 +312,6 @@ export class MapStationsComponent implements AfterViewInit {
     this.cdr.detectChanges();
   }
 
-
-  /**
-   * Lida com erros de localização se a geolocalização do navegador falhar.
-   * @param browserHasGeolocation Indica se o navegador suporta geolocalização.
-   * @param pos Coordenadas da localização padrão para centralizar o mapa.
-   */
-  handleLocationError(browserHasGeolocation: boolean, pos: google.maps.LatLng) {
-    // Implementar lógica de erro
-  }
-
-
-
   /**
    * Calcula a distância entre a localização do usuário e a estação de carregamento.
    * @param origin Localização do usuário.
@@ -484,37 +370,6 @@ export class MapStationsComponent implements AfterViewInit {
   }
   
   
-
-  
-
-  async calculateReturnHomeRoute() {
-    if (!this.userLocation) {
-      console.error('Localização do usuário não disponível.');
-      return;
-    }
-  
-    // Coordenadas da residência do usuário (substitua pelas coordenadas reais)
-    const homeLocation = new google.maps.LatLng(this.addressesWithCoordinates[0].lat,this.addressesWithCoordinates[0].lng); // Exemplo: coordenadas fictícias
-    const request: google.maps.DirectionsRequest = {
-      origin: this.userLocation, // Localização atual do usuário
-      destination: homeLocation, // Localização da residência
-      travelMode: google.maps.TravelMode.DRIVING
-    };
-  
-    this.directionsService.route(request, (result, status) => {
-      if (status === google.maps.DirectionsStatus.OK) {
-        this.directionsRenderer.setDirections(result);
-        this.directionsRenderer.setMap(this.map);
-        this.isRouteActive = true;
-        this.clearMarkers(); // Limpa os marcadores enquanto a rota está ativa
-        this.cdr.detectChanges();
-      } else {
-        console.error('Erro ao calcular a rota para casa:', status);
-      }
-    });
-  }
-  
-
   openSelectAddressModal() {
     this.isAddressOpen = true;
     const dialogRef = this.dialog.open(ModalSelectAddressComponent, {
