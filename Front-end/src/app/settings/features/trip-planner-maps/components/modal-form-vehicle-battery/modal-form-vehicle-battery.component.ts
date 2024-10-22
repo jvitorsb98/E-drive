@@ -14,6 +14,7 @@ import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-us
 import { Step } from '../../../../core/models/step';
 import Swal from 'sweetalert2';
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service'; 
 
 @Component({
   selector: 'app-modal-form-vehicle-battery',
@@ -34,6 +35,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private vehicleService: VehicleService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private alertasService: AlertasService,
     private tripPlannerMapsService: TripPlannerMapsService, 
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any }
@@ -139,20 +141,16 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       );
 
       if (!canCompleteTrip) {
-        this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
+        this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro
         return;
       }
 
       if (batteryPercentageAfterTrip < 10) {
-        Swal.fire({
-          title: 'Aviso de Bateria Baixa',
-          text: `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Continue',
-          cancelButtonText: 'Cancelar',
-        }).then((result) => {
-          if (result.isConfirmed) {
+         this.alertasService.showWarning(
+        'Aviso de Bateria Baixa',
+        `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`
+      ).then((result) => {
+          if (result) {
             this.dialogRef.close({
               canCompleteTrip: true,
               batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
@@ -167,12 +165,10 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
           }
         });
       } else {
-        Swal.fire({
-          title: 'Status da Bateria',
-          text: `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`,
-          icon: 'info',
-          confirmButtonText: 'OK'
-        }).then(() => {
+        this.alertasService.showInfo(
+          'Status da Bateria',
+          `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
+        ).then(() => {
           this.dialogRef.close({
             canCompleteTrip: true,
             batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
@@ -188,12 +184,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
 
 
   showInsufficientBatteryMessage() {
-    Swal.fire({
-      title: 'Erro!',
-      text: 'A viagem não pode ser realizada. Bateria insuficiente.',
-      icon: 'error',
-      confirmButtonText: 'Fechar'
-    });
+
   }
 
   openFAQModal() {
