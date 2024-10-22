@@ -24,8 +24,6 @@ import { TypeVehicleService } from '../../../../../core/services/typeVehicle/typ
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
 import { BrandService } from '../../../../../core/services/brand/brand.service';
 import { futureYearValidator } from '../../../../../shared/validators/future-year-validator';import { genericTextValidator } from '../../../../../shared/validators/generic-text-validator';
-;
-
 
 
 /**
