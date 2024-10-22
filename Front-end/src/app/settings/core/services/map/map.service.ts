@@ -1,5 +1,6 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
+import { LocationService } from '../location/location.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,9 +11,11 @@ export class MapService {
   directionsService!: google.maps.DirectionsService;
   directionsRenderer!: google.maps.DirectionsRenderer;
 
-  constructor() { }
+  constructor(
+    private locationService:LocationService
+  ) { }
 
-  initMap(mapContainer: ElementRef): google.maps.Map {
+  async initMap(mapContainer: ElementRef): Promise<google.maps.Map> {
     const mapOptions: google.maps.MapOptions = {
       center: { lat: -21.780, lng: -47.534 }, // Coordenadas de exemplo
       zoom: 15,
@@ -76,6 +79,7 @@ export class MapService {
     this.directionsRenderer = new google.maps.DirectionsRenderer();
     this.directionsRenderer.setMap(this.map); // Define o mapa no DirectionsRenderer
 
+
     return this.map;
   }
 
@@ -95,5 +99,8 @@ export class MapService {
       document.head.appendChild(script);
     });
   }
+
+  
+  
   
 }

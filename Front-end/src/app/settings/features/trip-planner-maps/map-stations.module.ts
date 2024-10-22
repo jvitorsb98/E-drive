@@ -11,12 +11,14 @@ import { AngularMaterialModule } from '../../angular-material/angular-material.m
 // Components
 import { MapStationsComponent } from './components/map-stations/map-stations.component';
 import { ModalFormVehicleBatteryComponent } from './components/modal-form-vehicle-battery/modal-form-vehicle-battery.component';
+import { ModalSelectAddressComponent } from './components/modal-select-address/modal-select-address.component';
 
 @NgModule({
   declarations: [
     // MapStations component
     MapStationsComponent,
     ModalFormVehicleBatteryComponent,
+    ModalSelectAddressComponent,
   ],
   imports: [
     CommonModule,             // Modulo comum

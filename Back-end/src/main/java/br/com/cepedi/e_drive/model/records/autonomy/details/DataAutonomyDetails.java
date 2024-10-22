@@ -27,7 +27,10 @@ public record DataAutonomyDetails(
         BigDecimal consumptionEnergetic,
 
         BigDecimal autonomyElectricMode
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/enderecos2
 ) {
     /**
      * Construtor que cria uma instância de {@code DataAutonomyDetails} com base em um objeto {@link Autonomy}.

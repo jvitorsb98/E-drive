@@ -52,6 +52,10 @@ public class Autonomy {
     @Column(name = "autonomy_electric_mode")
     private BigDecimal autonomyElectricMode;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> feature/enderecos2
 
     /**
      * Construtor que cria uma nova instância de Autonomy com base nos dados fornecidos em {@link DataRegisterAutonomy}.

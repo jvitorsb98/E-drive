@@ -1,0 +1,97 @@
+<div class="container-fluid pt-3">
+  <div class="col-12">
+    <div class="header-container">
+      <div class="ps-2">
+        <mat-icon (click)="cancel()">arrow_back</mat-icon>
+      </div>
+
+      <h1 class="titulo">Selecionar Endereço</h1>
+
+      <button (click)="openFAQModal()" class="btn">
+        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+      </button>
+    </div>
+
+    <div class="content">
+      <div class="col-12 col-md-6 mb-2 w-100">
+        <div class="custom-filter">
+          <mat-form-field class="d-flex w-100">
+            <input matInput (keyup)="applyFilter($event)" placeholder="Buscar endereço" #input>
+          </mat-form-field>
+        </div>
+
+        <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="addresses">
+          <ng-container matColumnDef="icon">
+            <th class="th-table" mat-header-cell *matHeaderCellDef>
+              <mat-icon matTooltip="Selecione o endereço">location_on</mat-icon>
+            </th>
+            <td class="td-table" mat-cell *matCellDef="let address">
+              <mat-icon 
+                class="icone-endereco" 
+                [matTooltip]="address.street + ', ' + address.city + ', ' + address.state"
+                matTooltipClass="multi-line-tooltip">
+                location_on
+              </mat-icon>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="details">
+            <th class="th-table" mat-header-cell *matHeaderCellDef><strong>Detalhes</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let address">
+              <strong>{{ address.street }}, {{ address.city }}, {{ address.state }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="chargingPoint">
+            <th class="th-table" mat-header-cell *matHeaderCellDef><strong>Carregamento</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let address">
+            <span *ngIf="address.hasChargingStation">
+                <mat-icon role="img" class="mat-icon notranslate check material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">check</mat-icon>
+                </span>
+                <span *ngIf="!address.hasChargingStation">
+                <mat-icon role="img" class="mat-icon notranslate error material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">close</mat-icon>
+                </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="choose">
+            <th class="th-table" mat-header-cell *matHeaderCellDef>
+              <strong>Escolher</strong>
+            </th>
+            <td class="td-table custom-radio" mat-cell *matCellDef="let address">
+              <div class="form-check">
+                <input 
+                  class="form-check-input custom-radio" 
+                  type="radio" 
+                  name="selectedAddress" 
+                  (click)="onSelect(address)" 
+                  id="address{{ address.id }}">
+                <label for="address{{ address.id }}" class="visually-hidden">
+                  Selecione o endereço {{ address.street }}
+                </label>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['icon', 'details', 'chargingPoint', 'choose']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['icon', 'details', 'chargingPoint', 'choose'];"></tr>
+
+          <div *ngIf="input.value.length != 0">
+            <tr class="mat-row" *matNoDataRow>
+              <td class="mat-cell no-data" colspan="4" *ngIf="input.value && !addresses.length">
+                Não foram encontrados dados para a pesquisa: "{{ input.value }}"
+              </td>
+            </tr>
+          </div>
+        </table>
+      </div>
+    </div>
+
+    <div class="buttons-container py-3">
+      <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" [disabled]="!selectedAddress" (click)="confirmAddress()"
+      text="Confirmar "></app-ui-button>
+      <app-ui-button class="w-100 mb-0" typeBtn="outline-secondary" (click)="cancel()"
+      text="Cancelar"></app-ui-button>
+    </div>
+  </div>
+</div>
