@@ -44,14 +44,30 @@
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
 						<strong>Cidade</strong>
 					</th>
-					<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.city}}</strong>
+					<td class="td-table" mat-cell *matCellDef="let element">
+            <strong>
+              <span *ngIf="element.city.length > 10; else noEllipsisCity">
+                {{element.city | slice: 0:10}}...
+              </span>
+              <ng-template #noEllipsisCity>
+                {{element.city}}
+              </ng-template>
+            </strong>
 					</td>
 				</ng-container>
 
 				<ng-container matColumnDef="neighborhood">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Bairro</strong>
 					</th>
-					<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.neighborhood}}</strong>
+					<td class="td-table" mat-cell *matCellDef="let element">
+            <strong>
+              <span *ngIf="element.neighborhood.length > 10; else noEllipsisNeighborhood">
+                {{element.neighborhood | slice: 0:10}}...
+              </span>
+              <ng-template #noEllipsisNeighborhood>
+                {{element.neighborhood}}
+              </ng-template>
+            </strong>
 					</td>
 				</ng-container>
 
@@ -59,7 +75,15 @@
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
 						<strong>Estado</strong>
 					</th>
-					<td class="td-table" mat-cell *matCellDef="let element"><strong>{{element.state}}</strong>
+					<td class="td-table" mat-cell *matCellDef="let element">
+            <strong>
+              <span *ngIf="element.state.length > 10; else noEllipsisState">
+                {{element.state | slice: 0:10}}...
+              </span>
+              <ng-template #noEllipsisState>
+                {{element.state}}
+              </ng-template>
+            </strong>
 					</td>
 				</ng-container>
 
