@@ -18,7 +18,7 @@
 
         <!-- Campo Marca - Aparece apenas se o campo 'version' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Marca</mat-label>
               <input #brandInput type="text" matInput formControlName="brand"
@@ -44,7 +44,7 @@
 
         <!-- Campo Modelo - Aparece apenas se o campo 'brand' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Modelo</mat-label>
               <input #modelInput type="text" matInput formControlName="model"
@@ -69,7 +69,7 @@
 
         <!-- Campo Tipo - Aparece apenas se o campo 'model' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Tipo</mat-label>
               <input #typeInput type="text" matInput formControlName="type"
@@ -91,7 +91,7 @@
 
         <!-- Campo Categoría - Aparece apenas se o campo 'type' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Categoria</mat-label>
               <input #categoryInput type="text" matInput formControlName="category"
@@ -112,7 +112,7 @@
         </div>
         <!-- Propulsão -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Propulsão</mat-label>
               <input #propulsionInput type="text" matInput formControlName="propulsion"
@@ -134,7 +134,7 @@
 
         <!-- Novo campo Motor -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-3">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Motor</mat-label>
               <input matInput formControlName="motor" placeholder="Digite o tipo de motor" maxlength="20" required />
@@ -159,7 +159,7 @@
 
         <!-- Novo campo Versão - Aparece apenas se o campo 'motor' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Versão</mat-label>
               <input matInput formControlName="version" placeholder="Digite a versão do veículo" maxlength="20"
@@ -186,7 +186,7 @@
 
         <!-- Ano -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Ano</mat-label>
               <input matInput formControlName="year" [mask]="'0000'" type="text" placeholder="Digite o ano do veículo"
@@ -207,7 +207,7 @@
         <!-- Campos adicionais -->
         <div class="col-12">
           <div class="row">
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Quilometragem por <strong>litro em
                     estrada:</strong></mat-label>
@@ -223,7 +223,7 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Quilometragem por <strong>litro em
                     cidade:</strong></mat-label>
@@ -239,7 +239,7 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Consumo <strong>energético:</strong></mat-label>
                 <input type="text" matInput formControlName="consumptionEnergetic" appDynamicMask
@@ -254,7 +254,7 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Autonomia em<strong> modo elétrico:</strong></mat-label>
                 <input type="text" matInput formControlName="autonomyElectricMode" [mask]="'000'"
@@ -269,13 +269,13 @@
             </div>
           </div>
         </div>
-        <div class="buttons-container py-3">
+        <div class="buttons-container py-0">
           <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" text="Redefinir"
             (click)="resetForm()"></app-ui-button>
           <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="submitForm()"
             [disabled]="!vehicleForm.valid">{{ editVehicle ? 'Atualizar Veículo' : 'Cadastrar Veículo'
             }}</app-ui-button>
-          <app-ui-button *ngIf="editVehicle" class="w-100" typeBtn="outline-secondary" text="Cancelar"
+          <app-ui-button *ngIf="editVehicle" class="mb-1 w-100" typeBtn="outline-secondary" text="Cancelar"
             (click)="closeModal()"></app-ui-button>
         </div>
       </div>

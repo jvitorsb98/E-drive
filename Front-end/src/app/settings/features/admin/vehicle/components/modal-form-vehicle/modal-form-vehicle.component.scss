@@ -110,6 +110,7 @@ body {
   display: flex;
   align-items: center;
   height: auto;
+  margin-bottom: -5px; // Espaçamento entre os campos
 }
 
 .mat-autocomplete-panel {
