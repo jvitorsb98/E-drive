@@ -18,7 +18,7 @@
 
         <!-- Campo Marca - Aparece apenas se o campo 'version' for válido -->
         <div class="row">
-          <div class="col-12 col-md-12 mb-2">
+          <div class="col-12 col-md-6 mb-2">
             <mat-form-field class="custom-select">
               <mat-label>Marca</mat-label>
               <input #brandInput type="text" matInput formControlName="brand"
@@ -198,8 +198,8 @@
             </mat-form-field>
             <!-- Erro: Ano inválido -->
             <div *ngIf="vehicleForm.get('year')?.hasError('invalidYear') && vehicleForm.get('year')?.dirty">
-              <mat-error class="mat-error-text-casa-decimal"><strong>O ano</strong> deve ser entre 1901 e o próximo
-                ano.</mat-error>
+              <mat-error class="mat-error-text-casa-decimal"><strong>O ano</strong> deve estar entre 1901 e {{
+                vehicleForm.get('year')?.errors?.['currentYear'] }}.</mat-error>
             </div>
           </div>
         </div>
