@@ -29,23 +29,34 @@
   <div class="row">
     <div class="container-table">
       <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
-        
+
         <!-- Coluna para ícones das marcas -->
         <ng-container matColumnDef="icon">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <mat-icon matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">emoji_flags</mat-icon>
+            <mat-icon
+              matTooltip="Este ícone representa cada marca de carro listada abaixo. Clique para ver os detalhes de cada marca.">emoji_flags</mat-icon>
           </th>
 
           <td class="td-table" mat-cell *matCellDef="let brand">
             <!-- Ícone da marca com tooltip -->
-            <mat-icon class="icone-emoji-brand" [matTooltip]="'ID: ' + brand.id + ' | Ativado: ' + brand.activated" matTooltipClass="multi-line-tooltip"> emoji_flags</mat-icon>
+            <mat-icon class="icone-emoji-brand" [matTooltip]="'ID: ' + brand.id + ' | Ativado: ' + brand.activated"
+              matTooltipClass="multi-line-tooltip"> emoji_flags</mat-icon>
           </td>
         </ng-container>
 
         <!-- Coluna para o nome das marcas -->
         <ng-container matColumnDef="name">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let brand"><strong>{{brand.name}}</strong></td>
+          <td class="td-table" mat-cell *matCellDef="let brand">
+            <strong>
+              <span *ngIf="brand.name.length > 18; else noEllipsisBrand">
+                {{ brand.name | slice: 0:18 }}...
+              </span>
+              <ng-template #noEllipsisBrand>
+                {{ brand.name }}
+              </ng-template>
+            </strong>
+          </td>
         </ng-container>
 
         <!-- Coluna para o status das marcas -->
@@ -87,7 +98,9 @@
 <!-- Container para o paginador e botão para adicionar nova marca -->
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Paginador para navegação entre páginas -->
-  <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]" aria-label="Selecione veículos por página"></mat-paginator>
+  <mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15, 20, 30, 40]"
+    aria-label="Selecione veículos por página"></mat-paginator>
   <!-- Botão para abrir modal de adição de nova marca -->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()" text="Nova marca"></app-ui-button>
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
+    text="Nova marca"></app-ui-button>
 </div>
