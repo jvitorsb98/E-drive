@@ -38,7 +38,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private alertasService: AlertasService,
     private tripPlannerMapsService: TripPlannerMapsService, 
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any }
+    @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any; isStation: boolean } // Adicione o atributo isStation aqui
   ) {
     this.dataSource = new MatTableDataSource(this.userVehicleDetails);
   }
@@ -131,40 +131,22 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       const formValue = this.vehicleStatusBatteryForm.value;
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryHealth = Number(formValue.saudeBateria);
-
-      // Chama o serviço para calcular o status da bateria
-      const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
-        formValue.selectedVehicle,
-        remainingBattery,
-        batteryHealth,
-        this.data.stepsArray
-      );
-
-      if (!canCompleteTrip) {
-        this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro
-        return;
-      }
-
-      if (batteryPercentageAfterTrip < 10) {
-         this.alertasService.showWarning(
-        'Aviso de Bateria Baixa',
-        `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`
-      ).then((result) => {
-          if (result) {
-            this.dialogRef.close({
-              canCompleteTrip: true,
-              batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
-              selectedVehicle: formValue.selectedVehicle
-            });
-          } else {
-            this.dialogRef.close({
-              canCompleteTrip: false,
-              batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
-              selectedVehicle: formValue.selectedVehicle
-            });
-          }
-        });
-      } else {
+  
+      if (this.data.isStation) {
+        // Chama o serviço para calcular o status da bateria
+        const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
+          formValue.selectedVehicle,
+          remainingBattery,
+          batteryHealth,
+          this.data.stepsArray
+        );
+  
+        if (!canCompleteTrip) {
+          this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro
+          return;
+        }
+  
+        // Aqui lidamos com o caso em que é possível completar a viagem
         this.alertasService.showInfo(
           'Status da Bateria',
           `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
@@ -175,13 +157,57 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
             selectedVehicle: formValue.selectedVehicle
           });
         });
+      } else {
+        // Modo de planejamento de viagem
+        this.tripPlannerMapsService.calculateChargingStations(
+          formValue.selectedVehicle,
+          remainingBattery,
+          batteryHealth,
+          this.data.stepsArray
+        ).then(({ chargingStations, message, canCompleteTrip, canCompleteWithoutStops, batteryPercentageAfterTrip }) => {
+          if (canCompleteTrip) {
+            if (canCompleteWithoutStops) {
+              // Se a viagem puder ser completada sem paradas
+              this.alertasService.showInfo(
+                'Status da Bateria',
+                `Você pode completar a viagem sem paradas, chegando com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
+              ).then(() => {
+                this.dialogRef.close({
+                  canCompleteTrip: true,
+                  selectedVehicle: formValue.selectedVehicle
+                });
+              });
+            } else {
+              // Se houver postos de carregamento necessários
+              this.alertasService.showInfo(
+                'Postos de Carregamento',
+                `Para completar sua viagem, você precisará passar por ${chargingStations.length} postos de carregamento.`
+              ).then(() => {
+                this.dialogRef.close({
+                  canCompleteTrip: true,
+                  chargingStations: chargingStations,
+                  selectedVehicle: formValue.selectedVehicle
+                });
+              });
+            }
+          } else {
+            // Se a viagem não pode ser completada
+            this.alertasService.showError(
+              'Erro!',
+              message // Utiliza a mensagem retornada pelo cálculo
+            );
+          }
+        }).catch(error => {
+          console.error('Erro ao calcular os postos de carregamento:', error);
+          this.alertasService.showError('Erro!', 'Não foi possível calcular os postos de carregamento.');
+        });
       }
     } else {
       console.error("Formulário inválido");
       return;
     }
   }
-
+  
 
   showInsufficientBatteryMessage() {
 

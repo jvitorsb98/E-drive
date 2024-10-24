@@ -80,37 +80,81 @@ export class PlanningTripComponent implements AfterViewInit {
     });
   }
 
-  planTrip() {
+  async planTrip() {
     if (!this.startLocation || !this.endLocation) {
       console.error('Por favor, selecione os locais de início e destino.');
       return;
     }
     this.map.setCenter(this.startLocation);
     this.inputsVisible = false; // Esconde os inputs
-    this.calculateRouteDistance(this.startLocation, this.endLocation)
-      .then(() => {
-        this.setCurrentPlace({ address: this.startLocation?.toString() || '', lat: this.startLocation?.lat() || 0, lng: this.startLocation?.lng() || 0 });
-        this.openModalAddVehicleBattery();
-      })
-      .catch(error => console.error('Erro ao calcular a distância:', error));
+    try {
+      await this.calculateRouteDistance(this.startLocation, this.endLocation);
+      this.setCurrentPlace({ address: this.endLocation?.toString() || '', lat: this.endLocation?.lat() || 0, lng: this.endLocation?.lng() || 0 });
+      this.openModalAddVehicleBattery();
+    } catch (error) {
+      console.error('Erro ao calcular a distância:', error);
+    }
   }
-
   openModalAddVehicleBattery() {
     const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
       width: '480px',
       height: '530px',
       data: {
         stepsArray: this.stepsArray,
-        place: this.startLocation
+        place: this.startLocation,
+        isStation: false
       },
     });
 
     chargingStationDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Dados recebidos do modal:', result);
+        this.handleVehicleBatteryModalClose();
       }
     });
   }
+
+  private handleVehicleBatteryModalClose() {
+    const destination = this.currentPlace?.geometry?.location;
+    console.log(destination)
+    this.isRouteActive = true;
+    this.directionsRenderer.setOptions({
+      suppressMarkers: true,
+      polylineOptions: {
+        strokeColor: '#19B6DD',
+      },
+    });
+  
+    if (destination) {
+      this.initiateRoute(destination);
+    } else {
+      console.error('Localização do destino não disponível.');
+    }
+  }
+
+  initiateRoute(destination: google.maps.LatLng) {
+    if (!this.startLocation) {
+      console.error('Localização do usuário não disponível.');
+      return; // Retorne se a localização for nula
+    }
+  
+    const request: google.maps.DirectionsRequest = {
+      origin: this.startLocation, // Mantenha esta linha para usar a localização do usuário
+      destination: destination,
+      travelMode: google.maps.TravelMode.DRIVING,
+    };
+  
+    this.directionsService.route(request, (result, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        this.directionsRenderer.setDirections(result);
+        this.directionsRenderer.setMap(this.map); 
+        this.isRouteActive = true;
+        this.cdr.detectChanges()
+      } else {
+        console.error('Erro ao iniciar a rota:', status);
+      }
+    });
+  }
+  
 
   private setCurrentPlace(geocodedData: { address: string; lat: number; lng: number }) {
     this.currentPlace = {

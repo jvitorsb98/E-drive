@@ -152,4 +152,144 @@ export class TripPlannerMapsService {
     }
     return 0;
   }
+  async calculateChargingStations(
+    selectedVehicle: any,
+    remainingBattery: number,
+    batteryHealth: number,
+    stepsArray: Step[]
+): Promise<{ 
+    chargingStations: any[], 
+    message: string, 
+    canCompleteTrip: boolean, 
+    canCompleteWithoutStops: boolean, 
+    batteryPercentageAfterTrip: number 
+}> {
+    const chargingStations: any[] = [];
+    const visitedStations = new Set<string>(); // Para rastrear estações já visitadas
+
+    batteryHealth = this.getBatteryHealth(selectedVehicle, batteryHealth);
+    const consumptionEnergetic = this.getConsumptionEnergetic(selectedVehicle);
+    const batteryCapacity = this.getBatteryCapacity(selectedVehicle, batteryHealth);
+    const calculatedAutonomyReal = this.calculateRealAutonomy(batteryCapacity, consumptionEnergetic);
+  
+    let currentBatteryPercentage = remainingBattery;
+    let batteryPercentageAfterTrip = currentBatteryPercentage;
+    let canCompleteWithoutStops = true;
+
+    // Busca todas as estações de carregamento entre o início e o fim do trajeto
+    const allChargingStations = await this.findAllChargingStationsBetween(stepsArray);
+    console.log('Estações de carregamento encontradas entre o ponto de partida e o destino:', allChargingStations);
+
+    // Itera sobre cada passo do trajeto
+    for (const step of stepsArray) {
+        const stepDistance = step.distance; // Distância do passo
+        console.log(`Distância do passo: ${stepDistance} km`);
+
+        // Calcula o consumo de bateria para o passo
+        const batteryConsumptionPercentage = this.calculateBatteryConsumption(stepDistance, calculatedAutonomyReal);
+        currentBatteryPercentage = Math.max(currentBatteryPercentage - batteryConsumptionPercentage, 0);
+        batteryPercentageAfterTrip = currentBatteryPercentage;
+
+        console.log(`Porcentagem de bateria após o passo: ${currentBatteryPercentage}%`);
+
+        // Verifica se a bateria é insuficiente para continuar
+        if (currentBatteryPercentage <= 0) {
+            return { chargingStations: [], message: 'Viagem não pode ser completada devido à falta de carga.', canCompleteTrip: false, canCompleteWithoutStops: false, batteryPercentageAfterTrip };
+        }
+
+        // Busca de postos de carregamento ao longo do trajeto
+        const chargingStation = await this.findNearestChargingStation([step], currentBatteryPercentage, calculatedAutonomyReal);
+        
+        if (chargingStation && !visitedStations.has(chargingStation.place_id)) {
+            // Verifica se a estação encontrada é acessível
+            const distanceToChargingStation = google.maps.geometry.spherical.computeDistanceBetween(
+                step.path[0],
+                chargingStation.geometry.location
+            ) / 1000;
+
+            console.log(`Distância até a estação de carregamento: ${distanceToChargingStation} km`);
+
+            if (distanceToChargingStation <= (currentBatteryPercentage / 100) * calculatedAutonomyReal) {
+                chargingStations.push(chargingStation);
+                visitedStations.add(chargingStation.place_id); // Marca a estação como visitada
+                console.log(`Posto de carregamento encontrado: ${chargingStation.name}`);
+                currentBatteryPercentage = 100; // Simula a recarga total
+            } else {
+                console.log(`Não é possível alcançar a estação de carregamento a partir deste ponto.`);
+            }
+        } else {
+            console.log('Nenhuma estação de carregamento encontrada neste passo.');
+        }
+
+        // Verifica se é necessário parar para recarregar
+        if (currentBatteryPercentage < (batteryConsumptionPercentage / stepDistance) * 100) {
+            canCompleteWithoutStops = false; // Atualiza a flag, pois é necessário parar
+            console.log('Necessário parar para recarregar.');
+            break; // Saia do loop para planejar parada
+        }
+    }
+  
+    const message = canCompleteWithoutStops 
+        ? 'Viagem pode ser completada sem paradas para recarga.' 
+        : 'Viagem não pode ser completada sem paradas para recarga.';
+
+    return { chargingStations, message, canCompleteTrip: !canCompleteWithoutStops, canCompleteWithoutStops, batteryPercentageAfterTrip };
+}
+
+// Método para buscar todas as estações de carregamento entre o ponto de partida e o ponto de chegada
+async findAllChargingStationsBetween(stepsArray: Step[]): Promise<any[]> {
+    const allChargingStations: any[] = [];
+    console.log(stepsArray);
+    for (const step of stepsArray) {
+        // Passa um array contendo o step atual
+        const chargingStation = await this.findChargingStationWithinDistance([step], 5); // Busca com raio máximo de 5 km
+        if (chargingStation && !allChargingStations.some(station => station.place_id === chargingStation.place_id)) {
+            allChargingStations.push(chargingStation); // Adiciona apenas se não estiver duplicado
+        }
+    }
+
+    return allChargingStations;
+}
+
+// Método para buscar estações de carregamento dentro de uma determinada distância
+findChargingStationWithinDistance(step: Step[], maxDistance: number): Promise<any | null> {
+    return new Promise((resolve, reject) => {
+        const placeService = new google.maps.places.PlacesService(document.createElement('div'));
+
+        const location = step[0].path[0];
+        const radius = maxDistance * 1000; // Converte para metros
+        const query = 'estação de carregamento elétrico';
+
+        placeService.textSearch({
+            query: query,
+            location: location,
+            radius: radius
+        }, (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                // Filtrar resultados para incluir apenas aqueles que estão dentro da autonomia do veículo
+                const filteredResults = results.filter(station => {
+                    const distanceToStation = google.maps.geometry.spherical.computeDistanceBetween(
+                        location,
+                        station!.geometry!.location!
+                    ) / 1000; // Distância em km
+                    return distanceToStation <= maxDistance; // Dentro do raio máximo
+                });
+
+                const nearestStation = filteredResults[0] || null; // Pega a primeira estação de carregamento filtrada encontrada
+                resolve(nearestStation);
+            } else {
+                console.error('Erro ao buscar estações de carregamento:', status);
+                resolve(null); // Nenhuma estação encontrada
+            }
+        });
+    });
+}
+
+// Método para encontrar a estação de carregamento mais próxima ao longo do trajeto
+async findNearestChargingStation(step: Step[], currentBatteryPercentage: number, calculatedAutonomyReal: number): Promise<any | null> {
+    const maxDistanceCanTravel = (currentBatteryPercentage / 100) * calculatedAutonomyReal;
+    const chargingStation = await this.findChargingStationWithinDistance(step, maxDistanceCanTravel);
+    return chargingStation;
+}
+
 }
