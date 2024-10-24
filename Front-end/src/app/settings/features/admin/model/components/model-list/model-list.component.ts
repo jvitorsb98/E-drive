@@ -163,7 +163,7 @@ export class ModelListComponent {
   openModalAddModel() {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
-      height: '320px',
+      height: '285px',
     }).afterClosed().subscribe(() => this.loadModels()); // Atualiza a lista de modelos após o fechamento do modal
   }
 
@@ -171,7 +171,7 @@ export class ModelListComponent {
   openModalEditModel(model: Model) {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
-      height: '320px',
+      height: '285px',
       data: model
     }).afterClosed().subscribe(() => this.loadModels()); // Atualiza a lista de modelos após o fechamento do modal
   }

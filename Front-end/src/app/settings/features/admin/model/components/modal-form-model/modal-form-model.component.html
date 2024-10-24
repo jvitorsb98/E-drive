@@ -25,7 +25,7 @@
         
         <!-- Seção para selecionar a marca do veículo -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6">
             <!-- Campo de seleção com autocomplete para escolher a marca -->
             <mat-form-field class="custom-select">
               <mat-label>Marca do veículo:</mat-label>
@@ -59,10 +59,10 @@
 
         <!-- Seção para inserir o nome do modelo -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6">
             <!-- Cartão que envolve o campo de inserção do nome do modelo -->
             <mat-card appearance="outlined" class="border-0">
-              <mat-form-field>
+              <mat-form-field class="custom-select">
                 <mat-label class="custom-label">Modelo</mat-label>
                 <!-- Campo de input para o nome do modelo com validação -->
                 <input 
@@ -75,7 +75,7 @@
                 <!-- Mensagem de erro se o campo 'name' estiver vazio após interação -->
                 <mat-error class="mat-error-text" 
                   *ngIf="modelForm.get('name')?.hasError('required') 
-                  && modelForm.get('name')?.touched" class="mat-error-text">
+                  && modelForm.get('name')?.touched">
                   O <strong>modelo</strong> é obrigatório.
                 </mat-error>
               </mat-form-field>
@@ -91,12 +91,8 @@
       </div>
 
       <!-- Botão de envio, desabilitado se o formulário estiver inválido -->
-      <div class="buttons-container">
-        <app-ui-button 
-          typeBtn="vivid-sky-blue" 
-          [pulseAnimation]="true" 
-          [disabled]="!modelForm.valid" 
-          (click)="onSubmit()" 
+      <div class="buttons-container py-1">
+        <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!modelForm.valid" (click)="onSubmit()" 
           text="Finalizar cadastro">
         </app-ui-button>
       </div>

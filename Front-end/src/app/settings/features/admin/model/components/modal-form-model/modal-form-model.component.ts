@@ -8,11 +8,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'; // Ferramentas para criar e manipular modais
 import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete'; // Componentes de autocompletar
 
-// SweetAlert2
-import Swal from 'sweetalert2'; // Biblioteca para exibir alertas personalizados
-
 // RxJS
-import { catchError, map, Observable, of, startWith } from 'rxjs'; // Operadores RxJS para manipulação de observáveis
+import { map, Observable, of, startWith } from 'rxjs'; // Operadores RxJS para manipulação de observáveis
 
 // Serviços
 import { ModelService } from '../../../../../core/services/model/model.service'; // Serviço para operações com modelos
