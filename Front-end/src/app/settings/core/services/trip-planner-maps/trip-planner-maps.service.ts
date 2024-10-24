@@ -152,11 +152,13 @@ export class TripPlannerMapsService {
     }
     return 0;
   }
+  
+  
   async calculateChargingStations(
     selectedVehicle: any,
     remainingBattery: number,
     batteryHealth: number,
-    stepsArray: Step[]
+    stepsArray: Step[],
 ): Promise<{ 
     chargingStations: any[], 
     message: string, 
@@ -190,11 +192,26 @@ export class TripPlannerMapsService {
         currentBatteryPercentage = Math.max(currentBatteryPercentage - batteryConsumptionPercentage, 0);
         batteryPercentageAfterTrip = currentBatteryPercentage;
 
-        console.log(`Porcentagem de bateria após o passo: ${currentBatteryPercentage}%`);
 
         // Verifica se a bateria é insuficiente para continuar
         if (currentBatteryPercentage <= 0) {
-            return { chargingStations: [], message: 'Viagem não pode ser completada devido à falta de carga.', canCompleteTrip: false, canCompleteWithoutStops: false, batteryPercentageAfterTrip };
+            return { 
+                chargingStations: [], 
+                message: 'Viagem não pode ser completada devido à falta de carga.', 
+                canCompleteTrip: false, 
+                canCompleteWithoutStops: false, 
+                batteryPercentageAfterTrip 
+            };
+        }
+
+        // Cálculo da distância restante nos passos seguintes
+        const remainingDistance = this.calculateRemainingDistance(stepsArray, step);
+        const requiredBatteryPercentage = (remainingDistance / calculatedAutonomyReal) * 100;
+
+        // **Verificação se a bateria é suficiente para completar a viagem sem paradas**
+        if (currentBatteryPercentage >= requiredBatteryPercentage) {
+            console.log('Pode completar a viagem sem paradas.');
+            continue; // Continua para o próximo passo
         }
 
         // Busca de postos de carregamento ao longo do trajeto
@@ -221,19 +238,27 @@ export class TripPlannerMapsService {
             console.log('Nenhuma estação de carregamento encontrada neste passo.');
         }
 
-        // Verifica se é necessário parar para recarregar
-        if (currentBatteryPercentage < (batteryConsumptionPercentage / stepDistance) * 100) {
-            canCompleteWithoutStops = false; // Atualiza a flag, pois é necessário parar
-            console.log('Necessário parar para recarregar.');
-            break; // Saia do loop para planejar parada
-        }
     }
-  
+
     const message = canCompleteWithoutStops 
         ? 'Viagem pode ser completada sem paradas para recarga.' 
         : 'Viagem não pode ser completada sem paradas para recarga.';
 
-    return { chargingStations, message, canCompleteTrip: !canCompleteWithoutStops, canCompleteWithoutStops, batteryPercentageAfterTrip };
+    return { 
+        chargingStations, 
+        message, 
+        canCompleteTrip: !canCompleteWithoutStops, 
+        canCompleteWithoutStops, 
+        batteryPercentageAfterTrip 
+    };
+}
+
+// **Método para calcular a distância restante a ser percorrida**
+calculateRemainingDistance(stepsArray: Step[], currentStep: Step): number {
+    const currentIndex = stepsArray.indexOf(currentStep);
+    const remainingSteps = stepsArray.slice(currentIndex + 1); // Obtém os passos restantes
+    const totalRemainingDistance = remainingSteps.reduce((total, step) => total + step.distance, 0); // Soma as distâncias restantes
+    return totalRemainingDistance; // Retorna a distância total restante
 }
 
 // Método para buscar todas as estações de carregamento entre o ponto de partida e o ponto de chegada
@@ -291,5 +316,7 @@ async findNearestChargingStation(step: Step[], currentBatteryPercentage: number,
     const chargingStation = await this.findChargingStationWithinDistance(step, maxDistanceCanTravel);
     return chargingStation;
 }
+
+
 
 }
