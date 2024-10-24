@@ -21,7 +21,7 @@ public class BackupService {
 
     private final String backupDirectory = "/home/joao/Documentos/backup";
 
-    @Scheduled(cron = "0 0 2 * * ?") // Executa diariamente às 02:00
+    @Scheduled(cron = "0 0 2 * * ?")
     public void performBackup() {
         try {
             String command = String.format(
@@ -29,11 +29,9 @@ public class BackupService {
                     user, backupDirectory, databaseName, databaseName
             );
 
-            // Usando ProcessBuilder para definir a variável de ambiente PGPASSWORD
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "export PGPASSWORD='" + password + "'; " + command);
             Process process = processBuilder.start();
 
-            // Captura a saída do comando
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {

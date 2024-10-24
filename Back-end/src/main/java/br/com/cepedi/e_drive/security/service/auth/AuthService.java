@@ -207,7 +207,6 @@ public class AuthService implements UserDetailsService {
 
         User user = repository.findByEmail(dataResetPassword.email());
         String token = tokenService.generateTokenRecoverPassword(user);
-        System.out.println("TOken" + token);
         try {
             emailService.sendResetPasswordEmailAsync(user.getName(), dataResetPassword.email(), token);
         } catch (MessagingException e) {
