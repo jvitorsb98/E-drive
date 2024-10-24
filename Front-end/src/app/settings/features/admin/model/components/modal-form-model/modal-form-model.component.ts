@@ -63,7 +63,7 @@ export class ModalFormModelComponent {
     this.buildForm(); // Constrói o formulário
     if (this.editModel) {
       this.fillForm(); // Preenche o formulário com os dados existentes
-      this.modelForm.get('name')?.enable(); // Habilita o campo 'name'
+      this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name'
     }
   }
 
@@ -72,10 +72,9 @@ export class ModalFormModelComponent {
    */
   buildForm() {
     this.modelForm = this.formBuilder.group({
-      name: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]), // Campo nome desabilitado até que uma marca seja selecionada
+      modelName: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]), // Campo nome desabilitado até que uma marca seja selecionada
       brand: new FormControl(null, [Validators.required]), // Campo marca obrigatório
     });
-    this.monitorBrandChanges(); // Monitora alterações no campo 'brand'
   }
 
   /**
@@ -84,7 +83,7 @@ export class ModalFormModelComponent {
   fillForm() {
     if (this.data.name) {
       this.modelForm.patchValue({
-        name: this.data.name, // Preenche o nome do modelo
+        modelName: this.data.name, // Preenche o nome do modelo
         brand: this.data.brand.name // Preenche a marca do modelo
       });
       console.log("fillForm", this.modelForm.value); // Loga os valores preenchidos
@@ -125,7 +124,7 @@ export class ModalFormModelComponent {
 
       const modelData = {
         ...this.data,
-        name: this.modelForm.get('name')?.value, // Nome do modelo
+        name: this.modelForm.get('modelName')?.value, // Nome do modelo
         idBrand: selectedBrandId // ID da marca selecionada
       };
 
@@ -135,7 +134,7 @@ export class ModalFormModelComponent {
 
       request$.subscribe({
         next: () => {
-          this.alertasService.showSuccess('Sucesso!', `O modelo ${this.modelForm.value.name} foi ${actionSucess} com sucesso.`); // Exibe sucesso
+          this.alertasService.showSuccess('Sucesso!', `O modelo ${this.modelForm.value.modelName} foi ${actionSucess} com sucesso.`); // Exibe sucesso
           this.closeModal(); // Fecha o modal
         },
         error: (response) => {
@@ -174,8 +173,26 @@ export class ModalFormModelComponent {
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value; // Marca selecionada
     this.modelForm.get('brand')?.setValue(selectedBrand.name); // Define o valor da marca no formulário
-    console.log('Marca selecionada:', selectedBrand); // Loga a marca selecionada
+
+    // Opcional: desabilitar ou habilitar o campo 'modelName' baseado na seleção
+    if (selectedBrand) {
+      this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name' se uma marca foi selecionada
+    } else {
+      this.modelForm.get('modelName')?.disable(); // Desabilita o campo 'name' se nenhuma marca foi selecionada
+    }
   }
+
+  // onBrandSelected(event: MatAutocompleteSelectedEvent): void {
+  //   const selectedBrand = event.option.value; // Marca selecionada
+  //   this.modelForm.get('name')?.setValue(selectedBrand.value.name); // Define o objeto da marca no formulário
+
+  //   // Opcional: desabilitar ou habilitar o campo 'modelName' baseado na seleção
+  //   if (selectedBrand) {
+  //     this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name' se uma marca foi selecionada
+  //   } else {
+  //     this.modelForm.get('modelName')?.disable(); // Desabilita o campo 'name' se nenhuma marca foi selecionada
+  //   }
+  // }
 
   /**
    * @description Obtém o ID da marca selecionada com base no nome.
@@ -206,20 +223,6 @@ export class ModalFormModelComponent {
    */
   isEditing(): boolean {
     return this.editModel; // Retorna o estado de edição
-  }
-
-  /**
-   * @description Monitora as alterações no campo de marca e habilita/desabilita o campo de nome.
-   */
-  private monitorBrandChanges(): void {
-    this.modelForm.get('brand')!.valueChanges.subscribe(brandValue => {
-      const selectedBrand = this.brands.find(brand => brand.name === brandValue); // Busca a marca correspondente
-      if (selectedBrand) {
-        this.modelForm.get('name')?.enable(); // Habilita o campo 'name'
-      } else {
-        this.modelForm.get('name')?.disable(); // Desabilita o campo 'name'
-      }
-    });
   }
 
   /**

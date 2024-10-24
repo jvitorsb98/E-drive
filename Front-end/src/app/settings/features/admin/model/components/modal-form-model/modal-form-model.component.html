@@ -22,20 +22,15 @@
     <!-- Início do formulário reativo com o FormGroup 'modelForm' -->
     <form [formGroup]="modelForm">
       <div class="content">
-        
+
         <!-- Seção para selecionar a marca do veículo -->
         <div class="row">
           <div class="col-12 col-md-6">
             <!-- Campo de seleção com autocomplete para escolher a marca -->
             <mat-form-field class="custom-select">
               <mat-label>Marca do veículo:</mat-label>
-              <input
-                type="text"
-                matInput
-                formControlName="brand"
-                [value]="modelForm.get('brand')?.value?.name || ''"
-                [matAutocomplete]="autoBrand"
-                aria-describedby="Help">
+              <input type="text" matInput formControlName="brand" [value]="modelForm.get('brand')?.value?.name || ''"
+                [matAutocomplete]="autoBrand" aria-describedby="Help">
               <!-- Autocomplete para sugerir marcas disponíveis -->
               <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
                 <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
@@ -47,12 +42,12 @@
 
               <!-- Validação para exibir erro caso o campo 'brand' esteja vazio após interação -->
               @if(modelForm.get('brand')?.hasError('required') && modelForm.get('brand')?.touched){
-                <mat-error class="mat-error-text"><strong>Marca</strong> é obrigatória</mat-error>
+              <mat-error class="mat-error-text"><strong>Marca</strong> é obrigatória</mat-error>
               }
             </mat-form-field>
             <!-- Exibe mensagem de erro quando nenhuma marca é encontrada -->
             @if(noBrandFound){
-              <mat-error class="mat-error-no-brand">Nenhuma <strong>marca</strong> encontrada.</mat-error>
+            <mat-error class="mat-error-no-brand">Nenhuma <strong>marca</strong> encontrada.</mat-error>
             }
           </div>
         </div>
@@ -65,24 +60,19 @@
               <mat-form-field class="custom-select">
                 <mat-label class="custom-label">Modelo</mat-label>
                 <!-- Campo de input para o nome do modelo com validação -->
-                <input 
-                  type="text" 
-                  name="name" 
-                  matInput 
-                  formControlName="name" 
-                  required
-                  aria-describedby="Help" />
+                <input type="text" name="modelName" matInput formControlName="modelName" required
+                  aria-describedby="Help"/>
                 <!-- Mensagem de erro se o campo 'name' estiver vazio após interação -->
-                <mat-error class="mat-error-text" 
-                  *ngIf="modelForm.get('name')?.hasError('required') 
-                  && modelForm.get('name')?.touched">
+                <mat-error class="mat-error-text" *ngIf="modelForm.get('modelName')?.hasError('required') 
+                  && modelForm.get('modelName')?.touched">
                   O <strong>modelo</strong> é obrigatório.
                 </mat-error>
               </mat-form-field>
               <!-- Mensagem de erro para validação de comprimento mínimo do nome do modelo -->
-              <div *ngIf="modelForm.get('name')?.hasError('minlength') && modelForm.get('name')?.dirty">
+              <div *ngIf="modelForm.get('modelName')?.hasError('minlength') && modelForm.get('modelName')?.dirty">
                 <mat-error class="mat-error-text-minlength">
-                  O <strong>Nome</strong> deve ter pelo menos {{ modelForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.
+                  O <strong>Nome</strong> deve ter pelo menos {{
+                  modelForm.get('modelName')?.errors?.['minlength']?.requiredLength }} caracteres.
                 </mat-error>
               </div>
             </mat-card>
@@ -92,7 +82,7 @@
 
       <!-- Botão de envio, desabilitado se o formulário estiver inválido -->
       <div class="buttons-container py-1">
-        <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!modelForm.valid" (click)="onSubmit()" 
+        <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!modelForm.valid" (click)="onSubmit()"
           text="Finalizar cadastro">
         </app-ui-button>
       </div>
