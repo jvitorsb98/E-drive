@@ -157,16 +157,35 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
             selectedVehicle: formValue.selectedVehicle
           });
         });
-      } else {
+      }  else {
         // Modo de planejamento de viagem
         this.tripPlannerMapsService.calculateChargingStations(
           formValue.selectedVehicle,
           remainingBattery,
           batteryHealth,
           this.data.stepsArray
-        ).then(({ chargingStations, message, canCompleteTrip, canCompleteWithoutStops, batteryPercentageAfterTrip }) => {
+        ).then(({ chargingStations, canCompleteTrip, canCompleteWithoutStops, batteryPercentageAfterTrip }) => {
           if (canCompleteTrip) {
-            if (canCompleteWithoutStops) {
+            // Se a viagem puder ser completada, mesmo que com paradas
+            if (!canCompleteWithoutStops) {
+              // Se houver postos de carregamento necessários
+              const chargingStationList = chargingStations
+              .map(station => `${station.name} (${this.formatAddress(station.formatted_address)})`)
+              .join('\n'); // Usar quebra de linha para separar os postos
+            
+            const message = `Você precisará passar por ${chargingStations.length} posto${chargingStations.length > 1 ? 's' : ''} de carregamento`;
+            console.log(chargingStationList[0])
+            const listStations = `${chargingStationList}`
+            this.alertasService.showInfo(message, listStations).then(() => {
+              // Mostrar a lista de postos de carregamento e suas localizações
+              this.dialogRef.close({
+                canCompleteTrip: true,
+                chargingStations: chargingStations,
+                selectedVehicle: formValue.selectedVehicle,
+                batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
+              });
+            });
+            } else {
               // Se a viagem puder ser completada sem paradas
               this.alertasService.showInfo(
                 'Status da Bateria',
@@ -174,19 +193,8 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
               ).then(() => {
                 this.dialogRef.close({
                   canCompleteTrip: true,
-                  selectedVehicle: formValue.selectedVehicle
-                });
-              });
-            } else {
-              // Se houver postos de carregamento necessários
-              this.alertasService.showInfo(
-                'Postos de Carregamento',
-                `Para completar sua viagem, você precisará passar por ${chargingStations.length} postos de carregamento.`
-              ).then(() => {
-                this.dialogRef.close({
-                  canCompleteTrip: true,
-                  chargingStations: chargingStations,
-                  selectedVehicle: formValue.selectedVehicle
+                  selectedVehicle: formValue.selectedVehicle,
+                  batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
                 });
               });
             }
@@ -194,7 +202,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
             // Se a viagem não pode ser completada
             this.alertasService.showError(
               'Erro!',
-              message // Utiliza a mensagem retornada pelo cálculo
+              "Viagem não pode ser completada pela falta de postos no percurso" // Utiliza a mensagem retornada pelo cálculo
             );
           }
         }).catch(error => {
@@ -209,9 +217,23 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   }
   
 
-  showInsufficientBatteryMessage() {
+  // Função para formatar o endereço
+  formatAddress(address: string): string {
+  const parts = address.split(','); // Divide a string em partes
 
+  // Verifica se o endereço possui pelo menos 3 partes
+  if (parts.length >= 3) {
+    const street = parts[0].trim(); // Pega o nome da rua
+    const cityState = parts[1].trim(); // Pega a cidade e o estado
+    const country = parts[2].trim(); // Pega o país
+
+    // Formata o endereço desejado
+    return `${street}, ${cityState}, ${country}`;
   }
+
+  // Se não houver partes suficientes, retorna o endereço original
+  return address;
+}
 
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
