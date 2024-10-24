@@ -225,7 +225,7 @@ export class ModalFormVehicleComponent {
   }
 
   private loadBrands() {
-    this.brandService.getAll().subscribe({
+    this.brandService.getAll(10, 10).subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data

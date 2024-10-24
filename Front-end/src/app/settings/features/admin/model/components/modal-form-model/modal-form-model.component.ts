@@ -96,7 +96,7 @@ export class ModalFormModelComponent {
    * @description Carrega a lista de marcas disponíveis do serviço BrandService.
    */
   loadBrands() {
-    this.brandService.getAll().subscribe({
+    this.brandService.getAll(10,10).subscribe({
       next: (response: any) => {
         this.brands = response.content
           .filter((brand: any) => brand.activated) // Filtra marcas ativas
@@ -181,18 +181,6 @@ export class ModalFormModelComponent {
       this.modelForm.get('modelName')?.disable(); // Desabilita o campo 'name' se nenhuma marca foi selecionada
     }
   }
-
-  // onBrandSelected(event: MatAutocompleteSelectedEvent): void {
-  //   const selectedBrand = event.option.value; // Marca selecionada
-  //   this.modelForm.get('name')?.setValue(selectedBrand.value.name); // Define o objeto da marca no formulário
-
-  //   // Opcional: desabilitar ou habilitar o campo 'modelName' baseado na seleção
-  //   if (selectedBrand) {
-  //     this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name' se uma marca foi selecionada
-  //   } else {
-  //     this.modelForm.get('modelName')?.disable(); // Desabilita o campo 'name' se nenhuma marca foi selecionada
-  //   }
-  // }
 
   /**
    * @description Obtém o ID da marca selecionada com base no nome.

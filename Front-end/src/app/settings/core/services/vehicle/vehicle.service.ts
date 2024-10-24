@@ -1,7 +1,7 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { catchError, Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IVehicleRequest, Vehicle } from '../../models/vehicle';
 import { PaginatedResponse } from '../../models/paginatedResponse';
 import { AuthService } from '../../security/services/auth/auth.service';

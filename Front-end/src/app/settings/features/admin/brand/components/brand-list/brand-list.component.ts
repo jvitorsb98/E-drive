@@ -4,8 +4,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
-import Swal from 'sweetalert2';
-import { catchError, of } from 'rxjs';
 
 // Modelos
 import { Brand } from '../../../../../core/models/brand';
@@ -36,6 +34,10 @@ import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details
   styleUrls: ['./brand-list.component.scss']
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
+  totalBrands: number = 0; // Total de veículos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
   displayedColumns: string[] = ['icon', 'name', 'activated', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brandList: Brand[] = []; // Lista de marcas
@@ -54,7 +56,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
    * Carrega a lista de marcas da API.
    */
   ngOnInit() {
-    this.loadBrands(); // Carregar a lista de marcas ao inicializar o componente
+    this.loadBrands(this.currentPage, this.pageSize); // Carregar a lista de marcas ao inicializar o componente
   }
 
   /**
@@ -70,8 +72,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   /**
    * Carrega a lista de marcas da API e atualiza a tabela.
    */
-  loadBrands() {
-    this.brandService.getAll().subscribe({
+  loadBrands(pageIndex: number, pageSize: number) {
+    this.brandService.getAll(pageIndex, pageSize).subscribe({
       next: (response: PaginatedResponse<Brand>) => { // Recebe a resposta paginada
         this.brandList = response.content; // Extrai a lista de marcas
 
@@ -90,6 +92,17 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
+   * Trata a mudança de página na tabela e atualiza a lista de veículos.
+   *
+   * @param {any} event - Evento de mudança de página.
+   */
+  onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.loadBrands(this.currentPage, this.pageSize);
+  }
+
+  /**
    * Desabilita uma marca após confirmação do usuário.
    *
    * @param brand A marca a ser desabilitada.
@@ -104,7 +117,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       if (isConfirmed) {
         this.brandService.delete(brand.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!').then(() => this.loadBrands()); // Atualiza a lista após desabilitação
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!').then(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após desabilitação
           },
           error: (error) => {
             this.alertasService.showError('Erro!', 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.');
@@ -149,7 +162,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
       height: '210px',
-    }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
+    }).afterClosed().subscribe(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }
 
   /**
@@ -164,7 +177,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       width: '500px',
       height: '210px',
       data: brandList
-    }).afterClosed().subscribe(() => this.loadBrands()); // Atualiza a lista após fechamento do modal
+    }).afterClosed().subscribe(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }
 
   /**
@@ -182,7 +195,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       if (isConfirmed) {
         this.brandService.activated(brand.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!').then(() => this.loadBrands());
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!').then(() => this.loadBrands(this.pageIndex, this.pageSize));
           },
           error: (error) => {
             this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
@@ -16,8 +16,15 @@ export class BrandService {
     this.brandUrl = `${environment.apiUrl}/api/v1/brands`;
   }
 
-  getAll(): Observable<PaginatedResponse<Brand>> {
-    return this.http.get<PaginatedResponse<Brand>>(`${this.brandUrl}?size=1000`);
+  getAll(page: number, size: number): Observable<PaginatedResponse<Brand>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'name,asc'); // Ordenação pelo nome em ordem ascendente
+
+    return this.http.get<PaginatedResponse<Brand>>(this.brandUrl, { params }).pipe(
+      catchError(() => throwError(() => new Error('Failed to load brands')))
+    );
   }
 
   // Método para obter detalhes de uma marca específica

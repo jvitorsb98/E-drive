@@ -11,7 +11,7 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 
 // Importa os módulos do Angular
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -135,7 +135,7 @@ export class ModalFormVehicleComponent implements OnInit {
   }
 
   loadBrands() {
-    this.brandService.getAll().subscribe({
+    this.brandService.getAll(10, 10).subscribe({
       next: (response: any) => {
         this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
