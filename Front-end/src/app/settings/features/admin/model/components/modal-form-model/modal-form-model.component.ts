@@ -243,29 +243,6 @@ export class ModalFormModelComponent {
   }
 
   /**
- * @description Filtra a lista de marcas com base no valor digitado pelo usuário no autocomplete.
- *
- * O método escuta as alterações no controle de formulário e aplica um filtro na lista de marcas,
- * convertendo o valor para minúsculas. Atualiza a variável `noBrandFound` se não houver marcas
- * correspondentes e emite a lista filtrada como um Observable.
- *
- * @returns {void}
- */
-  private filterBrands() {
-    this.modelForm.get('brand')!.valueChanges.pipe(
-      startWith(''), // Inicia o valor do filtro vazio
-      map(value => {
-        const filterValue = typeof value === 'string' ? value.toLowerCase() : ''; // Converte o valor para minúsculas
-        const filtered = this.brands.filter(brand => brand.name.toLowerCase().includes(filterValue)); // Filtra as marcas
-        this.noBrandFound = filtered.length === 0; // Verifica se há marcas filtradas
-        return filtered; // Retorna a lista filtrada
-      })
-    ).subscribe(filteredBrands => {
-      this.filteredBrands = of(filteredBrands); // Atualiza as marcas filtradas
-    });
-  }
-
-  /**
    * @description Manipula a seleção de uma marca no autocomplete.
    *
    * O método atualiza o controle de formulário com a marca selecionada e, se a marca tiver um ID,
