@@ -29,11 +29,11 @@
             <!-- Campo de seleção com autocomplete para escolher a marca -->
             <mat-form-field class="custom-select">
               <mat-label>Marca do veículo:</mat-label>
-              <input type="text" matInput formControlName="brand" [value]="modelForm.get('brand')?.value?.name || ''"
-                [matAutocomplete]="autoBrand" aria-describedby="Help">
-              <!-- Autocomplete para sugerir marcas disponíveis -->
+              <input #brandInput type="text" matInput formControlName="brand"
+                [value]="modelForm.get('brand')?.value?.name || ''" [matAutocomplete]="autoBrand"
+                aria-describedby="Help">
               <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
-                <mat-option *ngFor="let brand of (filteredBrands | async)" [value]="brand">
+                <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
                   {{ brand.name }}
                 </mat-option>
               </mat-autocomplete>
@@ -61,7 +61,7 @@
                 <mat-label class="custom-label">Modelo</mat-label>
                 <!-- Campo de input para o nome do modelo com validação -->
                 <input type="text" name="modelName" matInput formControlName="modelName" required
-                  aria-describedby="Help"/>
+                  aria-describedby="Help" />
                 <!-- Mensagem de erro se o campo 'name' estiver vazio após interação -->
                 <mat-error class="mat-error-text" *ngIf="modelForm.get('modelName')?.hasError('required') 
                   && modelForm.get('modelName')?.touched">

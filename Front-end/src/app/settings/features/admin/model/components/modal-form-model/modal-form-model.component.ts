@@ -23,6 +23,9 @@ import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-p
 import { AlertasService } from '../../../../../core/services/Alertas/alertas.service'; // Serviço para exibir alertas no sistema
 import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
 import { Brand } from '../../../../../core/models/brand';
+import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
+import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
+import { Vehicle } from '../../../../../core/models/vehicle';
 
 @Component({
   selector: 'app-modal-form-model',
@@ -35,6 +38,7 @@ export class ModalFormModelComponent {
   editModel: boolean = false; // Indica se o formulário está em modo de edição
   noBrandFound: boolean = false; // Indica se nenhuma marca foi encontrada
   brands: { name: string; id: number }[] = []; // Lista de marcas disponíveis para o formulário
+  models: { name: string; id: number }[] = [];
   filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Observable com marcas filtradas
 
   /**
@@ -49,6 +53,8 @@ export class ModalFormModelComponent {
   constructor(
     private modelService: ModelService, // Serviço para interagir com modelos
     private brandService: BrandService, // Serviço para interagir com marcas
+    private vehicleService: VehicleService,
+    private userDataService: UserDataService,
     private formBuilder: FormBuilder, // Ferramenta de construção de formulários
     private dialog: MatDialog, // Serviço de modais
     public dialogRef: MatDialogRef<ModalFormModelComponent>, // Referência ao modal atual
@@ -63,6 +69,7 @@ export class ModalFormModelComponent {
     this.editModel = !!this.data?.name; // Define se o modal está em modo de edição
     this.loadBrands(); // Carrega a lista de marcas
     this.buildForm(); // Constrói o formulário
+    this.setupAutocomplete(); // Configura o autocomplete
     if (this.editModel) {
       this.fillForm(); // Preenche o formulário com os dados existentes
       this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name'
@@ -107,6 +114,42 @@ export class ModalFormModelComponent {
         console.error('Erro ao carregar as marcas', error); // Exibe erro no console
       }
     });
+  }
+
+  loadModels(brandId: number) {
+    this.modelService.getModelsByBrandId(brandId).subscribe({
+      next: (response: any) => {
+        const models = response.content || [];
+        if (Array.isArray(models)) {
+          this.models = models.map(model => ({
+            name: this.userDataService.capitalizeWords(model.name),
+            id: model.id,
+            brandId: model.brand.id
+          }));
+          this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+        } else {
+          console.error('Expected an array but got:', models);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar os modelos', error);
+      }
+    });
+  }
+
+  setupAutocomplete() {
+    this.filteredBrands = this.modelForm.get('brand')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.brands, filterValue);
+      })
+    );
+  }
+
+  private _filter<T extends { version?: string, name?: string }>(array: T[], value: any, field: 'version' | 'name' = 'name'): T[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    return array.filter(item => item[field]?.toLowerCase().includes(filterValue));
   }
 
   /**
@@ -170,6 +213,10 @@ export class ModalFormModelComponent {
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value; // Marca selecionada
     this.modelForm.get('brand')?.setValue(selectedBrand.name); // Define o valor da marca no formulário
+
+    if (selectedBrand.id) {
+      this.loadModels(selectedBrand.id);
+    }
 
     // Opcional: desabilitar ou habilitar o campo 'modelName' baseado na seleção
     if (selectedBrand) {
