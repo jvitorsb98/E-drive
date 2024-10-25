@@ -224,13 +224,27 @@ export class ModalFormVehicleComponent {
     this.formUtils.observeFieldChanges(this.vehicleForm, 'consumptionEnergetic', 'autonomyElectricMode');
   }
 
-  private loadBrands() {
+  /**
+ * @description Carrega a lista de marcas disponíveis do serviço BrandService.
+ *
+ * Este método faz uma requisição para obter todas as marcas disponíveis, filtra apenas as marcas
+ * que estão ativas e formata os dados para um formato que inclui o nome e o ID da marca.
+ * Após carregar as marcas, configura o filtro para permitir a seleção no autocomplete.
+ *
+ * @returns {void}
+ */
+  loadBrands() {
     this.brandService.getAll().subscribe({
-      next: (response: any) => {
-        this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
-        this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+      next: (brands: Brand[]) => {
+        // Filtra e mapeia marcas ativas
+        this.brands = brands
+          .filter((brand: Brand) => brand.activated) // Filtra marcas ativas
+          .map((brand: Brand) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
+        this.setupAutocomplete(); // Configura o filtro de marcas para o autocomplete
       },
-      error: (error) => this.handleError('models', error),
+      error: (error) => {
+        console.error('Erro ao carregar as marcas', error); // Loga o erro no console
+      }
     });
   }
 

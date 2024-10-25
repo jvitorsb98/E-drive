@@ -47,6 +47,7 @@ export class ModelListComponent {
   pageIndex: number = 0; // Índice da página atual
   pageSize: number = 5; // Tamanho da página
   currentPage: number = 0; // Página atual
+
   // Colunas exibidas na tabela
   displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
@@ -55,6 +56,13 @@ export class ModelListComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação da tabela
   @ViewChild(MatSort) sort!: MatSort; // Ordenação da tabela
 
+  /**
+  * @description Inicializa o serviço de modelos, o diálogo para modais e o serviço de alertas.
+  *               Também inicializa o data source da tabela com os modelos.
+  * @param {ModelService} modelService - Serviço responsável pela manipulação de modelos.
+  * @param {MatDialog} dialog - Serviço utilizado para abrir diálogos modais.
+  * @param {AlertasService} alertasService - Serviço para exibição de alertas e notificações.
+  */
   constructor(
     private modelService: ModelService, // Serviço de modelos
     private dialog: MatDialog, // Diálogo para modais
@@ -63,28 +71,37 @@ export class ModelListComponent {
     this.dataSource = new MatTableDataSource(this.models); // Inicializa o datasource da tabela
   }
 
+  /**
+ * @description Carrega os modelos ao iniciar o componente.
+ */
   ngOnInit() {
     this.loadModels(this.currentPage, this.pageSize); // Carrega os modelos ao iniciar o componente
   }
 
+  /**
+   * @description Configura a paginação e a ordenação após a visualização do componente.
+   */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator; // Configura a paginação
     this.dataSource.sort = this.sort; // Configura a ordenação
     this.paginator._intl.itemsPerPageLabel = 'Itens por página'; // Customiza o rótulo de itens por página
   }
 
-  // Obtém a lista de modelos do serviço
+  /**
+ * @description Carrega a lista de modelos do serviço com paginação.
+ * @param {number} pageIndex - Índice da página atual.
+ * @param {number} pageSize - Tamanho da página.
+ */
   loadModels(pageIndex: number, pageSize: number) {
     this.modelService.getAll(pageIndex, pageSize).subscribe({
-      next: (response: PaginatedResponse<Model>) => { // Usa a interface tipada
+      next: (response: PaginatedResponse<Model>) => { // Usa tipagem forte para o retorno da API
 
-        // Extrai o array de modelos do campo 'content'
         this.models = response.content;
 
         if (Array.isArray(this.models)) {
           this.dataSource = new MatTableDataSource(this.models);
-          this.dataSource.sort = this.sort;
-          this.totalModels = response.totalElements; // Atualiza o total de modelos
+          this.dataSource.sort = this.sort; // Aplica a ordenação à fonte de dados
+          this.totalModels = response.totalElements; // Atualiza o total de modelos para paginação
         } else {
           console.error('Expected an array in response.content, but got:', this.models);
         }
@@ -96,32 +113,34 @@ export class ModelListComponent {
   }
 
   /**
- * Trata a mudança de página na tabela e atualiza a lista de veículos.
- *
- * @param {any} event - Evento de mudança de página.
- */
+   * @description Lida com a mudança de página na tabela e recarrega a lista de modelos.
+   * @param {any} event - O evento que contém informações sobre a mudança de página.
+   */
   onPageChange(event: any) {
-    this.pageSize = event.pageSize;
-    this.currentPage = event.pageIndex;
-    this.loadModels(this.currentPage, this.pageSize);
+    this.pageSize = event.pageSize; // Atualiza o tamanho da página conforme o selecionado
+    this.currentPage = event.pageIndex; // Atualiza o índice da página atual
+    this.loadModels(this.currentPage, this.pageSize); // Recarrega os modelos para a nova página
   }
 
-  // Deleta um modelo e atualiza a lista
+  /**
+   * @description Desativa um modelo e atualiza a lista após confirmação do usuário.
+   * @param {Model} modelData - O modelo a ser desativado.
+   */
   deleteModel(modelData: Model) {
     this.alertasService.showWarning(
-      'Deletar Modelo',
-      `Você tem certeza que deseja deletar o modelo "${modelData.name}"?`,
-      'Sim, deletar!',
+      'Desativar Modelo',
+      `Você tem certeza que deseja desativar o modelo "${modelData.name}"?`,
+      'Sim, desativar!',
       'Cancelar'
     ).then((isConfirmed) => {
       if (isConfirmed) {
         this.modelService.delete(modelData.id).pipe(
           catchError(() => {
-            this.alertasService.showError('Erro!', 'Ocorreu um erro ao deletar o modelo. Tente novamente mais tarde.');
+            this.alertasService.showError('Erro!', 'Ocorreu um erro ao desativar o modelo. Tente novamente mais tarde.');
             return of(null); // Continua a sequência de observáveis com um valor nulo
           })
         ).subscribe(() => {
-          this.alertasService.showSuccess('Sucesso!', 'O modelo foi deletado com sucesso!').then(() => {
+          this.alertasService.showSuccess('Sucesso!', 'O modelo foi desativado com sucesso!').then(() => {
             this.loadModels(this.pageIndex, this.pageSize); // Atualiza a lista de modelos após a exclusão
           });
         });
@@ -129,18 +148,23 @@ export class ModelListComponent {
     });
   }
 
-  // No arquivo: brand-list.component.ts
+  /**
+   * @description Ativa um modelo e atualiza a lista após confirmação do usuário.
+   * @param {Model} model - O modelo a ser ativado.
+   */
   activatedModel(model: Model) {
     this.alertasService.showWarning(
       'Ativar Modelo',
-      `Você tem certeza que deseja ativar o modelo  "${model.name}"?`,
+      `Você tem certeza que deseja ativar o modelo "${model.name}"?`,
       'Sim, ativar!',
       'Cancelar'
     ).then((isConfirmed) => {
       if (isConfirmed) {
         this.modelService.activated(model.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() => this.loadModels(this.pageIndex, this.pageSize));
+            this.alertasService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() =>
+              this.loadModels(this.pageIndex, this.pageSize)
+            );
           },
           error: (error) => {
             this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar o modelo. Tente novamente mais tarde.');
@@ -150,39 +174,55 @@ export class ModelListComponent {
     });
   }
 
-  // Aplica filtro na tabela
+  /**
+   * @description Aplica um filtro na tabela de modelos.
+   * @param {Event} event - O evento que contém o valor do filtro.
+   */
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    const filterValue = (event.target as HTMLInputElement).value; // Obtém o valor do filtro do evento
+    this.dataSource.filter = filterValue.trim().toLowerCase(); // Aplica o filtro à fonte de dados da tabela
 
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+      this.dataSource.paginator.firstPage(); // Retorna para a primeira página após aplicar o filtro
     }
   }
 
-  // Abre o modal para visualizar detalhes do modelo
+  /**
+   * @description Abre um modal para visualizar detalhes do modelo selecionado.
+   * @param {Model} model - O modelo cujos detalhes serão visualizados.
+   */
   openModalViewModel(model: Model) {
     this.dialog.open(ModalDetailsModelComponent, {
       width: '300px',
       height: '290px',
-      data: model
+      data: model // Passa os dados do modelo selecionado para o modal
     });
   }
 
-  // Abre o modal para adicionar um novo modelo
+  /**
+   * @description Abre um modal para adicionar um novo modelo.
+   */
   openModalAddModel() {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
       height: '285px',
-    }).afterClosed().subscribe(() => this.loadModels(this.pageIndex, this.pageSize)); // Atualiza a lista de modelos após o fechamento do modal
+    }).afterClosed().subscribe(() =>
+      this.loadModels(this.pageIndex, this.pageSize) // Recarrega a lista de modelos após o fechamento do modal
+    );
   }
 
-  // Abre o modal para editar um modelo existente
+  /**
+   * @description Abre um modal para editar um modelo existente.
+   * @param {Model} model - O modelo a ser editado.
+   */
   openModalEditModel(model: Model) {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
       height: '285px',
-      data: model
-    }).afterClosed().subscribe(() => this.loadModels(this.pageIndex, this.pageSize)); // Atualiza a lista de modelos após o fechamento do modal
+      data: model // Passa os dados do modelo para o modal
+    }).afterClosed().subscribe(() =>
+      this.loadModels(this.pageIndex, this.pageSize) // Recarrega a lista de modelos após o fechamento do modal
+    );
   }
+
 }

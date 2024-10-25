@@ -23,6 +23,7 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { CategoryService } from '../../../../core/services/category/category.service';
 import { CategoryAvgAutonomyStatsService } from '../../../../core/services/category-avg-autonomy-stats-service/category-avg-autonomy-stats.service';
 import { DataCategoryAvgAutonomyStats } from '../../../../core/models/DataCategoryAvgAutonomyStats';
+import { Brand } from '../../../../core/models/brand';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -134,14 +135,26 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
+  /**
+* @description Carrega a lista de marcas disponíveis do serviço BrandService.
+*
+* Este método faz uma requisição para obter todas as marcas disponíveis, filtra apenas as marcas
+* que estão ativas e formata os dados para um formato que inclui o nome e o ID da marca.
+* Após carregar as marcas, configura o filtro para permitir a seleção no autocomplete.
+*
+* @returns {void}
+*/
   loadBrands() {
     this.brandService.getAll().subscribe({
-      next: (response: any) => {
-        this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+      next: (brands: Brand[]) => {
+        // Filtra e mapeia marcas ativas
+        this.brands = brands
+          .filter((brand: Brand) => brand.activated) // Filtra marcas ativas
+          .map((brand: Brand) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
       error: (error) => {
-        console.error('Erro ao carregar as marcas', error);
+        console.error('Erro ao carregar as marcas', error); // Loga o erro no console
       }
     });
   }

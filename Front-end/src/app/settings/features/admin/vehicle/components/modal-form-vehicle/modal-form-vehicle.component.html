@@ -1,5 +1,5 @@
 <div class="container-fluid pt-3">
-  <div class="row">
+  <div class="col-12">
     <!-- Container para os botões e título -->
     <div class="col-12 header-container">
       <button class="icon" mat-icon-button aria-label="Voltar" (click)="closeModal()">
@@ -10,12 +10,8 @@
         <mat-icon>help_outline</mat-icon>
       </button>
     </div>
-  </div>
-
-  <div class="col-12">
     <form [formGroup]="vehicleForm">
       <div class="content">
-
         <!-- Campo Marca - Aparece apenas se o campo 'version' for válido -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -44,7 +40,6 @@
             }
           </div>
         </div>
-
         <!-- Campo Modelo - Aparece apenas se o campo 'brand' for válido -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -75,7 +70,6 @@
             }
           </div>
         </div>
-
         <!-- Campo Tipo - Aparece apenas se o campo 'model' for válido -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -95,14 +89,14 @@
                 <strong>O tipo</strong> é obrigatório.
               </mat-error>
             </mat-form-field>
-            @if(!formUtils.isFieldValid['type'] && vehicleForm.get('type')?.valid && vehicleForm.get('type')?.touched) {
+            @if(!formUtils.isFieldValid['type'] && vehicleForm.get('type')?.valid && vehicleForm.get('type')?.touched)
+            {
             <mat-error class="mat-error-text-isexists">
               O tipo <strong>não existe</strong>. Por favor, escolha um tipo válido.
             </mat-error>
             }
           </div>
         </div>
-
         <!-- Campo Categoría - Aparece apenas se o campo 'type' for válido -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -158,7 +152,6 @@
             }
           </div>
         </div>
-
         <!-- Novo campo Motor -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -183,7 +176,6 @@
             </div>
           </div>
         </div>
-
         <!-- Novo campo Versão - Aparece apenas se o campo 'motor' for válido -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -210,7 +202,6 @@
             </div>
           </div>
         </div>
-
         <!-- Ano -->
         <div class="row">
           <div class="col-12 col-md-6 mb-1">
@@ -230,7 +221,6 @@
             </div>
           </div>
         </div>
-
         <!-- Campos adicionais -->
         <div class="col-12">
           <div class="row">
@@ -284,8 +274,7 @@
             <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Autonomia em<strong> modo elétrico:</strong></mat-label>
-                <input type="text" matInput formControlName="autonomyElectricMode" 
-                  aria-describedby="Help">
+                <input type="text" matInput formControlName="autonomyElectricMode" aria-describedby="Help">
                 <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
               </mat-form-field>
               <div

@@ -38,13 +38,20 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   pageIndex: number = 0; // Índice da página atual
   pageSize: number = 5; // Tamanho da página
   currentPage: number = 0; // Página atual
-  displayedColumns: string[] = ['icon', 'name', 'activated', 'actions']; // Colunas a serem exibidas na tabela
+  displayedColumns: string[] = ['icon', 'marck', 'activated', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brands: Brand[] = []; // Lista de marcas
 
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação
   @ViewChild(MatSort) sort!: MatSort; // Ordenação
 
+  /**
+ * @description Inicializa o serviço de marcas, o diálogo para modais e o serviço de alertas.
+ *               Também inicializa o data source da tabela com as marcas.
+ * @param {BrandService} brandService - Serviço responsável pela manipulação de marcas.
+ * @param {MatDialog} dialog - Serviço utilizado para abrir diálogos modais.
+ * @param {AlertasService} alertasService - Serviço para exibição de alertas e notificações.
+ */
   constructor(
     private brandService: BrandService, // Serviço para interagir com a API de marcas
     private dialog: MatDialog, // Serviço para abrir diálogos
@@ -54,16 +61,20 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Método chamado quando o componente é inicializado.
-   * Carrega a lista de marcas da API.
-   */
+  * @description Método chamado quando o componente é inicializado.
+  * Carrega a lista de marcas da API.
+  *
+  * @returns {void}
+  */
   ngOnInit() {
     this.loadBrands(this.currentPage, this.pageSize); // Carregar a lista de marcas ao inicializar o componente
   }
 
   /**
-   * Método chamado após a visualização do componente ser inicializada.
+   * @description Método chamado após a visualização do componente ser inicializada.
    * Configura o paginador e a ordenação da tabela.
+   *
+   * @returns {void}
    */
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator; // Configura o paginador
@@ -72,10 +83,16 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Carrega a lista de marcas da API e atualiza a tabela.
+   * @description Carrega a lista de marcas da API e atualiza a tabela.
+   *
+   * Este método faz uma requisição para obter marcas paginadas e atualiza a tabela com as marcas recebidas.
+   *
+   * @param {number} pageIndex - O índice da página atual.
+   * @param {number} pageSize - O número de itens por página.
+   * @returns {void}
    */
   loadBrands(pageIndex: number, pageSize: number) {
-    this.brandService.getAll(pageIndex, pageSize).subscribe({
+    this.brandService.getAllPaginated(pageIndex, pageSize).subscribe({
       next: (response: PaginatedResponse<Brand>) => { // Recebe a resposta paginada
         this.brands = response.content; // Extrai a lista de marcas
 
@@ -94,9 +111,13 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Trata a mudança de página na tabela e atualiza a lista de veículos.
+   * @description Trata a mudança de página na tabela e atualiza a lista de marcas.
+   *
+   * Este método é chamado quando a página da tabela é alterada. Ele atualiza o tamanho da página e 
+   * o índice da página, e recarrega as marcas.
    *
    * @param {any} event - Evento de mudança de página.
+   * @returns {void}
    */
   onPageChange(event: any) {
     this.pageSize = event.pageSize;
@@ -105,9 +126,13 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Desabilita uma marca após confirmação do usuário.
+   * @description Desabilita uma marca após confirmação do usuário.
    *
-   * @param brand A marca a ser desabilitada.
+   * Este método exibe uma confirmação ao usuário e, se confirmado, desabilita a marca
+   * chamando o serviço correspondente.
+   *
+   * @param {Brand} brand - A marca a ser desabilitada.
+   * @returns {void}
    */
   disableBrand(brand: Brand) {
     this.alertasService.showWarning(
@@ -119,7 +144,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       if (isConfirmed) {
         this.brandService.delete(brand.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!').then(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após desabilitação
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!')
+              .then(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após desabilitação
           },
           error: (error) => {
             this.alertasService.showError('Erro!', 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.');
@@ -130,9 +156,13 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Aplica um filtro na tabela de marcas.
+   * @description Aplica um filtro na tabela de marcas.
    *
-   * @param event O evento de entrada do usuário para busca.
+   * Este método é chamado quando o usuário insere um valor de filtro. Ele atualiza a fonte de dados da tabela
+   * para exibir apenas as marcas que correspondem ao filtro aplicado.
+   *
+   * @param {Event} event - O evento de entrada do usuário para busca.
+   * @returns {void}
    */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -144,9 +174,12 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Abre o modal de visualização de detalhes da marca.
+   * @description Abre o modal de visualização de detalhes da marca.
    *
-   * @param brand Dados da marca a ser visualizada.
+   * Este método abre um modal para mostrar os detalhes da marca selecionada.
+   *
+   * @param {Brand} brand - Dados da marca a ser visualizada.
+   * @returns {void}
    */
   openModalViewBrand(brand: Brand) {
     this.dialog.open(ModalDetailsBrandComponent, {
@@ -157,8 +190,10 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Abre o modal para adicionar uma nova marca.
+   * @description Abre o modal para adicionar uma nova marca.
    * Atualiza a lista de marcas após o fechamento do modal.
+   *
+   * @returns {void}
    */
   openModalAddBrand() {
     this.dialog.open(ModalFormBrandComponent, {
@@ -168,10 +203,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Abre o modal para editar uma marca existente.
+   * @description Abre o modal para editar uma marca existente.
    * Atualiza a lista de marcas após o fechamento do modal.
    *
-   * @param brandList Dados da marca a ser editada.
+   * @param {Brand} brandList - Dados da marca a ser editada.
+   * @returns {void}
    */
   openModalEditBrand(brandList: Brand) {
     this.dialog.open(ModalFormBrandComponent, {
@@ -182,9 +218,13 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Ativa uma marca após confirmação do usuário.
+   * @description Ativa uma marca após confirmação do usuário.
    *
-   * @param brand A marca a ser ativada.
+   * Este método exibe uma confirmação ao usuário e, se confirmado, ativa a marca
+   * chamando o serviço correspondente.
+   *
+   * @param {Brand} brand - A marca a ser ativada.
+   * @returns {void}
    */
   activateBrand(brand: Brand) {
     this.alertasService.showWarning(
@@ -196,7 +236,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       if (isConfirmed) {
         this.brandService.activated(brand.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!').then(() => this.loadBrands(this.pageIndex, this.pageSize));
+            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!')
+              .then(() => this.loadBrands(this.pageIndex, this.pageSize));
           },
           error: (error) => {
             this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');
@@ -205,4 +246,5 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
 }

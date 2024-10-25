@@ -100,9 +100,15 @@ export class ModalFormBrandComponent {
   }
 
   /**
-   * Envia o formulário para cadastrar ou atualizar a marca.
-   * Exibe alertas de sucesso ou erro conforme a ação realizada.
-   */
+ * Envia o formulário para cadastrar ou atualizar a marca.
+ * Exibe alertas de sucesso ou erro conforme a ação realizada.
+ * 
+ * @description Este método verifica se o formulário é válido, determina se está em modo de edição ou de cadastro,
+ *              e realiza a requisição correspondente ao serviço de marcas. Após a requisição, ele trata as respostas
+ *              para exibir alertas apropriados ao usuário.
+ * 
+ * @returns {void}
+ */
   onSubmit() {
     if (this.brandForm.valid) {
       // Determina a ação com base na edição
@@ -120,7 +126,7 @@ export class ModalFormBrandComponent {
           this.handleSuccess(actionSucess); // Ação de sucesso
         },
         error: (response) => {
-          console.log(response.error)
+          console.log(response.error);
           this.handleError(response.error, actionsError); // Ação de erro
         }
       });

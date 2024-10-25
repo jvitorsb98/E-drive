@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, switchMap, throwError } from 'rxjs';
 import { Brand } from '../../models/brand';
 import { PaginatedResponse } from '../../models/paginatedResponse';
 
@@ -17,17 +17,17 @@ export class BrandService {
   }
 
   /**
- * Método para obter uma lista paginada de marcas (Brand) do backend.
- *
- * @param {number} [page=0] - Número da página que deseja carregar. O valor padrão é 0.
- * @param {number} [size=10] - Quantidade de itens por página. O valor padrão é 10.
- * @returns {Observable<PaginatedResponse<Brand>>} - Um Observable que emite a resposta paginada contendo uma lista de marcas.
- *
- * O método realiza uma requisição HTTP GET para a URL `brandUrl`, enviando os parâmetros de paginação
- * (page e size) e a ordenação pelo nome em ordem ascendente. Caso ocorra algum erro, o método retorna
- * uma mensagem de erro genérica: 'Failed to load brands'.
- */
-  getAll(page: number = 0, size: number = 10): Observable<PaginatedResponse<Brand>> {
+  * Método para obter uma lista paginada de marcas (Brand) do backend.
+  *
+  * @param {number} [page=0] - Número da página que deseja carregar. O valor padrão é 0.
+  * @param {number} [size=10] - Quantidade de itens por página. O valor padrão é 10.
+  * @returns {Observable<PaginatedResponse<Brand>>} - Um Observable que emite a resposta paginada contendo uma lista de marcas.
+  *
+  * Este método realiza uma requisição HTTP GET para a URL `brandUrl`, 
+  * enviando os parâmetros de paginação (page e size) e a ordenação pelo nome em ordem ascendente. 
+  * Se ocorrer algum erro durante a requisição, o método retorna um erro genérico: 'Failed to load brands'.
+  */
+  getAllPaginated(page: number = 0, size: number = 10): Observable<PaginatedResponse<Brand>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
@@ -38,6 +38,32 @@ export class BrandService {
     );
   }
 
+  /**
+   * Método para carregar todas as marcas (Brand) de uma só vez após descobrir o total de registros.
+   *
+   * Este método faz uma requisição inicial para obter o número total de marcas disponíveis.
+   * Em seguida, realiza uma requisição única para buscar todas as marcas, utilizando o total de registros 
+   * obtido na primeira chamada como o tamanho da página. Isso permite carregar todos os dados em uma única 
+   * requisição, facilitando o uso em situações onde um carregamento completo é necessário.
+   *
+   * @returns {Observable<Brand[]>} - Um Observable que emite uma lista de todas as marcas.
+   *
+   * Caso ocorra algum erro durante as requisições, o método retorna um erro genérico: 
+   * 'Failed to load all brands'.
+   */
+  getAll(): Observable<Brand[]> {
+    // Primeiro, faz uma requisição inicial para descobrir o número total de registros
+    return this.getAllPaginated(0, 1).pipe(
+      switchMap(response => {
+        const totalElements = response.totalElements;
+        // Faz a requisição final para obter todos os registros de uma só vez
+        return this.getAllPaginated(0, totalElements).pipe(
+          map(finalResponse => finalResponse.content),
+          catchError((error) => throwError(() => new Error('Failed to load all brands')))
+        );
+      })
+    );
+  }
 
   /**
   * Método para obter detalhes de uma marca específica.
@@ -128,6 +154,5 @@ export class BrandService {
       })
     );
   }
-
 
 }

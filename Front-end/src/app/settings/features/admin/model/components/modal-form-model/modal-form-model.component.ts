@@ -14,18 +14,15 @@ import { map, Observable, of, startWith } from 'rxjs'; // Operadores RxJS para m
 // Serviços
 import { ModelService } from '../../../../../core/services/model/model.service'; // Serviço para operações com modelos
 import { BrandService } from '../../../../../core/services/brand/brand.service'; // Serviço para operações com marcas
+import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service'; // Serviço para manipulação de dados do usuário
+import { AlertasService } from '../../../../../core/services/Alertas/alertas.service'; // Serviço para exibir alertas no sistema
 
 // Modelos
 import { Model } from '../../../../../core/models/model'; // Modelo de dados de veículo
+import { Brand } from '../../../../../core/models/brand'; // Modelo de dados de marca
 
 // Componentes
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para informações úteis
-import { AlertasService } from '../../../../../core/services/Alertas/alertas.service'; // Serviço para exibir alertas no sistema
-import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
-import { Brand } from '../../../../../core/models/brand';
-import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
-import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
-import { Vehicle } from '../../../../../core/models/vehicle';
 
 @Component({
   selector: 'app-modal-form-model',
@@ -53,7 +50,6 @@ export class ModalFormModelComponent {
   constructor(
     private modelService: ModelService, // Serviço para interagir com modelos
     private brandService: BrandService, // Serviço para interagir com marcas
-    private vehicleService: VehicleService,
     private userDataService: UserDataService,
     private formBuilder: FormBuilder, // Ferramenta de construção de formulários
     private dialog: MatDialog, // Serviço de modais
@@ -99,131 +95,196 @@ export class ModalFormModelComponent {
   }
 
   /**
-   * @description Carrega a lista de marcas disponíveis do serviço BrandService.
-   */
+ * @description Carrega a lista de marcas disponíveis do serviço BrandService.
+ *
+ * Este método faz uma requisição para obter todas as marcas disponíveis, filtra apenas as marcas
+ * que estão ativas e formata os dados para um formato que inclui o nome e o ID da marca.
+ * Após carregar as marcas, configura o filtro para permitir a seleção no autocomplete.
+ *
+ * @returns {void}
+ */
   loadBrands() {
     this.brandService.getAll().subscribe({
-      next: (response: PaginatedResponse<Brand>) => {
-        this.brands = response.content
+      next: (brands: Brand[]) => {
+        // Filtra e mapeia marcas ativas
+        this.brands = brands
           .filter((brand: Brand) => brand.activated) // Filtra marcas ativas
           .map((brand: Brand) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
-
-        this.filterBrands(); // Configura o filtro de marcas
+        this.setupAutocomplete(); // Configura o filtro de marcas para o autocomplete
       },
       error: (error) => {
-        console.error('Erro ao carregar as marcas', error); // Exibe erro no console
+        console.error('Erro ao carregar as marcas', error); // Loga o erro no console
       }
     });
   }
 
+  /**
+  * @description Carrega modelos (models) com base no ID da marca (brandId) fornecido.
+  *
+  * Este método faz uma requisição para o serviço de modelos, buscando todos os modelos associados 
+  * à marca especificada pelo ID. Ao receber a resposta, ele processa os dados, convertendo 
+  * cada modelo para um formato que inclui o nome capitalizado, o ID do modelo e o ID da marca. 
+  * Em seguida, reconfigura o autocomplete com os modelos carregados.
+  *
+  * @param {number} brandId - O ID da marca cujos modelos devem ser carregados.
+  *
+  * @returns {void} - Não retorna nenhum valor.
+  */
   loadModels(brandId: number) {
     this.modelService.getModelsByBrandId(brandId).subscribe({
       next: (response: any) => {
         const models = response.content || [];
         if (Array.isArray(models)) {
           this.models = models.map(model => ({
-            name: this.userDataService.capitalizeWords(model.name),
-            id: model.id,
-            brandId: model.brand.id
+            name: this.userDataService.capitalizeWords(model.name), // Capitaliza o nome do modelo
+            id: model.id, // ID do modelo
+            brandId: model.brand.id // ID da marca associada
           }));
-          this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+          this.setupAutocomplete(); // Reconfigura o autocomplete com os dados carregados
         } else {
-          console.error('Expected an array but got:', models);
+          console.error('Expected an array but got:', models); // Erro se não for um array
         }
       },
       error: (error) => {
-        console.error('Erro ao carregar os modelos', error);
+        console.error('Erro ao carregar os modelos', error); // Log de erro ao carregar modelos
       }
     });
   }
 
+  /**
+ * @description Configura o autocomplete para a seleção de marcas.
+ *
+ * Este método inicializa o Observable `filteredBrands`, que escuta as alterações de valor do 
+ * controle de formulário correspondente à marca. Sempre que o valor é alterado, ele aplica um 
+ * filtro à lista de marcas, verificando se há marcas correspondentes e atualizando 
+ * a variável `noBrandFound` adequadamente.
+ *
+ * @returns {void} - Não retorna nenhum valor.
+ */
   setupAutocomplete() {
     this.filteredBrands = this.modelForm.get('brand')!.valueChanges.pipe(
-      startWith(''),
+      startWith(''), // Inicia com um valor vazio para o filtro
       map(value => {
-        const filterValue = typeof value === 'string' ? value : (value?.name || '');
-        return this._filter(this.brands, filterValue);
+        const filterValue = typeof value === 'string' ? value.toLowerCase() : ''; // Converte o valor para minúsculas
+        const filtered = this.brands.filter(brand => brand.name.toLowerCase().includes(filterValue)); // Filtra as marcas
+        this.noBrandFound = filtered.length === 0; // Verifica se há marcas filtradas
+        return filtered; // Retorna a lista filtrada
       })
     );
   }
 
-  private _filter<T extends { version?: string, name?: string }>(array: T[], value: any, field: 'version' | 'name' = 'name'): T[] {
-    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
-    return array.filter(item => item[field]?.toLowerCase().includes(filterValue));
+  /**
+ * @description Método privado para filtrar um array de objetos com base em um valor de busca.
+ *
+ * Este método aplica um filtro a um array de objetos, retornando apenas os itens cujo campo 
+ * especificado (por padrão, o campo 'name') contém o valor de busca, ignorando diferenças de 
+ * maiúsculas e minúsculas. É utilizado para filtrar as opções disponíveis no autocomplete.
+ *
+ * @param {T[]} array - O array de objetos a ser filtrado.
+ * @param {any} value - O valor de busca a ser aplicado como filtro.
+ * @param {'version' | 'name'} field - O campo do objeto a ser filtrado (padrão é 'name').
+ * @returns {T[]} - Um novo array contendo apenas os itens que correspondem ao filtro.
+ */
+  private _filter<T extends { version?: string, name?: string }>(
+    array: T[],
+    value: any,
+    field: 'version' | 'name' = 'name'
+  ): T[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : ''; // Converte o valor de busca para minúsculas
+    return array.filter(item => item[field]?.toLowerCase().includes(filterValue)); // Filtra os itens do array
   }
 
   /**
-   * @description Submete o formulário para criar ou atualizar um modelo de veículo.
-   */
+ * @description Submete o formulário para criar ou atualizar um modelo de veículo.
+ *
+ * Este método verifica se o formulário é válido e, em seguida, determina se a operação é 
+ * uma atualização ou um cadastro. Com base nisso, ele coleta os dados do modelo, incluindo 
+ * o nome e o ID da marca selecionada, e faz uma requisição ao serviço correspondente.
+ * Após a requisição, exibe uma mensagem de sucesso ou erro, conforme o resultado.
+ *
+ * @returns {void}
+ */
   onSubmit() {
     if (this.modelForm.valid) {
-      const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a mensagem de sucesso
-      const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar'; // Determina a mensagem de erro
+      const actionSuccess = this.isEditing() ? 'atualizada' : 'cadastrada'; // Mensagem de sucesso
+      const actionError = this.isEditing() ? 'atualizar' : 'cadastrar'; // Mensagem de erro
 
-      const selectedBrandId = this.getSelectedBrandId(); // Obtém o ID da marca selecionada
+      const selectedBrandId = this.getSelectedBrandId(); // ID da marca selecionada
 
+      // Coleta os dados do modelo a serem enviados
       const modelData = {
         ...this.data,
         name: this.modelForm.get('modelName')?.value, // Nome do modelo
         idBrand: selectedBrandId // ID da marca selecionada
       };
 
+      // Faz a requisição para atualizar ou cadastrar o modelo
       const request$ = this.isEditing()
         ? this.modelService.update(modelData) // Atualiza o modelo existente
         : this.modelService.register(modelData); // Registra um novo modelo
 
+      // Trata a resposta da requisição
       request$.subscribe({
         next: () => {
-          this.alertasService.showSuccess('Sucesso!', `O modelo ${this.modelForm.value.modelName} foi ${actionSucess} com sucesso.`); // Exibe sucesso
-          this.closeModal(); // Fecha o modal
+          this.alertasService.showSuccess('Sucesso!',
+            `O modelo ${modelData.name} foi ${actionSuccess} com sucesso.`); // Mensagem de sucesso
+          this.closeModal(); // Fecha o modal após a operação
         },
         error: (response) => {
-          const errorMessage = response.error || `Ocorreu um erro ao tentar ${actionsError} o modelo.`; // Exibe mensagem de erro
-          this.alertasService.showError('Erro!', errorMessage); // Mostra alerta de erro
+          const errorMessage = response.error ||
+            `Ocorreu um erro ao tentar ${actionError} o modelo.`; // Mensagem de erro
+          this.alertasService.showError('Erro!', errorMessage); // Exibe alerta de erro
         }
       });
     } else {
-      this.alertasService.showWarning('Atenção', 'Por favor, preencha todos os campos obrigatórios.'); // Exibe alerta de atenção
+      this.alertasService.showWarning('Atenção',
+        'Por favor, preencha todos os campos obrigatórios.'); // Alerta se o formulário não é válido
     }
   }
 
   /**
-   * @description Filtra a lista de marcas com base no valor digitado pelo usuário no autocomplete.
-   */
+ * @description Filtra a lista de marcas com base no valor digitado pelo usuário no autocomplete.
+ *
+ * O método escuta as alterações no controle de formulário e aplica um filtro na lista de marcas,
+ * convertendo o valor para minúsculas. Atualiza a variável `noBrandFound` se não houver marcas
+ * correspondentes e emite a lista filtrada como um Observable.
+ *
+ * @returns {void}
+ */
   private filterBrands() {
     this.modelForm.get('brand')!.valueChanges.pipe(
       startWith(''), // Inicia o valor do filtro vazio
       map(value => {
         const filterValue = typeof value === 'string' ? value.toLowerCase() : ''; // Converte o valor para minúsculas
         const filtered = this.brands.filter(brand => brand.name.toLowerCase().includes(filterValue)); // Filtra as marcas
-
-        this.noBrandFound = filtered.length === 0; // Define se nenhuma marca foi encontrada
-
+        this.noBrandFound = filtered.length === 0; // Verifica se há marcas filtradas
         return filtered; // Retorna a lista filtrada
       })
     ).subscribe(filteredBrands => {
-      this.filteredBrands = of(filteredBrands); // Atualiza o observable de marcas filtradas
+      this.filteredBrands = of(filteredBrands); // Atualiza as marcas filtradas
     });
   }
 
   /**
-   * @description Manipula o evento de seleção de uma marca no autocomplete.
-   * @param event Evento disparado quando uma marca é selecionada.
+   * @description Manipula a seleção de uma marca no autocomplete.
+   *
+   * O método atualiza o controle de formulário com a marca selecionada e, se a marca tiver um ID,
+   * carrega os modelos associados. Também habilita ou desabilita o campo 'modelName' conforme
+   * a seleção da marca.
+   *
+   * @param {MatAutocompleteSelectedEvent} event - Evento da marca selecionada.
+   * @returns {void}
    */
   onBrandSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedBrand = event.option.value; // Marca selecionada
-    this.modelForm.get('brand')?.setValue(selectedBrand.name); // Define o valor da marca no formulário
+    this.modelForm.get('brand')?.setValue(selectedBrand.name); // Atualiza o valor da marca
 
     if (selectedBrand.id) {
-      this.loadModels(selectedBrand.id);
+      this.loadModels(selectedBrand.id); // Carrega modelos da marca selecionada
     }
 
-    // Opcional: desabilitar ou habilitar o campo 'modelName' baseado na seleção
-    if (selectedBrand) {
-      this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name' se uma marca foi selecionada
-    } else {
-      this.modelForm.get('modelName')?.disable(); // Desabilita o campo 'name' se nenhuma marca foi selecionada
-    }
+    // Habilita ou desabilita o campo 'modelName'
+    this.modelForm.get('modelName')?.[selectedBrand ? 'enable' : 'disable'](); // Usa o operador ternário para habilitar ou desabilitar
   }
 
   /**

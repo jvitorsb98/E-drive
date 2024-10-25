@@ -51,13 +51,31 @@
         <!-- Coluna para exibir a marca do veículo -->
         <ng-container matColumnDef="marck">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let model"><strong>{{model.brand.name}}</strong></td>
+          <td class="td-table" mat-cell *matCellDef="let model">
+            <strong>
+              <span *ngIf="model.brand.name.length > 15; else noEllipsisBrand">
+                {{ model.brand.name | slice: 0:15 }}...
+              </span>
+              <ng-template #noEllipsisBrand>
+                {{ model.brand.name }}
+              </ng-template>
+            </strong>
+          </td>
         </ng-container>
 
         <!-- Coluna para exibir o nome do modelo -->
         <ng-container matColumnDef="name">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let model"><strong>{{model.name}}</strong></td>
+          <td class="td-table" mat-cell *matCellDef="let model">
+            <strong>
+              <span *ngIf="model.name.length > 15; else noEllipsisModel">
+                {{ model.name | slice: 0:15 }}...
+              </span>
+              <ng-template #noEllipsisModel>
+                {{ model.name }}
+              </ng-template>
+            </strong>
+          </td>
         </ng-container>
 
         <!-- Coluna para exibir o status do modelo (Ativado ou Desativado) -->
@@ -104,9 +122,10 @@
 <!-- Container para o paginador e botão para adicionar nova marca -->
 <div class="container coll-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Paginação da tabela -->
-  <mat-paginator class="shadow-sn" [length]="totalModels" [pageSize]="pageSize" 
-  [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 200]" 
-  (page)="onPageChange($event)" aria-label="Selecione modelos por página"></mat-paginator>
+  <mat-paginator class="shadow-sn" [length]="totalModels" [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 200]"
+    (page)="onPageChange($event)" aria-label="Selecione modelos por página"></mat-paginator>
   <!-- Botão para abrir o modal de adicionar um novo modelo -->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddModel()" text="Novo modelo"></app-ui-button>
+  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddModel()"
+    text="Novo modelo"></app-ui-button>
 </div>
