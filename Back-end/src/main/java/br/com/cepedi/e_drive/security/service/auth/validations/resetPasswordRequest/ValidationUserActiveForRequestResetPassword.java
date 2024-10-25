@@ -36,7 +36,7 @@ public class ValidationUserActiveForRequestResetPassword implements ValidationRe
     public void validate(DataRequestResetPassword dataRequestResetPassword) {
         String email = dataRequestResetPassword.email().trim();
         User user = userRepository.findByEmail(email);
-        if(user != null && user.isActive()){
+        if(user != null && !user.isActive()){
             String errorMessage = messageSource.getMessage(
                     "auth.request.reset.password.inactive",
                     new Object[]{email},

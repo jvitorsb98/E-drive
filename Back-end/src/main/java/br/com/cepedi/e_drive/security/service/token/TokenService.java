@@ -156,7 +156,7 @@ public class TokenService {
      * @return A data de expiração do token de recuperação de senha.
      */
     private Instant expirationDateRecoverPassword() {
-        return LocalDateTime.now().plusMinutes(10).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.of("-03:00"));
     }
 
     /**
