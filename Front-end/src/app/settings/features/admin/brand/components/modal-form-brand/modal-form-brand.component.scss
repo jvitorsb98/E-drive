@@ -17,6 +17,7 @@
   display: flex;
   align-items: center;
   height: auto;
+  margin-bottom: -2px;
 }
 
 #Help {
@@ -49,22 +50,30 @@
 }
 
 .mat-error-text {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: -15px;
 }
 
 .mat-error-text-minlength {
-  margin-top: -22px;
-  font-size: 10px;
+  margin-top: -20px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
-  margin-left: 2px;
+  margin-left: -1px;
 }
 
 @media (max-width: 350px) {
   .mat-autocomplete-panel {
     top: calc(100% + 4px);
+  }
+
+  .mat-error-text-minlength {
+    font-size: 11px;
+  }
+
+  .titulo {
+    font-size: 16px;
   }
 }

@@ -39,10 +39,9 @@
               </mat-autocomplete>
               <!-- Ícone para abrir o dropdown do autocomplete -->
               <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
-
               <!-- Validação para exibir erro caso o campo 'brand' esteja vazio após interação -->
               @if(modelForm.get('brand')?.hasError('required') && modelForm.get('brand')?.touched){
-              <mat-error class="mat-error-text"><strong>Marca</strong> é obrigatória</mat-error>
+              <mat-error class="mat-error-text"><strong>Marca</strong> é um campo obrigatório.</mat-error>
               }
             </mat-form-field>
             <!-- Exibe mensagem de erro quando nenhuma marca é encontrada -->
@@ -62,11 +61,10 @@
                 <!-- Campo de input para o nome do modelo com validação -->
                 <input type="text" name="modelName" matInput formControlName="modelName" required
                   aria-describedby="Help" />
-                <!-- Mensagem de erro se o campo 'name' estiver vazio após interação -->
-                <mat-error class="mat-error-text" *ngIf="modelForm.get('modelName')?.hasError('required') 
-                  && modelForm.get('modelName')?.touched">
-                  O <strong>modelo</strong> é obrigatório.
-                </mat-error>
+                <!-- Validação para exibir erro caso o campo 'modelName' esteja vazio após interação -->
+                @if(modelForm.get('modelName')?.hasError('required') && modelForm.get('modelName')?.touched){
+                <mat-error class="mat-error-text"><strong>Modelo</strong> é um campo obrigatório.</mat-error>
+                }
               </mat-form-field>
               <!-- Mensagem de erro para validação de comprimento mínimo do nome do modelo -->
               <div *ngIf="modelForm.get('modelName')?.hasError('minlength') && modelForm.get('modelName')?.dirty">

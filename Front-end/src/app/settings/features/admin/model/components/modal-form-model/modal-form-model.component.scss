@@ -56,23 +56,23 @@ body {
 }
 
 .mat-error-text {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
-  margin-left: -15px;
+  margin-left: -10px;
 }
 
 .mat-error-no-brand {
   margin-top: -25px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
-  margin-left: 3px;
+  margin-left: 2px;
 }
 
 .mat-error-text-minlength {
   margin-top: -22px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: 1px;
@@ -99,7 +99,7 @@ body {
   display: flex;
   align-items: center;
   height: auto;
-  margin-bottom: -3px; // Espaçamento entre os campos
+  margin-bottom: -2px; // Espaçamento entre os campos
 }
 
 .mat-autocomplete-panel {
@@ -133,5 +133,13 @@ body {
 @media (max-width: 350px) {
   .mat-autocomplete-panel {
     top: calc(100% + 4px);
+  }
+
+  .mat-error-text-minlength {
+    font-size: 11px;
+  }
+
+  .titulo {
+    font-size: 16px;
   }
 }
