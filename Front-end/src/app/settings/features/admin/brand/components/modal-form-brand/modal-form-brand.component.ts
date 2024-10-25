@@ -10,9 +10,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 // SweetAlert2
 import Swal from 'sweetalert2'; // Biblioteca para exibir alertas bonitos e personalizáveis
 
-// RxJS
-import { catchError, of } from 'rxjs'; // Importa operadores para lidar com erros e criar observáveis
-
 // Serviços
 import { BrandService } from '../../../../../core/services/brand/brand.service'; // Serviço para operações relacionadas a marcas
 
@@ -75,8 +72,6 @@ export class ModalFormBrandComponent {
   ngOnInit(): void {
     this.editBrand = !!this.data?.name; // Determina se estamos editando com base na existência de dados
     this.buildForm(); // Constrói o formulário
-    console.log('editBrand:', this.editBrand);
-
     if (this.editBrand) {
       this.fillForm(); // Preenche o formulário se estivermos editando
     }
@@ -101,9 +96,6 @@ export class ModalFormBrandComponent {
       this.brandForm.patchValue({
         name: this.data.name
       });
-      console.log("fillForm", this.brandForm.value);
-    } else {
-      console.warn('Dados estão incompletos:', this.data);
     }
   }
 
@@ -113,8 +105,6 @@ export class ModalFormBrandComponent {
    */
   onSubmit() {
     if (this.brandForm.valid) {
-      console.log('Formulário válido:', this.brandForm.value);
-
       // Determina a ação com base na edição
       const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
       const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';
@@ -134,8 +124,6 @@ export class ModalFormBrandComponent {
           this.handleError(response.error, actionsError); // Ação de erro
         }
       });
-    } else {
-      console.warn('Formulário inválido:', this.brandForm);
     }
   }
 
@@ -165,8 +153,6 @@ export class ModalFormBrandComponent {
       confirmButtonColor: 'red',
     });
   }
-
-
 
   /**
    * Verifica se o formulário está no modo de edição.

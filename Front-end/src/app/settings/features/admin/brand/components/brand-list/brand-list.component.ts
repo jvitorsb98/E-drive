@@ -172,7 +172,6 @@ export class BrandListComponent implements OnInit, AfterViewInit {
    * @param brandList Dados da marca a ser editada.
    */
   openModalEditBrand(brandList: Brand) {
-    console.log('Objeto Brand enviado ao modal:', brandList);
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
       height: '210px',

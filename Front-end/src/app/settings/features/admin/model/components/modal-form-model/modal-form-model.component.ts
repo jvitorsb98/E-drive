@@ -86,10 +86,7 @@ export class ModalFormModelComponent {
         modelName: this.data.name, // Preenche o nome do modelo
         brand: this.data.brand.name // Preenche a marca do modelo
       });
-      console.log("fillForm", this.modelForm.value); // Loga os valores preenchidos
-    } else {
-      console.warn('Dados estão incompletos:', this.data); // Exibe aviso caso falte algum dado
-    }
+    } 
   }
 
   /**
@@ -115,8 +112,6 @@ export class ModalFormModelComponent {
    */
   onSubmit() {
     if (this.modelForm.valid) {
-      console.log('Formulário válido:', this.modelForm.value); // Loga o formulário válido
-
       const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada'; // Determina a mensagem de sucesso
       const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar'; // Determina a mensagem de erro
 
@@ -143,7 +138,6 @@ export class ModalFormModelComponent {
         }
       });
     } else {
-      console.warn('Formulário inválido:', this.modelForm); // Loga o formulário inválido
       this.alertasService.showWarning('Atenção', 'Por favor, preencha todos os campos obrigatórios.'); // Exibe alerta de atenção
     }
   }
@@ -166,6 +160,7 @@ export class ModalFormModelComponent {
       this.filteredBrands = of(filteredBrands); // Atualiza o observable de marcas filtradas
     });
   }
+
   /**
    * @description Manipula o evento de seleção de uma marca no autocomplete.
    * @param event Evento disparado quando uma marca é selecionada.

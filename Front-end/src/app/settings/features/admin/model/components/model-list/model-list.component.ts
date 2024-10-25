@@ -77,11 +77,9 @@ export class ModelListComponent {
   loadModels(pageIndex: number, pageSize: number) {
     this.modelService.getAll(pageIndex, pageSize).subscribe({
       next: (response: PaginatedResponse<Model>) => { // Usa a interface tipada
-        console.log('Response from getAllModels:', response);
 
         // Extrai o array de modelos do campo 'content'
         this.modelList = response.content;
-        console.log("modelList:", this.modelList);
 
         if (Array.isArray(this.modelList)) {
           this.dataSource = new MatTableDataSource(this.modelList);
@@ -131,7 +129,6 @@ export class ModelListComponent {
     });
   }
 
-
   // No arquivo: brand-list.component.ts
   activatedModel(model: Model) {
     this.alertasService.showWarning(
@@ -152,7 +149,6 @@ export class ModelListComponent {
       }
     });
   }
-
 
   // Aplica filtro na tabela
   applyFilter(event: Event) {
