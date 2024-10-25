@@ -1,9 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../../../environments/environment';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { UserVehicle } from '../../../models/user-vehicle';
 import { IApiResponse } from '../../../models/api-response';
+import { PaginatedResponse } from '../../../models/paginatedResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,15 @@ export class UserVehicleService {
 
   getAllUserVehicle(): Observable<IApiResponse<UserVehicle[]>> {
     return this.http.get<IApiResponse<UserVehicle[]>>(`${this.userVehicleUrl}/user`);
+  }
+
+  listAll(page: number, size: number): Observable<PaginatedResponse<UserVehicle>> {
+    const params = new HttpParams()
+    .set('page', page.toString())
+    .set('size', size.toString())
+    .set('sort', 'id');
+
+    return this.http.get<PaginatedResponse<UserVehicle>>(`${this.userVehicleUrl}/user`, { params: params });
   }
 
   registerVehicleUser(dataRegisterVehicleUser: any): Observable<any> {

@@ -10,7 +10,7 @@
 </div>
 
 <!-- Container para o filtro de busca -->
-<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12">
 	<div class="custom-filter">
 		<mat-form-field class="d-flex w-100">
 			<!-- Label do campo de busca -->
@@ -21,7 +21,7 @@
 	</div>
 </div>
 
-<div class="container coll-2 col-md-6 col-sm-9 col-lg-5" id="table-container">
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12" id="table-container">
 	<div class="row">
 		<div class="container-table">
 			<table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
@@ -43,20 +43,42 @@
 				<ng-container matColumnDef="mark">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
 					<td class="td-table" mat-cell *matCellDef="let userVehicle">
-						<strong>{{userVehicle.model.brand.name}}</strong>
+						<strong>
+              <span *ngIf="userVehicle.model.brand.name.length > 10; else noEllipsisMark">
+                {{userVehicle.model.brand.name | slice: 0:10}}...
+              </span>
+              <ng-template #noEllipsisMark>
+                {{userVehicle.model.brand.name}}
+              </ng-template>
+            </strong>
 					</td>
 				</ng-container>
 
 				<ng-container matColumnDef="model">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
 					<td class="td-table" mat-cell *matCellDef="let userVehicle">
-						<strong>{{userVehicle.model.name}}</strong>
+						<strong>
+              <span *ngIf="userVehicle.model.name.length > 10; else noEllipsisModel">
+                {{userVehicle.model.name | slice: 0:10}}...
+              </span>
+              <ng-template #noEllipsisModel>
+                {{userVehicle.model.name}}
+              </ng-template>
+            </strong>
 					</td>
 				</ng-container>
 
 				<ng-container matColumnDef="version">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Versão</strong></th>
-					<td class="td-table" mat-cell *matCellDef="let userVehicle"><strong>{{userVehicle.version}}</strong>
+					<td class="td-table" mat-cell *matCellDef="let userVehicle">
+            <strong>
+              <span *ngIf="userVehicle.version.length > 10; else noEllipsisVersion">
+                {{userVehicle.version | slice: 0:10}}...
+              </span>
+              <ng-template #noEllipsisVersion>
+                {{userVehicle.version}}
+              </ng-template>
+            </strong>
 					</td>
 				</ng-container>
 
@@ -86,9 +108,10 @@
 </div>
 
 <!-- Container para o paginador e botão para adicionar nova marca -->
-<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12">
 	<!-- Paginador para navegação entre páginas -->
-	<mat-paginator class="shadow-sn" [pageSizeOptions]="[5, 10, 15]" aria-label="Selecione veículos por página"></mat-paginator>
+	<mat-paginator class="shadow-sn" [length]="total" [pageSize]="pageSize"
+  [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)" aria-label="Selecione veículos por página"></mat-paginator>
 	<!-- Botão para abrir modal de adição de nova marca -->
 	<app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddUserVehicle()" text="Novo Veículo"></app-ui-button>
 </div>

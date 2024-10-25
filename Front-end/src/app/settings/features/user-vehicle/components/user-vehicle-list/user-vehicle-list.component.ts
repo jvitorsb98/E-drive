@@ -24,6 +24,9 @@ import { ModalDetailsVehicleComponent } from '../modal-details-vehicle/modal-det
 import Swal from 'sweetalert2';
 import { catchError, forkJoin, map, of } from 'rxjs';
 import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DataAddressDetails } from '../../../../core/models/inter-Address';
+import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
 
 @Component({
   selector: 'app-user-vehicle-list',
@@ -35,6 +38,15 @@ export class UserVehicleListComponent {
   dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
   userVehicleList: UserVehicle[] = [];
   userVehicleDetails: IVehicleWithUserVehicle[] = [];
+
+  // config de paginacao e ordenacao da tabela
+  total: number = 0; // Total de enderecos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
+  isFilterActive: boolean = false; // Indica se o filtro está ativo
+  filteredData: IVehicleWithUserVehicle[] = []; // Dados filtrados
+  searchKey: any; // Chave de busca para filtro
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -50,7 +62,7 @@ export class UserVehicleListComponent {
   }
 
   ngOnInit() {
-    this.getListUserVehicles();
+    this.getList(this.currentPage, this.pageSize); // Carrega os endereços ao iniciar o componente
   }
 
   ngAfterViewInit() {
@@ -59,47 +71,64 @@ export class UserVehicleListComponent {
     this.paginator._intl.itemsPerPageLabel = 'Itens por página';
   }
 
-    // Obtém a lista de veículos do usuário
-  getListUserVehicles() {
-    this.userVehicleService.getAllUserVehicle().subscribe({
-      next: (response: IApiResponse<UserVehicle[]>) => {
-        console.log('Response from getAllUserVehicle:', response);
+  getList(pageIndex: number, pageSize: number) {
+    if (this.isFilterActive) {
+      this.dataSource.data = this.filteredData;
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    } else {
+      this.userVehicleService.listAll(pageIndex, pageSize).subscribe({
+        next: (response: PaginatedResponse<UserVehicle>) => {
+          if (response && response.content && Array.isArray(response.content)) {
+            this.userVehicleList = response.content;
 
-        if (response && response.content && Array.isArray(response.content)) {
-          this.userVehicleList = response.content;
+            // Filtra os veículos que estão ativados
+            const activeVehicles = this.userVehicleList.filter(vehicle => vehicle.activated);
 
-          // Filtra os veículos que estão ativados
-          const activeVehicles = this.userVehicleList.filter(vehicle => vehicle.activated);
+            // Cria um array de observables para buscar detalhes dos veículos ativados
+            const vehicleDetailsObservables = activeVehicles.map(userVehicle =>
+              this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+                map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+              )
+            );
 
-          // Cria um array de observables para buscar detalhes dos veículos ativados
-          const vehicleDetailsObservables = activeVehicles.map(userVehicle =>
-            this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
-              map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
-            )
-          );
-
-          // Usa forkJoin para esperar até que todas as requisições estejam completas
-          forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
-            // Atualiza os dados com veículo e informações de UserVehicle
-            this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
-              return {
-                ...vehicle,
-                userVehicle // Inclui o UserVehicle no veículo
-              };
+            //  Usa forkJoin para esperar até que todas as requisições estejam completas
+            forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+              // Atualiza os dados com veículo e informações de UserVehicle
+              this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
+                return {
+                  ...vehicle,
+                  userVehicle // Inclui o UserVehicle no veículo
+                };
+              });
+              // Extrai o array de endereços do campo 'content'
+              if (Array.isArray(this.userVehicleDetails)) {
+                this.dataSource = new MatTableDataSource(this.userVehicleDetails);
+                this.dataSource.sort = this.sort;
+                this.total = response.totalElements;
+              } else {
+                this.alertasService.showError('Erro ao carregar endereços', 'Ocorreu um erro ao carregar os endereços.');
+              }
             });
-            console.log(this.userVehicleDetails)
-            this.dataSource.data = this.userVehicleDetails;
-          });
-        } else {
-          console.error('Expected an array in response.content but got:', response.content);
+          }
+        },
+        error: (error: HttpErrorResponse) => {
+          this.alertasService.showError('Erro ao carregar endereços', error.error.message || 'Ocorreu um erro ao carregar os endereços.');
         }
-      },
-      error: (err) => {
-        console.error('Error fetching userVehicles:', err);
-      }
-    });
+      });
+    }
   }
 
+  /**
+   * Trata a mudança de pagina na tabela e atualiza a lista de veiculos.
+   *
+   * @param {any} event - Evento de mudança de pagina.
+   */
+  onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.getList(this.currentPage, this.pageSize);
+  }
 
   // Deleta um veículo do usuário
   deleteUserVehicle(vehicleData: IVehicleWithUserVehicle) {
@@ -112,7 +141,8 @@ export class UserVehicleListComponent {
           })
         ).subscribe(() => {
           this.alertasService.showSuccess('Sucesso!', 'Veículo deletado com sucesso!');
-          this.getListUserVehicles();
+          this.searchKey ? this.applyFilter(this.searchKey) :
+            this.getList(this.currentPage, this.pageSize);
         })
       }
     });
@@ -128,13 +158,75 @@ export class UserVehicleListComponent {
     return vehicle;
   }
 
-  // Aplica o filtro na tabela
+  /**
+   * Aplica um filtro na lista de veículos com base na entrada do usuário.
+   *
+   * @param {Event} event - Evento de entrada do usuário.
+   */
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    try {
+      this.isFilterActive = true;
+      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.searchKey = event;
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+
+      this.userVehicleService.listAll(0, this.total)
+        .pipe(
+          catchError((error) => {
+            this.alertasService.showError("Erro !!", error.message);
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<UserVehicle> | never[]) => {
+          if (Array.isArray(response)) {
+            // Verifica se o retorno é um array vazio
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            //TODO - melhorar esse filtro
+            this.userVehicleList = response.content;
+
+            // Filtra os veículos que estão ativados
+            const activeVehicles = this.userVehicleList.filter(vehicle => vehicle.activated);
+
+            // Cria um array de observables para buscar detalhes dos veículos ativados
+            const vehicleDetailsObservables = activeVehicles.map(userVehicle =>
+              this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+                map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+              )
+            );
+
+            //  Usa forkJoin para esperar até que todas as requisições estejam completas
+            forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+              // Atualiza os dados com veículo e informações de UserVehicle
+              this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
+                return {
+                  ...vehicle,
+                  userVehicle // Inclui o UserVehicle no veículo
+                };
+              });
+
+              this.filteredData = this.userVehicleDetails.filter(vehicle =>
+                vehicle.model.name.toLowerCase().includes(filterValue) ||
+                vehicle.version.toLowerCase().includes(filterValue));
+
+              if (this.filteredData.length > 0) {
+                this.dataSource.data = this.filteredData;
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+              } else {
+                this.dataSource.data = [];
+              }
+            });
+          }
+        });
+    } catch (error: any) {
+      this.alertasService.showError("Erro !!", error.message);
     }
   }
 
@@ -156,7 +248,7 @@ export class UserVehicleListComponent {
       width: '80vw',
       height: '90vh',
       data: {}
-    }).afterClosed().subscribe(() => this.getListUserVehicles());
+    }).afterClosed().subscribe(() => this.getList(this.currentPage, this.pageSize));
   }
 
   // Abre o modal para editar um veículo
@@ -168,6 +260,7 @@ export class UserVehicleListComponent {
         vehicle: userVehicleWithDetails,
         userVehicle: userVehicleWithDetails.userVehicle
       }
-    }).afterClosed().subscribe(() => this.getListUserVehicles());
+    }).afterClosed().subscribe(() => this.searchKey ? this.applyFilter(this.searchKey) :
+      this.getList(this.currentPage, this.pageSize));
   }
 }
