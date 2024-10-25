@@ -193,7 +193,8 @@ export class MapStationsComponent implements AfterViewInit {
       height: '530px',
       data: {
         stepsArray: this.stepsArray, // Passando as informações de distância
-        place: this.currentPlace // Passando informações da estação atual, se necessário
+        place: this.currentPlace, // Passando informações da estação atual, se necessário
+        isStation: true
       },
     });
 
