@@ -100,6 +100,7 @@ public class VehicleUser {
         this.mileagePerLiterCity = dataRegisterAutonomy.mileagePerLiterCity();
         this.consumptionEnergetic = dataRegisterAutonomy.consumptionEnergetic();
         this.autonomyElectricMode = dataRegisterAutonomy.autonomyElectricMode();
+        this.batteryCapacity = dataRegisterAutonomy.batteryCapacity();
         this.activated = true;
     }
 
