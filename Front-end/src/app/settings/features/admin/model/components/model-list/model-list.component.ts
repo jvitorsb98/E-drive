@@ -23,6 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 // Imports de bibliotecas externas
 import { catchError, of } from 'rxjs';
 import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 /**
  * Componente para listar e gerenciar modelos de veículos.
@@ -53,6 +54,10 @@ export class ModelListComponent {
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
   models: Model[] = []; // Lista de modelos
 
+  isFilterActive: boolean = false; // Indica se o filtro está ativo
+  filteredData: Model[] = []; // Dados filtrados
+  searchKey: any; // Chave de busca para filtro
+
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação da tabela
   @ViewChild(MatSort) sort!: MatSort; // Ordenação da tabela
 
@@ -66,7 +71,7 @@ export class ModelListComponent {
   constructor(
     private modelService: ModelService, // Serviço de modelos
     private dialog: MatDialog, // Diálogo para modais
-    private alertasService: AlertasService
+    private alertService: AlertasService
   ) {
     this.dataSource = new MatTableDataSource(this.models); // Inicializa o datasource da tabela
   }
@@ -123,11 +128,59 @@ export class ModelListComponent {
   }
 
   /**
+   * @description Aplica um filtro na lista de veículos com base na entrada do usuário.
+   * @param {Event} event - O evento que contém o valor do filtro.
+   */
+  applyFilter(event: Event) {
+    try {
+      this.isFilterActive = true;
+      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.searchKey = event;
+
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+
+      this.modelService.getAllPaginated(0, this.totalModels)
+        .pipe(
+          catchError((error) => {
+            this.handleError(new HttpErrorResponse({ error: error }));
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<Model> | never[]) => {
+          if (Array.isArray(response)) {
+            // Verifica se o retorno é um array vazio
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            this.filteredData = response.content.filter(model =>
+              model.brand.name.toLowerCase().includes(filterValue) ||
+              model.name.toLowerCase().includes(filterValue)
+            );
+
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+    } catch (error) {
+      this.handleError(new HttpErrorResponse({ error: error }));
+    }
+  }
+
+  /**
    * @description Desativa um modelo e atualiza a lista após confirmação do usuário.
    * @param {Model} modelData - O modelo a ser desativado.
    */
   deleteModel(modelData: Model) {
-    this.alertasService.showWarning(
+    this.alertService.showWarning(
       'Desativar Modelo',
       `Você tem certeza que deseja desativar o modelo "${modelData.name}"?`,
       'Sim, desativar!',
@@ -136,11 +189,11 @@ export class ModelListComponent {
       if (isConfirmed) {
         this.modelService.delete(modelData.id).pipe(
           catchError(() => {
-            this.alertasService.showError('Erro!', 'Ocorreu um erro ao desativar o modelo. Tente novamente mais tarde.');
+            this.alertService.showError('Erro!', 'Ocorreu um erro ao desativar o modelo. Tente novamente mais tarde.');
             return of(null); // Continua a sequência de observáveis com um valor nulo
           })
         ).subscribe(() => {
-          this.alertasService.showSuccess('Sucesso!', 'O modelo foi desativado com sucesso!').then(() => {
+          this.alertService.showSuccess('Sucesso!', 'O modelo foi desativado com sucesso!').then(() => {
             this.loadModels(this.pageIndex, this.pageSize); // Atualiza a lista de modelos após a exclusão
           });
         });
@@ -153,7 +206,7 @@ export class ModelListComponent {
    * @param {Model} model - O modelo a ser ativado.
    */
   activatedModel(model: Model) {
-    this.alertasService.showWarning(
+    this.alertService.showWarning(
       'Ativar Modelo',
       `Você tem certeza que deseja ativar o modelo "${model.name}"?`,
       'Sim, ativar!',
@@ -162,12 +215,12 @@ export class ModelListComponent {
       if (isConfirmed) {
         this.modelService.activated(model.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() =>
+            this.alertService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() =>
               this.loadModels(this.pageIndex, this.pageSize)
             );
           },
           error: (error) => {
-            this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar o modelo. Tente novamente mais tarde.');
+            this.alertService.showError('Erro!', 'Ocorreu um erro ao ativar o modelo. Tente novamente mais tarde.');
           }
         });
       }
@@ -175,16 +228,21 @@ export class ModelListComponent {
   }
 
   /**
-   * @description Aplica um filtro na tabela de modelos.
-   * @param {Event} event - O evento que contém o valor do filtro.
+   * Trata erros de resposta HTTP e exibe um alerta ao usuário.
+   *
+   * @param {HttpErrorResponse} error - Objeto de erro da resposta HTTP.
    */
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value; // Obtém o valor do filtro do evento
-    this.dataSource.filter = filterValue.trim().toLowerCase(); // Aplica o filtro à fonte de dados da tabela
+  handleError(error: HttpErrorResponse) {
+    this.alertService.showError("Erro !!", error.message);
+  }
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage(); // Retorna para a primeira página após aplicar o filtro
-    }
+  /**
+   * Exibe um alerta de sucesso ao usuário.
+   *
+   * @param {string} text - Texto opcional a ser exibido na mensagem de sucesso.
+   */
+  handleSuccess(text: string = "Operação realizada com sucesso") {
+    this.alertService.showSuccess("Sucesso !!", text);
   }
 
   /**
