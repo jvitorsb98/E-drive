@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, switchMap, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Model } from '../../models/model';
 import { PaginatedResponse } from '../../models/paginatedResponse';
@@ -27,7 +27,7 @@ export class ModelService {
  * (page e size) e a ordenação pelo nome em ordem ascendente. Caso ocorra algum erro, o método retorna
  * uma mensagem de erro genérica: 'Failed to load models'.
  */
-  getAll(page: number, size: number): Observable<PaginatedResponse<Model>> {
+  getAllPaginated(page: number, size: number): Observable<PaginatedResponse<Model>> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
@@ -35,6 +35,33 @@ export class ModelService {
 
     return this.http.get<PaginatedResponse<Model>>(this.modelUrl, { params: params }).pipe(
       catchError(() => throwError(() => new Error('Failed to load models')))
+    );
+  }
+
+  /**
+ * Método para carregar todos os modelos (Model) de uma só vez após descobrir o total de registros.
+ *
+ * Este método faz uma requisição inicial para obter o número total de modelos disponíveis.
+ * Em seguida, realiza uma requisição única para buscar todos os modelos, utilizando o total de registros 
+ * obtido na primeira chamada como o tamanho da página. Isso permite carregar todos os dados em uma única 
+ * requisição, facilitando o uso em situações onde um carregamento completo é necessário.
+ *
+ * @returns {Observable<Model[]>} - Um Observable que emite uma lista de todos os modelos.
+ *
+ * Caso ocorra algum erro durante as requisições, o método retorna um erro genérico: 
+ * 'Failed to load all models'.
+ */
+  getAll(): Observable<Model[]> {
+    // Primeiro, faz uma requisição inicial para descobrir o número total de registros
+    return this.getAllPaginated(0, 1).pipe(
+      switchMap(response => {
+        const totalElements = response.totalElements;
+        // Faz a requisição final para obter todos os registros de uma só vez
+        return this.getAllPaginated(0, totalElements).pipe(
+          map(finalResponse => finalResponse.content),
+          catchError((error) => throwError(() => new Error('Failed to load all models')))
+        );
+      })
     );
   }
 

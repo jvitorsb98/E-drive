@@ -93,7 +93,7 @@ export class ModelListComponent {
  * @param {number} pageSize - Tamanho da página.
  */
   loadModels(pageIndex: number, pageSize: number) {
-    this.modelService.getAll(pageIndex, pageSize).subscribe({
+    this.modelService.getAllPaginated(pageIndex, pageSize).subscribe({
       next: (response: PaginatedResponse<Model>) => { // Usa tipagem forte para o retorno da API
 
         this.models = response.content;
