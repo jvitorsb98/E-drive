@@ -66,7 +66,7 @@ export class ModelListComponent {
   *               Também inicializa o data source da tabela com os modelos.
   * @param {ModelService} modelService - Serviço responsável pela manipulação de modelos.
   * @param {MatDialog} dialog - Serviço utilizado para abrir diálogos modais.
-  * @param {AlertasService} alertasService - Serviço para exibição de alertas e notificações.
+  * @param {AlertasService} alertService - Serviço para exibição de alertas e notificações.
   */
   constructor(
     private modelService: ModelService, // Serviço de modelos

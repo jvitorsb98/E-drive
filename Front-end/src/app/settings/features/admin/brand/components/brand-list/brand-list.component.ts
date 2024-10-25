@@ -15,6 +15,8 @@ import { BrandService } from '../../../../../core/services/brand/brand.service';
 // Componentes de modal
 import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
 import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
+import { catchError, of } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 /**
  * Componente para listar e gerenciar marcas.
@@ -42,6 +44,10 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brands: Brand[] = []; // Lista de marcas
 
+  isFilterActive: boolean = false; // Indica se o filtro está ativo
+  filteredData: Brand[] = []; // Dados filtrados
+  searchKey: any; // Chave de busca para filtro
+
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação
   @ViewChild(MatSort) sort!: MatSort; // Ordenação
 
@@ -50,12 +56,12 @@ export class BrandListComponent implements OnInit, AfterViewInit {
  *               Também inicializa o data source da tabela com as marcas.
  * @param {BrandService} brandService - Serviço responsável pela manipulação de marcas.
  * @param {MatDialog} dialog - Serviço utilizado para abrir diálogos modais.
- * @param {AlertasService} alertasService - Serviço para exibição de alertas e notificações.
+ * @param {AlertasService} alertService - Serviço para exibição de alertas e notificações.
  */
   constructor(
     private brandService: BrandService, // Serviço para interagir com a API de marcas
     private dialog: MatDialog, // Serviço para abrir diálogos
-    private alertasService: AlertasService // Serviço para exibir alertas
+    private alertService: AlertasService // Serviço para exibir alertas
   ) {
     this.dataSource = new MatTableDataSource(this.brands); // Inicializa a fonte de dados da tabela
   }
@@ -135,7 +141,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
    * @returns {void}
    */
   disableBrand(brand: Brand) {
-    this.alertasService.showWarning(
+    this.alertService.showWarning(
       'Desabilitar Marca',
       `Você tem certeza que deseja desabilitar a marca "${brand.name}"?`,
       'Sim, desabilitar!',
@@ -144,11 +150,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       if (isConfirmed) {
         this.brandService.delete(brand.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!')
+            this.alertService.showSuccess('Sucesso!', 'A marca foi desabilitada com sucesso!')
               .then(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após desabilitação
           },
           error: (error) => {
-            this.alertasService.showError('Erro!', 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.');
+            this.alertService.showError('Erro!', 'Ocorreu um erro ao desabilitar a marca. Tente novamente mais tarde.');
           }
         });
       }
@@ -156,7 +162,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * @description Aplica um filtro na tabela de marcas.
+   * @description Aplica um filtro na lista de veículos com base na entrada do usuário.
    *
    * Este método é chamado quando o usuário insere um valor de filtro. Ele atualiza a fonte de dados da tabela
    * para exibir apenas as marcas que correspondem ao filtro aplicado.
@@ -165,12 +171,64 @@ export class BrandListComponent implements OnInit, AfterViewInit {
    * @returns {void}
    */
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase(); // Aplica o filtro na tabela
+    try {
+      this.isFilterActive = true;
+      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.searchKey = event;
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage(); // Volta para a primeira página após filtro
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+
+      this.brandService.getAllPaginated(0, this.totalBrands)
+        .pipe(
+          catchError((error) => {
+            this.handleError(new HttpErrorResponse({ error: error }));
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<Brand> | never[]) => {
+          if (Array.isArray(response)) {
+            // Verifica se o retorno é um array vazio
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            this.filteredData = response.content.filter(brand =>
+              brand.name.toLowerCase().includes(filterValue) // Filtra as marcas pelo nome
+            );
+
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+    } catch (error) {
+      this.handleError(new HttpErrorResponse({ error: error }));
     }
+  }
+
+  /**
+   * Trata erros de resposta HTTP e exibe um alerta ao usuário.
+   *
+   * @param {HttpErrorResponse} error - Objeto de erro da resposta HTTP.
+   */
+  handleError(error: HttpErrorResponse) {
+    this.alertService.showError("Erro !!", error.message);
+  }
+
+  /**
+   * Exibe um alerta de sucesso ao usuário.
+   *
+   * @param {string} text - Texto opcional a ser exibido na mensagem de sucesso.
+   */
+  handleSuccess(text: string = "Operação realizada com sucesso") {
+    this.alertService.showSuccess("Sucesso !!", text);
   }
 
   /**
@@ -227,7 +285,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
    * @returns {void}
    */
   activateBrand(brand: Brand) {
-    this.alertasService.showWarning(
+    this.alertService.showWarning(
       'Ativar Marca',
       `Você tem certeza que deseja ativar a marca "${brand.name}"?`,
       'Sim, ativar!',
@@ -236,11 +294,11 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       if (isConfirmed) {
         this.brandService.activated(brand.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!')
+            this.alertService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!')
               .then(() => this.loadBrands(this.pageIndex, this.pageSize));
           },
           error: (error) => {
-            this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');
+            this.alertService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');
           }
         });
       }
