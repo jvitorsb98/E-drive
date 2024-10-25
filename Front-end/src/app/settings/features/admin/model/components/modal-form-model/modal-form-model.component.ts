@@ -21,6 +21,8 @@ import { Model } from '../../../../../core/models/model'; // Modelo de dados de 
 // Componentes
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para informações úteis
 import { AlertasService } from '../../../../../core/services/Alertas/alertas.service'; // Serviço para exibir alertas no sistema
+import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
+import { Brand } from '../../../../../core/models/brand';
 
 @Component({
   selector: 'app-modal-form-model',
@@ -86,18 +88,18 @@ export class ModalFormModelComponent {
         modelName: this.data.name, // Preenche o nome do modelo
         brand: this.data.brand.name // Preenche a marca do modelo
       });
-    } 
+    }
   }
 
   /**
    * @description Carrega a lista de marcas disponíveis do serviço BrandService.
    */
   loadBrands() {
-    this.brandService.getAll(10,10).subscribe({
-      next: (response: any) => {
+    this.brandService.getAll().subscribe({
+      next: (response: PaginatedResponse<Brand>) => {
         this.brands = response.content
-          .filter((brand: any) => brand.activated) // Filtra marcas ativas
-          .map((brand: any) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
+          .filter((brand: Brand) => brand.activated) // Filtra marcas ativas
+          .map((brand: Brand) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
 
         this.filterBrands(); // Configura o filtro de marcas
       },
