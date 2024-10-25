@@ -21,7 +21,6 @@ import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 
 // Imports de bibliotecas externas
-import Swal from 'sweetalert2';
 import { catchError, of } from 'rxjs';
 import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
@@ -44,6 +43,10 @@ import { AlertasService } from '../../../../../core/services/Alertas/alertas.ser
   styleUrls: ['./model-list.component.scss'] // Corrigido para 'styleUrls'
 })
 export class ModelListComponent {
+  totalModels: number = 0; // Total de veículos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 10; // Tamanho da página
+  currentPage: number = 0; // Página atual
   // Colunas exibidas na tabela
   displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
@@ -61,7 +64,7 @@ export class ModelListComponent {
   }
 
   ngOnInit() {
-    this.loadModels(); // Carrega os modelos ao iniciar o componente
+    this.loadModels(this.currentPage, this.pageSize); // Carrega os modelos ao iniciar o componente
   }
 
   ngAfterViewInit() {
@@ -71,8 +74,8 @@ export class ModelListComponent {
   }
 
   // Obtém a lista de modelos do serviço
-  loadModels() {
-    this.modelService.getAll().subscribe({
+  loadModels(pageIndex: number, pageSize: number) {
+    this.modelService.getAll(pageIndex, pageSize).subscribe({
       next: (response: PaginatedResponse<Model>) => { // Usa a interface tipada
         console.log('Response from getAllModels:', response);
 
@@ -94,6 +97,17 @@ export class ModelListComponent {
     });
   }
 
+    /**
+   * Trata a mudança de página na tabela e atualiza a lista de veículos.
+   *
+   * @param {any} event - Evento de mudança de página.
+   */
+    onPageChange(event: any) {
+      this.pageSize = event.pageSize;
+      this.currentPage = event.pageIndex;
+      this.loadModels(this.currentPage, this.pageSize);
+    }
+
   // Deleta um modelo e atualiza a lista
   deleteModel(modelData: Model) {
     this.alertasService.showWarning(
@@ -110,7 +124,7 @@ export class ModelListComponent {
           })
         ).subscribe(() => {
           this.alertasService.showSuccess('Sucesso!', 'O modelo foi deletado com sucesso!').then(() => {
-            this.loadModels(); // Atualiza a lista de modelos após a exclusão
+            this.loadModels(this.pageIndex, this.pageSize); // Atualiza a lista de modelos após a exclusão
           });
         });
       }
@@ -129,7 +143,7 @@ export class ModelListComponent {
       if (isConfirmed) {
         this.modelService.activated(model.id).subscribe({
           next: () => {
-            this.alertasService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() => this.loadModels());
+            this.alertasService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() => this.loadModels(this.pageIndex, this.pageSize));
           },
           error: (error) => {
             this.alertasService.showError('Erro!', 'Ocorreu um erro ao ativar o modelo. Tente novamente mais tarde.');
@@ -164,7 +178,7 @@ export class ModelListComponent {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
       height: '285px',
-    }).afterClosed().subscribe(() => this.loadModels()); // Atualiza a lista de modelos após o fechamento do modal
+    }).afterClosed().subscribe(() => this.loadModels(this.pageIndex, this.pageSize)); // Atualiza a lista de modelos após o fechamento do modal
   }
 
   // Abre o modal para editar um modelo existente
@@ -173,6 +187,6 @@ export class ModelListComponent {
       width: '500px',
       height: '285px',
       data: model
-    }).afterClosed().subscribe(() => this.loadModels()); // Atualiza a lista de modelos após o fechamento do modal
+    }).afterClosed().subscribe(() => this.loadModels(this.pageIndex, this.pageSize)); // Atualiza a lista de modelos após o fechamento do modal
   }
 }

@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
@@ -17,8 +17,15 @@ export class ModelService {
   }
 
   // Método para obter todas as marcas
-  getAll(): Observable<PaginatedResponse<Model>> {
-    return this.http.get<PaginatedResponse<Model>>(this.modelUrl);
+  getAll(page: number, size: number): Observable<PaginatedResponse<Model>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sort', 'name,asc'); // Ordenação pelo nome em ordem ascendente
+
+    return this.http.get<PaginatedResponse<Model>>(this.modelUrl, { params }).pipe(
+      catchError(() => throwError(() => new Error('Failed to load models')))
+    );
   }
 
   getModelsByBrandId(brandId: number): Observable<Model[]> {
