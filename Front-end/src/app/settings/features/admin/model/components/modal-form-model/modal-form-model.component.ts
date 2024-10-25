@@ -68,6 +68,7 @@ export class ModalFormModelComponent {
     this.setupAutocomplete(); // Configura o autocomplete
     if (this.editModel) {
       this.fillForm(); // Preenche o formulário com os dados existentes
+      this.modelForm.get('brand')?.disable(); // Desabilita o campo 'brand'
       this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name'
     }
   }

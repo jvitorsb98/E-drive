@@ -101,7 +101,7 @@
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Paginador para navegação entre páginas -->
   <mat-paginator class="shadow-sn" [length]="totalBrands" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 15, 20, 30, 40, 50, totalBrands]" (page)="onPageChange($event)"
+    [pageSizeOptions]="[5, 10, 20, 30, 40, 50, totalBrands]" (page)="onPageChange($event)"
     aria-label="Selecione veículos por página"></mat-paginator>
   <!-- Botão para abrir modal de adição de nova marca -->
   <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
