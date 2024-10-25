@@ -19,9 +19,6 @@ public record DataRegisterAutonomy(
 
         BigDecimal consumptionEnergetic,
 
-        BigDecimal autonomyElectricMode,
-
-        BigDecimal batteryCapacity
-
+        BigDecimal autonomyElectricMode
 ) {
 }
