@@ -172,11 +172,14 @@ public class VehicleService {
     public DataVehicleDetails updateVehicle(DataUpdateVehicle data, Long id) {
         validationUpdateVehicleList.forEach(v -> v.validate(data,id));
         Vehicle vehicle = vehicleRepository.getReferenceById(id);
+        Autonomy autonomy = autonomyRepository.getReferenceById(vehicle.getAutonomy().getId());
         Category category = data.categoryId() != null ? categoryRepository.getReferenceById(data.categoryId()) : null;
         Propulsion propulsion = data.propulsionId() != null ? propulsionRepository.getReferenceById(data.propulsionId()) : null;
         VehicleType vehicleType = data.typeId() != null ? vehicleTypeRepository.getReferenceById(data.typeId()) : null;
         Model model = data.modelId() != null ? modelRepository.getReferenceById(data.modelId()) : null;
         vehicle.updateDataVehicle(data, model, category, vehicleType, propulsion);
+        autonomy.updateAutonomy(data.dataRegisterAutonomy());
+        autonomyRepository.save(autonomy);
         vehicleRepository.save(vehicle);
         return new DataVehicleDetails(vehicle);
     }
