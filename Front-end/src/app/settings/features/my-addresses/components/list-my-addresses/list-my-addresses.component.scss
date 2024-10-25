@@ -8,8 +8,8 @@
   }
 
   /* Estiliza o contêiner de filtro personalizado com display flex,
-         ocupando 100% da largura, centralizando-o com margem de 5% e
-         ajustando a margem inferior para -25px para alinhamento. */
+       ocupando 100% da largura, centralizando-o com margem de 5% e
+       ajustando a margem inferior para -25px para alinhamento. */
   .custom-filter {
     display: flex;
     margin: 3% auto;
@@ -17,7 +17,7 @@
   }
 
   /* Contêiner da tabela com cantos arredondados, centralizado horizontalmente,
-         com overflow-x ativado para rolagem horizontal e altura definida. */
+       com overflow-x ativado para rolagem horizontal e altura definida. */
   #table-container {
     border-radius: 10px;
     margin: 1% auto;
@@ -34,16 +34,16 @@
   }
 
   /* A tabela ocupa 100% da largura do contêiner,
-         com as bordas das células colapsadas para uma exibição contínua. */
+       com as bordas das células colapsadas para uma exibição contínua. */
   table {
     width: 100%;
     border-collapse: collapse;
   }
 
   /*
-       Este estilo define que o cabeçalho da tabela (elementos <th>)
-       ficará fixo no topo ao rolar a página.
-    */
+     Este estilo define que o cabeçalho da tabela (elementos <th>)
+     ficará fixo no topo ao rolar a página.
+  */
   .fixed-header th {
     position: sticky;
     top: 0;
@@ -51,34 +51,34 @@
   }
 
   /* Estilos para os cabeçalhos da tabela (th), com padding,
-         texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
+       texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
   .th-table {
     padding: 1% 1%;
     text-align: left;
-    font-size: 12px;
+    font-size: 16px !important;
     font-weight: 350;
     color: #5a5a5a;
   }
 
   /* Estilos para as células da tabela (td), com padding,
-         texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
+       texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
   .td-table {
     padding: 1% 1%;
     text-align: left;
-    font-size: 9px;
+    font-size: 12px !important;
     font-weight: 350;
     color: #767676;
   }
 
   /* Define a altura das linhas da tabela como automática, garantindo
-         que a altura se ajuste ao conteúdo. */
+       que a altura se ajuste ao conteúdo. */
   tr {
     height: auto !important;
   }
 
   /* Estilos para o ícone de emoji (bandeira) ao lado do texto na tabela,
-         com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
-  .icone-emoji-carro {
+       com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
+  .icone-locale {
     font-size: 20px;
     color: #767676;
     margin-right: 10px;
@@ -92,7 +92,7 @@
   }
 
   /* Estilos para o ícone interativo na tabela, com tamanho de 18px,
-         cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
+       cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
   .icone-table {
     font-size: 18px;
     color: #767676;
@@ -109,16 +109,16 @@
   }
 
   /* Estilos para o texto exibido quando não há dados na tabela,
-         com espaçamento interno, tamanho de fonte maior e cor azul. */
+       com espaçamento interno, tamanho de fonte maior e cor azul. */
   .no-data {
     padding: 8px 14px;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 16px;
     color: #19B6DD;
   }
 
   /* Define os botões customizados dentro do formulário,
-         centralizando-os com display flex e largura de 100%. */
+       centralizando-os com display flex e largura de 100%. */
   .custom-button {
     display: flex;
     width: 100%;
@@ -138,28 +138,25 @@
   /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
   .th-table mat-icon {
     font-size: 20px;
-    padding: 1% 1%;
-    text-align: left;
-    font-weight: 350;
   }
 
   /* Define o campo de formulário dentro do filtro personalizado como flexível,
-         ocupando todo o espaço horizontal disponível. */
+       ocupando todo o espaço horizontal disponível. */
   .custom-filter mat-form-field {
     flex: 1;
   }
 
-  /* Estilos adicionais para telas de até 768px */
-  @media (max-width: 500px) {
+   /* Estilos adicionais para telas de até 768px */
+   @media (max-width: 500px) {
     .th-table {
-      font-size: 10px;
+      font-size: 14px !important;
     }
 
     .td-table {
-      font-size: 8px;
+      font-size: 10px !important;
     }
 
-    .icone-emoji-carro {
+    .icone-carro {
       font-size: 13px;
     }
 
@@ -184,11 +181,11 @@
   /* Estilos adicionais para telas de até 340px */
   @media (max-width: 340px) {
     .th-table {
-      font-size: 10px;
+      font-size: 12px !important;
     }
 
     .td-table {
-      font-size: 7px;
+      font-size: 8px !important;
     }
 
     .icone-table {

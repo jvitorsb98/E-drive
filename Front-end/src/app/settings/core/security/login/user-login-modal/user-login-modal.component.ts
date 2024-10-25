@@ -21,9 +21,8 @@ export class UserLoginModalComponent implements OnInit {
   isLoading = false;
   successMessage: string | null = null;
   //TODO - remoção de opção de login com imagem
-  // userProfileImage = 'assets/images/Gemini_Generated_Image_dda4t6dda4t6dda4.jpeg';  // Caminho da imagem
   userProfileImage = 'assets/images/DALL·E 2024-10-17.jpeg';
-  // userProfileImage = 'assets/images/Gemini_Generated_Image_lhxmx1lhxmx1lhxm.jpeg';
+
 
   constructor(
     private fb: FormBuilder,
