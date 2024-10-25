@@ -12,14 +12,60 @@
   padding: 0;
 }
 
+.profile-image {
+  width: 60%;
+  max-width: 250px;
+  height: 60%;
+  max-height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+  margin-top: 10px;
+}
+
+@media (max-height: 600px) {
+  .profile-image {
+    max-width: 170px;
+    max-height: 170px;
+  }
+}
+
+/* Header do card */
+.profile-header {
+  position: relative;
+  padding: 1.5rem;
+  // background-color: #19B6DD;
+  border-radius: 15px 15px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-info {
+  margin-bottom: 20px;
+}
+
+/* Contatos */
+.contact-info {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+
 mat-card {
   height: 100%;
   padding: 20px;
 }
 
 mat-card-content {
-  position: relative;
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 50%;
+  gap: 15px; /* Espaçamento entre os campos */
 }
 
 mat-form-field {
@@ -115,5 +161,32 @@ mat-card-actions {
 
   .login-card {
     height: 100vh;
+  }
+}
+
+.links-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Espaçamento horizontal entre links */
+  margin-top: 10px;
+  flex-wrap: wrap; /* Permite quebra para a próxima linha */
+  align-items: center;
+}
+
+.links-container a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #000000;
+  transition: color 0.2s;
+}
+
+.links-container a:hover {
+  color: #19B6DD;
+}
+
+@media (max-width: 600px) {
+  .links-container {
+      flex-direction: column; /* Alinha os links verticalmente em telas menores */
+      gap: 10px; /* Reduz o espaço entre links */
   }
 }

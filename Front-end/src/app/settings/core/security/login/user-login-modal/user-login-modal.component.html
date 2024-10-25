@@ -1,55 +1,61 @@
 <div class="login-container">
-    <mat-card class="login-card">
-        <div class="icon-row">
-            <button mat-icon-button aria-label="Back" (click)="goBack()">
-                <mat-icon>arrow_back</mat-icon>
-            </button>
-            <mat-card-title>Entre em sua conta</mat-card-title>
-            <button mat-icon-button aria-label="Help" (click)="openFAQModal()">
-                <mat-icon>help_outline</mat-icon>
-            </button>
+  <mat-card class="login-card">
+    <div class="icon-row">
+      <button mat-icon-button aria-label="Back" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <mat-card-title>Entre em sua conta</mat-card-title>
+      <button mat-icon-button aria-label="Help" (click)="openFAQModal()">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+    </div>
+    <br><br>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="profile-header">
+          <img class="profile-image" src="{{ userProfileImage }}" alt="User Photo" />
         </div>
-        <br><br>
-        <mat-card-content>
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                <mat-form-field>
-                    <mat-label>E-mail</mat-label>
-                    <input matInput formControlName="email" placeholder="Digite seu e-mail" type="email" required>
-                    <mat-error class="mat-error-text" *ngIf="loginForm.controls['email'].hasError('required')">
-                        E-mail <strong>obrigatório.</strong>
-                    </mat-error>
-                    <mat-error class="mat-error-text" *ngIf="loginForm.controls['email'].hasError('email')">
-                        E-mail <strong>inválido</strong>
-                    </mat-error>
-                </mat-form-field>
+        <div class="profile-info">
+          <mat-form-field class="contact-info">
+            <mat-label>E-mail</mat-label>
+            <input matInput formControlName="email" placeholder="Digite seu e-mail" type="email" required>
+            <mat-error class="mat-error-text" *ngIf="loginForm.controls['email'].hasError('required')">
+              E-mail <strong>obrigatório.</strong>
+            </mat-error>
+            <mat-error class="mat-error-text" *ngIf="loginForm.controls['email'].hasError('email')">
+              E-mail <strong>inválido</strong>
+            </mat-error>
+          </mat-form-field>
 
-                <div class="pass-field">
-                    <mat-form-field>
-                        <mat-label>Senha</mat-label>
-                        <input matInput formControlName="password" placeholder="Digite sua senha" type="password"
-                            class="password-input hidden-text" required>
-                        <i class="bi bi-eye-slash-fill eye-icon password-eye-icon"></i>
-                        <mat-error class="mat-error-text" *ngIf="loginForm.controls['password'].hasError('required')">
-                            Senha <strong>obrigatória.</strong>
-                        </mat-error>
-                        <mat-error class="mat-error-text" *ngIf="loginForm.controls['password'].hasError('minlength')">
-                            Senha deve ter <strong>pelo menos 6 caracteres.</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
+          <div class="pass-field">
+            <mat-form-field class="contact-info">
+              <mat-label>Senha</mat-label>
+              <input matInput formControlName="password" placeholder="Digite sua senha" type="password"
+                class="password-input hidden-text" required>
+              <i class="bi bi-eye-slash-fill eye-icon password-eye-icon"></i>
+              <mat-error class="mat-error-text" *ngIf="loginForm.controls['password'].hasError('required')">
+                Senha <strong>obrigatória.</strong>
+              </mat-error>
+              <mat-error class="mat-error-text" *ngIf="loginForm.controls['password'].hasError('minlength')">
+                Senha deve ter <strong>pelo menos 6 caracteres.</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
 
-                <div class="actions">
-                    <mat-card-actions>
-                        <button mat-raised-button color="primary" type="submit" class="full-width-button">Acessar meu
-                            E-Drive</button>
-                            <div class="d-flex justify-content-center gap-5">
-                              <a class="forgot-password-link" (click)="modalResetPassword(true)">Esqueceu a senha?</a>
-                              <a class="forgot-password-link" (click)="modalResetPassword(false)">Recuperar conta</a>
-                              <a class="forgot-password-link" routerLink="/e-driver/users/registration" (click)="closeDialog()">Cadastre-se</a>
-                            </div>
-                    </mat-card-actions>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
+        <div class="actions">
+          <mat-card-actions>
+            <button mat-raised-button color="primary" type="submit" class="full-width-button">
+              Acessar meu E-Drive
+            </button>
+            <div class="links-container">
+              <a class="custom-link" (click)="modalResetPassword(true)">Esqueceu a senha?</a>
+              <a class="custom-link" (click)="modalResetPassword(false)">Recuperar conta</a>
+              <a class="custom-link" routerLink="/e-driver/users/registration" (click)="closeDialog()">Cadastre-se</a>
+            </div>
+          </mat-card-actions>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>
