@@ -21,9 +21,9 @@ export class ModelService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sort', 'name,asc'); // Ordenação pelo nome em ordem ascendente
+      .set('sort', 'name'); // Ordenação pelo nome em ordem ascendente
 
-    return this.http.get<PaginatedResponse<Model>>(this.modelUrl, { params }).pipe(
+    return this.http.get<PaginatedResponse<Model>>(this.modelUrl, { params: params }).pipe(
       catchError(() => throwError(() => new Error('Failed to load models')))
     );
   }

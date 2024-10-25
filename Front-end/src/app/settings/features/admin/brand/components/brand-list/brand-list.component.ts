@@ -40,7 +40,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   currentPage: number = 0; // Página atual
   displayedColumns: string[] = ['icon', 'name', 'activated', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
-  brandList: Brand[] = []; // Lista de marcas
+  brands: Brand[] = []; // Lista de marcas
 
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação
   @ViewChild(MatSort) sort!: MatSort; // Ordenação
@@ -49,7 +49,9 @@ export class BrandListComponent implements OnInit, AfterViewInit {
     private brandService: BrandService, // Serviço para interagir com a API de marcas
     private dialog: MatDialog, // Serviço para abrir diálogos
     private alertasService: AlertasService // Serviço para exibir alertas
-  ) { }
+  ) {
+    this.dataSource = new MatTableDataSource(this.brands); // Inicializa a fonte de dados da tabela
+  }
 
   /**
    * Método chamado quando o componente é inicializado.
@@ -75,14 +77,14 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   loadBrands(pageIndex: number, pageSize: number) {
     this.brandService.getAll(pageIndex, pageSize).subscribe({
       next: (response: PaginatedResponse<Brand>) => { // Recebe a resposta paginada
-        this.brandList = response.content; // Extrai a lista de marcas
+        this.brands = response.content; // Extrai a lista de marcas
 
-        if (Array.isArray(this.brandList)) {
-          this.dataSource = new MatTableDataSource(this.brandList); // Atualiza a fonte de dados
-          this.dataSource.paginator = this.paginator; // Atualiza o paginador
+        if (Array.isArray(this.brands)) {
+          this.dataSource = new MatTableDataSource(this.brands); // Atualiza a fonte de dados
           this.dataSource.sort = this.sort; // Atualiza a ordenação
+          this.totalBrands = response.totalElements; // Atualiza o total de marcas
         } else {
-          console.error('Esperava um array em response.content, mas recebeu:', this.brandList);
+          console.error('Esperava um array em response.content, mas recebeu:', this.brands);
         }
       },
       error: (error) => {
@@ -161,7 +163,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   openModalAddBrand() {
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
-      height: '210px',
+      height: '200px',
     }).afterClosed().subscribe(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }
 

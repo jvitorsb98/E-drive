@@ -20,9 +20,9 @@ export class BrandService {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
-      .set('sort', 'name,asc'); // Ordenação pelo nome em ordem ascendente
+      .set('sort', 'name'); // Ordenação pelo nome em ordem ascendente
 
-    return this.http.get<PaginatedResponse<Brand>>(this.brandUrl, { params }).pipe(
+    return this.http.get<PaginatedResponse<Brand>>(this.brandUrl, { params: params }).pipe(
       catchError(() => throwError(() => new Error('Failed to load brands')))
     );
   }

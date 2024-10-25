@@ -45,12 +45,12 @@ import { AlertasService } from '../../../../../core/services/Alertas/alertas.ser
 export class ModelListComponent {
   totalModels: number = 0; // Total de veículos disponíveis
   pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 10; // Tamanho da página
+  pageSize: number = 5; // Tamanho da página
   currentPage: number = 0; // Página atual
   // Colunas exibidas na tabela
   displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
-  modelList: Model[] = []; // Lista de modelos
+  models: Model[] = []; // Lista de modelos
 
   @ViewChild(MatPaginator) paginator!: MatPaginator; // Paginação da tabela
   @ViewChild(MatSort) sort!: MatSort; // Ordenação da tabela
@@ -60,7 +60,7 @@ export class ModelListComponent {
     private dialog: MatDialog, // Diálogo para modais
     private alertasService: AlertasService
   ) {
-    this.dataSource = new MatTableDataSource(this.modelList); // Inicializa o datasource da tabela
+    this.dataSource = new MatTableDataSource(this.models); // Inicializa o datasource da tabela
   }
 
   ngOnInit() {
@@ -79,14 +79,14 @@ export class ModelListComponent {
       next: (response: PaginatedResponse<Model>) => { // Usa a interface tipada
 
         // Extrai o array de modelos do campo 'content'
-        this.modelList = response.content;
+        this.models = response.content;
 
-        if (Array.isArray(this.modelList)) {
-          this.dataSource = new MatTableDataSource(this.modelList);
-          this.dataSource.paginator = this.paginator;
+        if (Array.isArray(this.models)) {
+          this.dataSource = new MatTableDataSource(this.models);
           this.dataSource.sort = this.sort;
+          this.totalModels = response.totalElements; // Atualiza o total de modelos
         } else {
-          console.error('Expected an array in response.content, but got:', this.modelList);
+          console.error('Expected an array in response.content, but got:', this.models);
         }
       },
       error: (error) => {
@@ -95,16 +95,16 @@ export class ModelListComponent {
     });
   }
 
-    /**
-   * Trata a mudança de página na tabela e atualiza a lista de veículos.
-   *
-   * @param {any} event - Evento de mudança de página.
-   */
-    onPageChange(event: any) {
-      this.pageSize = event.pageSize;
-      this.currentPage = event.pageIndex;
-      this.loadModels(this.currentPage, this.pageSize);
-    }
+  /**
+ * Trata a mudança de página na tabela e atualiza a lista de veículos.
+ *
+ * @param {any} event - Evento de mudança de página.
+ */
+  onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.loadModels(this.currentPage, this.pageSize);
+  }
 
   // Deleta um modelo e atualiza a lista
   deleteModel(modelData: Model) {
