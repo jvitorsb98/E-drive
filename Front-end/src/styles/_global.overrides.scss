@@ -99,3 +99,30 @@ button[type="button-cancel"] {
 .custom-radio-button {
   font-size: 18px !important; /* Tamanho do texto ao lado do rádio */
 }
+
+// NOTE: Customização de Alertas Swal tabela
+.swal-table-container {
+  max-height: 300px;  /* Define a altura máxima */
+  overflow-y: auto;   /* Ativa a rolagem vertical */
+  // overflow-x: hidden; /* Evita rolagem horizontal, se possível */
+  margin: 10px 0;
+}
+
+.swal-table {
+  width: 100%;        /* Garante que a tabela ocupe toda a largura */
+  border-collapse: collapse;
+}
+
+.swal-thead th {
+  position: sticky;   /* Mantém o cabeçalho fixo durante a rolagem */
+  top: 0;
+  background-color: #343a40;
+  color: white;
+  z-index: 1;
+}
+
+.swal-tbody td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
