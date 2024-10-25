@@ -4,13 +4,8 @@
   </div>
 </div>
 
-<!-- Contêiner para os inputs e botões sobre o mapa -->
-<div class="input-overlay">
-  <!-- Botão para escolher localização inicial como localização atual -->
-  <button (click)="useCurrentLocation()" class="use-location-btn">
-    Usar Localização Atual
-  </button>
-
+<!-- Contêiner para os inputs e botões sobre o mapa, exibido apenas quando isRouteActivate é false -->
+<div class="input-overlay" *ngIf="!isRouteActive">
   <!-- Campo para seleção do local de partida -->
   <input #startLocationInput id="startLocation" type="text" placeholder="Escolha o local de partida" />
 
@@ -23,3 +18,12 @@
 
 <!-- Container do Mapa -->
 <div #mapContainer id="map"></div>
+
+<!-- Botão de Cancelar Rota -->
+<button *ngIf="isRouteActive" 
+        class="cancel-route-button" 
+        [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" 
+        (click)="cancelRoute()">
+  Cancelar Rota
+</button>
+

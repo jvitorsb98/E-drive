@@ -16,19 +16,35 @@ import Swal from 'sweetalert2';
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
 import { AlertasService } from '../../../../core/services/Alertas/alertas.service'; 
 
+/**
+ * Componente modal para gerenciar o status da bateria do veículo.
+ * Este componente permite que o usuário selecione um veículo e insira informações sobre a bateria.
+ */
 @Component({
   selector: 'app-modal-form-vehicle-battery',
   templateUrl: './modal-form-vehicle-battery.component.html',
   styleUrls: ['./modal-form-vehicle-battery.component.scss']
 })
 export class ModalFormVehicleBatteryComponent implements OnInit {
-  vehicleStatusBatteryForm!: FormGroup;
-  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'choose'];
-  dataSource = new MatTableDataSource<IVehicleWithUserVehicle>();
-  userVehicleList: UserVehicle[] = [];
-  userVehicleDetails: IVehicleWithUserVehicle[] = [];
-  isStation: boolean = false;
+  vehicleStatusBatteryForm!: FormGroup; // Formulário para o status da bateria do veículo
+  displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'choose']; // Colunas da tabela de veículos
+  dataSource = new MatTableDataSource<IVehicleWithUserVehicle>(); // Fonte de dados para a tabela
+  userVehicleList: UserVehicle[] = []; // Lista de veículos do usuário
+  userVehicleDetails: IVehicleWithUserVehicle[] = []; // Detalhes dos veículos do usuário
+  isStation: boolean = false; // Indica se o modal é para uma estação
 
+  /**
+   * Construtor do componente.
+   * @param formBuilder Serviço para construção de formulários reativos.
+   * @param userVehicleService Serviço para manipulação de veículos do usuário.
+   * @param vehicleService Serviço para manipulação de veículos.
+   * @param dialog Serviço de diálogo do Angular Material.
+   * @param cdr Detector de mudanças para atualizar a UI.
+   * @param alertasService Serviço para exibir alertas.
+   * @param tripPlannerMapsService Serviço para planejamento de viagens.
+   * @param dialogRef Referência ao diálogo atual.
+   * @param data Dados passados ao abrir o modal.
+   */
   constructor(
     private formBuilder: FormBuilder,
     private userVehicleService: UserVehicleService,
@@ -38,25 +54,35 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private alertasService: AlertasService,
     private tripPlannerMapsService: TripPlannerMapsService, 
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any }
+    @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any; isStation: boolean }
   ) {
-    this.dataSource = new MatTableDataSource(this.userVehicleDetails);
+    this.dataSource = new MatTableDataSource(this.userVehicleDetails); // Inicializa a fonte de dados da tabela
   }
 
+  /**
+   * Método chamado na inicialização do componente.
+   * Constrói o formulário e carrega os dados necessários.
+   */
   ngOnInit() {
-    this.buildForm();
-    this.populateForm();
-    this.getListUserVehicles();
+    this.buildForm(); // Constrói o formulário
+    this.populateForm(); // Preenche o formulário com dados existentes
+    this.getListUserVehicles(); // Obtém a lista de veículos do usuário
   }
 
+  /**
+   * Constrói o formulário reativo para o status da bateria do veículo.
+   */
   buildForm() {
     this.vehicleStatusBatteryForm = this.formBuilder.group({
-      selectedVehicle: new FormControl(null, [Validators.required]),
-      bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator]),
-      saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator])
+      selectedVehicle: new FormControl(null, [Validators.required]), // Veículo selecionado (obrigatório)
+      bateriaRestante: new FormControl(null, [Validators.required, Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator]), // Bateria restante (obrigatório)
+      saudeBateria: new FormControl(null, [Validators.min(0), Validators.max(100), Validators.pattern('^[0-9]*$'), numberValidator]) // Saúde da bateria (opcional)
     });
   }
 
+  /**
+   * Preenche o formulário com os dados existentes passados ao modal.
+   */
   populateForm() {
     this.vehicleStatusBatteryForm.patchValue({
       selectedVehicle: this.data.place.selectedVehicle || null,
@@ -65,28 +91,33 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     });
   }
 
+  /**
+   * Obtém a lista de veículos do usuário e filtra apenas os ativados.
+   */
   getListUserVehicles() {
     this.userVehicleService.getAllUserVehicle().subscribe({
       next: (response: IApiResponse<UserVehicle[]>) => {
         if (response?.content && Array.isArray(response.content)) {
-          // Filtra os veículos que estão ativados
-          this.userVehicleList = response.content.filter(vehicle => vehicle.activated === true);
+          this.userVehicleList = response.content.filter(vehicle => vehicle.activated === true); // Filtra os veículos ativados
           console.log("Lista de veículos ativados do usuário:", this.userVehicleList);
-          this.loadVehicleDetails();
+          this.loadVehicleDetails(); // Carrega os detalhes dos veículos
         } else {
           console.error('Expected an array in response.content but got:', response.content);
         }
       },
       error: (err) => {
-        console.error('Error fetching userVehicles:', err);
+        console.error('Error fetching userVehicles:', err); // Loga erro ao buscar veículos do usuário
       }
     });
   }
 
+  /**
+   * Carrega os detalhes dos veículos associados ao usuário.
+   */
   loadVehicleDetails() {
     const vehicleDetailsObservables = this.userVehicleList.map(userVehicle =>
       this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
-        map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+        map((vehicle: Vehicle) => ({ vehicle, userVehicle })) // Mapeia os detalhes dos veículos
       )
     );
 
@@ -96,75 +127,59 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         userVehicle
       }));
 
-      this.dataSource.data = this.userVehicleDetails;
+      this.dataSource.data = this.userVehicleDetails; // Atualiza a fonte de dados da tabela
       console.log("Detalhes dos veículos carregados:", this.userVehicleDetails);
 
-      // Se houver apenas um veículo disponível, selecione-o automaticamente
       if (this.userVehicleDetails.length === 1) {
         this.vehicleStatusBatteryForm.patchValue({
-          selectedVehicle: this.userVehicleDetails[0] // Marca o ID como selecionado
+          selectedVehicle: this.userVehicleDetails[0] // Seleciona automaticamente se houver apenas um veículo
         });
 
         setTimeout(() => {
           const inputElement = document.querySelector('input[formControlName="bateriaRestante"]');
           console.log(inputElement);
-          (inputElement as HTMLInputElement).focus(); // Asserção de tipo para HTMLInputElement
+          (inputElement as HTMLInputElement).focus(); // Foca no campo de bateria restante
         }, 100);
-
       }
-
     });
   }
 
+  /**
+   * Aplica um filtro à tabela com base na entrada do usuário.
+   * @param event Evento disparado pela entrada do filtro.
+   */
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSource.filter = filterValue.trim().toLowerCase(); // Aplica o filtro
 
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+      this.dataSource.paginator.firstPage(); // Retorna à primeira página se houver paginação
     }
     console.log("Filtro aplicado:", filterValue);
   }
 
+  /**
+   * Envia o status da bateria após validações no formulário.
+   */
   submitBatteryStatus() {
     if (this.vehicleStatusBatteryForm.valid) {
       const formValue = this.vehicleStatusBatteryForm.value;
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryHealth = Number(formValue.saudeBateria);
-
-      // Chama o serviço para calcular o status da bateria
-      const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
-        formValue.selectedVehicle,
-        remainingBattery,
-        batteryHealth,
-        this.data.stepsArray
-      );
-
-      if (!canCompleteTrip) {
-        this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro
-        return;
-      }
-
-      if (batteryPercentageAfterTrip < 10) {
-         this.alertasService.showWarning(
-        'Aviso de Bateria Baixa',
-        `Você chegará com apenas ${batteryPercentageAfterTrip.toFixed(2)}% de bateria. Você deseja continuar?`
-      ).then((result) => {
-          if (result) {
-            this.dialogRef.close({
-              canCompleteTrip: true,
-              batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
-              selectedVehicle: formValue.selectedVehicle
-            });
-          } else {
-            this.dialogRef.close({
-              canCompleteTrip: false,
-              batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
-              selectedVehicle: formValue.selectedVehicle
-            });
-          }
-        });
-      } else {
+  
+      if (this.data.isStation) {
+        const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
+          formValue.selectedVehicle,
+          remainingBattery,
+          batteryHealth,
+          this.data.stepsArray
+        );
+  
+        if (!canCompleteTrip) {
+          this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro se a viagem não pode ser completada
+          return;
+        }
+  
         this.alertasService.showInfo(
           'Status da Bateria',
           `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
@@ -175,28 +190,71 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
             selectedVehicle: formValue.selectedVehicle
           });
         });
+      } else {
+        // Modo de planejamento de viagem
+        this.tripPlannerMapsService.calculateChargingStations(
+          formValue.selectedVehicle,
+          remainingBattery,
+          batteryHealth,
+          this.data.stepsArray
+        ).then(({ chargingStations, canCompleteTrip, canCompleteWithoutStops, batteryPercentageAfterTrip }) => {
+          if (canCompleteTrip) {
+            if (!canCompleteWithoutStops) {
+              const chargingStationList = chargingStations.map(station => `${station.name}`).join('\n'); 
+              const message = `Você precisará passar por ${chargingStations.length} posto${chargingStations.length > 1 ? 's' : ''} de carregamento`;
+              console.log(chargingStationList[0]);
+              const listStations = `${chargingStationList}`;
+              this.alertasService.showInfo(message, listStations).then(() => {
+                this.dialogRef.close({
+                  canCompleteTrip: true,
+                  chargingStations: chargingStations,
+                  selectedVehicle: formValue.selectedVehicle,
+                  batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
+                });
+              });
+            } else {
+              this.alertasService.showInfo(
+                'Status da Bateria',
+                `Você pode completar a viagem sem paradas, chegando com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
+              ).then(() => {
+                this.dialogRef.close({
+                  canCompleteTrip: true,
+                  selectedVehicle: formValue.selectedVehicle,
+                  batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
+                });
+              });
+            }
+          } else {
+            this.alertasService.showError(
+              'Erro!',
+              "Viagem não pode ser completada pela falta de postos no percurso"
+            );
+          }
+        }).catch(error => {
+          console.error('Erro ao calcular os postos de carregamento:', error);
+          this.alertasService.showError('Erro!', 'Não foi possível calcular os postos de carregamento.');
+        });
       }
     } else {
-      console.error("Formulário inválido");
+      console.error("Formulário inválido"); // Loga erro se o formulário for inválido
       return;
     }
   }
 
-
-  showInsufficientBatteryMessage() {
-
-  }
-
+  /**
+   * Abre um modal com perguntas frequentes relacionadas ao status da bateria do veículo.
+   */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
       data: {
-        faqs: [
-
-        ]
+        faqs: []
       },
     });
   }
 
+  /**
+   * Fecha o modal atual.
+   */
   closeModal() {
     this.dialogRef.close();
   }
