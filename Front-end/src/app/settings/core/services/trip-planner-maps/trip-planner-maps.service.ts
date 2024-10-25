@@ -345,19 +345,26 @@ calculateRemainingDistance(stepsArray: Step[], currentStep: Step): number {
 async findAllChargingStationsBetween(stepsArray: Step[]): Promise<any[]> {
   const allChargingStations: any[] = [];
   console.log(stepsArray);
-  
-  for (const step of stepsArray) {
-      // Passa um array contendo o step atual
-      const chargingStation = await this.findChargingStationWithinDistance([step], 5); // Busca com raio máximo de 5 km
-      
-      // Se encontrar uma estação de carregamento e ela não está duplicada
-      if (chargingStation && !allChargingStations.some(station => station.place_id === chargingStation.place_id)) {
-          // Mapeia a estação de carregamento com o passo correspondente
-          allChargingStations.push({ station: chargingStation, step });
-      }
-  }
 
-  return allChargingStations;
+  // Cria uma lista de promessas para buscar as estações de carregamento em paralelo
+  const chargingStationsPromises = stepsArray.map(async (step) => {
+    const chargingStation = await this.findChargingStationWithinDistance([step], 5);
+
+    // Verifica se encontrou uma estação de carregamento e se não há duplicata
+    if (chargingStation && !allChargingStations.some(station => station.place_id === chargingStation.place_id)) {
+      // Retorna a estação de carregamento com o passo correspondente
+      return { station: chargingStation, step };
+    }
+
+    // Retorna null caso não encontre uma estação ou já exista duplicata
+    return null;
+  });
+
+  // Aguarda a resolução de todas as promessas
+  const results = await Promise.all(chargingStationsPromises);
+
+  // Filtra os resultados para remover os valores nulos
+  return results.filter(result => result !== null);
 }
 
 

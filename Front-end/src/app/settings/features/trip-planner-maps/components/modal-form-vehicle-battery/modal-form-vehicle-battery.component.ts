@@ -170,7 +170,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
             if (!canCompleteWithoutStops) {
               // Se houver postos de carregamento necessários
               const chargingStationList = chargingStations
-              .map(station => `${station.name} (${this.formatAddress(station.formatted_address)})`)
+              .map(station => `${station.name}`)
               .join('\n'); // Usar quebra de linha para separar os postos
             
             const message = `Você precisará passar por ${chargingStations.length} posto${chargingStations.length > 1 ? 's' : ''} de carregamento`;
@@ -217,23 +217,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   }
   
 
-  // Função para formatar o endereço
-  formatAddress(address: string): string {
-  const parts = address.split(','); // Divide a string em partes
 
-  // Verifica se o endereço possui pelo menos 3 partes
-  if (parts.length >= 3) {
-    const street = parts[0].trim(); // Pega o nome da rua
-    const cityState = parts[1].trim(); // Pega a cidade e o estado
-    const country = parts[2].trim(); // Pega o país
-
-    // Formata o endereço desejado
-    return `${street}, ${cityState}, ${country}`;
-  }
-
-  // Se não houver partes suficientes, retorna o endereço original
-  return address;
-}
 
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
