@@ -25,7 +25,6 @@ import { UserPasswordModalComponent } from '../user-password-modal/user-password
 // Validators
 import { countryCodeValidator } from '../../../../shared/validators/country-code.validators';
 import { noNumbersValidator } from '../../../../shared/validators/no-numbers.validator';
-import { emailExistsValidator } from '../../../../shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-user-registration-form',
@@ -55,11 +54,7 @@ export class UserRegistrationFormComponent {
   buildForm(_countries: { code: string }[] = []) {
     this.userForm = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.minLength(2), noNumbersValidator]),
-      email: new FormControl(null, {
-        validators: [Validators.required, Validators.email],
-        // asyncValidators: [emailExistsValidator(this.userService)],
-        updateOn: 'blur' // Verifica o e-mail quando o usuário sai do campo
-      }),
+      email: new FormControl(null, [Validators.required, Validators.email]),
       birth: new FormControl(null, Validators.required),
       cellPhone: new FormControl(null, Validators.required),
       countryCode: new FormControl(null, Validators.required)

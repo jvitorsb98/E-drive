@@ -3,14 +3,15 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 15px; /* Ajuste conforme necessário */
+  margin-top: 15px;
+  /* Ajuste conforme necessário */
   margin-bottom: 25px;
 }
 
 .icon-row button {
   position: absolute;
   left: 0;
-  margin-left: -5px; 
+  margin-left: -5px;
 }
 
 .custom-icon-cellfone {
@@ -50,13 +51,25 @@
 }
 
 .mat-error-text {
+  margin-top: 0px;
   font-size: 10px;
   line-height: 1.5;
   text-align: left;
   margin-left: -15px;
 }
 
+.mat-error-name {
+  margin-top: -22px;
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 2px;
+}
+
 .mat-error-name-email {
+  margin-top: -22px;
+  margin-bottom: 0;
+  /* Zera a margem inferior */
   font-size: 10px;
   line-height: 1.5;
   text-align: left;
@@ -64,10 +77,23 @@
 }
 
 .mat-error-codigo-text {
+  margin-top: 0px;
   font-size: 10px;
   line-height: 1.5;
   text-align: left;
-  margin-left: -17px;
+  margin-left: -15px;
+}
+
+.error-codigo-pais-text {
+  white-space: nowrap;
+}
+
+.mat-error-text-cellPhone {
+  margin-top: 0px;
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -5px;
 }
 
 .custom-autocomplete-option {
@@ -88,10 +114,28 @@
 }
 
 .continue-button {
-  position: fixed; /* Trocar para fixed para que ele não afete o layout geral */
+  position: fixed;
   width: 100%;
   padding: 20px;
   bottom: 0;
   left: 0;
-  margin-bottom: 0; /* Garanta que não há margens desnecessárias */
+  margin-bottom: 0;
+}
+
+@media(max-width: 360px) {
+  // .custom-select {
+  //   width: 100%;
+  // }
+
+  // .custom-input {
+  //   width: 100%;
+  // }
+  .mat-error-codigo-text {
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone {
+    white-space: nowrap;
+    margin-left: 8px;
+  }
 }
