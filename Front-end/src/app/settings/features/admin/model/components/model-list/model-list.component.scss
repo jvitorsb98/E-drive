@@ -138,6 +138,8 @@
   /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
   .th-table mat-icon {
     font-size: 20px;
+    padding: 1% 1%;
+    text-align: left;
   }
   
   /* Define o campo de formulário dentro do filtro personalizado como flexível, 
@@ -150,7 +152,7 @@
 @media (max-width: 500px) {
   
   .th-table {
-    font-size: 10px;
+    font-size: 11px;
   }
 
   .td-table {
