@@ -10,9 +10,6 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 // SweetAlert2
 import Swal from 'sweetalert2'; // Biblioteca para exibir alertas bonitos e personalizáveis
 
-// RxJS
-import { catchError, of } from 'rxjs'; // Importa operadores para lidar com erros e criar observáveis
-
 // Serviços
 import { BrandService } from '../../../../../core/services/brand/brand.service'; // Serviço para operações relacionadas a marcas
 
@@ -75,8 +72,6 @@ export class ModalFormBrandComponent {
   ngOnInit(): void {
     this.editBrand = !!this.data?.name; // Determina se estamos editando com base na existência de dados
     this.buildForm(); // Constrói o formulário
-    console.log('editBrand:', this.editBrand);
-
     if (this.editBrand) {
       this.fillForm(); // Preenche o formulário se estivermos editando
     }
@@ -101,20 +96,21 @@ export class ModalFormBrandComponent {
       this.brandForm.patchValue({
         name: this.data.name
       });
-      console.log("fillForm", this.brandForm.value);
-    } else {
-      console.warn('Dados estão incompletos:', this.data);
     }
   }
 
   /**
-   * Envia o formulário para cadastrar ou atualizar a marca.
-   * Exibe alertas de sucesso ou erro conforme a ação realizada.
-   */
+ * Envia o formulário para cadastrar ou atualizar a marca.
+ * Exibe alertas de sucesso ou erro conforme a ação realizada.
+ * 
+ * @description Este método verifica se o formulário é válido, determina se está em modo de edição ou de cadastro,
+ *              e realiza a requisição correspondente ao serviço de marcas. Após a requisição, ele trata as respostas
+ *              para exibir alertas apropriados ao usuário.
+ * 
+ * @returns {void}
+ */
   onSubmit() {
     if (this.brandForm.valid) {
-      console.log('Formulário válido:', this.brandForm.value);
-  
       // Determina a ação com base na edição
       const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
       const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';
@@ -123,22 +119,20 @@ export class ModalFormBrandComponent {
       const request$ = this.isEditing()
         ? this.brandService.update({ ...this.data, ...this.brandForm.value }) // Atualiza a marca
         : this.brandService.register(this.brandForm.value); // Cadastra uma nova marca
-  
+
       // Realiza a requisição e separa as ações para sucesso e erro
       request$.subscribe({
         next: () => {
           this.handleSuccess(actionSucess); // Ação de sucesso
         },
         error: (response) => {
-          console.log(response.error)
+          console.log(response.error);
           this.handleError(response.error, actionsError); // Ação de erro
         }
       });
-    } else {
-      console.warn('Formulário inválido:', this.brandForm);
     }
   }
-  
+
   // Ação de sucesso
   handleSuccess(action: string) {
     Swal.fire({
@@ -153,7 +147,7 @@ export class ModalFormBrandComponent {
       }
     });
   }
-  
+
   // Ação de erro
   handleError(error: any, action: string) {
     const errorMessage = error || `Ocorreu um erro ao tentar ${action} a marca. Tente novamente.`;
@@ -165,8 +159,6 @@ export class ModalFormBrandComponent {
       confirmButtonColor: 'red',
     });
   }
-  
-  
 
   /**
    * Verifica se o formulário está no modo de edição.
@@ -190,6 +182,8 @@ export class ModalFormBrandComponent {
    */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
+      width: '350px',
+      height: '230px',
       data: {
         faqs: [
           {

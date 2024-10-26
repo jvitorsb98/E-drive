@@ -1,8 +1,8 @@
 import { Component, Inject, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of, startWith } from 'rxjs';
 import Swal from 'sweetalert2';
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component';
 
@@ -23,7 +23,8 @@ import { PropusionService } from '../../../../../core/services/propusion/propusi
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
 import { BrandService } from '../../../../../core/services/brand/brand.service';
-import { futureYearValidator } from '../../../../../shared/validators/future-year-validator';import { genericTextValidator } from '../../../../../shared/validators/generic-text-validator';
+import { futureYearValidator } from '../../../../../shared/validators/future-year-validator'; import { genericTextValidator } from '../../../../../shared/validators/generic-text-validator';
+import { UserDataService } from '../../../../../core/services/user/userdata/user-data.service';
 
 
 /**
@@ -67,38 +68,47 @@ import { futureYearValidator } from '../../../../../shared/validators/future-yea
   styleUrls: ['./modal-form-vehicle.component.scss']
 })
 export class ModalFormVehicleComponent {
-  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger!: MatAutocompleteTrigger;
+  // Referência para o painel de autocomplete
+  @ViewChild('brandInput', { read: MatAutocompleteTrigger }) autoBrandTrigger!: MatAutocompleteTrigger;
+  @ViewChild('modelInput', { read: MatAutocompleteTrigger }) autoModelTrigger!: MatAutocompleteTrigger;
+  @ViewChild('typeInput', { read: MatAutocompleteTrigger }) autoTypeTrigger!: MatAutocompleteTrigger;
+  @ViewChild('categoryInput', { read: MatAutocompleteTrigger }) autoCategoryTrigger!: MatAutocompleteTrigger;
+  @ViewChild('propulsionInput', { read: MatAutocompleteTrigger }) autoPropulsionTrigger!: MatAutocompleteTrigger;
+  @ViewChild('versionInput', { read: MatAutocompleteTrigger }) autoVersionTrigger!: MatAutocompleteTrigger;
 
   vehicleForm!: FormGroup; // Formulário reativo
   editVehicle = false; // Indica se o formulário está em modo de edição
-  noCategoryFound = false; // Indica se nenhuma categoria foi encontrada
-  noBrandFound = false; // Indica se nenhuma marca foi encontrada
+  isBrandValid = false; // Indica se nenhuma marca foi encontrada
 
   brands: { name: string; id: number }[] = []; // Lista de marcas
-  filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de marcas
   categories: { name: string; id: number }[] = []; // Lista de categorias
   models: { name: string; id: number }[] = []; // Lista de modelos
   types: { name: string; id: number }[] = []; // Lista de tipos
   propulsions: { name: string; id: number }[] = []; // Lista de propulsões
 
-  filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
+  filteredBrands: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de marcas
   filteredModels: Observable<{ name: string }[]> = of([]); // Lista filtrada de modelos
+  filteredTypes: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de tipos
+  filteredVersions: Observable<Vehicle[]> = of([]); // Now filtering vehicles based on version name
+  filteredCategories: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de categorias
+  filteredPropulsions: Observable<{ name: string; id: number }[]> = of([]); // Lista filtrada de propulsões
+
   vehicles: Vehicle[] = []; // Lista de veículos
 
-   /**
-   * Construtor do componente ModalFormVehicleComponent
-   *
-   * @param vehicleService - Serviço responsável por operações relacionadas a veículos
-   * @param categoryService - Serviço responsável por operações relacionadas a categorias
-   * @param brandService - Serviço responsável por operações relacionadas a marcas
-   * @param modelService - Serviço responsável por operações relacionadas a modelos
-   * @param propulsionService - Serviço responsável por operações relacionadas a propulsões
-   * @param vehicleTypeService - Serviço responsável por operações relacionadas a tipos de veículos
-   * @param formBuilder - Utilizado para criar formulários reativos
-   * @param dialog - Serviço para abertura de diálogos modais
-   * @param dialogRef - Referência ao diálogo aberto para manipulação de eventos
-   * @param data - Dados injetados no diálogo, contendo informações do veículo
-   */
+  /**
+  * Construtor do componente ModalFormVehicleComponent
+  *
+  * @param vehicleService - Serviço responsável por operações relacionadas a veículos
+  * @param categoryService - Serviço responsável por operações relacionadas a categorias
+  * @param brandService - Serviço responsável por operações relacionadas a marcas
+  * @param modelService - Serviço responsável por operações relacionadas a modelos
+  * @param propulsionService - Serviço responsável por operações relacionadas a propulsões
+  * @param vehicleTypeService - Serviço responsável por operações relacionadas a tipos de veículos
+  * @param formBuilder - Utilizado para criar formulários reativos
+  * @param dialog - Serviço para abertura de diálogos modais
+  * @param dialogRef - Referência ao diálogo aberto para manipulação de eventos
+  * @param data - Dados injetados no diálogo, contendo informações do veículo
+  */
   constructor(
     private vehicleService: VehicleService,
     private categoryService: CategoryService,
@@ -106,10 +116,11 @@ export class ModalFormVehicleComponent {
     private modelService: ModelService,
     private propulsionService: PropusionService,
     private vehicleTypeService: TypeVehicleService,
+    private userDataService: UserDataService,
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
-    public formutils: FormUtilsService,
+    public formUtils: FormUtilsService,
     @Inject(MAT_DIALOG_DATA) public data: Vehicle
   ) { }
 
@@ -123,12 +134,18 @@ export class ModalFormVehicleComponent {
     this.loadCategories();
     this.loadTypes();
     this.buildForm();
+    this.setupAutocomplete();
     this.loadPropulsions();
     if (this.editVehicle) {
       this.fillForm();
     }
 
-    this.vehicleForm.get('brand')?.valueChanges.subscribe(this.onBrandChange.bind(this));
+    // this.vehicleForm.get('brand')?.valueChanges.subscribe(this.onBrandChange.bind(this));
+
+    // Adiciona um listener ao campo 'brand' para atualizar a validade sempre que o usuário digitar
+    // this.vehicleForm.get('brand')?.valueChanges.subscribe(() => {
+    //   this.onBrandInputChange(); // Chama a função para verificar a validade da marca
+    // });
 
     // Inicializa os observadores de campo
     if (!this.editVehicle) {
@@ -142,13 +159,17 @@ export class ModalFormVehicleComponent {
   private buildForm(): void {
     this.vehicleForm = this.formBuilder.group({
       brand: new FormControl(null, [Validators.required]),
-      model: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
-      type: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
-      category: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
-      propulsion: new FormControl(!this.editVehicle ? !this.editVehicle ? { value: null, disabled: true } : null : null, [Validators.required]),
-      motor: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, genericTextValidator(2, 20)]),
-      version: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, genericTextValidator(2, 20)]),
-      year: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [Validators.required, futureYearValidator]),
+
+      // Inicializa os campos desabilitados no modo de criação, habilitados no modo de edição
+      model: new FormControl(this.editVehicle ? this.data.model : { value: null, disabled: !this.editVehicle }, [Validators.required]),
+      type: new FormControl(this.editVehicle ? this.data.type : { value: null, disabled: !this.editVehicle }, [Validators.required]),
+      category: new FormControl(this.editVehicle ? this.data.category : { value: null, disabled: !this.editVehicle }, [Validators.required]),
+      propulsion: new FormControl(this.editVehicle ? this.data.propulsion : { value: null, disabled: !this.editVehicle }, [Validators.required]),
+
+      motor: new FormControl(this.editVehicle ? this.data.motor : { value: null, disabled: !this.editVehicle }, [Validators.required, genericTextValidator(2, 20)]),
+      version: new FormControl(this.editVehicle ? this.data.version : { value: null, disabled: !this.editVehicle }, [Validators.required, genericTextValidator(2, 20)]),
+      year: new FormControl(this.editVehicle ? this.data.year : { value: null, disabled: !this.editVehicle }, [Validators.required, futureYearValidator]),
+
       mileagePerLiterRoad: new FormControl(!this.editVehicle ? { value: null, disabled: true } : null, [
         Validators.pattern(/^\d+(\.\d+)?$/),
         Validators.required
@@ -195,25 +216,35 @@ export class ModalFormVehicleComponent {
   }
 
   initializeFieldObservers(): void {
-    this.formutils.observeFieldChanges(this.vehicleForm,'brand', 'model');
-    this.formutils.observeFieldChanges(this.vehicleForm,'model', 'type');
-    this.formutils.observeFieldChanges(this.vehicleForm,'type', 'category');
-    this.formutils.observeFieldChanges(this.vehicleForm,'category', 'propulsion');
-    this.formutils.observeFieldChanges(this.vehicleForm,'propulsion', 'motor');
-    this.formutils.observeFieldChanges(this.vehicleForm,'motor', 'version');
-    this.formutils.observeFieldChanges(this.vehicleForm,'version', 'year');
-    this.formutils.observeFieldChanges(this.vehicleForm,'year', 'mileagePerLiterRoad');
-    this.formutils.observeFieldChanges(this.vehicleForm,'mileagePerLiterRoad', 'mileagePerLiterCity');
-    this.formutils.observeFieldChanges(this.vehicleForm,'mileagePerLiterCity', 'consumptionEnergetic');
-    this.formutils.observeFieldChanges(this.vehicleForm,'consumptionEnergetic', 'autonomyElectricMode');
+    this.formUtils.observeFieldChanges(this.vehicleForm, 'motor', 'version');
+    this.formUtils.observeFieldChanges(this.vehicleForm, 'version', 'year');
+    this.formUtils.observeFieldChanges(this.vehicleForm, 'year', 'mileagePerLiterRoad');
+    this.formUtils.observeFieldChanges(this.vehicleForm, 'mileagePerLiterRoad', 'mileagePerLiterCity');
+    this.formUtils.observeFieldChanges(this.vehicleForm, 'mileagePerLiterCity', 'consumptionEnergetic');
+    this.formUtils.observeFieldChanges(this.vehicleForm, 'consumptionEnergetic', 'autonomyElectricMode');
   }
 
+  /**
+ * @description Carrega a lista de marcas disponíveis do serviço BrandService.
+ *
+ * Este método faz uma requisição para obter todas as marcas disponíveis, filtra apenas as marcas
+ * que estão ativas e formata os dados para um formato que inclui o nome e o ID da marca.
+ * Após carregar as marcas, configura o filtro para permitir a seleção no autocomplete.
+ *
+ * @returns {void}
+ */
   loadBrands() {
     this.brandService.getAll().subscribe({
-      next: (response: any) => {
-        this.brands = response.content.map((brand: Brand) => ({ name: brand.name, id: brand.id }));
+      next: (brands: Brand[]) => {
+        // Filtra e mapeia marcas ativas
+        this.brands = brands
+          .filter((brand: Brand) => brand.activated) // Filtra marcas ativas
+          .map((brand: Brand) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
+        this.setupAutocomplete(); // Configura o filtro de marcas para o autocomplete
       },
-      error: (error) => this.handleError('brands', error),
+      error: (error) => {
+        console.error('Erro ao carregar as marcas', error); // Loga o erro no console
+      }
     });
   }
 
@@ -221,10 +252,11 @@ export class ModalFormVehicleComponent {
    * Carrega a lista de modelos disponíveis de uma marca selecionada.
    * @param idBrand - Identificador da marca selecionada
    */
-  private loadModels(idBrand: number): void {
+  loadModels(idBrand: number) {
     this.modelService.getModelsByBrandId(idBrand).subscribe({
       next: (response: any) => {
         this.models = response.content.map((model: Model) => ({ name: model.name, id: model.id }));
+        this.setupAutocomplete();
       },
       error: (error) => this.handleError('models', error),
     });
@@ -237,6 +269,7 @@ export class ModalFormVehicleComponent {
     this.categoryService.getAll().subscribe({
       next: (response: PaginatedResponse<VehicleType>) => {
         this.categories = response.content.map((category: Category) => ({ name: category.name, id: category.id }));
+        this.setupAutocomplete();
       },
       error: (error) => this.handleError('categories', error),
     });
@@ -249,6 +282,7 @@ export class ModalFormVehicleComponent {
     this.vehicleTypeService.getAll().subscribe({
       next: (response: PaginatedResponse<VehicleType>) => {
         this.types = response.content.map((type: VehicleType) => ({ name: type.name, id: type.id }));
+        this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
       error: (error) => this.handleError('types', error),
     });
@@ -261,22 +295,87 @@ export class ModalFormVehicleComponent {
     this.propulsionService.getAll().subscribe({
       next: (response: PaginatedResponse<Propulsion>) => {
         this.propulsions = response.content.map((propulsion: Propulsion) => ({ name: propulsion.name, id: propulsion.id }));
+        this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
       error: (error) => this.handleError('propulsions', error),
     });
   }
 
-  /**
-   * Executa ação quando uma marca é selecionada, carregando os modelos correspondentes.
-   * @param selectedBrand - Nome da marca selecionada
-   */
-  private onBrandChange(selectedBrand: string): void {
-    const brand = this.brands.find(b => b.name === selectedBrand);
-    if (brand) {
-      this.loadModels(brand.id);
-    } else {
-      this.models = [];
-    }
+  loadVehiclesByModel(modelId: number) {
+    this.vehicleService.getVehiclesByModel(modelId).subscribe({
+      next: (response: any) => {
+        const vehicles = response.content || [];
+
+        if (Array.isArray(vehicles)) {
+          this.vehicles = vehicles.map(vehicle => ({
+            ...vehicle,
+            version: this.userDataService.capitalizeWords(vehicle.version),
+          }));
+
+          this.setupAutocomplete(); // Reconfigure autocomplete with the filtered vehicle list
+        } else {
+          console.error('Expected an array but got:', vehicles);
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar os veículos', error);
+      }
+    });
+  }
+
+  setupAutocomplete() {
+    this.filteredBrands = this.vehicleForm.get('brand')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.brands, filterValue);
+      })
+    );
+
+    this.filteredModels = this.vehicleForm.get('model')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.models, filterValue);
+      })
+    );
+
+    this.filteredTypes = this.vehicleForm.get('type')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.types, filterValue);
+      })
+    );
+
+    this.filteredCategories = this.vehicleForm.get('category')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.categories, filterValue);
+      })
+    );
+
+    this.filteredPropulsions = this.vehicleForm.get('propulsion')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value?.name || '');
+        return this._filter(this.propulsions, filterValue);
+      })
+    );
+
+    this.filteredVersions = this.vehicleForm.get('version')!.valueChanges.pipe(
+      startWith(''),
+      map(value => {
+        const filterValue = typeof value === 'string' ? value : (value || '');
+        return this._filter(this.vehicles, filterValue, 'version');
+      })
+    );
+  }
+
+  private _filter<T extends { version?: string, name?: string }>(array: T[], value: any, field: 'version' | 'name' = 'name'): T[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    return array.filter(item => item[field]?.toLowerCase().includes(filterValue));
   }
 
   /**
@@ -290,7 +389,6 @@ export class ModalFormVehicleComponent {
       console.warn('Invalid form:', this.vehicleForm);
       return;
     }
-
     const vehicleData = this.buildVehicleRequest();
     const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
     const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';
@@ -300,7 +398,7 @@ export class ModalFormVehicleComponent {
       : this.vehicleService.register(vehicleData);
 
 
-      request$.subscribe({
+    request$.subscribe({
       next: (response) => {
         console.log('Response received:', response); // Aqui você pega o response no caso de sucesso
         this.showSuccessMessage(actionSucess);
@@ -349,7 +447,6 @@ export class ModalFormVehicleComponent {
     return this.categories.find(category => category.name === this.vehicleForm.get('category')?.value)?.id;
   }
 
-
   /**
  * Obtém o ID do tipo de veículo selecionado.
  *
@@ -369,6 +466,177 @@ export class ModalFormVehicleComponent {
   }
 
   /**
+  * Manipula a seleção de uma marca no campo de autocomplete.
+  * @param event - Evento de seleção de marca
+  */
+  onBrandSelected(event: MatAutocompleteSelectedEvent): void {
+    // Obtém a marca selecionada do evento de autocomplete
+    const selectedBrand = event.option.value;
+
+    // Verifica se uma marca válida foi selecionada
+    if (selectedBrand && selectedBrand.id) {
+      // Usa o método genérico para atualizar o campo 'brand'
+      this.formUtils.updateFormField(
+        this.vehicleForm,
+        'brand', // Nome do campo no formulário
+        selectedBrand, // Valor selecionado
+        (id: number) => this.loadModels(id), // Função para carregar modelos
+        'model' // Próximo campo a ser habilitado
+      );
+    } else {
+      // Caso nenhuma marca válida seja selecionada, trata a situação
+      this.formUtils.resetAndDisableFields(this.vehicleForm, ['model', 'type', 'category', 'propulsion']);
+    }
+  }
+
+  onModelSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedModel = event.option.value;
+
+    if (selectedModel && selectedModel.id) {
+      this.formUtils.updateFormField(
+        this.vehicleForm,
+        'model',
+        selectedModel,
+        null, // Nenhuma função de carregamento necessária para o modelo
+        'type' // O próximo campo a ser habilitado
+      );
+    } else {
+      // Se o modelo não for selecionado, desabilita os campos 'type', 'category' e 'propulsion'
+      this.formUtils.resetAndDisableFields(this.vehicleForm, ['type', 'category', 'propulsion']);
+    }
+  }
+
+  onTypeSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedType = event.option.value;
+
+    // Verifica se um tipo válido foi selecionado
+    if (selectedType) {
+      this.formUtils.updateFormField(
+        this.vehicleForm,
+        'type', // Nome do campo no formulário
+        selectedType, // Valor selecionado
+        (id: number) => this.loadVehiclesByModel(id), // Função para carregar veículos, se necessário
+        'category' // O próximo campo a ser habilitado
+      );
+    } else {
+      // Se o tipo não for selecionado, desabilita o campo category
+      this.formUtils.resetAndDisableFields(this.vehicleForm, ['category']);
+    }
+  }
+
+  onCategorySelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedCategory = event.option.value;
+
+    // Verifica se uma categoria válida foi selecionada
+    if (selectedCategory) {
+      this.formUtils.updateFormField(
+        this.vehicleForm,
+        'category', // Nome do campo no formulário
+        selectedCategory, // Valor selecionado
+        (id: number) => this.loadVehiclesByModel(id), // Função para carregar veículos, se necessário
+        'propulsion' // O próximo campo a ser habilitado
+      );
+    } else {
+      // Se a categoria não for selecionada, desabilita o campo propulsion
+      this.formUtils.resetAndDisableFields(this.vehicleForm, ['propulsion']);
+    }
+  }
+
+  onPropulsionSelected(event: MatAutocompleteSelectedEvent): void {
+    const selectedPropulsion = event.option.value;
+
+    // Verifica se a propulsão foi selecionada corretamente
+    if (selectedPropulsion) {
+      this.formUtils.updateFormField(
+        this.vehicleForm,
+        'propulsion', // Nome do campo no formulário
+        selectedPropulsion, // Valor selecionado
+        (id: number) => this.loadVehiclesByModel(id), // Função para carregar veículos, se necessário
+        'motor' // O próximo campo a ser habilitado
+      );
+    } else {
+      // Se a propulsão não for selecionada, desabilita o campo motor
+      this.formUtils.resetAndDisableFields(this.vehicleForm, ['motor']);
+    }
+  }
+
+  // Método para verificar se a marca digitada é válida
+  onBrandInputChange(): void {
+    const inputBrand = this.vehicleForm.get('brand')?.value;
+
+    // Verifica se a marca digitada existe nas opções disponíveis
+    this.filteredBrands.subscribe(brands => {
+      this.formUtils.isFieldValid['brand'] = brands.some(brand => brand.name.toLowerCase() === inputBrand.toLowerCase());
+
+      // Resetar e desabilitar o campo 'model' se o usuário está digitando no campo 'brand'
+      if (inputBrand) {
+        this.formUtils.resetAndDisableFields(this.vehicleForm, ['model', 'type', 'category', 'propulsion']);
+      }
+    });
+  }
+
+  // Método para verificar se o modelo digitado é válido
+  onModelInputChange(): void {
+    const inputModel = this.vehicleForm.get('model')?.value;
+
+    this.filteredModels.subscribe(models => {
+      // Verifica se o modelo digitado existe nas opções disponíveis
+      this.formUtils.isFieldValid['model'] = models.some(model => model.name.toLowerCase() === inputModel.toLowerCase());
+
+      // Se houver um valor no campo de modelo
+      if (inputModel) {
+        this.formUtils.resetAndDisableFields(this.vehicleForm, ['type', 'category', 'propulsion']);
+      }
+    });
+  }
+
+  // Método para verificar se o tipo digitado é válido
+  onTypeInputChange(): void {
+    const inputType = this.vehicleForm.get('type')?.value;
+
+    this.filteredTypes.subscribe(types => {
+      // Verifica se o tipo digitado existe nas opções disponíveis
+      this.formUtils.isFieldValid['type'] = types.some(type => type.name.toLowerCase() === inputType.toLowerCase());
+
+      // Se houver um valor no campo de tipo
+      if (inputType) {
+        this.formUtils.resetAndDisableFields(this.vehicleForm, ['category', 'propulsion']);
+      }
+    });
+  }
+
+  // Método para verificar se a categoria digitada é válida
+  onCategoryInputChange(): void {
+    const inputCategory = this.vehicleForm.get('category')?.value;
+
+    this.filteredCategories.subscribe(categories => {
+      // Verifica se a categoria digitada existe nas opções disponíveis
+      this.formUtils.isFieldValid['category'] = categories.some(category => category.name.toLowerCase() === inputCategory.toLowerCase());
+
+      // Se houver um valor no campo de categoria
+      if (inputCategory) {
+        this.formUtils.resetAndDisableFields(this.vehicleForm, ['propulsion']);
+      }
+    });
+  }
+
+  // Método para verificar se a propulsão digitada é válida
+  onPropulsionInputChange(): void {
+    const inputPropulsion = this.vehicleForm.get('propulsion')?.value;
+
+    this.filteredPropulsions.subscribe(propulsions => {
+      // Verifica se a propulsão digitada existe nas opções disponíveis
+      this.formUtils.isFieldValid['propulsion'] = propulsions.some(propulsion => propulsion.name.toLowerCase() === inputPropulsion.toLowerCase());
+
+      // Se houver um valor no campo de propulsão
+      if (inputPropulsion) {
+        this.vehicleForm.get('motor')?.reset(); // Reseta o campo de motor
+        this.vehicleForm.get('motor')?.disable(); // Desabilita o campo de motor
+      }
+    });
+  }
+
+  /**
  * Exibe uma mensagem de sucesso após a operação.
  *
  * @param {string} action - Ação realizada (cadastrar ou atualizar)
@@ -382,7 +650,7 @@ export class ModalFormVehicleComponent {
     this.dialogRef.close(true);
   }
 
-  private showErrorMessage(error:string,action: string): void {
+  private showErrorMessage(error: string, action: string): void {
     Swal.fire({
       title: 'Error!',
       icon: 'error',
@@ -402,6 +670,49 @@ export class ModalFormVehicleComponent {
       icon: 'error',
       text: `Failed to load ${context}. Please try again.`,
     });
+  }
+
+  // Alterna a abertura do painel de autocomplete
+  toggleAutocomplete(field: string, event: MouseEvent) {
+    event.stopPropagation();
+
+    let trigger: MatAutocompleteTrigger | undefined;
+
+    // Determine qual trigger usar baseado no campo
+    switch (field) {
+      case 'brand':
+        trigger = this.autoBrandTrigger;
+        break;
+      case 'model':
+        trigger = this.autoModelTrigger;
+        break;
+      case 'type':
+        trigger = this.autoTypeTrigger;
+        break;
+      case 'category':
+        trigger = this.autoCategoryTrigger;
+        break;
+      case 'propulsion':
+        trigger = this.autoPropulsionTrigger;
+        break;
+      case 'version':
+        trigger = this.autoVersionTrigger;
+        break;
+      default:
+        console.error('Campo não reconhecido:', field);
+        return;
+    }
+
+    // Verifica se o trigger é válido antes de chamar os métodos
+    if (trigger) {
+      if (trigger.panelOpen) {
+        trigger.closePanel();
+      } else {
+        trigger.openPanel();
+      }
+    } else {
+      console.error('Trigger não encontrado para o campo:', field);
+    }
   }
 
   /**

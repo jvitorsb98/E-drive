@@ -26,13 +26,6 @@ body {
   color: #b5abab;
 }
 
-.mat-hint-text {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: -14px;
-}
-
 .buttons-container {
   display: flex;
   flex-direction: column;
@@ -63,30 +56,26 @@ body {
 }
 
 .mat-error-text {
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
-  margin-left: -15px;
-}
-
-.custom-select {
-  margin-bottom: 0;
+  margin-left: -10px;
 }
 
 .mat-error-no-brand {
+  margin-top: -25px;
   font-size: 12px;
-  margin: 0;
-  padding: 0; 
-  line-height: 1; 
-  display: block; 
-}
-
-
-.mat-error-text-minlength {
-  font-size: 10px;
   line-height: 1.5;
   text-align: left;
   margin-left: 2px;
+}
+
+.mat-error-text-minlength {
+  margin-top: -22px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 1px;
 }
 
 .filtro {
@@ -102,10 +91,15 @@ body {
 }
 
 .custom-select {
+  margin-bottom: 0;
+}
+
+.custom-select {
   position: relative;
   display: flex;
   align-items: center;
   height: auto;
+  margin-bottom: -2px; // Espaçamento entre os campos
 }
 
 .mat-autocomplete-panel {
@@ -136,19 +130,16 @@ body {
   position: relative;
 }
 
-.custom-suffix {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 12px;
-  color: #19B6DD;
-  pointer-events: none;
-  white-space: nowrap;
-}
-
 @media (max-width: 350px) {
   .mat-autocomplete-panel {
     top: calc(100% + 4px);
+  }
+
+  .mat-error-text-minlength {
+    font-size: 11px;
+  }
+
+  .titulo {
+    font-size: 16px;
   }
 }

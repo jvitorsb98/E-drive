@@ -29,8 +29,9 @@
             <mat-label class="custom-label">Marca</mat-label>
             <input type="text" name="name" matInput formControlName="name" required aria-describedby="Help" />
             <mat-error class="mat-error-text" *ngIf="brandForm.get('name')?.hasError('required') 
-                  && brandForm.get('name')?.touched" class="mat-error-text">O <strong>Nome</strong> é
-              obrigatório.</mat-error>
+                  && brandForm.get('name')?.touched" class="mat-error-text">O <strong>Nome</strong> é um campo
+              obrigatório.
+            </mat-error>
           </mat-form-field>
           <!-- Mensagem de erro se o nome da marca não atender ao comprimento mínimo -->
           <div *ngIf="brandForm.get('name')?.hasError('minlength') && brandForm.get('name')?.dirty">

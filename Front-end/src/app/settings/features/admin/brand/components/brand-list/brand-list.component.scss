@@ -12,8 +12,7 @@
      ajustando a margem inferior para -25px para alinhamento. */
 .custom-filter {
   display: flex;
-  width: 100%;
-  margin: 10% auto;
+  margin: 3% auto;
   margin-bottom: -25px;
 }
 
@@ -80,7 +79,7 @@ tr {
 /* Estilos para o ícone de emoji (bandeira) ao lado do texto na tabela, 
      com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
 .icone-emoji-brand {
-  font-size: 20px;
+  font-size: 18px;
   color: #767676;
   margin-right: 10px;
   cursor: pointer;
@@ -139,10 +138,62 @@ tr {
 /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
 .th-table mat-icon {
   font-size: 20px;
+  padding: 1% 1%;
+  text-align: left;
+  font-weight: 350;
 }
 
 /* Define o campo de formulário dentro do filtro personalizado como flexível, 
      ocupando todo o espaço horizontal disponível. */
 .custom-filter mat-form-field {
   flex: 1;
+}
+
+/* Estilos adicionais para telas de até 768px */
+@media (max-width: 500px) {
+  
+  .th-table {
+    font-size: 10px;
+  }
+
+  .td-table {
+    font-size: 8px;
+  }
+
+  .icone-emoji-brand {
+    font-size: 16px;
+  }
+
+  .icone-table {
+    font-size: 15px;
+    margin-right: 0px;
+  }
+
+  .no-data {
+    font-size: 12px;
+  }
+
+  .th-table mat-icon {
+    font-size: 18px;
+  }
+
+  .top-bar {
+    margin-bottom: 8%;
+  }
+
+}
+
+/* Estilos adicionais para telas de até 340px */
+@media (max-width: 340px) {
+  .th-table {
+    font-size: 10px;
+  }
+
+  .td-table {
+    font-size: 8px;
+  }
+
+  .icone-table {
+    font-size: 15px;
+  }
 }

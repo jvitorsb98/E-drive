@@ -36,7 +36,7 @@ export class VehicleListComponent {
   currentPage: number = 0; // Página atual
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Vehicle>(); // Fonte de dados da tabela
-  List: Vehicle[] = []; // Lista de veículos
+  vehicles: Vehicle[] = []; // Lista de veículos
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: Vehicle[] = []; // Dados filtrados
   searchKey: any; // Chave de busca para filtro
@@ -58,7 +58,7 @@ export class VehicleListComponent {
     private dialog: MatDialog,
     private alertServise: AlertasService
   ) {
-    this.dataSource = new MatTableDataSource(this.List);
+    this.dataSource = new MatTableDataSource(this.vehicles);
   }
 
   /**
@@ -66,7 +66,7 @@ export class VehicleListComponent {
    * Obtém a lista de veículos.
    */
   ngOnInit() {
-    this.getList(this.currentPage, this.pageSize);
+    this.loadVehicles(this.currentPage, this.pageSize);
   }
 
   /**
@@ -85,7 +85,7 @@ export class VehicleListComponent {
    * @param {number} pageIndex - Índice da página atual.
    * @param {number} pageSize - Tamanho da página.
    */
-  getList(pageIndex: number, pageSize: number) {
+  loadVehicles(pageIndex: number, pageSize: number) {
     if (this.isFilterActive) {
       this.dataSource.data = this.filteredData;
       this.dataSource.paginator = this.paginator;
@@ -94,10 +94,10 @@ export class VehicleListComponent {
       this.vehicleService.getAll(pageIndex, pageSize).subscribe({
         next: (response: PaginatedResponse<Vehicle>) => { // Usa a interface tipada
           // Extrai o array de veículos do campo 'content'
-          this.List = response.content;
+          this.vehicles = response.content;
 
-          if (Array.isArray(this.List)) {
-            this.dataSource = new MatTableDataSource(this.List);
+          if (Array.isArray(this.vehicles)) {
+            this.dataSource = new MatTableDataSource(this.vehicles);
             this.dataSource.sort = this.sort;
             this.totalVehicles = response.totalElements;
           } else {
@@ -119,7 +119,7 @@ export class VehicleListComponent {
   onPageChange(event: any) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.getList(this.currentPage, this.pageSize);
+    this.loadVehicles(this.currentPage, this.pageSize);
   }
 
   /**
@@ -138,7 +138,7 @@ export class VehicleListComponent {
         this.vehicleService.deactivate(Data.id).subscribe({
           next: () => {
             this.handleSuccess('Veículo desativado com sucesso!');
-            this.searchKey ? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
+            this.searchKey ? this.applyFilter(this.searchKey) : this.loadVehicles(this.pageIndex, this.pageSize);
           },
           error: (error: HttpErrorResponse) => this.handleError(error)
         });
@@ -146,7 +146,6 @@ export class VehicleListComponent {
     });
   }
   
-
   /**
    * Ativa um veículo com base no seu ID.
    *
@@ -163,7 +162,7 @@ export class VehicleListComponent {
         this.vehicleService.activate(Data.id).subscribe({
           next: () => {
             this.handleSuccess('Veículo ativado com sucesso!');
-            this.searchKey ? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
+            this.searchKey ? this.applyFilter(this.searchKey) : this.loadVehicles(this.pageIndex, this.pageSize);
           },
           error: (error: HttpErrorResponse) => this.handleError(error)
         });
@@ -238,7 +237,7 @@ export class VehicleListComponent {
     }
   }
 
-  // LOGICA DO MODAL
+  // LOGICA DOS MODAIS
 
   /**
    * Abre um modal para visualizar os detalhes de um veículo.
@@ -247,8 +246,8 @@ export class VehicleListComponent {
    */
   openModalView(vehicle: Vehicle) {
     this.dialog.open(ModalDetailsVehicleComponent, {
-      width: '99%',
-      height: '80%',
+      width: '80%',
+      height: '85%',
       data: vehicle
     });
   }
@@ -261,7 +260,7 @@ export class VehicleListComponent {
       width: '99%',
       height: '80%',
       data: null
-    }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize));
+    }).afterClosed().subscribe(() => this.loadVehicles(this.pageIndex, this.pageSize));
   }
 
   /**
@@ -274,6 +273,6 @@ export class VehicleListComponent {
       width: '99%',
       height: '80%',
       data: vehicle
-    }).afterClosed().subscribe(() => this.getList(this.pageIndex, this.pageSize)); // Atualiza a lista de veículos após fechar o modal
+    }).afterClosed().subscribe(() => this.loadVehicles(this.pageIndex, this.pageSize)); // Atualiza a lista de veículos após fechar o modal
   }
 }

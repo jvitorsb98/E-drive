@@ -1,5 +1,5 @@
 <div class="container-fluid pt-3">
-  <div class="row">
+  <div class="col-12">
     <!-- Container para os botões e título -->
     <div class="col-12 header-container">
       <button class="icon" mat-icon-button aria-label="Voltar" (click)="closeModal()">
@@ -10,43 +10,50 @@
         <mat-icon>help_outline</mat-icon>
       </button>
     </div>
-  </div>
-
-  <div class="col-12">
     <form [formGroup]="vehicleForm">
       <div class="content">
-
         <!-- Campo Marca - Aparece apenas se o campo 'version' for válido -->
         <div class="row">
-          <div class="col-12 col-md-12 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Marca</mat-label>
-              <mat-select formControlName="brand">
-                <mat-option *ngFor="let brand of brands" [value]="brand.name">
+              <input #brandInput type="text" matInput formControlName="brand" (input)="onBrandInputChange()"
+                [value]="vehicleForm.get('brand')?.value?.name || ''" [matAutocomplete]="autoBrand"
+                aria-describedby="Help">
+              <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
+                <mat-option *ngFor="let brand of filteredBrands | async" [value]="brand">
                   {{ brand.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('brand', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('brand')?.hasError('required') && vehicleForm.get('brand')?.touched">
                 <strong>A marca</strong> é obrigatória.
               </mat-error>
-              <mat-error *ngIf="noBrandFound">
-                Nenhuma <strong>marca</strong> encontrada.
-              </mat-error>
             </mat-form-field>
+            @if(!formUtils.isFieldValid['brand'] && vehicleForm.get('brand')?.valid &&
+            vehicleForm.get('brand')?.touched) {
+            <mat-error class="mat-error-text-isexists">
+              A marca <strong>não existe</strong>. Por favor, escolha uma marca válida.
+            </mat-error>
+            }
           </div>
         </div>
-
         <!-- Campo Modelo - Aparece apenas se o campo 'brand' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Modelo</mat-label>
-              <mat-select formControlName="model">
-                <mat-option *ngFor="let model of models" [value]="model.name">
+              <input #modelInput type="text" matInput formControlName="model" (input)="onModelInputChange()"
+                [value]="vehicleForm.get('model')?.value?.name || ''" [matAutocomplete]="autoModel">
+              <mat-autocomplete #autoModel="matAutocomplete" (optionSelected)="onModelSelected($event)">
+                <mat-option *ngFor="let model of filteredModels | async" [value]="model">
                   {{ model.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('model', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('model')?.hasError('required') && vehicleForm.get('model')?.touched">
                 <strong>O modelo</strong> é obrigatório.
@@ -55,65 +62,99 @@
                 Nenhum <strong>modelo</strong> encontrado.
               </mat-error>
             </mat-form-field>
+            @if(!formUtils.isFieldValid['model'] && vehicleForm.get('model')?.valid &&
+            vehicleForm.get('model')?.touched) {
+            <mat-error class="mat-error-text-isexists">
+              O modelo <strong>não existe</strong>. Por favor, escolha um modelo válido.
+            </mat-error>
+            }
           </div>
         </div>
-
         <!-- Campo Tipo - Aparece apenas se o campo 'model' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Tipo</mat-label>
-              <mat-select formControlName="type">
-                <mat-option *ngFor="let type of types" [value]="type.name">
+              <input #typeInput type="text" matInput formControlName="type" (input)="onTypeInputChange()"
+                [value]="vehicleForm.get('type')?.value?.name || ''" [matAutocomplete]="autoType">
+              <mat-autocomplete #autoType="matAutocomplete" (optionSelected)="onTypeSelected($event)">
+                <mat-option *ngFor="let type of filteredTypes | async" [value]="type">
                   {{ type.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('type', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('type')?.hasError('required') && vehicleForm.get('type')?.touched">
                 <strong>O tipo</strong> é obrigatório.
               </mat-error>
             </mat-form-field>
+            @if(!formUtils.isFieldValid['type'] && vehicleForm.get('type')?.valid && vehicleForm.get('type')?.touched)
+            {
+            <mat-error class="mat-error-text-isexists">
+              O tipo <strong>não existe</strong>. Por favor, escolha um tipo válido.
+            </mat-error>
+            }
           </div>
         </div>
-
         <!-- Campo Categoría - Aparece apenas se o campo 'type' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Categoria</mat-label>
-              <mat-select formControlName="category">
-                <mat-option *ngFor="let category of categories" [value]="category.name">
+              <input #categoryInput type="text" matInput formControlName="category" (input)="onCategoryInputChange()"
+                [value]="vehicleForm.get('category')?.value?.name || ''" [matAutocomplete]="autoCategory">
+              <mat-autocomplete #autoCategory="matAutocomplete" (optionSelected)="onCategorySelected($event)">
+                <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
                   {{ category.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('category', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('category')?.hasError('required') && vehicleForm.get('category')?.touched">
                 <strong>A categoria</strong> é obrigatória.
               </mat-error>
             </mat-form-field>
+            @if(!formUtils.isFieldValid['category'] && vehicleForm.get('category')?.valid &&
+            vehicleForm.get('category')?.touched) {
+            <mat-error class="mat-error-text-isexists">
+              A categoria <strong>não existe</strong>. Por favor, escolha uma categoria válida.
+            </mat-error>
+            }
           </div>
         </div>
         <!-- Propulsão -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Propulsão</mat-label>
-              <mat-select formControlName="propulsion">
-                <mat-option *ngFor="let propulsion of propulsions" [value]="propulsion.name">
+              <input #propulsionInput type="text" matInput formControlName="propulsion"
+                (input)="onPropulsionInputChange()" [value]="vehicleForm.get('propulsion')?.value?.name || ''"
+                [matAutocomplete]="autoPropulsion">
+              <mat-autocomplete #autoPropulsion="matAutocomplete" (optionSelected)="onPropulsionSelected($event)">
+                <mat-option *ngFor="let propulsion of filteredPropulsions | async" [value]="propulsion">
                   {{ propulsion.name }}
                 </mat-option>
-              </mat-select>
+              </mat-autocomplete>
+              <mat-icon class="autocomplete-icon"
+                (click)="toggleAutocomplete('propulsion', $event)">arrow_drop_down</mat-icon>
               <mat-error class="mat-error-text"
                 *ngIf="vehicleForm.get('propulsion')?.hasError('required') && vehicleForm.get('propulsion')?.touched">
                 <strong>A propulsão</strong> é obrigatória.
               </mat-error>
             </mat-form-field>
+            @if(!formUtils.isFieldValid['propulsion'] && vehicleForm.get('propulsion')?.valid &&
+            vehicleForm.get('propulsion')?.touched) {
+            <mat-error class="mat-error-text-isexists">
+              A propulsão <strong>não existe</strong>. Por favor, escolha uma propulsão válida.
+            </mat-error>
+            }
           </div>
         </div>
-
         <!-- Novo campo Motor -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-3">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Motor</mat-label>
               <input matInput formControlName="motor" placeholder="Digite o tipo de motor" maxlength="20" required />
@@ -135,10 +176,9 @@
             </div>
           </div>
         </div>
-
         <!-- Novo campo Versão - Aparece apenas se o campo 'motor' for válido -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Versão</mat-label>
               <input matInput formControlName="version" placeholder="Digite a versão do veículo" maxlength="20"
@@ -162,10 +202,9 @@
             </div>
           </div>
         </div>
-
         <!-- Ano -->
         <div class="row">
-          <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 col-md-6 mb-1">
             <mat-form-field class="custom-select">
               <mat-label>Ano</mat-label>
               <input matInput formControlName="year" [mask]="'0000'" type="text" placeholder="Digite o ano do veículo"
@@ -177,16 +216,15 @@
             </mat-form-field>
             <!-- Erro: Ano inválido -->
             <div *ngIf="vehicleForm.get('year')?.hasError('invalidYear') && vehicleForm.get('year')?.dirty">
-              <mat-error class="mat-error-text-casa-decimal"><strong>O ano</strong> deve ser entre 1901 e o próximo
-                ano.</mat-error>
+              <mat-error class="mat-error-text-casa-decimal"><strong>O ano</strong> deve estar entre 1901 e {{
+                vehicleForm.get('year')?.errors?.['currentYear'] }}.</mat-error>
             </div>
           </div>
         </div>
-
         <!-- Campos adicionais -->
         <div class="col-12">
           <div class="row">
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Quilometragem por <strong>litro em
                     estrada:</strong></mat-label>
@@ -202,7 +240,7 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Quilometragem por <strong>litro em
                     cidade:</strong></mat-label>
@@ -218,7 +256,7 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Consumo <strong>energético:</strong></mat-label>
                 <input type="text" matInput formControlName="consumptionEnergetic" appDynamicMask
@@ -233,11 +271,10 @@
               </div>
             </div>
 
-            <div class="col-12 col-md-6 mb-2">
+            <div class="col-12 col-md-6 mb-1">
               <mat-form-field class="custom-select w-100">
                 <mat-label class="mat-label-text">Autonomia em<strong> modo elétrico:</strong></mat-label>
-                <input type="text" matInput formControlName="autonomyElectricMode" [mask]="'000'"
-                  aria-describedby="Help">
+                <input type="text" matInput formControlName="autonomyElectricMode" aria-describedby="Help">
                 <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
               </mat-form-field>
               <div
@@ -248,13 +285,13 @@
             </div>
           </div>
         </div>
-        <div class="buttons-container py-3">
+        <div class="buttons-container py-0">
           <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" text="Redefinir"
             (click)="resetForm()"></app-ui-button>
           <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="submitForm()"
             [disabled]="!vehicleForm.valid">{{ editVehicle ? 'Atualizar Veículo' : 'Cadastrar Veículo'
             }}</app-ui-button>
-          <app-ui-button *ngIf="editVehicle" class="w-100" typeBtn="outline-secondary" text="Cancelar"
+          <app-ui-button *ngIf="editVehicle" class="mb-1 w-100" typeBtn="outline-secondary" text="Cancelar"
             (click)="closeModal()"></app-ui-button>
         </div>
       </div>

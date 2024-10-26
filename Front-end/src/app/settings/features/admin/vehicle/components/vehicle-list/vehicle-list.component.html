@@ -37,10 +37,10 @@
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
             <!-- Exibe o ícone do veículo com tooltip informativo -->
-            <mat-icon class="icone-emoji-carro"
-              [matTooltip]="'ID: ' + vehicle.id + ' | Status: ' + (vehicle.activated ? 'Ativado' : 'Desativado')"
-              matTooltipClass="multi-line-tooltip">directions_car
-            </mat-icon>
+            <mat-icon class="icone-emoji-carro" [matTooltip]="'ID: ' + vehicle.id 
+              + ' | Status: ' 
+              + (vehicle.activated ? 'Ativado' : 'Desativado')"
+              matTooltipClass="multi-line-tooltip">directions_car</mat-icon>
           </td>
         </ng-container>
 
@@ -137,7 +137,7 @@
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
   <!-- Paginador para navegação entre páginas -->
   <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
+    [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 100, totalVehicles]" (page)="onPageChange($event)"
     aria-label="Selecione veículos por página"></mat-paginator>
   <!-- Botão para abrir modal de adição de novo veículo-->
   <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()"

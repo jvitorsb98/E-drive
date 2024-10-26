@@ -11,7 +11,7 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 
 // Importa os módulos do Angular
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -23,6 +23,7 @@ import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popu
 import { CategoryService } from '../../../../core/services/category/category.service';
 import { CategoryAvgAutonomyStatsService } from '../../../../core/services/category-avg-autonomy-stats-service/category-avg-autonomy-stats.service';
 import { DataCategoryAvgAutonomyStats } from '../../../../core/models/DataCategoryAvgAutonomyStats';
+import { Brand } from '../../../../core/models/brand';
 
 @Component({
   selector: 'app-modal-form-vehicle',
@@ -64,11 +65,7 @@ export class ModalFormVehicleComponent implements OnInit {
     private categoryAvgAutonomyStatsService: CategoryAvgAutonomyStatsService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
-  ) { 
-
-
-    
-  }
+  ) { }
 
   ngOnInit() {
     this.initializeData();
@@ -99,7 +96,6 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
-
   loadAverageAutonomy(selectedVehicle: Vehicle) {
     const category = selectedVehicle.category; // Ou como você obtém a categoria do veículo
 
@@ -129,7 +125,7 @@ export class ModalFormVehicleComponent implements OnInit {
         mileagePerLiterCity: this.data.userVehicle.mileagePerLiterCity,
         consumptionEnergetic: this.data.userVehicle.consumptionEnergetic,
         autonomyElectricMode: this.data.userVehicle.autonomyElectricMode,
-        batteryCapacity: this.data.userVehicle.batteryCapacity 
+        batteryCapacity: this.data.userVehicle.batteryCapacity
       });
 
 
@@ -139,16 +135,39 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
+  // TODO: Esse método não está trazendo os dados da marca
+  // loadBrands() {
+  //   this.brandService.getAll().subscribe({
+  //     next: (response: any) => {
+  //       this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+  //       this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
+  //     },
+  //     error: (error) => {
+  //       console.error('Erro ao carregar as marcas', error);
+  //     }
+  //   });
+  // }
 
-
+  /**
+* @description Carrega a lista de marcas disponíveis do serviço BrandService.
+*
+* Este método faz uma requisição para obter todas as marcas disponíveis, filtra apenas as marcas
+* que estão ativas e formata os dados para um formato que inclui o nome e o ID da marca.
+* Após carregar as marcas, configura o filtro para permitir a seleção no autocomplete.
+*
+* @returns {void}
+*/
   loadBrands() {
     this.brandService.getAll().subscribe({
-      next: (response: any) => {
-        this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
+      next: (brands: Brand[]) => {
+        // Filtra e mapeia marcas ativas
+        this.brands = brands
+          .filter((brand: Brand) => brand.activated) // Filtra marcas ativas
+          .map((brand: Brand) => ({ name: brand.name, id: brand.id })); // Mapeia os dados para o formato esperado
         this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
       },
       error: (error) => {
-        console.error('Erro ao carregar as marcas', error);
+        console.error('Erro ao carregar as marcas', error); // Loga o erro no console
       }
     });
   }
@@ -248,12 +267,12 @@ export class ModalFormVehicleComponent implements OnInit {
   }
 
   private calculateBatteryCapacity(consumptionEnergetic: number, autonomyElectricMode: number): string | null {
-    if(consumptionEnergetic != null && autonomyElectricMode!= null){
-      const capacity = (consumptionEnergetic * autonomyElectricMode) / 3.6; 
+    if (consumptionEnergetic != null && autonomyElectricMode != null) {
+      const capacity = (consumptionEnergetic * autonomyElectricMode) / 3.6;
       return capacity.toFixed(2); // Formata o número com 2 casas decimais
     }
     return null
-}
+  }
 
   onVersionSelected(event: MatAutocompleteSelectedEvent): void {
     const selectedVehicle = event.option.value as Vehicle;
@@ -266,10 +285,10 @@ export class ModalFormVehicleComponent implements OnInit {
       this.userVehicleForm.get('autonomyElectricMode')?.setValue(selectedVehicle.autonomy.autonomyElectricMode);
     }
 
-    const consumptionEnergetic = Number(selectedVehicle.autonomy.consumptionEnergetic); 
-    const autonomyElectricMode = Number(selectedVehicle.autonomy.autonomyElectricMode); 
-    
-    if(Number(selectedVehicle.autonomy.autonomyElectricMode)!= null){
+    const consumptionEnergetic = Number(selectedVehicle.autonomy.consumptionEnergetic);
+    const autonomyElectricMode = Number(selectedVehicle.autonomy.autonomyElectricMode);
+
+    if (Number(selectedVehicle.autonomy.autonomyElectricMode) != null) {
       this.loadAverageAutonomy(selectedVehicle);
     }
 
@@ -289,10 +308,10 @@ export class ModalFormVehicleComponent implements OnInit {
       console.log('Dados do veículo:', this.data.userVehicle);
       const formData = this.userVehicleForm.value;
 
-      if(formData.batteryCapacity == null){
-        formData.batteryCapacity = (Number(formData.consumptionEnergetic)*3.6)/Number(formData.autonomyElectricMode)
-      }else if(formData.autonomyElectricMode == null){
-        formData.autonomyElectricMode = Number(formData.batteryCapacity)/(Number(formData.consumptionEnergetic)*3.6)
+      if (formData.batteryCapacity == null) {
+        formData.batteryCapacity = (Number(formData.consumptionEnergetic) * 3.6) / Number(formData.autonomyElectricMode)
+      } else if (formData.autonomyElectricMode == null) {
+        formData.autonomyElectricMode = Number(formData.batteryCapacity) / (Number(formData.consumptionEnergetic) * 3.6)
       }
       const dataUpdateAutonomy = {
         mileagePerLiterRoad: Number(formData.mileagePerLiterRoad),
@@ -301,7 +320,7 @@ export class ModalFormVehicleComponent implements OnInit {
         autonomyElectricMode: Number(formData.autonomyElectricMode),
         batteryCapacity: Number(formData.batteryCapacity)
       };
-      
+
 
       const updateData = {
         dataUpdateAutonomy: dataUpdateAutonomy
@@ -335,10 +354,10 @@ export class ModalFormVehicleComponent implements OnInit {
     } else {
       if (this.userVehicleForm.valid) {
         const formData = this.userVehicleForm.value;
-        if(formData.batteryCapacity == null){
-          formData.batteryCapacity = (Number(formData.consumptionEnergetic)*3.6)/Number(formData.autonomyElectricMode)
-        }else if(formData.autonomyElectricMode == null){
-          formData.autonomyElectricMode = Number(formData.batteryCapacity)/(Number(formData.consumptionEnergetic)*3.6)
+        if (formData.batteryCapacity == null) {
+          formData.batteryCapacity = (Number(formData.consumptionEnergetic) * 3.6) / Number(formData.autonomyElectricMode)
+        } else if (formData.autonomyElectricMode == null) {
+          formData.autonomyElectricMode = Number(formData.batteryCapacity) / (Number(formData.consumptionEnergetic) * 3.6)
         }
         const dataRegisterAutonomy = {
           mileagePerLiterRoad: formData.mileagePerLiterRoad,
@@ -347,7 +366,7 @@ export class ModalFormVehicleComponent implements OnInit {
           autonomyElectricMode: formData.autonomyElectricMode,
           batteryCapacity: Number(formData.batteryCapacity)
         };
-        
+
         const dataRegisterVehicleUser = {
           vehicleId: this.selectedVehicle!.id, // Use o ID da versão do veículo
           dataRegisterAutonomy: dataRegisterAutonomy,
@@ -435,6 +454,7 @@ export class ModalFormVehicleComponent implements OnInit {
       console.error('Trigger não encontrado para o campo:', field);
     }
   }
+
   private isEditMode(): boolean {
     return !!this.data.vehicle && !!this.data.userVehicle;
   }
@@ -501,7 +521,5 @@ export class ModalFormVehicleComponent implements OnInit {
       }
     });
   }
-  
-  
-}
 
+}
