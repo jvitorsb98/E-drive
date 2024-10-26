@@ -14,7 +14,7 @@ import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-us
 import { Step } from '../../../../core/models/step';
 import Swal from 'sweetalert2';
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
-import { AlertasService } from '../../../../core/services/Alertas/alertas.service'; 
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
 
 /**
  * Componente modal para gerenciar o status da bateria do veículo.
@@ -52,7 +52,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private alertasService: AlertasService,
-    private tripPlannerMapsService: TripPlannerMapsService, 
+    private tripPlannerMapsService: TripPlannerMapsService,
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { stepsArray: Step[]; place: any; isStation: boolean }
   ) {
@@ -166,7 +166,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
       const formValue = this.vehicleStatusBatteryForm.value;
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryHealth = Number(formValue.saudeBateria);
-  
+
       if (this.data.isStation) {
         const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
           formValue.selectedVehicle,
@@ -174,12 +174,12 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
           batteryHealth,
           this.data.stepsArray
         );
-  
+
         if (!canCompleteTrip) {
           this.alertasService.showError('Erro!', 'A viagem não pode ser realizada. Bateria insuficiente.'); // Alerta de erro se a viagem não pode ser completada
           return;
         }
-  
+
         this.alertasService.showInfo(
           'Status da Bateria',
           `Você chegará com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`
@@ -197,17 +197,37 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
           remainingBattery,
           batteryHealth,
           this.data.stepsArray
-        ).then(({ chargingStations, canCompleteTrip, canCompleteWithoutStops, batteryPercentageAfterTrip }) => {
+        ).then(({ chargingStationsMap, canCompleteTrip, canCompleteWithoutStops, batteryPercentageAfterTrip }) => {
           if (canCompleteTrip) {
             if (!canCompleteWithoutStops) {
-              const chargingStationList = chargingStations.map(station => `${station.name}`).join('\n'); 
-              const message = `Você precisará passar por ${chargingStations.length} posto${chargingStations.length > 1 ? 's' : ''} de carregamento`;
-              console.log(chargingStationList[0]);
-              const listStations = `${chargingStationList}`;
-              this.alertasService.showInfo(message, listStations).then(() => {
+              // Define os cabeçalhos da tabela
+              const headers = ['Nome do Posto', 'Endereço', 'Porcentagem de Bateria'];
+
+              // Cria as linhas da tabela com os dados dos postos de carregamento
+              const rows = Array.from(chargingStationsMap.entries()).map(([posto, currentBatteryPercentage]) => {
+                const displayName = posto.name.toLowerCase() === "estação de carregamento para veículos elétricos".toLowerCase() ? "Posto" : posto.name;
+            
+                // Extraindo o endereço e removendo o CEP e o país
+                const addressParts = posto.formatted_address.split(','); 
+                const filteredAddress = addressParts.slice(0, -2).join(',').trim(); // Remove as últimas duas partes (CEP e país)
+            
+                return [
+                    displayName,
+                    filteredAddress,
+                    `${currentBatteryPercentage.toFixed(2)}%`,
+                ];
+            });
+            
+
+
+            const message = `Você precisará passar por ${chargingStationsMap.size} posto${chargingStationsMap.size > 1 ? 's' : ''}
+             de carregamento para chegar ao destino com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`;
+
+              // Exibe o alerta com a tabela
+              this.alertasService.showTableAlert(message, headers, rows).then(() => {
                 this.dialogRef.close({
                   canCompleteTrip: true,
-                  chargingStations: chargingStations,
+                  chargingStations: chargingStationsMap.keys(),
                   selectedVehicle: formValue.selectedVehicle,
                   batteryPercentageAfterTrip: batteryPercentageAfterTrip.toFixed(2),
                 });

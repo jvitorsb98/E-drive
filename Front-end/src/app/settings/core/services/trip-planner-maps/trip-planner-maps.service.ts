@@ -159,13 +159,13 @@ export class TripPlannerMapsService {
     batteryHealth: number,
     stepsArray: Step[],
 ): Promise<{ 
-    chargingStations: any[], 
+    chargingStationsMap: Map<any, number>, 
     canCompleteTrip: boolean, 
     canCompleteWithoutStops: boolean, 
     batteryPercentageAfterTrip: number 
 }> {
-    const chargingStations: any[] = [];
-    const visitedStations = new Set<string>(); // Para rastrear estações já visitadas
+  const chargingStationsMap = new Map<any, number>();
+  const visitedStations = new Set<string>(); // Para rastrear estações já visitadas
 
     batteryHealth = this.getBatteryHealth(selectedVehicle, batteryHealth);
     const consumptionEnergetic = this.getConsumptionEnergetic(selectedVehicle);
@@ -184,7 +184,7 @@ export class TripPlannerMapsService {
     if (currentBatteryPercentage >= totalBatteryConsumption) {
         console.log("A viagem pode ser completada sem paradas.");
         return { 
-            chargingStations: [], 
+            chargingStationsMap: new Map(), 
             canCompleteTrip: true, 
             canCompleteWithoutStops: true, 
             batteryPercentageAfterTrip: currentBatteryPercentage - totalBatteryConsumption 
@@ -216,7 +216,7 @@ export class TripPlannerMapsService {
               // Verifica se a bateria é insuficiente para continuar
               if (currentBatteryPercentage <= 0) {
                   return { 
-                      chargingStations: [], 
+                      chargingStationsMap: new Map(), 
                       canCompleteTrip: false, 
                       canCompleteWithoutStops: false, 
                       batteryPercentageAfterTrip 
@@ -233,7 +233,7 @@ export class TripPlannerMapsService {
         console.log(`Distância do passo: ${stepDistance} km`);
 
         if (currentBatteryPercentage  > this.calculateBatteryConsumption(distanciaRestante, calculatedAutonomyReal)) {
-          batteryPercentageAfterTrip -= this.calculateBatteryConsumption(distanciaRestante, calculatedAutonomyReal);
+          batteryPercentageAfterTrip = currentBatteryPercentage-  this.calculateBatteryConsumption(distanciaRestante, calculatedAutonomyReal);
           console.log('Pode completar a viagem sem mais paradas.');
           break; // Continua para o próximo passo
         }
@@ -247,7 +247,7 @@ export class TripPlannerMapsService {
         // Verifica se a bateria é insuficiente para continuar
         if (currentBatteryPercentage <= 0) {
             return { 
-                chargingStations: [], 
+                chargingStationsMap: new Map(), 
                 canCompleteTrip: false, 
                 canCompleteWithoutStops: false, 
                 batteryPercentageAfterTrip 
@@ -288,7 +288,7 @@ export class TripPlannerMapsService {
             }
 
             // Adiciona a estação se for necessário
-            chargingStations.push(station);
+            chargingStationsMap.set(station, currentBatteryPercentage); // Adiciona a estação e o nível de bateria ao Map
             visitedStations.add(station.place_id); // Marca a estação como visitada
             console.log("parando com "  + currentBatteryPercentage + "% de bateria")
             console.log(`Posto de carregamento encontrado: ${station.name}`);
@@ -302,7 +302,7 @@ export class TripPlannerMapsService {
     }
 
     return { 
-        chargingStations, 
+        chargingStationsMap, 
         canCompleteTrip: true, 
         canCompleteWithoutStops, 
         batteryPercentageAfterTrip 
