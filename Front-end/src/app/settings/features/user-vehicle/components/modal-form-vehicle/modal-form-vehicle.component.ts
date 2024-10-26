@@ -135,19 +135,6 @@ export class ModalFormVehicleComponent implements OnInit {
     }
   }
 
-  // TODO: Esse método não está trazendo os dados da marca
-  // loadBrands() {
-  //   this.brandService.getAll().subscribe({
-  //     next: (response: any) => {
-  //       this.brands = response.content.map((brand: any) => ({ name: brand.name, id: brand.id }));
-  //       this.setupAutocomplete(); // Reconfigure the autocomplete with the loaded data
-  //     },
-  //     error: (error) => {
-  //       console.error('Erro ao carregar as marcas', error);
-  //     }
-  //   });
-  // }
-
   /**
 * @description Carrega a lista de marcas disponíveis do serviço BrandService.
 *
