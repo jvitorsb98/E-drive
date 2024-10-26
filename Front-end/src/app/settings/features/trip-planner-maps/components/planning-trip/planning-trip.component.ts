@@ -125,13 +125,17 @@ export class PlanningTripComponent implements AfterViewInit {
    * Planeja a viagem com base nas localizações selecionadas pelo usuário.
    */
   async planTrip() {
+
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+
     if (!this.startLocation || !this.endLocation) {
       console.error('Por favor, selecione os locais de início e destino.');
       return;
     }
 
-    this.map.setCenter(this.startLocation); // Centraliza o mapa na localização inicial
-    this.inputsVisible = false; // Esconde os inputs após seleção das localizações
+    this.map.setCenter(this.startLocation); 
+    this.inputsVisible = false; 
 
     try {
       await this.calculateRouteDistance(this.startLocation, this.endLocation);
