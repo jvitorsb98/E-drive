@@ -59,6 +59,7 @@
 }
 
 .mat-error-name {
+  white-space: nowrap;
   margin-top: -22px;
   font-size: 10px;
   line-height: 1.5;
@@ -67,6 +68,7 @@
 }
 
 .mat-error-name-email {
+  white-space: nowrap;
   margin-top: -22px;
   margin-bottom: 0;
   /* Zera a margem inferior */
@@ -77,6 +79,7 @@
 }
 
 .mat-error-codigo-text {
+  white-space: nowrap;
   margin-top: 0px;
   font-size: 10px;
   line-height: 1.5;
@@ -89,6 +92,7 @@
 }
 
 .mat-error-text-cellPhone {
+  white-space: nowrap;
   margin-top: 0px;
   font-size: 10px;
   line-height: 1.5;
@@ -123,19 +127,27 @@
 }
 
 @media(max-width: 360px) {
-  // .custom-select {
-  //   width: 100%;
-  // }
-
-  // .custom-input {
-  //   width: 100%;
-  // }
   .mat-error-codigo-text {
     white-space: nowrap;
   }
 
   .mat-error-text-cellPhone {
     white-space: nowrap;
-    margin-left: 8px;
+    margin-left: -15px
+  }
+}
+
+@media(max-width: 350px) {
+  .custom-select {
+    width: 100%;
+  }
+
+  .custom-input {
+    width: 100%;
+  }
+
+  .mat-error-text-cellPhone {
+    white-space: nowrap;
+    margin-left: -15px
   }
 }

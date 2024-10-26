@@ -126,10 +126,26 @@
             aria-describedby="Help" />
             <mat-icon matSuffix class="custom-icon-cellfone">phone</mat-icon>
             <!-- Error messages -->
-            <mat-error class="mat-error-text-cellPhone" *ngIf="userForm.get('cellPhone')?.hasError('required') && userForm.get('cellPhone')?.touched">
+            <mat-error class="mat-error-text-cellPhone" *ngIf="userForm.get('cellPhone')?.hasError('required') 
+              && userForm.get('cellPhone')?.touched ">
               <strong>Telefone celular</strong> é obrigatório.
             </mat-error>
+            <!-- - Error message invalid phone pattern -->
+            <mat-error class="mat-error-text-cellPhone" *ngIf="userForm.get('cellPhone')?.invalid && 
+              (userForm.get('cellPhone')?.touched || userForm.get('cellPhone')?.dirty) 
+              && !userForm.get('cellPhone')?.hasError('required')">
+              <strong>Telefone celular</strong> no formato (xx) xxxxx.
+            </mat-error>
           </mat-form-field>
+          <!-- - Error message invalid phone pattern -->
+          <!-- TODO: A validação condicional está sendo feita em tempo real. É necessário revisar o SCSS para centralizar o texto. -->
+          <!-- @if(userForm.get('cellPhone')?.invalid && 
+            (userForm.get('cellPhone')?.touched || userForm.get('cellPhone')?.dirty) 
+            && !userForm.get('cellPhone')?.hasError('required')){
+              <mat-error class="mat-error-text-cellPhone">
+              <strong>Telefone celular</strong> no formato (xx) xxxxx.
+            </mat-error>
+            } -->
         </div>
       </mat-card>
     </div>

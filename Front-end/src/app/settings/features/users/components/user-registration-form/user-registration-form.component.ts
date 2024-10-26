@@ -32,24 +32,40 @@ import { noNumbersValidator } from '../../../../shared/validators/no-numbers.val
 })
 export class UserRegistrationFormComponent {
 
-  userForm!: FormGroup;
-  phoneType: string = 'MOBILE';
-  countries: any[] = [];
-  filteredCountries!: Observable<any[]>; // Utilizado para filtrar países
-  user!: User;
-  users: User[] = [];
-  minDate: Date | null = null;
-  maxDate: Date | null = null;
+  userForm!: FormGroup; // Formulário do usuário
+  phoneType: string = 'MOBILE'; // Tipo de telefone (MOBILE por padrão)
+  countries: any[] = []; // Lista de países disponíveis
+  filteredCountries!: Observable<any[]>; // Observable para filtrar países
+  user!: User; // Objeto que representa o usuário atual
+  minDate: Date | null = null; // Data mínima permitida para nascimento
+  maxDate: Date | null = null; // Data máxima permitida para nascimento
 
+  /**
+ * @description Inicializa o serviço de dados do usuário, o serviço de países, o diálogo para modais,
+ *               o roteador e o construtor de formulários. Também chama o método buildForm para configurar
+ *               o formulário inicial do componente.
+ * @param {UserDataService} userDataService - Serviço responsável pela manipulação dos dados do usuário.
+ * @param {CountryService} countryService - Serviço para obtenção e manipulação de dados de países.
+ * @param {MatDialog} dialog - Serviço utilizado para abrir diálogos modais.
+ * @param {Router} router - Serviço para navegação de rotas no aplicativo.
+ * @param {FormBuilder} formBuilder - Serviço para criação e manipulação de formulários reativos.
+ */
   constructor(
     private userDataService: UserDataService,
     private countryService: CountryService,
     public dialog: MatDialog,
     private router: Router,
-    private formBuilder: FormBuilder) {
-    this.buildForm();
+    private formBuilder: FormBuilder
+  ) {
+    this.buildForm(); // @ Inicializa o formulário do componente
   }
 
+  /**
+ * @description Inicializa o formulário do usuário com os campos necessários e aplica validações específicas.
+ *               Se uma lista de países for passada, um validador personalizado para o código do país é adicionado.
+ * @param {{ code: string }[]} _countries - Lista opcional de objetos representando países, usada para validar
+ *               o código do país. Cada objeto deve conter uma propriedade `code` com o código do país.
+ */
   buildForm(_countries: { code: string }[] = []) {
     this.userForm = this.formBuilder.group({
       name: new FormControl(null, [Validators.required, Validators.minLength(2), noNumbersValidator]),
@@ -58,21 +74,31 @@ export class UserRegistrationFormComponent {
       cellPhone: new FormControl(null, Validators.required),
       countryCode: new FormControl(null, Validators.required)
     });
+
+    // Adiciona um validador personalizado se uma lista de países for fornecida
     if (_countries.length > 0) {
       this.userForm.setValidators(countryCodeValidator(_countries));
+      // @ Validador personalizado para `countryCode`, com base na lista de países fornecida
     }
   }
 
+  /**
+ * @description Inicializa o componente ao configurar as datas mínima e máxima para o campo de data de nascimento e 
+ *               obter uma lista de países da API. Após receber os dados de países, o formulário do usuário é inicializado 
+ *               com a lista e o campo `countryCode` é configurado para filtrar os países em tempo real conforme o usuário digita.
+ * 
+ * @param {CountryService} countryService - Serviço que busca e fornece dados de países.
+ * @returns {void}
+ */
   ngOnInit() {
-    this.setMinAndMaxDate();
+    this.setMinAndMaxDate(); // Define as datas mínima e máxima para o campo de data de nascimento
 
+    // Busca a lista de países da API e configura o formulário e o filtro após obter os dados
     this.countryService.getCountries().subscribe({
       next: (data: any[]) => {
         this.countries = data.map((country: any) => {
           const idd = country.idd || {};
-          const root = idd.root || '';
-          const suffixes = idd.suffixes || [];
-          const code = root + (suffixes.length > 0 ? suffixes[0] : '');
+          const code = (idd.root || '') + (idd.suffixes?.[0] || '');
 
           return {
             name: country.name?.common || 'Unknown',
@@ -80,75 +106,103 @@ export class UserRegistrationFormComponent {
           };
         });
 
-        // Inicializa o formulário após obter a lista de países
-        this.buildForm(this.countries);
+        this.buildForm(this.countries); // Inicializa o formulário com a lista de países
 
-        // Inicializa filteredCountries após definir countries
+        // Configura o filtro reativo para `countryCode` baseado no valor digitado
         this.filteredCountries = this.userForm.get('countryCode')!.valueChanges.pipe(
           startWith(''),
           distinctUntilChanged(),
           map(value => this.filterCountries(value || ''))
         );
       },
+
       error: (error: any) => {
-        console.error('Erro ao buscar dados da API:', error);
+        console.error('Erro ao buscar dados da API:', error); // Loga o erro ao console
       }
     });
   }
 
+  /**
+ * @description Verifica se o formulário do usuário é válido. Se válido, 
+ *               cria um objeto `user` com os dados do formulário, formata e armazena o número de celular 
+ *               e, em seguida, abre o modal para a etapa de senha.
+ * 
+ * @returns {void}
+ */
   continueToPasswordStep() {
     if (this.userForm.valid) {
-      this.user = { ...this.userForm.value };
-      this.user.cellPhone = this.userDataService.formatAndStoreUserData(this.userForm.get('countryCode')!.value, this.userForm.get('cellPhone')!.value);
-      this.openModalPasswordUser();
+      this.user = { ...this.userForm.value }; // Cria um objeto `user` a partir dos valores do formulário
+      this.user.cellPhone = this.userDataService.formatAndStoreUserData(
+        this.userForm.get('countryCode')!.value,
+        this.userForm.get('cellPhone')!.value
+      ); // Formata e armazena o número de celular com o código do país
+
+      this.openModalPasswordUser(); // Abre o modal para a etapa de senha
     }
   }
 
-  // Filtra a lista de países com base na string de pesquisa, considerando nome e código.
+  /**
+ * @description Filtra a lista de países com base no valor de entrada fornecido.
+ *               Retorna um array de países que contêm o valor de entrada no nome ou no código.
+ * 
+ * @param {string} value - Valor de entrada para filtrar os países.
+ * @returns {any[]} - Array filtrado de países.
+ */
   private filterCountries(value: string): any[] {
-    const filterValue = value.toLowerCase();
+    const filterValue = value.toLowerCase(); // Converte o valor de entrada para minúsculas
     return this.countries.filter(country =>
-      country.name.toLowerCase().includes(filterValue) ||
-      country.code.toLowerCase().includes(filterValue)
+      country.name.toLowerCase().includes(filterValue) || // Verifica se o nome do país inclui o valor de entrada
+      country.code.toLowerCase().includes(filterValue)   // Verifica se o código do país inclui o valor de entrada
     );
   }
 
-  // Atualiza o código do país selecionado pelo usuário no formulário
+  /**
+  * @description Atualiza o campo `countryCode` do formulário do usuário 
+  *               com o código do país correspondente ao código fornecido.
+  * 
+  * @param {string} code - Código do país selecionado.
+  * @returns {void}
+  */
   onCountryChange(code: string) {
-    const country = this.countries.find(c => c.code === code);
+    const country = this.countries.find(c => c.code === code); // Busca o país pelo código fornecido
     if (country) {
-      // this.selectedCountryCode = country.code;
-      this.userForm.get('countryCode')?.setValue(country.code);
+      this.userForm.get('countryCode')?.setValue(country.code); // Atualiza o campo `countryCode` no formulário
     }
   }
 
-  // Função para validar a data de nascimento do usuário
+  /**
+ * @description Define as datas mínima e máxima para o campo de data de nascimento.
+ *               A data mínima é fixada para 100 anos atrás e a data máxima para 10 anos atrás.
+ * 
+ * @returns {void}
+ */
   private setMinAndMaxDate() {
-    const date = new Date();
-    this.minDate = new Date(date.getFullYear() - 100, 0, 1);
-    this.maxDate = new Date(date.getFullYear() - 10, date.getMonth(), date.getDate()); // Exatamente 10 anos atrás
+    const date = new Date(); // Obtém a data atual
+    this.minDate = new Date(date.getFullYear() - 100, 0, 1); // Define a data mínima para 100 anos atrás
+    this.maxDate = new Date(date.getFullYear() - 10, date.getMonth(), date.getDate()); // Define a data máxima para exatamente 10 anos atrás
   }
 
-  // Função para abrir o modal de visualização de usuário
-  openModalViewUser(user: User) {
-    this.dialog.open(UserPasswordModalComponent, {
-      width: '700px',
-      height: '330px',
-      data: user
-    })
-  }
-
+  /**
+  * @description Abre um modal para que o usuário insira a senha, 
+  *               passando os dados do usuário como informações.
+  * 
+  * @returns {void}
+  */
   private openModalPasswordUser() {
-    this.dialog.open(UserPasswordModalComponent, {
-      width: '430px',
-      height: '500px',
-      data: this.user
+    this.dialog.open(UserPasswordModalComponent, { // Abre o modal com o componente especificado
+      width: '430px', // Define a largura do modal
+      height: '500px', // Define a altura do modal
+      data: this.user // Passa os dados do usuário para o modal
     });
   }
 
+  /**
+   * @description Redireciona o usuário de volta para a página inicial.
+   * 
+   * @returns {void}
+   */
   goBack() {
-    // this.dialog.closeAll();
-    this.router.navigate(['/']);
+    this.router.navigate(['/']); // Navega para a rota da página inicial
   }
 
 }
