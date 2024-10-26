@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 
 // Serviços e Modelos
 import { User } from '../../../../core/models/user';
-import { UserService } from '../../../../core/services/user/user.service';
 import { CountryService } from '../../../../core/services/apis/country/country.service';
 import { UserDataService } from '../../../../core/services/user/userdata/user-data.service';
 
@@ -102,8 +101,6 @@ export class UserRegistrationFormComponent {
       this.user = { ...this.userForm.value };
       this.user.cellPhone = this.userDataService.formatAndStoreUserData(this.userForm.get('countryCode')!.value, this.userForm.get('cellPhone')!.value);
       this.openModalPasswordUser();
-    } else {
-      console.log('Formulário inválido');
     }
   }
 
@@ -122,8 +119,6 @@ export class UserRegistrationFormComponent {
     if (country) {
       // this.selectedCountryCode = country.code;
       this.userForm.get('countryCode')?.setValue(country.code);
-    } else {
-      console.error('Código do país não encontrado.');
     }
   }
 
@@ -131,7 +126,7 @@ export class UserRegistrationFormComponent {
   private setMinAndMaxDate() {
     const date = new Date();
     this.minDate = new Date(date.getFullYear() - 100, 0, 1);
-    this.maxDate = date;
+    this.maxDate = new Date(date.getFullYear() - 10, date.getMonth(), date.getDate()); // Exatamente 10 anos atrás
   }
 
   // Função para abrir o modal de visualização de usuário

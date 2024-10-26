@@ -70,7 +70,8 @@
           formControlName="birth"
           readonly 
           required 
-          aria-describedby="Help" />
+          aria-describedby="Help"
+          (focus)="picker.open()" />
           <mat-datepicker-toggle matIconSuffix class="custom-icon-data" [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker>
             <mat-datepicker-actions>
