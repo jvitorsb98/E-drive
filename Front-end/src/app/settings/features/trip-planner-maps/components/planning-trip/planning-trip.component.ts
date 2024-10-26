@@ -125,13 +125,17 @@ export class PlanningTripComponent implements AfterViewInit {
    * Planeja a viagem com base nas localizações selecionadas pelo usuário.
    */
   async planTrip() {
+
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+
     if (!this.startLocation || !this.endLocation) {
       console.error('Por favor, selecione os locais de início e destino.');
       return;
     }
 
-    this.map.setCenter(this.startLocation); // Centraliza o mapa na localização inicial
-    this.inputsVisible = false; // Esconde os inputs após seleção das localizações
+    this.map.setCenter(this.startLocation); 
+    this.inputsVisible = false; 
 
     try {
       await this.calculateRouteDistance(this.startLocation, this.endLocation);
@@ -247,7 +251,6 @@ export class PlanningTripComponent implements AfterViewInit {
         this.directionsRenderer.setDirections(result);
         this.directionsRenderer.setMap(this.map);
         this.isRouteActive = true;
-        this.cdr.detectChanges();
       } else {
         console.error('Erro ao iniciar a rota:', status);
       }
@@ -279,7 +282,6 @@ export class PlanningTripComponent implements AfterViewInit {
         .then(({ steps, totalDistance }) => {
           this.stepsArray = steps;
           this.totalDistance = Number(totalDistance);
-          this.cdr.detectChanges();
           resolve();
         })
         .catch(error => {
@@ -292,15 +294,15 @@ export class PlanningTripComponent implements AfterViewInit {
   /**
     * Cancela a rota atual e limpa os marcadores no mapa.
     */
-  async cancelRoute() {
+  cancelRoute() {
     // Desativa o renderizador de direções
     this.directionsRenderer.setMap(null);
-    
-    // Reseta os campos de autocomplete
-    await this.resetAutocomplete();
-  
-    // Define que a rota não está ativa
     this.isRouteActive = false;
+    this.cdr.detectChanges();
+
+    // Reseta os campos de autocomplete
+    this.resetAutocomplete();
+  
   
     // Limpa o array de passos
     this.stepsArray.splice(0, this.stepsArray.length);
@@ -309,7 +311,6 @@ export class PlanningTripComponent implements AfterViewInit {
     this.clearMarkers();
   
     // Detecta mudanças no estado do componente
-    this.cdr.detectChanges();
   }
   
 

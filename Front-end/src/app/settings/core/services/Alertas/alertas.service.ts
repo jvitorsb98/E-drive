@@ -86,6 +86,8 @@ export class AlertasService {
     });
   }
 
+
+
   showTableAlert(
     title: string,
     headers: string[],
@@ -105,20 +107,23 @@ export class AlertasService {
   }
 
   private generateTableHtml(headers: string[], rows: string[][]): string {
-    const headerHtml = headers.map(header => `<th>${header}</th>`).join('');
+    const headerHtml = headers.map(header => 
+        `<th style="border: 1px solid #ddd; padding: 3px; background-color: #f2f2f2; font-size: 10px;">${header}</th>`).join('');
+        
     const rowsHtml = rows
-      .map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`)
-      .join('');
+        .map(row => `<tr>${row.map(cell => `<td style="border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 10px;">${cell}</td>`).join('')}</tr>`)
+        .join('');
 
     return `
-      <div class="swal-table-container">
-      <table class="swal-table">
-        <thead class="swal-thead">
-          <tr>${headerHtml}</tr>
-        </thead>
-        <tbody class="swal-tbody">${rowsHtml}</tbody>
-      </table>
-    </div>
+      <div style="overflow-x:auto; max-width: 100%;">
+        <table style="font-size: 8px; width: 100%; border-collapse: collapse;">
+          <thead style="font-weight: bold;">
+            <tr>${headerHtml}</tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
     `;
-  }
+}
+
 }
