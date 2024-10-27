@@ -3,12 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { AuthService } from '../../../../services/auth/auth.service';
-import {  emailnoExistsValidator } from '../../../../../../shared/validators/email-exists.validator';
-import { UserService } from '../../../../../services/user/user.service';
-import { IRecoverPasswordResponse } from '../../../../../models/inter-Login';
-
 
 @Component({
   selector: 'app-modal-recover-password',
@@ -26,8 +21,6 @@ export class ModalRecoverPasswordComponent {
     public dialogRef: MatDialogRef<ModalRecoverPasswordComponent>,
     private fb: FormBuilder,
     private auth: AuthService,
-    private router: Router,
-    private userService: UserService,
     private alertasService: AlertasService
   ) { }
 
