@@ -1,4 +1,4 @@
-<div class="container-fluid p-3">
+<div class="container justify-content-cente form-floating p-3">
   <div class="icon-row">
     <button mat-icon-button aria-label="Back" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
@@ -7,7 +7,7 @@
   </div>
   <form [formGroup]="userForm">
     <!-- Nome -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="col-md-12 col-md-12 col-sm-12 col-lg-12 form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Nome completo:</mat-label>
@@ -35,7 +35,7 @@
       </mat-card>
     </div>
     <!-- Email -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="col-md-12 col-md-12 col-sm-12 col-lg-12 form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Email:</mat-label>
@@ -58,7 +58,7 @@
       </mat-card>
     </div>
     <!-- Data de nascimento -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="col-md-12 col-md-12 col-sm-12 col-lg-12 form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Data de nascimento:</mat-label>
@@ -87,7 +87,7 @@
       </mat-card>
     </div>
     <!-- Código do país e telefone celular -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="col-md-12 col-md-12 col-sm-12 col-lg-12 form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <div class="form-container">
           <mat-form-field class="custom-select">
@@ -149,9 +149,10 @@
         </div>
       </mat-card>
     </div>
-    <div class="continue-button">
-      <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!userForm.valid" (click)="continueToPasswordStep()"
-        text="Continuar"></app-ui-button>
-    </div>
   </form>
+  <div class="footer-button w-100">
+    <app-ui-button 
+      typeBtn="vivid-sky-blue" [disabled]="!userForm.valid" (click)="continueToPasswordStep()" text="Continuar">
+    </app-ui-button>
+  </div>
 </div>

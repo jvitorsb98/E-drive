@@ -1,11 +1,20 @@
+.container {
+  margin-top: 0px;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 60px;
+}
+
 .icon-row {
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
   margin-top: 15px;
-  /* Ajuste conforme necessário */
-  margin-bottom: 25px;
+  margin-bottom: -15%;
 }
 
 .icon-row button {
@@ -117,15 +126,6 @@
   width: 60%;
 }
 
-.continue-button {
-  position: fixed;
-  width: 100%;
-  padding: 20px;
-  bottom: 0;
-  left: 0;
-  margin-bottom: 0;
-}
-
 @media(max-width: 360px) {
   .mat-error-codigo-text {
     white-space: nowrap;
@@ -133,11 +133,11 @@
 
   .mat-error-text-cellPhone {
     white-space: nowrap;
-    margin-left: -15px
+    margin-left: -2px
   }
 }
 
-@media(max-width: 350px) {
+@media(max-width: 352px) {
   .custom-select {
     width: 100%;
   }
@@ -148,6 +148,6 @@
 
   .mat-error-text-cellPhone {
     white-space: nowrap;
-    margin-left: -15px
+    margin-left: -10px;
   }
 }
