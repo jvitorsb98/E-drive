@@ -31,8 +31,23 @@ import { AlertasService } from '../../../../core/services/Alertas/alertas.servic
   styleUrl: './user-password-modal.component.scss'
 })
 export class UserPasswordModalComponent implements OnInit {
-  userPassword!: FormGroup;
+  userPassword!: FormGroup; // Formulário de senha do usuário
 
+  /**
+  * @description Construtor do componente UserPasswordModalComponent.
+  * Injeta os serviços necessários para manipular dados do usuário, navegação, construção de formulários,
+  * renderização dinâmica, exibição de alertas e controle de diálogos modais.
+  * 
+  * @param userService Serviço responsável por manipular os dados dos usuários.
+  * @param router Serviço de roteamento Angular para navegação entre páginas.
+  * @param formBuilder Serviço para construir formulários reativos.
+  * @param renderer Serviço para manipular o DOM de forma segura.
+  * @param el ElementRef para acessar o elemento DOM nativo do componente.
+  * @param alertService Serviço para exibir alertas personalizados.
+  * @param dialog Serviço de diálogo para abrir janelas modais no aplicativo.
+  * @param userData Dados do usuário passados ao abrir o modal.
+  * @param dialogRef Referência ao diálogo modal aberto para controle de sua instância.
+  */
   constructor(
     private userService: UserService,
     private router: Router,
@@ -45,12 +60,18 @@ export class UserPasswordModalComponent implements OnInit {
     public dialogRef: MatDialogRef<UserPasswordModalComponent>,
   ) { }
 
+  /**
+ * @description Inicializa o componente, configurando o formulário e inicializando o validador de campo de senha.
+ */
   ngOnInit() {
     this.buildForm();
     PasswordFieldValidator.initializePasswordField(this.renderer, this.el);
   }
 
-  // Cria e inicializa o formulário com validação de senha e confirmação de senha.
+  /**
+   * @description Cria e inicializa o formulário com os campos de senha, confirmação de senha e consentimento para newsletter,
+   * aplicando validações de senha e confirmação.
+   */
   buildForm() {
     this.userPassword = this.formBuilder.group({
       password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
@@ -59,18 +80,26 @@ export class UserPasswordModalComponent implements OnInit {
     }, { validators: passwordMatchValidator });
   }
 
+  /**
+   * @description Verifica se o formulário está válido e, em caso positivo, chama o método `createUser` para cadastrar o usuário.
+   * Caso contrário, marca todos os campos como "touched" para exibir mensagens de erro.
+   */
   saveUser(): void {
-    // Verifica se o formulário existe e se está válido
     if (this.userPassword && this.userPassword.valid) {
       this.createUser();
     } else {
-      // Caso o formulário não esteja válido, marqua todos os campos como 'touched' para mostrar mensagens de erro
       this.userPassword.markAllAsTouched();
     }
   }
 
-  // Função para criar um usuário
-  createUser() {
+  /**
+   * @description Função para cadastrar um novo usuário. Se o formulário estiver válido, os dados de senha são salvos,
+   * e o serviço de registro de usuário é chamado. Ao final, um modal de confirmação é exibido e, após confirmação,
+   * o usuário é redirecionado para a página de login.
+   * 
+   * @returns void
+   */
+  createUser(): void {
     if (this.userPassword.valid) {
       this.userData.password = this.userPassword.value.password;
 
@@ -81,27 +110,30 @@ export class UserPasswordModalComponent implements OnInit {
           this.alertService.showSuccess('Cadastro bem-sucedido!', `${this.userData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`)
             .then((result) => {
               if (result) {
-                // Primeiro inscreva-se no evento de navegação para abrir o modal
                 this.router.events.pipe(
                   filter(event => event instanceof NavigationEnd),
-                  take(1) // Certifica-se de que o evento de navegação seja emitido apenas uma vez para evitar vazamentos de memória.
+                  take(1)
                 ).subscribe(() => {
-                  // Abre o modal após a navegação
-                  this.router.navigate(['e-driver/login'])
+                  this.router.navigate(['e-driver/login']);
                 });
-                // Depois navega para a página de introdução
                 this.router.navigate(['e-driver/intro-page']);
               }
             });
         },
         error: (e) => {
-          this.alertService.showError(e.error)
+          this.alertService.showError(e.error);
         }
       });
     }
   }
 
-  // Abre o modal de LGPD
+  /**
+ * @description Abre o modal da LGPD (Lei Geral de Proteção de Dados) com perguntas frequentes relacionadas aos direitos
+ * e consentimento de dados do usuário. O modal é aberto somente se o controle de 'newsletter' for inválido.
+ * Após o fechamento do modal, o valor de 'newsletter' é atualizado com base na resposta do usuário.
+ * 
+ * @param lgpdFaqs {Array} - Lista de perguntas e respostas sobre a LGPD a serem exibidas no modal.
+ */
   openLGPDModal() {
     // Verifica se o controle 'newsletter' é inválido e não abre o modal
     if (!this.userPassword.get('newsletter')?.invalid) {
@@ -139,7 +171,6 @@ export class UserPasswordModalComponent implements OnInit {
         this.userPassword.get('newsletter')?.setValue(false);
       }
     });
-
   }
 
   // Função para fechar o modal
