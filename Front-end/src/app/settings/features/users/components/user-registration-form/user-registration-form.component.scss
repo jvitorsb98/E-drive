@@ -51,7 +51,7 @@
 }
 
 .custom-label {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: normal;
 }
 
@@ -61,7 +61,7 @@
 
 .mat-error-text {
   margin-top: 0px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: -15px;
@@ -70,7 +70,7 @@
 .mat-error-name {
   white-space: nowrap;
   margin-top: -22px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: 2px;
@@ -80,8 +80,7 @@
   white-space: nowrap;
   margin-top: -22px;
   margin-bottom: 0;
-  /* Zera a margem inferior */
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: 1px;
@@ -90,7 +89,7 @@
 .mat-error-codigo-text {
   white-space: nowrap;
   margin-top: 0px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: -15px;
@@ -103,7 +102,7 @@
 .mat-error-text-cellPhone {
   white-space: nowrap;
   margin-top: 0px;
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: -5px;
@@ -126,28 +125,69 @@
   width: 60%;
 }
 
-@media(max-width: 360px) {
+@media(max-width: 395px) {
+
   .mat-error-codigo-text {
+    font-size: 11px;
     white-space: nowrap;
   }
 
   .mat-error-text-cellPhone {
-    white-space: nowrap;
-    margin-left: -2px
+    margin-left: -20px;
+  }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    margin-left: 0px;
+    font-size: 12px;
   }
 }
 
-@media(max-width: 352px) {
-  .custom-select {
-    width: 100%;
+@media(max-width: 370px) {
+  .custom-label {
+    font-size: 13px;
   }
 
-  .custom-input {
-    width: 100%;
+  .mat-error-codigo-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    font-size: 12px;
   }
 
   .mat-error-text-cellPhone {
+    font-size: 10px;
     white-space: nowrap;
-    margin-left: -10px;
+    margin-left: -5px;
+  }
+}
+
+@media(max-width: 340px) {
+  // .custom-select {
+  //   width: 100%;
+  // }
+
+  // .custom-input {
+  //   width: 100%;
+  // }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    font-size: 11px;
+  }
+
+  .error-codigo-pais-text {
+    font-size: 11px;
+  }
+
+  .mat-error-codigo-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone {
+    font-size: 10px;
+    white-space: nowrap;
+    margin-left: -15px;
   }
 }

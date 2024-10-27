@@ -108,7 +108,7 @@
             </mat-autocomplete>
             <!-- Error messages -->
             <mat-error class="mat-error-text error-codigo-pais-text" *ngIf="userForm.get('countryCode')?.hasError('required') && userForm.get('countryCode')?.touched">
-              <strong>Código do país</strong> é obrigatório.
+              <strong>Código</strong> é obrigatório.
             </mat-error>
             @if(userForm.get('countryCode')?.hasError('invalidCountry')){
               <mat-error class="mat-error-codigo-text"><strong>Código do país </strong>invalido.</mat-error>
@@ -126,15 +126,15 @@
             aria-describedby="Help" />
             <mat-icon matSuffix class="custom-icon-cellfone">phone</mat-icon>
             <!-- Error messages -->
-            <mat-error class="mat-error-text-cellPhone" *ngIf="userForm.get('cellPhone')?.hasError('required') 
+            <mat-error class="mat-error-text-cellPhone" id="error-text-obrigadotio" *ngIf="userForm.get('cellPhone')?.hasError('required') 
               && userForm.get('cellPhone')?.touched ">
-              <strong>Telefone celular</strong> é obrigatório.
+              <strong>Telefone</strong> é obrigatório.
             </mat-error>
             <!-- - Error message invalid phone pattern -->
             <mat-error class="mat-error-text-cellPhone" *ngIf="userForm.get('cellPhone')?.invalid && 
               (userForm.get('cellPhone')?.touched || userForm.get('cellPhone')?.dirty) 
               && !userForm.get('cellPhone')?.hasError('required')">
-              <strong>Telefone celular</strong> no formato (xx) xxxxx.
+              <strong>Telefone</strong> no formato (xx) xxxxx-xxxx.
             </mat-error>
           </mat-form-field>
           <!-- - Error message invalid phone pattern -->
