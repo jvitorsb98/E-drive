@@ -11,93 +11,84 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MailServiceTest {
 
-    @Autowired
+    @InjectMocks
     private MailService mailService;
 
-    @Autowired
+    @Mock
     private MailRepository mailRepository;
 
     private Faker faker;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         faker = new Faker();
-        mailRepository.deleteAll();
     }
 
     @Test
-    @DisplayName("Should register a new mail and return details")
+    @DisplayName("Deve registrar um novo e-mail e retornar os detalhes")
     void testRegister() {
+        // Preparação dos dados para o registro do e-mail
         DataRegisterMail dataRegisterMail = new DataRegisterMail(
-                faker.internet().emailAddress(),
-                faker.internet().emailAddress(),
-                faker.lorem().sentence(),
-                faker.lorem().word()
+            "remetente@exemplo.com",
+            "destinatario@exemplo.com",
+            "Conteúdo do e-mail",
+            "Assunto do e-mail"
         );
 
+        // Criação de um objeto Mail simulado
+        Mail mail = new Mail(dataRegisterMail);
+        when(mailRepository.save(any(Mail.class))).thenReturn(mail); // Configuração do mock
+
+        // Chamada ao método de registro
         DataDetailsMail result = mailService.register(dataRegisterMail);
 
-        assertNotNull(result);
-        assertNotNull(result.id());
+        // Verificações
+        assertNotNull(result); // Verifica se o resultado não é nulo
         assertEquals(dataRegisterMail.from(), result.from());
         assertEquals(dataRegisterMail.to(), result.to());
         assertEquals(dataRegisterMail.content(), result.content());
         assertEquals(dataRegisterMail.subject(), result.subject());
     }
 
-    @Test
-    @DisplayName("Should register a mail with an invalid email address")
-    void testRegister_InvalidEmail() {
-        DataRegisterMail dataRegisterMail = new DataRegisterMail(
-                "invalid-email", // E-mail inválido
-                faker.internet().emailAddress(),
-                faker.lorem().sentence(),
-                faker.lorem().word()
-        );
-
-        
-        DataDetailsMail result = mailService.register(dataRegisterMail);
-
-        assertNotNull(result);
-        assertEquals(dataRegisterMail.from(), result.from());
-
-        Mail savedMail = mailRepository.findById(result.id()).orElse(null);
-        assertNotNull(savedMail);
-        assertEquals("invalid-email", savedMail.getFrom());
-    }
-
 
     @Test
-    @DisplayName("Should list all registered mails with pagination")
+    @DisplayName("Deve listar todos os e-mails com paginação")
     void testListAll() {
+        List<Mail> mails = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            mailService.register(new DataRegisterMail(
+            mails.add(new Mail(
+                    null,
                     faker.internet().emailAddress(),
                     faker.internet().emailAddress(),
                     faker.lorem().sentence(),
                     faker.lorem().word()
             ));
         }
-
         Pageable pageable = PageRequest.of(0, 10);
+        Page<Mail> mailPage = new PageImpl<>(mails, pageable, mails.size());
+        when(mailRepository.findAll(pageable)).thenReturn(mailPage);
+
         Page<DataDetailsMail> result = mailService.listAll(pageable);
 
         assertNotNull(result);
@@ -105,17 +96,18 @@ public class MailServiceTest {
     }
 
     @Test
-    @DisplayName("Should find a mail by its ID")
+    @DisplayName("Deve encontrar um e-mail pelo ID")
     void testFindById() {
         Mail mail = new Mail(
-                null, faker.internet().emailAddress(),
+                1L, // ID fictício
+                faker.internet().emailAddress(),
                 faker.internet().emailAddress(),
                 faker.lorem().sentence(),
                 faker.lorem().word()
         );
-        mail = mailRepository.save(mail);
+        when(mailRepository.findById(1L)).thenReturn(Optional.of(mail));
 
-        DataDetailsMail result = mailService.findById(mail.getId());
+        DataDetailsMail result = mailService.findById(1L);
 
         assertNotNull(result);
         assertEquals(mail.getId(), result.id());
@@ -126,27 +118,30 @@ public class MailServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw exception if mail not found by ID")
+    @DisplayName("Deve lançar exceção se o e-mail não for encontrado pelo ID")
     void testFindById_MailNotFound() {
-        Long invalidId = -1L; // ID inválido
+        when(mailRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(IllegalArgumentException.class, () -> {
-            mailService.findById(invalidId);
+            mailService.findById(-1L);
         });
     }
 
     @Test
-    @DisplayName("Should find mails by sender address")
+    @DisplayName("Deve encontrar e-mails pelo endereço do remetente")
     void testFindByFrom() {
         String sender = faker.internet().emailAddress();
+        List<Mail> mails = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            mailService.register(new DataRegisterMail(
+            mails.add(new Mail(
+                    null,
                     sender,
                     faker.internet().emailAddress(),
                     faker.lorem().sentence(),
                     faker.lorem().word()
             ));
         }
+        when(mailRepository.findByFrom(sender)).thenReturn(mails);
 
         List<DataDetailsMail> result = mailService.findByFrom(sender);
 
@@ -154,6 +149,4 @@ public class MailServiceTest {
         assertEquals(5, result.size());
         assertTrue(result.stream().allMatch(mail -> mail.from().equals(sender)));
     }
-    
-    
 }

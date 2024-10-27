@@ -1,7 +1,6 @@
 package br.com.cepedi.e_drive.security.service.auth.validations.reactivated;
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
-import br.com.cepedi.e_drive.security.service.auth.AuthService;
 import br.com.cepedi.e_drive.security.service.user.UserService;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;

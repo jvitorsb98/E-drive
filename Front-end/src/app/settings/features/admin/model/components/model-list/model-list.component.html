@@ -13,6 +13,18 @@
 </div>
 
 <!-- Container para o filtro de busca -->
+<div class="container coll-2 col-md-6 col-sm-9 col-lg-5">
+  <div class="custom-filter">
+    <mat-form-field class="d-flex w-100">
+      <!-- Label do campo de busca -->
+      <mat-label>Busca por modelo</mat-label>
+      <!-- Campo de input para buscar modelos por nome -->
+      <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+    </mat-form-field>
+  </div>
+</div>
+
+<!-- Container para o filtro de busca -->
 <div class="container coll-12 col-md-12 col-sm-12 col-lg-12">
   <div class="custom-filter">
     <mat-form-field class="d-flex w-100">

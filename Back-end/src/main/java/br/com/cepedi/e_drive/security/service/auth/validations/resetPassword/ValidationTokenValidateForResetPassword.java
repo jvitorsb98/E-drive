@@ -1,7 +1,6 @@
 package br.com.cepedi.e_drive.security.service.auth.validations.resetPassword;
 
 import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
-import br.com.cepedi.e_drive.security.service.auth.validations.resetPassword.ValidationResetPassword;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;

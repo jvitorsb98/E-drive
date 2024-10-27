@@ -40,7 +40,8 @@ public record DataAutonomyDetails(
                 autonomy.getMileagePerLiterRoad(),
                 autonomy.getMileagePerLiterCity(),
                 autonomy.getConsumptionEnergetic(),
-                autonomy.getAutonomyElectricMode()
+                autonomy.getAutonomyElectricMode(),
+                autonomy.getBatteryCapacity()
         );
     }
 
