@@ -1,10 +1,12 @@
-package br.com.cepedi.e_drive.security.service;
+package br.com.cepedi.e_drive.security.service.user;
 
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsUser;
 import br.com.cepedi.e_drive.security.model.records.update.DataUpdateUser;
 import br.com.cepedi.e_drive.security.repository.UserRepository;
-import br.com.cepedi.e_drive.security.service.user.UserService;
+import br.com.cepedi.e_drive.security.service.token.TokenService;
+import br.com.cepedi.e_drive.security.service.user.validations.update.UserValidationUpdate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +34,12 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private TokenService tokenService;
+
+     @Mock
+    private List<UserValidationUpdate> userValidationUpdateList;
+
     @InjectMocks
     private UserService userService;
 
@@ -41,26 +51,27 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        email = "test@example.com";
-        newPassword = "newPassword";
-        encodedPassword = "encodedPassword";
-
-        user = new User();
-        user.setEmail(email);
-        user.setName("Old Name");
-        user.setCellphone("Old Cellphone");
-        user.setBirth(LocalDate.of(1990, 1, 1));
-        user.setActivated(true);
-
-        dataUpdateUser = new DataUpdateUser(
-                "New Name",
-                "New Cellphone",
-                LocalDate.of(2000, 1, 1)
-        );
-
-        // Resetting mocks before each test
-        reset(userRepository, passwordEncoder);
-    }
+            email = "test@example.com";
+            newPassword = "newPassword";
+            encodedPassword = "encodedPassword";
+    
+            user = new User();
+            user.setEmail(email);
+            user.setName("Old Name");
+            user.setCellphone("Old Cellphone");
+            user.setBirth(LocalDate.of(1990, 1, 1));
+            user.setActivated(true);
+    
+            dataUpdateUser = new DataUpdateUser(
+                    "New Name",
+                    "New Cellphone",
+                    LocalDate.of(2000, 1, 1)
+            );
+    
+            // Resetting mocks before each test
+            reset(userRepository, passwordEncoder, userValidationUpdateList); // Resetting mocks, incluindo a lista
+        }
+    
 
     @Test
     @DisplayName("Should return true if user exists by email")
@@ -153,35 +164,87 @@ public class UserServiceTest {
     void testUpdateUser_UserNotFound() {
         UserDetails userDetails = mock(UserDetails.class);
         when(userDetails.getUsername()).thenReturn(email);
-        when(userRepository.existsByEmail(email)).thenReturn(false); // Ajustado para usar existsByEmail
-
+        when(userRepository.findByEmail(email)).thenReturn(null); // Simula que o usuário não foi encontrado
+    
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
             userService.updateUser(dataUpdateUser, userDetails);
         });
-
+    
         assertEquals("User not found", exception.getMessage(), "Expected exception message to be: User not found");
-        verify(userRepository, never()).saveAndFlush(any(User.class));
+        verify(userRepository, never()).saveAndFlush(any(User.class)); // Verifica se saveAndFlush não foi chamado
+    }
+    
+    @Test
+    void testUpdateUser_Success() {
+        // Dados de entrada
+        String email = "test@example.com";
+        DataUpdateUser data = new DataUpdateUser("Nome Atualizado", "11999999999", LocalDate.of(1990, 1, 1));
+        UserDetails userDetails = mock(UserDetails.class);
+        when(userDetails.getUsername()).thenReturn(email);
+
+        // Configurando o usuário existente
+        User existingUser = new User();
+        existingUser.setEmail(email);
+
+        // Configurando mocks
+        when(userRepository.findByEmail(email)).thenReturn(existingUser);
+        userValidationUpdateList.forEach(validation -> doNothing().when(validation).validate(data, email));
+
+        // Chama o método de teste
+        DataDetailsUser result = userService.updateUser(data, userDetails);
+
+        // Verificações
+        assertNotNull(result); // Verifica se o retorno não é nulo
+        assertEquals("Nome Atualizado", existingUser.getName()); 
+        assertEquals("11999999999", existingUser.getCellphone());
+        assertEquals(LocalDate.of(1990, 1, 1), existingUser.getBirth()); 
+        verify(userRepository, times(1)).findByEmail(email);
     }
 
     @Test
-    @DisplayName("Should update user details successfully")
-    void testUpdateUser_Success() {
-        UserDetails userDetails = mock(UserDetails.class);
-        when(userDetails.getUsername()).thenReturn(email);
-        when(userRepository.existsByEmail(email)).thenReturn(true); // Ajustado para validar existência
-        when(userRepository.findByEmail(email)).thenReturn(user);
+void testGetUserDesctivatedByEmail_UserFound() {
+    // Dados de entrada
+    String email = "desativado@example.com";
+    
+    // Configurando o usuário esperado
+    User expectedUser = new User();
+    expectedUser.setEmail(email);
+    
+    // Configurando o mock
+    when(userRepository.findByEmail(email)).thenReturn(expectedUser);
+    
+    // Chama o método de teste
+    User result = userService.getUserDesctivatedByEmail(email);
+    
+    // Verificações
+    assertNotNull(result); // Verifica se o retorno não é nulo
+    assertEquals(email, result.getEmail()); // Verifica se o e-mail é o esperado
+    verify(userRepository, times(1)).findByEmail(email); // Verifica se o método findByEmail foi chamado uma vez
+}
+@Test
+void testGetUserByToken_UserFound() {
+    // Dados de entrada
+    String token = "Bearer someValidToken";
+    String email = "tokenUser@example.com";
+    
+    // Configurando o usuário esperado
+    User expectedUser = new User();
+    expectedUser.setEmail(email);
+    
+    // Configurando mocks para o TokenService e UserRepository
+    when(tokenService.getEmailByToken("someValidToken")).thenReturn(email);
+    when(userRepository.findByEmail(email)).thenReturn(expectedUser);
+    
+    // Chama o método de teste
+    User result = userService.getUserByToken(token);
+    
+    // Verificações
+    assertNotNull(result); // Verifica se o retorno não é nulo
+    assertEquals(email, result.getEmail()); // Verifica se o e-mail é o esperado
+    verify(tokenService, times(1)).getEmailByToken("someValidToken"); // Verifica a extração do e-mail pelo token
+    verify(userRepository, times(1)).findByEmail(email); // Verifica se a busca no repositório foi chamada
+}
 
-        DataDetailsUser result = userService.updateUser(dataUpdateUser, userDetails);
-
-        assertNotNull(result, "Expected result to be non-null");
-        assertEquals("New Name", user.getName(), "Expected user name to be updated to: New Name");
-        assertEquals("New Cellphone", user.getCellphone(), "Expected user cellphone to be updated to: New Cellphone");
-        assertEquals(LocalDate.of(2000, 1, 1), user.getBirth(), "Expected user birth date to be updated to: 2000-01-01");
-        verify(userRepository).findByEmail(email);
-        verify(userRepository).saveAndFlush(user);
-    }
-
-
-
+    
 }
 

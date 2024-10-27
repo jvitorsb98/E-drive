@@ -3,14 +3,14 @@
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 30px; /* Ajuste conforme necessário */
+  margin-top: 15px; /* Ajuste conforme necessário */
   margin-bottom: 25px;
 }
 
 .icon-row button {
   position: absolute;
   left: 0;
-  margin-left: 10px; 
+  margin-left: -5px; 
 }
 
 .custom-icon-cellfone {
@@ -47,20 +47,6 @@
 
 #Help {
   color: #b5abab;
-}
-
-.mat-hint-text {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: -14px;
-}
-
-.mat-hint-cellPhone-text {
-  font-size: 10px;
-  line-height: 1.5;
-  text-align: left;
-  margin-left: 6px;
 }
 
 .mat-error-text {
@@ -101,10 +87,11 @@
   width: 60%;
 }
 
-.continue-button{
-  position: absolute;
+.continue-button {
+  position: fixed; /* Trocar para fixed para que ele não afete o layout geral */
   width: 100%;
   padding: 20px;
   bottom: 0;
   left: 0;
+  margin-bottom: 0; /* Garanta que não há margens desnecessárias */
 }

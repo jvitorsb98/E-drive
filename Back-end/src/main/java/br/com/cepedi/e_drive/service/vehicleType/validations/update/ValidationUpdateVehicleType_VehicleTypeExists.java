@@ -4,7 +4,10 @@ import br.com.cepedi.e_drive.model.entitys.VehicleType;
 import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * Implementação da interface {@link ValidationUpdateVehicleType} para validação de tipos de veículos
@@ -15,6 +18,9 @@ public class ValidationUpdateVehicleType_VehicleTypeExists implements Validation
 
     @Autowired
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Autowired
+    private MessageSource messageSource; // Injeção do MessageSource para internacionalização
 
     /**
      * Valida se o tipo de veículo com o ID fornecido existe e está ativado.
@@ -27,10 +33,20 @@ public class ValidationUpdateVehicleType_VehicleTypeExists implements Validation
         if (vehicleTypeRepository.existsById(id)) {
             VehicleType vehicleType = vehicleTypeRepository.getReferenceById(id);
             if (!vehicleType.isActivated()) {
-                throw new ValidationException("The required vehicle type is disabled");
+                String errorMessage = messageSource.getMessage(
+                        "vehicleType.update.disabled", // Chave da mensagem para veículo desativado
+                        new Object[]{id}, // Parâmetro da mensagem (ID)
+                        Locale.getDefault() // Locale padrão
+                );
+                throw new ValidationException(errorMessage);
             }
         } else {
-            throw new ValidationException("The required vehicle type does not exist");
+            String errorMessage = messageSource.getMessage(
+                    "vehicleType.update.notExist", // Chave da mensagem para veículo inexistente
+                    new Object[]{id}, // Parâmetro da mensagem (ID)
+                    Locale.getDefault() // Locale padrão
+            );
+            throw new ValidationException(errorMessage);
         }
     }
 }

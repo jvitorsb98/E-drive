@@ -1,0 +1,111 @@
+.top-bar {
+  position: fixed;
+  width: 100%;
+  background-color: #19B6DD;
+  padding: .2rem 0;
+}
+
+.profile-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f2f4f8;
+}
+
+.profile-card {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: 90%;
+  height: 60%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.profile-info {
+  flex-grow: 1; /* Faz com que o conteúdo ocupe o espaço disponível */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centraliza verticalmente */
+  align-items: center; /* Centraliza horizontalmente */
+}
+
+.profile-header {
+  background-color: #19B6DD;
+  padding: 20px;
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+}
+
+.profile-info h2 {
+  margin: 15px 0 5px;
+  font-size: 24px;
+  color: #333;
+}
+
+.profile-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #777;
+}
+
+.contact-info {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center; /* Garante alinhamento central dos itens */
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+}
+
+.mat-icon {
+  font-size: 20px;
+}
+
+.button-group {
+  display: flex;
+  flex-direction: column; /* Alternativa: row para deixar lado a lado */
+  gap: 10px;
+  margin-top: auto; /* Empurra os botões para o final do card */
+  padding: 0 20px;
+}
+button {
+  width: 100%;
+  background-color: #19B6DD !important;
+  color: white !important;
+}
+
+.edit-button {
+  display: flex;
+  justify-content: end;
+  cursor: pointer;
+}
+
+.edit-button img {
+  width: 24px;
+  height: 24px;
+}
+
+.delete-account {
+  color: #ff5252;
+  text-decoration: none;
+  cursor: pointer;
+  text-align: center;
+}

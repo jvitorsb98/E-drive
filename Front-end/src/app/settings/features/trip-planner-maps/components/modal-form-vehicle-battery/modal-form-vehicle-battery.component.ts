@@ -134,60 +134,29 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         const yearsOfUse = currentYear - vehicleYear;
         batteryHealth = Math.max(100 - (yearsOfUse * 2.3), 0); // Garante que a saúde da bateria não fique negativa
       }
-
       const remainingBattery = Number(formValue.bateriaRestante);
       let batteryPercentageAfterTrip = remainingBattery;
 
       // Verifique se devemos usar a autonomia personalizada
-      const useCustomAutonomy = formValue.selectedVehicle.userVehicle.batteryCapacity != null &&
-        formValue.selectedVehicle.userVehicle.mileagePerLiterCity != null &&
-        formValue.selectedVehicle.userVehicle.mileagePerLiterRoad != null &&
-        formValue.selectedVehicle.userVehicle.consumptionEnergetic != null;
-      let mileage;
-      let autonomy;
-      let distance
-      if (useCustomAutonomy) {
-        const mileagePerLiterCity = Number(formValue.selectedVehicle.userVehicle.mileagePerLiterCity);
-        const mileagePerLiterRoad = Number(formValue.selectedVehicle.userVehicle.mileagePerLiterRoad);
-        const batteryCapacity = Number(formValue.selectedVehicle.userVehicle.batteryCapacity) * 3.6; 
-        const consumptionEnergetic = Number(formValue.selectedVehicle.userVehicle.consumptionEnergetic);
-
-        for (const step of this.data.stepsArray) {
-          distance = step.distance;
-          console.log(step.roadType)
-          mileage = step.roadType === 'cidade' ? mileagePerLiterCity : mileagePerLiterRoad;
-
-          // Calculo da autonomia em km
-          autonomy = batteryCapacity / consumptionEnergetic; // Autonomia em km
-
-          const batteryConsumptionPercentage = (distance / (autonomy * (batteryPercentageAfterTrip / 100))) * 100;
-          batteryPercentageAfterTrip -= batteryConsumptionPercentage;
-          console.log(batteryPercentageAfterTrip);
-
-          if (batteryPercentageAfterTrip <= 0) {
-            batteryPercentageAfterTrip = 0;
-            this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
-            return; // Para a função se a bateria for insuficiente
-          }
+      const batteryCapacity = (Number(formValue.selectedVehicle.userVehicle.batteryCapacity) * 3.6) * (batteryHealth/100); // kWh para MJ
+      const consumptionEnergetic = Number(formValue.selectedVehicle.userVehicle.consumptionEnergetic); // MJ/km
+      for (const step of this.data.stepsArray) {
+        const distance = step.distance; // km
+      
+        // Cálculo da autonomia em km com base na capacidade da bateria e no consumo energético
+        const calculatedAutonomy = batteryCapacity / consumptionEnergetic; // Autonomia em km
+      
+        // Cálculo da porcentagem de consumo da bateria
+        const batteryConsumptionPercentage = (distance / calculatedAutonomy) * 100; 
+        batteryPercentageAfterTrip -= batteryConsumptionPercentage;
+        
+        console.log(batteryPercentageAfterTrip);
+      
+        if (batteryPercentageAfterTrip <= 0) {
+          batteryPercentageAfterTrip = 0;
+          this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
+          return; // Para a função se a bateria for insuficiente
         }
-      } else {
-        for (const step of this.data.stepsArray) {
-          distance = step.distance;
-          autonomy = formValue.selectedVehicle.userVehicle.autonomyElectricMode || 0;
-
-
-          const batteryConsumptionPercentage = (distance / (autonomy * (batteryPercentageAfterTrip / 100))) * 100;
-          batteryPercentageAfterTrip -= batteryConsumptionPercentage;
-          console.log(batteryPercentageAfterTrip);
-
-
-          if (batteryPercentageAfterTrip <= 0) {
-            batteryPercentageAfterTrip = 0;
-            this.showInsufficientBatteryMessage(); // Mostra mensagem ao usuário
-            return; // Para a função se a bateria for insuficiente
-          }
-        }
-
       }
 
       // Alerta sobre a porcentagem de bateria restante

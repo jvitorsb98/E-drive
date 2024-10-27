@@ -1,66 +1,54 @@
 <!-- Container principal com padding superior -->
 <div class="container-fluid pt-3">
-  <div class="col-12">
+  <div class="row">
+    <!-- Container para os botões e título -->
+    <div class="col-12 header-container">
+      <!-- Botão para voltar, que chama a função closeModal ao ser clicado -->
+      <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
 
-    <div class="row">
-      <!-- Container para os botões e título -->
-      <div class="col-12 header-container">
-        <!-- Botão para voltar, que chama a função closeModal ao ser clicado -->
-        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
+      <!-- Título do formulário; exibe 'Cadastrar Marca' ou 'Editar Marca' com base na variável editBrand -->
+      <h1 class="titulo" *ngIf="!editBrand">Cadastrar Marca</h1>
+      <h1 class="titulo" *ngIf="editBrand">Editar Marca</h1>
 
-        <!-- Título do formulário; exibe 'Cadastrar Marca' ou 'Editar Marca' com base na variável editBrand -->
-        <h1 class="titulo" *ngIf="!editBrand">Cadastrar Marca</h1>
-        <h1 class="titulo" *ngIf="editBrand">Editar Marca</h1>
+      <!-- Botão para abrir um modal de FAQ -->
+      <button class="icon" mat-icon-button (click)="openFAQModal()">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+    </div>
+  </div>
 
-        <!-- Botão para abrir um modal de FAQ -->
-        <button class="icon" mat-icon-button (click)="openFAQModal()">
-          <mat-icon>help_outline</mat-icon>
-        </button>
+  <!-- Formulário vinculado ao FormGroup brandForm -->
+  <form [formGroup]="brandForm">
+    <div class="content">
+      <div class="row">
+        <div class="col-12">
+          <!-- Campo de entrada para o nome da marca -->
+          <mat-form-field class="custom-select">
+            <mat-label class="custom-label">Marca</mat-label>
+            <input type="text" name="name" matInput formControlName="name" required aria-describedby="Help" />
+            <mat-error class="mat-error-text" *ngIf="brandForm.get('name')?.hasError('required') 
+                  && brandForm.get('name')?.touched" class="mat-error-text">O <strong>Nome</strong> é
+              obrigatório.</mat-error>
+          </mat-form-field>
+          <!-- Mensagem de erro se o nome da marca não atender ao comprimento mínimo -->
+          <div *ngIf="brandForm.get('name')?.hasError('minlength') && brandForm.get('name')?.dirty">
+            <mat-error class="mat-error-text-minlength">
+              O <strong>Nome</strong> deve ter pelo menos {{
+              brandForm.get('name')?.errors?.['minlength']?.requiredLength
+              }} caracteres.
+            </mat-error>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Formulário vinculado ao FormGroup brandForm -->
-    <form [formGroup]="brandForm">
-      <div class="content">
-
-          <div class="row">
-            <div class="col-12 col-md-6 mb-2">
-              <mat-card>
-                <!-- Campo de entrada para o nome da marca -->
-                <mat-form-field>
-                  <mat-label class="custom-label">Marca</mat-label>
-                  <input 
-                  type="text" 
-                  name="name" 
-                  matInput 
-                  formControlName="name" 
-                  required 
-                  aria-describedby="Help" />
-                  <!-- <mat-hint id="Help" class="mat-hint-text">Informe o nome da <strong>marca.</strong></mat-hint> -->
-                  <mat-error class="mat-error-text" 
-                  *ngIf="brandForm.get('name')?.hasError('required') 
-                  && brandForm.get('name')?.touched" class="mat-error-text">O <strong>Nome</strong> é obrigatório.</mat-error>
-                </mat-form-field>
-                <!-- Mensagem de erro se o nome da marca não atender ao comprimento mínimo -->
-                <div *ngIf="brandForm.get('name')?.hasError('minlength') && brandForm.get('name')?.dirty">
-                  <mat-error class="mat-error-text-minlength">
-                    O <strong>Nome</strong> deve ter pelo menos {{
-                      brandForm.get('name')?.errors?.['minlength']?.requiredLength
-                    }} caracteres.
-                  </mat-error>
-                </div>
-              </mat-card>
-            </div>
-        </div>
-      </div>
-
-      <!-- Container para os botões do formulário -->
-      <div class="buttons-container">
-        <!-- Botão para finalizar o cadastro, desabilitado se o formulário não for válido -->
-        <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!brandForm.valid" (click)="onSubmit()" text="Finalizar cadastro"></app-ui-button>
-      </div>
-    </form>
-  </div>
+    <!-- Container para os botões do formulário -->
+    <div class="buttons-container">
+      <!-- Botão para finalizar o cadastro, desabilitado se o formulário não for válido -->
+      <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!brandForm.valid" (click)="onSubmit()"
+        text="Finalizar cadastro"></app-ui-button>
+    </div>
+  </form>
 </div>

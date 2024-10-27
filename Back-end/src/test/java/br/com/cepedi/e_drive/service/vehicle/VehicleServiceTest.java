@@ -93,7 +93,7 @@ public class VehicleServiceTest {
         VehicleType mockVehicleType = new VehicleType();
         mockVehicleType.setId(4L);
 
-        Autonomy mockAutonomy = new Autonomy(null, new BigDecimal("12.5"), new BigDecimal("10.0"), new BigDecimal("8.5"), new BigDecimal("100.0"));
+        Autonomy mockAutonomy = new Autonomy(null, new BigDecimal("12.5"), new BigDecimal("10.0"), new BigDecimal("8.5"), new BigDecimal("100.0"), null);
 
         Vehicle mockVehicle = new Vehicle();
         mockVehicle.setId(1L);

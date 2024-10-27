@@ -53,6 +53,12 @@ public class Autonomy {
     private BigDecimal autonomyElectricMode;
 
     /**
+     * Capacidade da bateria. Pode ser nulo.
+     */
+    @Column(name = "battery_capacity")
+    private  BigDecimal batteryCapacity;
+
+    /**
      * Construtor que cria uma nova instância de Autonomy com base nos dados fornecidos em {@link DataRegisterAutonomy}.
      *
      * @param dataRegisterAutonomy Objeto contendo os dados para registrar uma nova autonomia.
@@ -62,5 +68,6 @@ public class Autonomy {
         this.mileagePerLiterCity = dataRegisterAutonomy.mileagePerLiterCity();
         this.consumptionEnergetic = dataRegisterAutonomy.consumptionEnergetic();
         this.autonomyElectricMode = dataRegisterAutonomy.autonomyElectricMode();
+        this.batteryCapacity = dataRegisterAutonomy.batteryCapacity();
     }
 }

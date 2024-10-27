@@ -71,7 +71,7 @@ public class VehicleUserRepositoryTest {
         Vehicle vehicle = createVehicle();
 
         DataRegisterAutonomy dataRegister = new DataRegisterAutonomy(
-            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE);
+            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,BigDecimal.ONE);
 
         VehicleUser vehicleUser1 = new VehicleUser(user, vehicle, dataRegister);
         vehicleUserRepository.save(vehicleUser1);
@@ -99,7 +99,7 @@ public class VehicleUserRepositoryTest {
         Vehicle vehicle = createVehicle();
 
         DataRegisterAutonomy dataRegister = new DataRegisterAutonomy(
-            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE);
+            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,BigDecimal.ONE);
 
         VehicleUser vehicleUser1 = new VehicleUser(user, vehicle, dataRegister);
         vehicleUserRepository.save(vehicleUser1);
@@ -127,7 +127,7 @@ public class VehicleUserRepositoryTest {
         Vehicle vehicle = createVehicle();
 
         DataRegisterAutonomy dataRegister = new DataRegisterAutonomy(
-            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE);
+            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,BigDecimal.ONE);
 
         VehicleUser activeUser = new VehicleUser(user, vehicle, dataRegister);
         vehicleUserRepository.save(activeUser);
@@ -173,7 +173,7 @@ public class VehicleUserRepositoryTest {
         Vehicle vehicle = createVehicle();
 
         DataRegisterAutonomy dataRegister = new DataRegisterAutonomy(
-            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE);
+            BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE,BigDecimal.ONE);
 
         IntStream.range(0, 15).forEach(i -> {
             VehicleUser activeUser = new VehicleUser(user, vehicle, dataRegister);

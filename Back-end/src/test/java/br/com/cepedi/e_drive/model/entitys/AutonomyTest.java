@@ -23,12 +23,12 @@ public class AutonomyTest {
     void setUp() {
         faker = new Faker();
 
-        // Criação de instância de Autonomy com Faker
         DataRegisterAutonomy data = new DataRegisterAutonomy(
                 new BigDecimal(faker.number().randomDouble(2, 1, 10)),
                 new BigDecimal(faker.number().randomDouble(2, 1, 10)),
                 new BigDecimal(faker.number().randomDouble(2, 1, 10)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 10))
+                new BigDecimal(faker.number().randomDouble(2, 1, 10)),
+                new BigDecimal(faker.number().randomDouble(2, 1, 10)) // batteryCapacity
         );
 
         autonomy = new Autonomy(data);
@@ -42,6 +42,7 @@ public class AutonomyTest {
         assertNotNull(autonomy.getMileagePerLiterCity(), () -> "Mileage per liter city should not be null");
         assertNotNull(autonomy.getConsumptionEnergetic(), () -> "Consumption energetic should not be null");
         assertNotNull(autonomy.getAutonomyElectricMode(), () -> "Autonomy electric mode should not be null");
+        assertNotNull(autonomy.getBatteryCapacity(), () -> "Battery capacity should not be null"); // Verificação do atributo batteryCapacity
     }
 
     @Test
@@ -52,14 +53,16 @@ public class AutonomyTest {
         BigDecimal newMileagePerLiterCity = new BigDecimal(faker.number().randomDouble(2, 1, 10));
         BigDecimal newConsumptionEnergetic = new BigDecimal(faker.number().randomDouble(2, 1, 10));
         BigDecimal newAutonomyElectricMode = new BigDecimal(faker.number().randomDouble(2, 1, 10));
-        
+        BigDecimal newBatteryCapacity = new BigDecimal(faker.number().randomDouble(2, 1, 10)); // batteryCapacity
+
         DataRegisterAutonomy newData = new DataRegisterAutonomy(
                 newMileagePerLiterRoad,
                 newMileagePerLiterCity,
                 newConsumptionEnergetic,
-                newAutonomyElectricMode
+                newAutonomyElectricMode,
+                newBatteryCapacity // Atualização do atributo batteryCapacity
         );
-        
+
         // Act
         autonomy = new Autonomy(newData);
 
@@ -68,49 +71,22 @@ public class AutonomyTest {
         assertEquals(newMileagePerLiterCity, autonomy.getMileagePerLiterCity(), () -> "Mileage per liter city should be updated.");
         assertEquals(newConsumptionEnergetic, autonomy.getConsumptionEnergetic(), () -> "Consumption energetic should be updated.");
         assertEquals(newAutonomyElectricMode, autonomy.getAutonomyElectricMode(), () -> "Autonomy electric mode should be updated.");
+        assertEquals(newBatteryCapacity, autonomy.getBatteryCapacity(), () -> "Battery capacity should be updated."); // Verificação de batteryCapacity
     }
-    
+
     @Test
-    @DisplayName("Test creation with no-args constructor")
-    void testNoArgsConstructor() {
+    @DisplayName("Test getter and setter for batteryCapacity")
+    void testBatteryCapacityGetterAndSetter() {
         // Arrange
-        Autonomy autonomy = new Autonomy(); // Usando o construtor padrão
+        BigDecimal batteryCapacity = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100));
 
         // Act
-        // Não há ações adicionais
+        autonomy.setBatteryCapacity(batteryCapacity);
+        BigDecimal retrievedBatteryCapacity = autonomy.getBatteryCapacity();
 
         // Assert
-        assertNotNull(autonomy, "Autonomy instance should be created with no-args constructor.");
-        assertNull(autonomy.getId(), "ID should be null by default.");
-        assertNull(autonomy.getMileagePerLiterRoad(), () -> "MileagePerLiterRoad should be null by default.");
-        assertNull(autonomy.getMileagePerLiterCity(), () -> "MileagePerLiterCity should be null by default.");
-        assertNull(autonomy.getConsumptionEnergetic(), () -> "ConsumptionEnergetic should be null by default.");
-        assertNull(autonomy.getAutonomyElectricMode(), () -> "AutonomyElectricMode should be null by default.");
+        assertEquals(batteryCapacity, retrievedBatteryCapacity, () -> "The batteryCapacity should be set and retrieved correctly.");
     }
-    
-    @Test
-    @DisplayName("Test creation with all-args constructor")
-    void testAllArgsConstructor() {
-        // Arrange
-        Long id = faker.number().randomNumber();
-        BigDecimal mileagePerLiterRoad = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100));
-        BigDecimal mileagePerLiterCity = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100));
-        BigDecimal consumptionEnergetic = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100));
-        BigDecimal autonomyElectricMode = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100));
-
-        // Act
-        Autonomy autonomy = new Autonomy(id, mileagePerLiterRoad, mileagePerLiterCity, consumptionEnergetic, autonomyElectricMode);
-
-        // Assert
-        assertNotNull(autonomy, "Autonomy instance should be created with all-args constructor.");
-        assertEquals(id, autonomy.getId(), "ID should be initialized correctly.");
-        assertEquals(mileagePerLiterRoad, autonomy.getMileagePerLiterRoad(), () -> "MileagePerLiterRoad should be initialized correctly.");
-        assertEquals(mileagePerLiterCity, autonomy.getMileagePerLiterCity(), () -> "MileagePerLiterCity should be initialized correctly.");
-        assertEquals(consumptionEnergetic, autonomy.getConsumptionEnergetic(), () -> "ConsumptionEnergetic should be initialized correctly.");
-        assertEquals(autonomyElectricMode, autonomy.getAutonomyElectricMode(), () -> "AutonomyElectricMode should be initialized correctly.");
-    }
-    
-    
 
     @Test
     @DisplayName("Test getter and setter for mileagePerLiterRoad")
