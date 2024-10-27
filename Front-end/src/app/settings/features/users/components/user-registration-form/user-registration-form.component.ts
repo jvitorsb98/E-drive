@@ -191,7 +191,7 @@ export class UserRegistrationFormComponent {
   private openModalPasswordUser() {
     this.dialog.open(UserPasswordModalComponent, { // Abre o modal com o componente especificado
       width: '450px', // Define a largura do modal
-      height: '480px', // Define a altura do modal
+      height: '485px', // Define a altura do modal
       data: this.user // Passa os dados do usuário para o modal
     });
   }

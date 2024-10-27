@@ -68,7 +68,7 @@ export class UserLoginModalComponent implements OnInit {
       isPasswordRecovery: isPasswordRecovery
     }, {
       width: '500px',
-      height: '223px',
+      height: '232px',
       disableClose: true
     });
   }
