@@ -174,7 +174,7 @@ export class ListMyAddressesComponent implements OnInit {
   openModalDetailsAddress(address: DataAddressDetails) {
     this.dialog.open(ModalDetailsAddressComponent, {
       width: '600px',
-      height: '400px',
+      height: '440px',
       data: address
     });
   }

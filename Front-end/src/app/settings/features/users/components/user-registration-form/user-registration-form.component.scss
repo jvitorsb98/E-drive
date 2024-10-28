@@ -1,16 +1,26 @@
+.container {
+  margin-top: 0px;
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 60px;
+}
+
 .icon-row {
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  margin-top: 15px; /* Ajuste conforme necessário */
-  margin-bottom: 25px;
+  margin-top: 15px;
+  margin-bottom: -15%;
 }
 
 .icon-row button {
   position: absolute;
   left: 0;
-  margin-left: -5px; 
+  margin-left: -5px;
 }
 
 .custom-icon-cellfone {
@@ -41,7 +51,7 @@
 }
 
 .custom-label {
-  font-size: 12px;
+  font-size: 15px;
   font-weight: normal;
 }
 
@@ -50,24 +60,52 @@
 }
 
 .mat-error-text {
-  font-size: 10px;
+  margin-top: 0px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: -15px;
 }
 
+.mat-error-name {
+  white-space: nowrap;
+  margin-top: -22px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 2px;
+}
+
 .mat-error-name-email {
-  font-size: 10px;
+  white-space: nowrap;
+  margin-top: -22px;
+  margin-bottom: 0;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
   margin-left: 1px;
 }
 
 .mat-error-codigo-text {
-  font-size: 10px;
+  white-space: nowrap;
+  margin-top: 0px;
+  font-size: 12px;
   line-height: 1.5;
   text-align: left;
-  margin-left: -17px;
+  margin-left: -15px;
+}
+
+.error-codigo-pais-text {
+  white-space: nowrap;
+}
+
+.mat-error-text-cellPhone {
+  white-space: nowrap;
+  margin-top: 0px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -5px;
 }
 
 .custom-autocomplete-option {
@@ -87,11 +125,69 @@
   width: 60%;
 }
 
-.continue-button {
-  position: fixed; /* Trocar para fixed para que ele não afete o layout geral */
-  width: 100%;
-  padding: 20px;
-  bottom: 0;
-  left: 0;
-  margin-bottom: 0; /* Garanta que não há margens desnecessárias */
+@media(max-width: 395px) {
+
+  .mat-error-codigo-text {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone {
+    margin-left: -20px;
+  }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    margin-left: 0px;
+    font-size: 12px;
+  }
+}
+
+@media(max-width: 370px) {
+  .custom-label {
+    font-size: 13px;
+  }
+
+  .mat-error-codigo-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    font-size: 12px;
+  }
+
+  .mat-error-text-cellPhone {
+    font-size: 10px;
+    white-space: nowrap;
+    margin-left: -5px;
+  }
+}
+
+@media(max-width: 340px) {
+  // .custom-select {
+  //   width: 100%;
+  // }
+
+  // .custom-input {
+  //   width: 100%;
+  // }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    font-size: 11px;
+  }
+
+  .error-codigo-pais-text {
+    font-size: 11px;
+  }
+
+  .mat-error-codigo-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone {
+    font-size: 10px;
+    white-space: nowrap;
+    margin-left: -15px;
+  }
 }

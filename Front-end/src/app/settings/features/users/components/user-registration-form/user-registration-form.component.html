@@ -1,4 +1,4 @@
-<div class="container-fluid p-3">
+<div class="container col-md-12 col-md-12 col-sm-12 col-lg-12 justify-content-cente form-floating p-3">
   <div class="icon-row">
     <button mat-icon-button aria-label="Back" (click)="goBack()">
       <mat-icon>arrow_back</mat-icon>
@@ -7,50 +7,71 @@
   </div>
   <form [formGroup]="userForm">
     <!-- Nome -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Nome completo:</mat-label>
-          <input type="text" name="name" matInput formControlName="name" required aria-describedby="Help" />
-          <mat-error
-            *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.dirty || userForm.get('name')?.touched"
-            class="mat-error-text">O <strong>Nome</strong> é obrigatório.</mat-error>
+          <input 
+          type="text" 
+          name="name" 
+          matInput 
+          formControlName="name" 
+          required aria-describedby="Help"/>
+          <!-- Error messages -->
+          <mat-error class="mat-error-text" *ngIf="userForm.get('name')?.hasError('required') && userForm.get('name')?.touched">
+            O campo <strong>Nome</strong> é obrigatório.
+          </mat-error>
         </mat-form-field>
-
+        <!-- Error message conter apenas letras -->
         <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('hasNumbers')">
-          <mat-error class="mat-error-name-email">O nome não pode conter números.</mat-error>
+          <mat-error class="mat-error-name">O campo <strong>Nome</strong> deve conter apenas letras.</mat-error>
         </div>
-
-        <div
-          *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength') && !userForm.get('name')?.hasError('hasNumbers')">
-          <mat-error class="mat-error-name-email">O <strong>Nome</strong> deve ter pelo menos {{
-            userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.</mat-error>
+        <!-- Error message min length -->
+        <div *ngIf="userForm.get('name')?.dirty && userForm.get('name')?.hasError('minlength') && !userForm.get('name')?.hasError('hasNumbers')">
+          <mat-error class="mat-error-name">O <strong>Nome</strong> precisa ter pelo menos
+            {{ userForm.get('name')?.errors?.['minlength']?.requiredLength }} caracteres.
+          </mat-error>
         </div>
       </mat-card>
     </div>
     <!-- Email -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Email:</mat-label>
-          <input type="text" name="email" matInput formControlName="email" appEmailPatternValidator required
-            aria-describedby="Help" />
+          <input 
+          type="text" 
+          name="email" 
+          matInput 
+          formControlName="email" 
+          appEmailPatternValidator required
+          aria-describedby="Help"/>
+          <!-- Error messages -->
+          <mat-error class="mat-error-text" *ngIf="userForm.get('email')?.hasError('required') && userForm.get('email')?.touched">
+            O campo <strong>Email</strong> é obrigatório.
+          </mat-error>
         </mat-form-field>
-
-        <div *ngIf="userForm.get('email')?.hasError('invalidEmailPattern') && userForm.get('email')?.dirty
-              && !userForm.get('email')?.hasError('required') && userForm.get('email')?.invalid">
-          <mat-error class="mat-error-name-email">O <strong>Email</strong> é inválido.</mat-error>
-        </div>
-
+        <!-- Error message invalid email pattern -->
+         <div *ngIf="userForm.get('email')?.hasError('invalidEmailPattern') && (userForm.get('email')?.touched || userForm.get('email')?.dirty) && !userForm.get('email')?.hasError('required')">
+            <mat-error class="mat-error-name-email">O <strong>Email</strong> é inválido.</mat-error>
+         </div>
       </mat-card>
     </div>
     <!-- Data de nascimento -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <mat-form-field>
           <mat-label class="custom-label">Data de nascimento:</mat-label>
-          <input matInput [matDatepicker]="picker" [min]="minDate" [max]="maxDate" name="birth" formControlName="birth"
-            readonly required aria-describedby="Help" />
+          <input 
+          matInput 
+          [matDatepicker]="picker" 
+          [min]="minDate" [max]="maxDate" 
+          name="birth" 
+          formControlName="birth"
+          readonly 
+          required 
+          aria-describedby="Help"
+          (focus)="picker.open()" />
           <mat-datepicker-toggle matIconSuffix class="custom-icon-data" [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker>
             <mat-datepicker-actions>
@@ -58,41 +79,80 @@
               <button mat-raised-button matDateRangePickerApply class="apply-button">Confirmar</button>
             </mat-datepicker-actions>
           </mat-datepicker>
+          <!-- Error messages -->
+          <mat-error class="mat-error-text" *ngIf="userForm.get('birth')?.hasError('required') && userForm.get('birth')?.touched">
+            O campo <strong>Data de nascimento</strong> é obrigatório.
+          </mat-error>
         </mat-form-field>
       </mat-card>
     </div>
     <!-- Código do país e telefone celular -->
-    <div class="col-md-12 form-floating mb-1">
+    <div class="form-floating mb-1">
       <mat-card appearance="outlined" class="border-0">
         <div class="form-container">
           <mat-form-field class="custom-select">
             <mat-label class="custom-label">Código do país:</mat-label>
-            <input type="text" matInput required formControlName="countryCode" [matAutocomplete]="auto"
-              [matAutocompleteDisabled]="false" (input)="userForm.get('countryCode')?.markAsTouched()">
+            <input 
+            type="text" 
+            matInput 
+            required 
+            formControlName="countryCode" 
+            [matAutocomplete]="auto"
+            [matAutocompleteDisabled]="false" 
+            (input)="userForm.get('countryCode')?.markAsTouched()">
             <mat-autocomplete #auto="matAutocomplete">
               <mat-option *ngFor="let country of filteredCountries | async" [value]="country.code"
                 class="custom-autocomplete-option">
                 {{ country.name }} ({{ country.code }})
               </mat-option>
             </mat-autocomplete>
-
-            <mat-error class="mat-error-codigo-text" [ngStyle]="{'white-space': 'nowrap'}"
-              *ngIf="userForm.get('countryCode')?.hasError('invalidCountry')"><strong>Código do país</strong>
-              invalido.</mat-error>
-
+            <!-- Error messages -->
+            <mat-error class="mat-error-text error-codigo-pais-text" *ngIf="userForm.get('countryCode')?.hasError('required') && userForm.get('countryCode')?.touched">
+              <strong>Código</strong> é obrigatório.
+            </mat-error>
+            @if(userForm.get('countryCode')?.hasError('invalidCountry')){
+              <mat-error class="mat-error-codigo-text"><strong>Código do país </strong>invalido.</mat-error>
+            }
           </mat-form-field>
           <mat-form-field appearance="fill" class="custom-input">
             <mat-label class="custom-label">Telefone celular:</mat-label>
-            <input type="text" matInput [placeholder]="'(xx) xxxxx-xxxx'" [mask]="phoneType | phoneMask"
-              formControlName="cellPhone" required aria-describedby="Help" />
+            <input 
+            type="text" 
+            matInput 
+            [placeholder]="'(xx) xxxxx-xxxx'" 
+            [mask]="phoneType | phoneMask"
+            formControlName="cellPhone" 
+            required 
+            aria-describedby="Help" />
             <mat-icon matSuffix class="custom-icon-cellfone">phone</mat-icon>
+            <!-- Error messages -->
+            <mat-error class="mat-error-text-cellPhone" id="error-text-obrigadotio" *ngIf="userForm.get('cellPhone')?.hasError('required') 
+              && userForm.get('cellPhone')?.touched ">
+              <strong>Telefone</strong> é obrigatório.
+            </mat-error>
+            <!-- - Error message invalid phone pattern -->
+            <mat-error class="mat-error-text-cellPhone" *ngIf="userForm.get('cellPhone')?.invalid && 
+              (userForm.get('cellPhone')?.touched || userForm.get('cellPhone')?.dirty) 
+              && !userForm.get('cellPhone')?.hasError('required')">
+              <strong>Telefone</strong> no formato (xx) xxxxx-xxxx.
+            </mat-error>
           </mat-form-field>
+          <!-- - Error message invalid phone pattern -->
+          <!-- TODO: A validação condicional está sendo feita em tempo real. É necessário revisar o SCSS para centralizar o texto. -->
+          <!-- @if(userForm.get('cellPhone')?.invalid && 
+            (userForm.get('cellPhone')?.touched || userForm.get('cellPhone')?.dirty) 
+            && !userForm.get('cellPhone')?.hasError('required')){
+              <mat-error class="mat-error-text-cellPhone">
+              <strong>Telefone celular</strong> no formato (xx) xxxxx.
+            </mat-error>
+            } -->
         </div>
       </mat-card>
     </div>
-    <div class="continue-button">
-      <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!userForm.valid" (click)="continueToPasswordStep()"
-        text="Continuar"></app-ui-button>
-    </div>
   </form>
+  <div class="footer-button w-100">
+    <app-ui-button 
+      typeBtn="vivid-sky-blue" [disabled]="!userForm.valid" (click)="continueToPasswordStep()" text="Continuar">
+    </app-ui-button>
+  </div>
 </div>
