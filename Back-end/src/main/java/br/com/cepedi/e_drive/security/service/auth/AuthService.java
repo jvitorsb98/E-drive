@@ -1,7 +1,5 @@
 package br.com.cepedi.e_drive.security.service.auth;
 
-import br.com.cepedi.e_drive.audit.record.input.DataRegisterAudit;
-import br.com.cepedi.e_drive.audit.service.AuditService;
 import br.com.cepedi.e_drive.security.model.entitys.User;
 import br.com.cepedi.e_drive.security.model.records.details.DadosTokenJWT;
 import br.com.cepedi.e_drive.security.model.records.details.DataDetailsRegisterUser;
@@ -40,7 +38,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -93,8 +90,6 @@ public class AuthService implements UserDetailsService {
     @Autowired
     private MessageSource messageSource;
 
-    @Autowired
-    private AuditService auditService;
 
     @Autowired
     private EmailService emailService;
@@ -128,7 +123,6 @@ public class AuthService implements UserDetailsService {
         validationRegisterUserList.forEach(v -> v.validation(dataRegisterUser));
         User user = new User(dataRegisterUser, passwordEncoder);
         repository.save(user);
-
         String confirmationToken = tokenService.generateTokenForActivatedEmail(user);
         String successMessage = messageSource.getMessage(
                 "auth.register.success",
@@ -292,5 +286,3 @@ public class AuthService implements UserDetailsService {
 
     }
 }
-
-

@@ -1,3 +1,4 @@
+
 // Importa os modelos necessários
 import { UserVehicle } from '../../../../core/models/user-vehicle';
 import { Vehicle } from '../../../../core/models/vehicle';
@@ -11,7 +12,7 @@ import { UserVehicleService } from '../../../../core/services/user/uservehicle/u
 
 // Importa os módulos do Angular
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
@@ -65,11 +66,7 @@ export class ModalFormVehicleComponent implements OnInit {
     private categoryAvgAutonomyStatsService: CategoryAvgAutonomyStatsService,
     public dialogRef: MatDialogRef<ModalFormVehicleComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { vehicle: Vehicle, userVehicle: UserVehicle },
-  ) { 
-
-
-    
-  }
+  ) { }
 
   ngOnInit() {
     this.initializeData();

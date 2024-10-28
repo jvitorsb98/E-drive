@@ -68,7 +68,7 @@ public class AuditLog {
      * </p>
      */
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     /**
@@ -101,11 +101,4 @@ public class AuditLog {
         this.affectedResource = data.affectedResource();
         this.origin = data.origin();
     }
-
-    public Long getUserId() {
-        return user != null ? user.getId() : null; // Retorna o ID do usuário, se disponível
-    }
-
-  
-    
 }
