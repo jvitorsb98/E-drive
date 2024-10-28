@@ -1,4 +1,4 @@
-package br.com.cepedi.e_drive.security.controller;
+package br.com.cepedi.e_drive.security.controller.auth;
 
 import br.com.cepedi.e_drive.security.controller.auth.AuthController;
 import br.com.cepedi.e_drive.security.model.entitys.User;
