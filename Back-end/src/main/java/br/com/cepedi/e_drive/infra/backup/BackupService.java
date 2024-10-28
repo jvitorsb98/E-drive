@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class BackupService {
@@ -24,9 +26,12 @@ public class BackupService {
     @Scheduled(cron = "0 0 2 * * ?")
     public void performBackup() {
         try {
+            // Obtém a data atual no formato "yyyy-MM-dd"
+            String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
             String command = String.format(
-                    "pg_dump -U %s -F c --no-owner -b -v -f %s/%s.backup %s",
-                    user, backupDirectory, databaseName, databaseName
+                    "pg_dump -U %s -F c --no-owner -b -v -f %s/%s_%s.backup %s",
+                    user, backupDirectory, databaseName, currentDate, databaseName
             );
 
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", "export PGPASSWORD='" + password + "'; " + command);
