@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,6 +20,9 @@ public class ValidationModelExistsForActivatedTest {
 
     @Mock
     private ModelRepository modelRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @InjectMocks
     private ValidationModelExistsForActivated validationModelExistsForActivated;
@@ -33,12 +39,14 @@ public class ValidationModelExistsForActivatedTest {
         Long modelId = 1L;
 
         when(modelRepository.existsById(modelId)).thenReturn(false);
+        when(messageSource.getMessage("model.activated.not.found", null, Locale.getDefault()))
+                .thenReturn("The required model does not exist"); // Simular a mensagem de erro
 
         // Act & Assert
         ValidationException thrownException = assertThrows(ValidationException.class,
-            () -> validationModelExistsForActivated.validation(modelId),
-            "Expected validation() to throw ValidationException when the model does not exist");
-        
+                () -> validationModelExistsForActivated.validation(modelId),
+                "Expected validation() to throw ValidationException when the model does not exist");
+
         assertEquals("The required model does not exist", thrownException.getMessage());
     }
 
@@ -55,4 +63,3 @@ public class ValidationModelExistsForActivatedTest {
         validationModelExistsForActivated.validation(modelId);
     }
 }
-

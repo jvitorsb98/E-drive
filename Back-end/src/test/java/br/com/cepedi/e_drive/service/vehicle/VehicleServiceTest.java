@@ -93,7 +93,7 @@ public class VehicleServiceTest {
         VehicleType mockVehicleType = new VehicleType();
         mockVehicleType.setId(4L);
 
-        Autonomy mockAutonomy = new Autonomy(null, new BigDecimal("12.5"), new BigDecimal("10.0"), new BigDecimal("8.5"), new BigDecimal("100.0"), null);
+        Autonomy mockAutonomy = new Autonomy(null, new BigDecimal("12.5"), new BigDecimal("10.0"), new BigDecimal("8.5"), null);
 
         Vehicle mockVehicle = new Vehicle();
         mockVehicle.setId(1L);
@@ -525,12 +525,24 @@ public class VehicleServiceTest {
         VehicleType mockVehicleType = mock(VehicleType.class);
         when(mockVehicleType.getId()).thenReturn(vehicleTypeId);
 
+        // Mock de Autonomy
+        Autonomy mockAutonomy = mock(Autonomy.class);
+        when(mockAutonomy.getId()).thenReturn(autonomyId);
+
+        // Mock de DataRegisterAutonomy
+        DataRegisterAutonomy mockDataRegisterAutonomy = mock(DataRegisterAutonomy.class);
+        when(mockDataRegisterAutonomy.mileagePerLiterRoad()).thenReturn(new BigDecimal("12.5"));
+        when(mockDataRegisterAutonomy.mileagePerLiterCity()).thenReturn(new BigDecimal("10.0"));
+        when(mockDataRegisterAutonomy.consumptionEnergetic()).thenReturn(new BigDecimal("8.5"));
+        when(mockDataRegisterAutonomy.autonomyElectricMode()).thenReturn(new BigDecimal("100.0"));
+
+        // Mock de Vehicle
         Vehicle mockVehicle = mock(Vehicle.class);
         when(mockVehicle.getId()).thenReturn(vehicleId);
         when(mockVehicle.getModel()).thenReturn(mockModel);
         when(mockVehicle.getCategory()).thenReturn(mockCategory);
         when(mockVehicle.getPropulsion()).thenReturn(mockPropulsion);
-        when(mockVehicle.getAutonomy()).thenReturn(new Autonomy());
+        when(mockVehicle.getAutonomy()).thenReturn(mockAutonomy); // Aqui você associa o mock de Autonomy
         when(mockVehicle.getType()).thenReturn(mockVehicleType);
 
         DataUpdateVehicle dataUpdateVehicle = new DataUpdateVehicle(
@@ -542,15 +554,12 @@ public class VehicleServiceTest {
                 autonomyId,
                 propulsionId,
                 2024L,
-                new DataRegisterAutonomy(
-                        new BigDecimal("12.5"),
-                        new BigDecimal("10.0"),
-                        new BigDecimal("8.5"),
-                        new BigDecimal("100.0"), null
-                )
+                mockDataRegisterAutonomy // Use o mock de DataRegisterAutonomy
         );
 
+        // Configuração dos repositórios
         when(vehicleRepository.getReferenceById(vehicleId)).thenReturn(mockVehicle);
+        when(autonomyRepository.getReferenceById(autonomyId)).thenReturn(mockAutonomy); // Mock do repositório de autonomia
         when(categoryRepository.getReferenceById(categoryId)).thenReturn(mockCategory);
         when(propulsionRepository.getReferenceById(propulsionId)).thenReturn(mockPropulsion);
         when(vehicleTypeRepository.getReferenceById(vehicleTypeId)).thenReturn(mockVehicleType);
@@ -578,7 +587,9 @@ public class VehicleServiceTest {
         assertEquals(vehicleId, result.id(), () -> "Vehicle ID should match.");
         assertEquals("New Motor", result.motor(), () -> "Motor should be updated.");
         assertEquals("New Version", result.version(), () -> "Version should be updated.");
+        verify(mockAutonomy).updateAutonomy(mockDataRegisterAutonomy); // Verifica se a autonomia foi atualizada
     }
+
 
     @Test
     @DisplayName("Should disable vehicle correctly")

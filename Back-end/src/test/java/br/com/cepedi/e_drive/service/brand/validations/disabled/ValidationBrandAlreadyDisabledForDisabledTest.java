@@ -10,6 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -18,6 +21,9 @@ public class ValidationBrandAlreadyDisabledForDisabledTest {
 
     @Mock
     private BrandRepository brandRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @InjectMocks
     private ValidationBrandAlreadyDisabledForDisabled validationBrand;
@@ -36,14 +42,18 @@ public class ValidationBrandAlreadyDisabledForDisabledTest {
         // Arrange
         Long brandId = faker.number().randomNumber();
         Brand brand = new Brand();
-        brand.setActivated(false); 
+        brand.setActivated(false);
 
         when(brandRepository.existsById(brandId)).thenReturn(true);
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
 
+        // Simular a mensagem de erro que será lançada
+        when(messageSource.getMessage("brand.disabled.already.disabled", new Object[]{brand.getName()}, Locale.getDefault()))
+                .thenReturn("Brand is already disabled");
+
         // Act & Assert
         assertThrows(ValidationException.class, () -> validationBrand.validation(brandId),
-        		() ->"Expected validation() to throw ValidationException when brand is already disabled");
+                () -> "Expected validation() to throw ValidationException when brand is already disabled");
     }
 
     @Test

@@ -9,7 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +22,9 @@ class ValidationVehicleTypeExistsForDisabledTest {
 
     @Mock
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock do MessageSource
 
     @InjectMocks
     private ValidationVehicleTypeExistsForDisabled validation;
@@ -28,13 +35,20 @@ class ValidationVehicleTypeExistsForDisabledTest {
     @DisplayName("Should throw ValidationException when VehicleType does not exist")
     void testValidationExists_ThrowsException() {
         // Arrange
-        Long vehicleTypeId = faker.number().randomNumber();
+        Long vehicleTypeId = Math.abs(faker.number().randomNumber()); // Garantir que o ID é positivo
 
         when(vehicleTypeRepository.existsById(vehicleTypeId)).thenReturn(false);
 
+        // Mockando a mensagem do MessageSource
+        when(messageSource.getMessage("vehicleType.disabled.notExist", new Object[]{vehicleTypeId}, Locale.getDefault()))
+                .thenReturn("O tipo de veículo com ID " + vehicleTypeId + " não existe.");
+
         // Act & Assert
-        assertThrows(ValidationException.class, 
-            () -> validation.validation(vehicleTypeId),
-            () -> "Expected ValidationException when the VehicleType does not exist");
+        ValidationException thrown = assertThrows(ValidationException.class,
+                () -> validation.validation(vehicleTypeId)
+        );
+
+        // Verificar a mensagem da exceção
+        assertEquals("O tipo de veículo com ID " + vehicleTypeId + " não existe.", thrown.getMessage());
     }
 }

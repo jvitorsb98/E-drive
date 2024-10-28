@@ -20,62 +20,66 @@ import static org.mockito.Mockito.*;
 
 import java.util.Locale;
 
+/**
+ * Testes para validação da existência do modelo associado ao veículo durante a atualização.
+ */
 class ValidationUpdateVehicle_ModelExistsTest {
 
     @Mock
-    private ModelRepository modelRepository;
+    private ModelRepository modelRepository; // Repositório para verificar a existência do modelo
+
     @Mock
-    private MessageSource messageSource;
+    private MessageSource messageSource; // Fonte de mensagens para internacionalização
 
     @InjectMocks
-    private ValidationUpdateVehicle_ModelExists validation;
+    private ValidationUpdateVehicle_ModelExists validation; // Validador a ser testado
 
-    private Faker faker;
+    private Faker faker; // Utilitário para gerar dados fictícios
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        faker = new Faker(); 
+        MockitoAnnotations.openMocks(this); // Inicializa os mocks
+        faker = new Faker(); // Inicializa Faker para gerar dados fictícios
     }
 
     @Test
-    @DisplayName("Should throw ValidationException when model does not exist")
+    @DisplayName("Deve lançar ValidationException quando o modelo não existir")
     void shouldThrowWhenModelDoesNotExist() {
         // Arrange
-        Long modelId = faker.number().randomNumber();
-        DataUpdateVehicle data = mock(DataUpdateVehicle.class);
+        Long modelId = faker.number().randomNumber(); // Gera um ID de modelo fictício
+        DataUpdateVehicle data = mock(DataUpdateVehicle.class); // Mock do DataUpdateVehicle
 
-        when(data.modelId()).thenReturn(modelId);
-        when(modelRepository.existsById(modelId)).thenReturn(false);
-         when(messageSource.getMessage("vehicle.update.model.not.found", null, Locale.getDefault()))
-        .thenReturn("The provided model ID does not exist.");
+        when(data.modelId()).thenReturn(modelId); // Simula o retorno do ID do modelo
+        when(modelRepository.existsById(modelId)).thenReturn(false); // Simula que o modelo não existe
+        when(messageSource.getMessage("vehicle.update.model.not.found", null, Locale.getDefault()))
+                .thenReturn("O ID do modelo fornecido não existe."); // Mensagem de erro
 
         // Act & Assert
         ValidationException thrown = assertThrows(
-            ValidationException.class,
-            () -> validation.validate(data, modelId),
-            "Expected ValidationException to be thrown when model does not exist"
+                ValidationException.class,
+                () -> validation.validate(data, modelId), // Valida o dado
+                "Esperava que ValidationException fosse lançada quando o modelo não existir"
         );
 
         // Assert
-        assertEquals("The provided model ID does not exist.", thrown.getMessage());
-        verify(modelRepository).existsById(modelId);
+        assertEquals("O ID do modelo fornecido não existe.", thrown.getMessage()); // Verifica a mensagem de erro
+        verify(modelRepository).existsById(modelId); // Verifica se o repositório foi consultado
     }
 
     @Test
-    @DisplayName("Should not throw ValidationException when model exists")
+    @DisplayName("Deve não lançar ValidationException quando o modelo existir")
     void shouldNotThrowWhenModelExists() {
         // Arrange
-        Long modelId = faker.number().randomNumber();
-        DataUpdateVehicle data = mock(DataUpdateVehicle.class);
+        Long modelId = faker.number().randomNumber(); // Gera um ID de modelo fictício
+        DataUpdateVehicle data = mock(DataUpdateVehicle.class); // Mock do DataUpdateVehicle
 
-        when(data.modelId()).thenReturn(modelId);
-        when(modelRepository.existsById(modelId)).thenReturn(true);
+        when(data.modelId()).thenReturn(modelId); // Simula o retorno do ID do modelo
+        when(modelRepository.existsById(modelId)).thenReturn(true); // Simula que o modelo existe
 
         // Act & Assert
-        assertDoesNotThrow(() -> validation.validate(data, modelId));
+        assertDoesNotThrow(() -> validation.validate(data, modelId)); // Valida o dado sem lançar exceção
 
         // Assert
-        verify(modelRepository).existsById(modelId);
+        verify(modelRepository).existsById(modelId); // Verifica se o repositório foi consultado
     }
 }

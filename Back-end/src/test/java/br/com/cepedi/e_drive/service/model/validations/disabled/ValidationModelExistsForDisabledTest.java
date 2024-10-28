@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -18,6 +21,9 @@ public class ValidationModelExistsForDisabledTest {
 
 	@Mock
 	private ModelRepository modelRepository;
+
+	@Mock
+	private MessageSource messageSource; // Mock para MessageSource
 
 	@InjectMocks
 	private ValidationModelExistsForDisabled validationModelExistsForDisabled;
@@ -34,11 +40,13 @@ public class ValidationModelExistsForDisabledTest {
 		Long modelId = 1L;
 
 		when(modelRepository.existsById(modelId)).thenReturn(false);
+		when(messageSource.getMessage("model.disabled.not.found", null, Locale.getDefault()))
+				.thenReturn("The required model does not exist"); // Simular a mensagem de erro
 
 		// Act & Assert
 		ValidationException thrownException = assertThrows(ValidationException.class,
 				() -> validationModelExistsForDisabled.validation(modelId),
-				() ->"Expected validation() to throw ValidationException when the model does not exist");
+				"Expected validation() to throw ValidationException when the model does not exist");
 
 		assertEquals("The required model does not exist", thrownException.getMessage());
 	}

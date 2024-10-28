@@ -8,6 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -17,6 +20,9 @@ public class ValidationCategoryExistsTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @InjectMocks
     private ValidationCategoryExists validationCategoryExists;
@@ -39,7 +45,7 @@ public class ValidationCategoryExistsTest {
 
         // Act & Assert
         assertDoesNotThrow(() -> validationCategoryExists.validate(categoryId),
-        		() ->"Expected validate() to not throw an exception when category exists");
+                () -> "Expected validate() to not throw an exception when category exists");
     }
 
     @Test
@@ -50,8 +56,12 @@ public class ValidationCategoryExistsTest {
 
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
 
+        // Simular a mensagem de erro que será lançada
+        when(messageSource.getMessage("category.disabled.not.found_2", new Object[]{categoryId}, Locale.getDefault()))
+                .thenReturn("Category not found");
+
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> validationCategoryExists.validate(categoryId),
-        		() -> "Expected validate() to throw IllegalArgumentException when category does not exist");
+                () -> "Expected validate() to throw IllegalArgumentException when category does not exist");
     }
 }

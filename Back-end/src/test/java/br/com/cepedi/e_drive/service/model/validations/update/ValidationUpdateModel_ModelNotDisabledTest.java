@@ -11,16 +11,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 public class ValidationUpdateModel_ModelNotDisabledTest {
 
     @Mock
     private ModelRepository modelRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock do MessageSource
 
     @InjectMocks
     private ValidationUpdateModel_ModelDisabled validationUpdateModel_ModelNotDisabled;
@@ -29,10 +33,9 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
 
     @BeforeEach
     void setUp() {
-    	MockitoAnnotations.openMocks(this);
-    	faker = new Faker();
+        MockitoAnnotations.openMocks(this);
+        faker = new Faker();
     }
-
 
     @Test
     @DisplayName("Validation - Model Exists and is Not Activated - Throws ValidationException")
@@ -43,14 +46,17 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
 
         Model model = new Model();
         model.setActivated(false);
+        model.setName(faker.lorem().word()); // Definir o nome do modelo
 
         when(modelRepository.existsById(modelId)).thenReturn(true);
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
+        when(messageSource.getMessage("model.update.disabled", new Object[]{model.getName()}, java.util.Locale.getDefault()))
+                .thenReturn("The required model is not activated");
 
         // Act & Assert
         ValidationException thrownException = assertThrows(ValidationException.class,
                 () -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId),
-                () -> "Expected validation() to throw ValidationException when the model is not activated");
+                "Expected validation() to throw ValidationException when the model is not activated");
 
         assertEquals("The required model is not activated", thrownException.getMessage());
     }
@@ -63,7 +69,7 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
         DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
 
         Model model = new Model();
-        model.setActivated(true); 
+        model.setActivated(true);
 
         when(modelRepository.existsById(modelId)).thenReturn(true);
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
@@ -72,22 +78,5 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
         assertDoesNotThrow(() -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId));
     }
 
-    @Test
-    @DisplayName("Validation - Model Does Not Exist - Throws ValidationException")
-    void validation_ModelDoesNotExist_ThrowsValidationException() {
-        // Arrange
-        Long modelId = faker.number().randomNumber();
-        DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
 
-        when(modelRepository.existsById(modelId)).thenReturn(false);
-
-        // Act & Assert
-        ValidationException thrownException = assertThrows(ValidationException.class,
-                () -> validationUpdateModel_ModelNotDisabled.validation(dataUpdateModel, modelId),
-                () -> "Expected validation() to throw ValidationException when the model is not found");
-
-        assertEquals("Model not found", thrownException.getMessage());
-    }
 }
-
-

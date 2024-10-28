@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.service.vehicle.validations.register;
 
-
 import br.com.cepedi.e_drive.model.entitys.Model;
 import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.ModelRepository;
@@ -12,16 +11,20 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ValidationRegisterVehicle_Model_NotDisabledTest {
 
     @Mock
     private ModelRepository modelRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @InjectMocks
     private ValidationRegisterVehicle_Model_NotDisabled validation;
@@ -40,20 +43,25 @@ class ValidationRegisterVehicle_Model_NotDisabledTest {
         // Arrange
         Long modelId = faker.number().randomNumber();
         DataRegisterVehicle data = new DataRegisterVehicle(
-        	faker.commerce().productName(),
-            faker.lorem().word(),
-            modelId,
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            null
+                faker.commerce().productName(),
+                faker.lorem().word(),
+                modelId,
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                null
         );
 
         Model model = mock(Model.class);
         when(modelRepository.existsById(modelId)).thenReturn(true);
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
         when(model.getActivated()).thenReturn(false);
+        when(model.getName()).thenReturn(faker.commerce().productName()); // Adicionando nome do modelo
+
+        // Mockando a mensagem de erro
+        when(messageSource.getMessage("vehicle.register.model.disabled", new Object[]{model.getName()}, Locale.getDefault()))
+                .thenReturn("The provided model id is disabled");
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(data));
@@ -68,14 +76,14 @@ class ValidationRegisterVehicle_Model_NotDisabledTest {
         // Arrange
         Long modelId = faker.number().randomNumber();
         DataRegisterVehicle data = new DataRegisterVehicle(
-        	faker.commerce().productName(),
-            faker.lorem().word(),
-            modelId,
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            null
+                faker.commerce().productName(),
+                faker.lorem().word(),
+                modelId,
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                null
         );
 
         Model model = mock(Model.class);
@@ -95,14 +103,14 @@ class ValidationRegisterVehicle_Model_NotDisabledTest {
         // Arrange
         Long modelId = faker.number().randomNumber();
         DataRegisterVehicle data = new DataRegisterVehicle(
-        	faker.commerce().productName(),
-            faker.lorem().word(),
-            modelId,
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            null
+                faker.commerce().productName(),
+                faker.lorem().word(),
+                modelId,
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                null
         );
 
         when(modelRepository.existsById(modelId)).thenReturn(false);
@@ -112,4 +120,3 @@ class ValidationRegisterVehicle_Model_NotDisabledTest {
         verify(modelRepository).existsById(modelId);
     }
 }
-

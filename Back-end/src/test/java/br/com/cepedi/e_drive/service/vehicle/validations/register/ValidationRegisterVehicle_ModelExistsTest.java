@@ -10,17 +10,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
 
 import com.github.javafaker.Faker;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 class ValidationRegisterVehicle_ModelExistsTest {
 
     @Mock
     private ModelRepository modelRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @InjectMocks
     private ValidationRegisterVehicle_ModelExists validation;
@@ -44,6 +47,8 @@ class ValidationRegisterVehicle_ModelExistsTest {
                 null  // dataRegisterAutonomy
         );
         when(modelRepository.existsById(data.modelId())).thenReturn(false);
+        // Mock do retorno do MessageSource
+        when(messageSource.getMessage(eq("vehicle.register.model.not.found"), any(), any())).thenReturn("The provided model id does not exist");
 
         // Act & Assert
         ValidationException thrown = assertThrows(ValidationException.class, () -> validation.validate(data));
@@ -70,4 +75,3 @@ class ValidationRegisterVehicle_ModelExistsTest {
         assertDoesNotThrow(() -> validation.validate(data));
     }
 }
-

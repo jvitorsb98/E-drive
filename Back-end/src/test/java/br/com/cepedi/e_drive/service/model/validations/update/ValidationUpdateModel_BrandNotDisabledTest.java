@@ -11,6 +11,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -22,6 +25,9 @@ public class ValidationUpdateModel_BrandNotDisabledTest {
     @Mock
     private BrandRepository brandRepository;
 
+    @Mock
+    private MessageSource messageSource; // Mock do MessageSource
+
     @InjectMocks
     private ValidationUpdateModel_BrandNotDisabled validationUpdateModel_BrandNotDisabled;
 
@@ -29,40 +35,44 @@ public class ValidationUpdateModel_BrandNotDisabledTest {
 
     @BeforeEach
     void setUp() {
-    	MockitoAnnotations.openMocks(this);
-    	faker = new Faker();
+        MockitoAnnotations.openMocks(this);
+        faker = new Faker();
     }
 
     @Test
-    @DisplayName("Validation - Brand Exists and is Activated - Throws ValidationException")
-    void validation_BrandExistsAndIsActivated_ThrowsValidationException() {
-    	// Arrange
-    	Long brandId = faker.number().randomNumber();
-    	DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
-
-    	Brand brand = new Brand();
-    	brand.setActivated(true);
-
-    	when(brandRepository.existsById(brandId)).thenReturn(true);
-    	when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
-
-    	// Act & Assert
-    	ValidationException thrownException = assertThrows(ValidationException.class,
-    			() -> validationUpdateModel_BrandNotDisabled.validation(dataUpdateModel, brandId),
-    			() -> "Expected validation() to throw ValidationException when the brand is activated");
-
-    	assertEquals("The required brand is activated", thrownException.getMessage());
-    }
-
-    @Test
-    @DisplayName("Validation - Brand Exists and is Not Activated - No Exception Thrown")
-    void validation_BrandExistsAndIsNotActivated_NoExceptionThrown() {
+    @DisplayName("Validation - Brand Exists and is Not Activated - Throws ValidationException")
+    void validation_BrandExistsAndIsNotActivated_ThrowsValidationException() {
         // Arrange
-        Long brandId = faker.number().randomNumber();
+        Long brandId = Math.abs(faker.number().randomNumber()); // Garantir que o ID é positivo
         DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
 
         Brand brand = new Brand();
-        brand.setActivated(false);
+        brand.setActivated(false); // Deve ser false para lançar a exceção
+        brand.setName(faker.lorem().word()); // Simulando o nome da marca
+
+        when(brandRepository.existsById(brandId)).thenReturn(true);
+        when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
+        when(messageSource.getMessage("model.update.brand.disabled", new Object[]{brand.getName()}, Locale.getDefault()))
+                .thenReturn("The required brand " + brand.getName() + " is disabled");
+
+        // Act & Assert
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationUpdateModel_BrandNotDisabled.validation(dataUpdateModel, brandId),
+                "Expected validation() to throw ValidationException when the brand is not activated");
+
+        // Verificar a mensagem da exceção
+        assertEquals("The required brand " + brand.getName() + " is disabled", thrownException.getMessage());
+    }
+
+    @Test
+    @DisplayName("Validation - Brand Exists and is Activated - No Exception Thrown")
+    void validation_BrandExistsAndIsActivated_NoExceptionThrown() {
+        // Arrange
+        Long brandId = Math.abs(faker.number().randomNumber()); // Garantir que o ID é positivo
+        DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
+
+        Brand brand = new Brand();
+        brand.setActivated(true); // Deve ser true para não lançar exceção
 
         when(brandRepository.existsById(brandId)).thenReturn(true);
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
@@ -75,7 +85,7 @@ public class ValidationUpdateModel_BrandNotDisabledTest {
     @DisplayName("Validation - Brand Does Not Exist - No Exception Thrown")
     void validation_BrandDoesNotExist_NoExceptionThrown() {
         // Arrange
-        Long brandId = faker.number().randomNumber();
+        Long brandId = Math.abs(faker.number().randomNumber()); // Garantir que o ID é positivo
         DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
 
         when(brandRepository.existsById(brandId)).thenReturn(false);
@@ -84,4 +94,3 @@ public class ValidationUpdateModel_BrandNotDisabledTest {
         assertDoesNotThrow(() -> validationUpdateModel_BrandNotDisabled.validation(dataUpdateModel, brandId));
     }
 }
-

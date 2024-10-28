@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -20,6 +21,9 @@ public class ValidationUpdateModel_ModelExistsTest {
 
     @Mock
     private ModelRepository modelRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock do MessageSource
 
     @InjectMocks
     private ValidationUpdateModel_ModelExists validationUpdateModel_ModelExists;
@@ -35,18 +39,22 @@ public class ValidationUpdateModel_ModelExistsTest {
     @Test
     @DisplayName("Validation - Model Does Not Exist - Throws ValidationException")
     void validation_ModelDoesNotExist_ThrowsValidationException() {
-    	// Arrange
-    	Long modelId = faker.number().randomNumber();
-    	DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
+        // Arrange
+        Long modelId = faker.number().randomNumber();
+        DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), modelId);
 
-    	when(modelRepository.existsById(modelId)).thenReturn(false);
+        // Define o comportamento do mock do ModelRepository
+        when(modelRepository.existsById(modelId)).thenReturn(false);
+        // Define o comportamento do mock do MessageSource
+        when(messageSource.getMessage("model.update.not.found", null, java.util.Locale.getDefault()))
+                .thenReturn("The required model does not exist");
 
-    	// Act & Assert
-    	ValidationException thrownException = assertThrows(ValidationException.class,
-    			() -> validationUpdateModel_ModelExists.validation(dataUpdateModel, modelId),
-    			() -> "Expected validation() to throw ValidationException when the model does not exist");
+        // Act & Assert
+        ValidationException thrownException = assertThrows(ValidationException.class,
+                () -> validationUpdateModel_ModelExists.validation(dataUpdateModel, modelId),
+                "Expected validation() to throw ValidationException when the model does not exist");
 
-    	assertEquals("The required model does not exist", thrownException.getMessage());
+        assertEquals("The required model does not exist", thrownException.getMessage());
     }
 
     @Test

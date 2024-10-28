@@ -40,39 +40,38 @@ class ValidationUpdateVehicle_Model_NotDisabledTest {
         faker = new Faker(); // Inicializa Faker para gerar dados fictícios
     }
 
-   @Test
-@DisplayName("Should throw ValidationException when model is disabled")
-void shouldThrowWhenModelIsDisabled() {
-    // Arrange
-    Long modelId = faker.number().randomNumber();
-    DataUpdateVehicle data = mock(DataUpdateVehicle.class);
-    Model model = mock(Model.class);
+    @Test
+    @DisplayName("Should throw ValidationException when model is disabled")
+    void shouldThrowWhenModelIsDisabled() {
+        // Arrange
+        Long modelId = faker.number().randomNumber();
+        DataUpdateVehicle data = mock(DataUpdateVehicle.class);
+        Model model = mock(Model.class);
 
-    when(data.modelId()).thenReturn(modelId);
-    when(modelRepository.existsById(modelId)).thenReturn(true);  // Simula que o modelo existe
-    when(modelRepository.getReferenceById(modelId)).thenReturn(model);  // Simula a referência ao modelo
-    when(model.getActivated()).thenReturn(false);  // Simula que o modelo está desativado
+        when(data.modelId()).thenReturn(modelId);
+        when(modelRepository.existsById(modelId)).thenReturn(true);  // Simula que o modelo existe
+        when(modelRepository.getReferenceById(modelId)).thenReturn(model);  // Simula a referência ao modelo
+        when(model.getActivated()).thenReturn(false);  // Simula que o modelo está desativado
 
-    // Simula a mensagem de erro retornada pelo MessageSource
-    when(messageSource.getMessage("vehicle.update.model.disabled", null, Locale.getDefault()))
-        .thenReturn("The provided model id is disabled");
+        // Simula a mensagem de erro retornada pelo MessageSource
+        when(messageSource.getMessage("vehicle.update.model.disabled", null, Locale.getDefault()))
+                .thenReturn("The provided model id is disabled");
 
-    // Act & Assert
-    ValidationException thrown = assertThrows(
-        ValidationException.class,
-        () -> validation.validate(data, modelId),
-        "Expected ValidationException to be thrown when model is disabled"
-    );
+        // Act & Assert
+        ValidationException thrown = assertThrows(
+                ValidationException.class,
+                () -> validation.validate(data, modelId),
+                "Expected ValidationException to be thrown when model is disabled"
+        );
 
-    // Assert
-    assertEquals("The provided model id is disabled", thrown.getMessage());
+        // Assert
+        assertEquals("The provided model id is disabled", thrown.getMessage());
 
-    // Verifica se os métodos no repositório foram chamados corretamente
-    verify(modelRepository).existsById(modelId);
-    verify(modelRepository).getReferenceById(modelId);
-    verify(model).getActivated();
-}
-
+        // Verifica se os métodos no repositório foram chamados corretamente
+        verify(modelRepository).existsById(modelId);
+        verify(modelRepository).getReferenceById(modelId);
+        verify(model).getActivated();
+    }
 
     @Test
     @DisplayName("Should not throw ValidationException when model is enabled")
@@ -95,4 +94,3 @@ void shouldThrowWhenModelIsDisabled() {
         verify(modelRepository).getReferenceById(modelId);
     }
 }
-

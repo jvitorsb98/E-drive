@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,6 +23,9 @@ class ValidationUpdatePropulsion_PropulsionNotDisabledTest {
 
     @Mock
     private PropulsionRepository propulsionRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @BeforeEach
     void setUp() {
@@ -35,6 +41,8 @@ class ValidationUpdatePropulsion_PropulsionNotDisabledTest {
         when(propulsionRepository.existsById(id)).thenReturn(true);
         when(propulsionRepository.getReferenceById(id)).thenReturn(propulsion);
         when(propulsion.getActivated()).thenReturn(true); // Activated
+        when(messageSource.getMessage("propulsion.update.activated", new Object[]{id}, Locale.getDefault()))
+                .thenReturn("The required propulsion is activated"); // Mockando a mensagem de erro
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(id));
@@ -49,7 +57,7 @@ class ValidationUpdatePropulsion_PropulsionNotDisabledTest {
         Propulsion propulsion = mock(Propulsion.class);
         when(propulsionRepository.existsById(id)).thenReturn(true);
         when(propulsionRepository.getReferenceById(id)).thenReturn(propulsion);
-        when(propulsion.getActivated()).thenReturn(false); 
+        when(propulsion.getActivated()).thenReturn(false); // Not activated
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));
@@ -60,7 +68,7 @@ class ValidationUpdatePropulsion_PropulsionNotDisabledTest {
     void validate_ShouldNotThrowExceptionIfNotExists() {
         // Arrange
         Long id = 1L;
-        when(propulsionRepository.existsById(id)).thenReturn(false); 
+        when(propulsionRepository.existsById(id)).thenReturn(false); // Propulsion does not exist
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));

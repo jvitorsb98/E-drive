@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -19,6 +22,9 @@ public class ValidationModelAlreadyDisabledForDisabledTest {
 
 	@Mock
 	private ModelRepository modelRepository;
+
+	@Mock
+	private MessageSource messageSource; // Mock para MessageSource
 
 	@InjectMocks
 	private ValidationModelAlreadyDisabledForDisabled validationModelAlreadyDisabledForDisabled;
@@ -38,11 +44,13 @@ public class ValidationModelAlreadyDisabledForDisabledTest {
 
 		when(modelRepository.existsById(modelId)).thenReturn(true);
 		when(modelRepository.getReferenceById(modelId)).thenReturn(model);
+		when(messageSource.getMessage("model.disabled.already.disabled", null, Locale.getDefault()))
+				.thenReturn("The model is already disabled"); // Simular a mensagem de erro
 
 		// Act & Assert
 		ValidationException thrownException = assertThrows(ValidationException.class,
 				() -> validationModelAlreadyDisabledForDisabled.validation(modelId),
-				() ->"Expected validation() to throw ValidationException when the model is already disabled");
+				"Expected validation() to throw ValidationException when the model is already disabled");
 
 		assertEquals("The model is already disabled", thrownException.getMessage());
 	}

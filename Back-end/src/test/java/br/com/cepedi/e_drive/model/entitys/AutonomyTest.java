@@ -42,7 +42,6 @@ public class AutonomyTest {
         assertNotNull(autonomy.getMileagePerLiterCity(), () -> "Mileage per liter city should not be null");
         assertNotNull(autonomy.getConsumptionEnergetic(), () -> "Consumption energetic should not be null");
         assertNotNull(autonomy.getAutonomyElectricMode(), () -> "Autonomy electric mode should not be null");
-        assertNotNull(autonomy.getBatteryCapacity(), () -> "Battery capacity should not be null"); // Verificação do atributo batteryCapacity
     }
 
     @Test
@@ -71,22 +70,8 @@ public class AutonomyTest {
         assertEquals(newMileagePerLiterCity, autonomy.getMileagePerLiterCity(), () -> "Mileage per liter city should be updated.");
         assertEquals(newConsumptionEnergetic, autonomy.getConsumptionEnergetic(), () -> "Consumption energetic should be updated.");
         assertEquals(newAutonomyElectricMode, autonomy.getAutonomyElectricMode(), () -> "Autonomy electric mode should be updated.");
-        assertEquals(newBatteryCapacity, autonomy.getBatteryCapacity(), () -> "Battery capacity should be updated."); // Verificação de batteryCapacity
     }
 
-    @Test
-    @DisplayName("Test getter and setter for batteryCapacity")
-    void testBatteryCapacityGetterAndSetter() {
-        // Arrange
-        BigDecimal batteryCapacity = BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100));
-
-        // Act
-        autonomy.setBatteryCapacity(batteryCapacity);
-        BigDecimal retrievedBatteryCapacity = autonomy.getBatteryCapacity();
-
-        // Assert
-        assertEquals(batteryCapacity, retrievedBatteryCapacity, () -> "The batteryCapacity should be set and retrieved correctly.");
-    }
 
     @Test
     @DisplayName("Test getter and setter for mileagePerLiterRoad")

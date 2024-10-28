@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,6 +22,9 @@ class ValidationUpdatePropulsion_PropulsionExistsTest {
     @Mock
     private PropulsionRepository propulsionRepository;
 
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -29,7 +35,9 @@ class ValidationUpdatePropulsion_PropulsionExistsTest {
     void validate_ShouldThrowIllegalArgumentExceptionIfNotExists() {
         // Arrange
         Long id = 1L;
-        when(propulsionRepository.existsById(id)).thenReturn(false); 
+        when(propulsionRepository.existsById(id)).thenReturn(false);
+        when(messageSource.getMessage("propulsion.not.found_1", new Object[]{id}, Locale.getDefault()))
+                .thenReturn("Propulsion with the given ID does not exist"); // Mockando a mensagem de erro
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> validation.validate(id));

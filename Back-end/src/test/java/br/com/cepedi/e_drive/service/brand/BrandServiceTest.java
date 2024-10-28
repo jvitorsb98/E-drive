@@ -6,6 +6,7 @@ import br.com.cepedi.e_drive.model.records.brand.input.DataRegisterBrand;
 import br.com.cepedi.e_drive.model.records.brand.input.DataUpdateBrand;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import br.com.cepedi.e_drive.service.brand.validations.disabled.BrandValidatorDisabled;
+import br.com.cepedi.e_drive.service.brand.validations.register.ValidationBrandRegister;
 import br.com.cepedi.e_drive.service.brand.validations.update.ValidationBrandUpdate;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +38,9 @@ class BrandServiceTest {
 
     @Mock
     private BrandRepository brandRepository;
+
+    @Mock
+    private List<ValidationBrandRegister> brandValidationRegisterList;
 
     @Mock
     private List<ValidationBrandUpdate> brandValidationUpdateList;

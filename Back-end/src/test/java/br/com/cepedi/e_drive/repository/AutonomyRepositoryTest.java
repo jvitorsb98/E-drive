@@ -40,7 +40,6 @@ public class AutonomyRepositoryTest {
                 new BigDecimal(faker.number().randomDouble(2, 1, 100)),
                 new BigDecimal(faker.number().randomDouble(2, 1, 100)),
                 new BigDecimal(faker.number().randomDouble(2, 1, 100)),
-                new BigDecimal(faker.number().randomDouble(2, 1, 100)),
                 new BigDecimal(faker.number().randomDouble(2, 1, 100))
         );
     }

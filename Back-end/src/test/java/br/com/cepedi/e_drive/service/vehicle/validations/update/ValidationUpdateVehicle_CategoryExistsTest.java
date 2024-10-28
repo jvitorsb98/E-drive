@@ -36,7 +36,7 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        faker = new Faker(); 
+        faker = new Faker();
     }
 
     @Test
@@ -45,28 +45,29 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
         // Arrange
         Long categoryId = faker.number().randomNumber();
         DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            categoryId, // categoryId
-            faker.number().randomNumber(), // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
+                faker.lorem().word(), // motor
+                faker.lorem().word(), // version
+                faker.number().randomNumber(), // modelId
+                categoryId, // categoryId
+                faker.number().randomNumber(), // typeId
+                faker.number().randomNumber(), // brandId
+                faker.number().randomNumber(), // propulsionId
+                faker.number().randomNumber(), // year
+                null // dataRegisterAutonomy
         );
 
         // Simula que a categoria não existe
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
 
-         when(messageSource.getMessage("vehicle.update.category.not.found", null, Locale.getDefault()))
-            .thenReturn("The provided category id does not exist");
+        // Mock da mensagem de erro
+        when(messageSource.getMessage("vehicle.update.category.not.found", null, Locale.getDefault()))
+                .thenReturn("The provided category id does not exist");
 
         // Act & Assert
         ValidationException thrown = assertThrows(
-            ValidationException.class,
-            () -> validation.validate(data, categoryId),
-            "Expected ValidationException to be thrown when categoryId does not exist"
+                ValidationException.class,
+                () -> validation.validate(data, categoryId),
+                "Expected ValidationException to be thrown when categoryId does not exist"
         );
 
         // Assert
@@ -79,15 +80,15 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
         // Arrange
         Long categoryId = faker.number().randomNumber();
         DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            categoryId, // categoryId
-            faker.number().randomNumber(), // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
+                faker.lorem().word(), // motor
+                faker.lorem().word(), // version
+                faker.number().randomNumber(), // modelId
+                categoryId, // categoryId
+                faker.number().randomNumber(), // typeId
+                faker.number().randomNumber(), // brandId
+                faker.number().randomNumber(), // propulsionId
+                faker.number().randomNumber(), // year
+                null // dataRegisterAutonomy
         );
 
         // Simula que a categoria existe
@@ -102,19 +103,18 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
     void shouldNotThrowExceptionWhenCategoryIdIsNull() {
         // Arrange
         DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            null, // categoryId
-            faker.number().randomNumber(), // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
+                faker.lorem().word(), // motor
+                faker.lorem().word(), // version
+                faker.number().randomNumber(), // modelId
+                null, // categoryId
+                faker.number().randomNumber(), // typeId
+                faker.number().randomNumber(), // brandId
+                faker.number().randomNumber(), // propulsionId
+                faker.number().randomNumber(), // year
+                null // dataRegisterAutonomy
         );
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(data, null));
     }
 }
-

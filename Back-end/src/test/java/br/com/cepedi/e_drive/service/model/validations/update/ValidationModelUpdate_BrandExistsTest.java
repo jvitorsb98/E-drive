@@ -10,6 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -20,6 +23,9 @@ public class ValidationModelUpdate_BrandExistsTest {
 
 	@Mock
 	private BrandRepository brandRepository;
+
+	@Mock
+	private MessageSource messageSource; // Mock para MessageSource
 
 	@InjectMocks
 	private ValidationModelUpdate_BrandExists validationModelUpdate_BrandExists;
@@ -40,25 +46,27 @@ public class ValidationModelUpdate_BrandExistsTest {
 		DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
 
 		when(brandRepository.existsById(brandId)).thenReturn(false);
+		when(messageSource.getMessage("model.update.brand.not.found", new Object[]{brandId}, Locale.getDefault()))
+				.thenReturn("The required brand does not exist"); // Mockando a mensagem de erro
 
 		// Act & Assert
 		ValidationException thrownException = assertThrows(ValidationException.class,
 				() -> validationModelUpdate_BrandExists.validation(dataUpdateModel, brandId),
-				() -> "Expected validation() to throw ValidationException when the brand does not exist");
+				"Expected validation() to throw ValidationException when the brand does not exist");
 
 		assertEquals("The required brand does not exist", thrownException.getMessage());
 	}
 
 	@Test
-    @DisplayName("Validation - Brand Exists - No Exception Thrown")
-    void validation_BrandExists_NoExceptionThrown() {
-        // Arrange
-        Long brandId = faker.number().randomNumber();
-        DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
+	@DisplayName("Validation - Brand Exists - No Exception Thrown")
+	void validation_BrandExists_NoExceptionThrown() {
+		// Arrange
+		Long brandId = faker.number().randomNumber();
+		DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
 
-        when(brandRepository.existsById(brandId)).thenReturn(true);
+		when(brandRepository.existsById(brandId)).thenReturn(true);
 
-        // Act & Assert
-        assertDoesNotThrow(() -> validationModelUpdate_BrandExists.validation(dataUpdateModel, brandId));
-    }
+		// Act & Assert
+		assertDoesNotThrow(() -> validationModelUpdate_BrandExists.validation(dataUpdateModel, brandId));
+	}
 }

@@ -1,6 +1,5 @@
 package br.com.cepedi.e_drive.service.vehicle.validations.register;
 
-
 import br.com.cepedi.e_drive.model.entitys.Propulsion;
 import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.repository.PropulsionRepository;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +22,9 @@ class ValidationRegisterVehicle_Propulsion_NotDisabledTest {
 
     @Mock
     private PropulsionRepository propulsionRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock do MessageSource
 
     @InjectMocks
     private ValidationRegisterVehicle_Propulsion_NotDisabled validation;
@@ -40,20 +43,23 @@ class ValidationRegisterVehicle_Propulsion_NotDisabledTest {
         // Arrange
         Long propulsionId = faker.number().randomNumber();
         DataRegisterVehicle data = new DataRegisterVehicle(
-            faker.commerce().productName(), // Substituindo por um nome de produto
-            faker.lorem().word(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            propulsionId,
-            faker.number().randomNumber(),
-            null
+                faker.commerce().productName(),
+                faker.lorem().word(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                propulsionId,
+                faker.number().randomNumber(),
+                null
         );
 
         Propulsion propulsion = mock(Propulsion.class);
         when(propulsionRepository.existsById(propulsionId)).thenReturn(true);
         when(propulsionRepository.getReferenceById(propulsionId)).thenReturn(propulsion);
         when(propulsion.getActivated()).thenReturn(false);
+
+        // Mock do retorno da mensagem
+        when(messageSource.getMessage(anyString(), any(), any())).thenReturn("The provided propulsion id is disabled");
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(data));
@@ -68,14 +74,14 @@ class ValidationRegisterVehicle_Propulsion_NotDisabledTest {
         // Arrange
         Long propulsionId = faker.number().randomNumber();
         DataRegisterVehicle data = new DataRegisterVehicle(
-            faker.commerce().productName(), // Substituindo por um nome de produto
-            faker.lorem().word(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            propulsionId,
-            faker.number().randomNumber(),
-            null
+                faker.commerce().productName(),
+                faker.lorem().word(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                propulsionId,
+                faker.number().randomNumber(),
+                null
         );
 
         Propulsion propulsion = mock(Propulsion.class);
@@ -95,14 +101,14 @@ class ValidationRegisterVehicle_Propulsion_NotDisabledTest {
         // Arrange
         Long propulsionId = faker.number().randomNumber();
         DataRegisterVehicle data = new DataRegisterVehicle(
-            faker.commerce().productName(), // Substituindo por um nome de produto
-            faker.lorem().word(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            faker.number().randomNumber(),
-            propulsionId,
-            faker.number().randomNumber(),
-            null
+                faker.commerce().productName(),
+                faker.lorem().word(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                faker.number().randomNumber(),
+                propulsionId,
+                faker.number().randomNumber(),
+                null
         );
 
         when(propulsionRepository.existsById(propulsionId)).thenReturn(false);

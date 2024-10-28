@@ -9,6 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import com.github.javafaker.Faker;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -17,6 +20,9 @@ public class ValidationAlreadyDisabledTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @InjectMocks
     private ValidationAlreadyDisabled validationAlreadyDisabled;
@@ -39,9 +45,13 @@ public class ValidationAlreadyDisabledTest {
 
         when(categoryRepository.findById(categoryId)).thenReturn(java.util.Optional.of(category));
 
+        // Simular a mensagem de erro que será lançada
+        when(messageSource.getMessage("category.disabled.already.disabled", new Object[]{categoryId}, Locale.getDefault()))
+                .thenReturn("Category is already disabled");
+
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> validationAlreadyDisabled.validate(categoryId),
-        		() ->"Expected validate() to throw IllegalArgumentException when category is already disabled");
+                () -> "Expected validate() to throw IllegalArgumentException when category is already disabled");
     }
 
     @Test
@@ -50,12 +60,12 @@ public class ValidationAlreadyDisabledTest {
         // Arrange
         Long categoryId = faker.number().randomNumber();
         Category category = new Category();
-        category.setActivated(true); 
+        category.setActivated(true); // Category is enabled
 
         when(categoryRepository.findById(categoryId)).thenReturn(java.util.Optional.of(category));
 
         // Act & Assert
-        validationAlreadyDisabled.validate(categoryId); 
+        validationAlreadyDisabled.validate(categoryId);
     }
 
     @Test
@@ -66,8 +76,12 @@ public class ValidationAlreadyDisabledTest {
 
         when(categoryRepository.findById(categoryId)).thenReturn(java.util.Optional.empty());
 
+        // Simular a mensagem de erro que será lançada
+        when(messageSource.getMessage("category.disabled.not.found", new Object[]{categoryId}, Locale.getDefault()))
+                .thenReturn("Category not found");
+
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> validationAlreadyDisabled.validate(categoryId),
-        		() -> "Expected validate() to throw IllegalArgumentException when category does not exist");
+                () -> "Expected validate() to throw IllegalArgumentException when category does not exist");
     }
 }

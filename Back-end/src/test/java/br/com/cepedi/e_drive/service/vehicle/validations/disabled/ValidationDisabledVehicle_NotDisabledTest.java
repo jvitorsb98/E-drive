@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,6 +23,9 @@ class ValidationDisabledVehicle_NotDisabledTest {
 
     @Mock
     private VehicleRepository vehicleRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock para MessageSource
 
     @BeforeEach
     void setUp() {
@@ -34,11 +40,15 @@ class ValidationDisabledVehicle_NotDisabledTest {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicleRepository.existsById(id)).thenReturn(true);
         when(vehicleRepository.getReferenceById(id)).thenReturn(vehicle);
-        when(vehicle.isActivated()).thenReturn(false); 
+        when(vehicle.isActivated()).thenReturn(false); // Vehicle is not activated
+
+        // Mockando a mensagem de erro
+        when(messageSource.getMessage("vehicle.disable.already", new Object[]{id}, Locale.getDefault()))
+                .thenReturn("The provided vehicle already disabled");
 
         // Act & Assert
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(id));
-        assertEquals("The provided vehicle already disabled ", exception.getMessage());
+        assertEquals("The provided vehicle already disabled", exception.getMessage());
     }
 
     @Test
@@ -49,7 +59,7 @@ class ValidationDisabledVehicle_NotDisabledTest {
         Vehicle vehicle = mock(Vehicle.class);
         when(vehicleRepository.existsById(id)).thenReturn(true);
         when(vehicleRepository.getReferenceById(id)).thenReturn(vehicle);
-        when(vehicle.isActivated()).thenReturn(true); 
+        when(vehicle.isActivated()).thenReturn(true); // Vehicle is activated
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));
@@ -60,10 +70,9 @@ class ValidationDisabledVehicle_NotDisabledTest {
     void validate_ShouldNotThrowExceptionIfNotExists() {
         // Arrange
         Long id = 1L;
-        when(vehicleRepository.existsById(id)).thenReturn(false); 
+        when(vehicleRepository.existsById(id)).thenReturn(false);
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(id));
     }
 }
-

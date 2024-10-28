@@ -10,7 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.MessageSource;
 
+import java.util.Locale;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +23,9 @@ class ValidationVehicleTypeAlreadyDisabledForActivatedTest {
 
     @Mock
     private VehicleTypeRepository vehicleTypeRepository;
+
+    @Mock
+    private MessageSource messageSource; // Mock do MessageSource
 
     @InjectMocks
     private ValidationVehicleTypeAlreadyDisabledForActivated validation;
@@ -29,16 +36,23 @@ class ValidationVehicleTypeAlreadyDisabledForActivatedTest {
     @DisplayName("Should throw ValidationException when VehicleType is already disabled")
     void testValidationAlreadyDisabled_ThrowsException() {
         // Arrange
-        Long vehicleTypeId = faker.number().randomNumber();
+        Long vehicleTypeId = Math.abs(faker.number().randomNumber()); // Garantir que o ID é positivo
         VehicleType vehicleType = new VehicleType();
         vehicleType.setActivated(false);
 
         when(vehicleTypeRepository.existsById(vehicleTypeId)).thenReturn(true);
         when(vehicleTypeRepository.getReferenceById(vehicleTypeId)).thenReturn(vehicleType);
 
+        // Mockando a mensagem do MessageSource
+        when(messageSource.getMessage("vehicleType.activated.alreadyDisabled", new Object[]{vehicleTypeId}, Locale.getDefault()))
+                .thenReturn("O tipo de veículo com ID " + vehicleTypeId + " já está desativado.");
+
         // Act & Assert
-        assertThrows(ValidationException.class, 
-            () -> validation.validation(vehicleTypeId),
-            () -> "Expected ValidationException when the VehicleType is already disabled");
+        ValidationException thrown = assertThrows(ValidationException.class,
+                () -> validation.validation(vehicleTypeId)
+        );
+
+        // Verificar a mensagem da exceção
+        assertEquals("O tipo de veículo com ID " + vehicleTypeId + " já está desativado.", thrown.getMessage());
     }
 }

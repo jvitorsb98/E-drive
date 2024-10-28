@@ -14,9 +14,7 @@ import org.springframework.context.MessageSource;
 
 import com.github.javafaker.Faker;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import java.util.Locale;
 
@@ -36,10 +34,10 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        faker = new Faker(); 
+        faker = new Faker();
 
-        when(messageSource.getMessage("vehicle.update.category.disabled", null, Locale.ENGLISH))
-        .thenReturn("The provided category ID is disabled.");
+        when(messageSource.getMessage("vehicle.update.category.disabled", null, Locale.getDefault()))
+                .thenReturn("The provided category ID is disabled");
     }
 
     @Test
@@ -48,59 +46,50 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
         // Arrange
         Long categoryId = faker.number().randomNumber();
         DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            categoryId, // categoryId
-            faker.number().randomNumber(), // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
+                faker.lorem().word(), // motor
+                faker.lorem().word(), // version
+                faker.number().randomNumber(), // modelId
+                categoryId, // categoryId
+                faker.number().randomNumber(), // typeId
+                faker.number().randomNumber(), // brandId
+                faker.number().randomNumber(), // propulsionId
+                faker.number().randomNumber(), // year
+                null // dataRegisterAutonomy
         );
-    
+
         Category category = new Category();
         category.setActivated(false);
-    
+
         // Simula que a categoria existe e está desativada
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
         when(categoryRepository.getReferenceById(categoryId)).thenReturn(category);
-    
+
         // Act & Assert
         ValidationException thrown = assertThrows(
-            ValidationException.class,
-            () -> validation.validate(data, categoryId),
-            "Expected ValidationException to be thrown when category is disabled"
+                ValidationException.class,
+                () -> validation.validate(data, categoryId),
+                "Expected ValidationException to be thrown when category is disabled"
         );
-    
+
         // Verifica a mensagem da exceção
-        assertEquals("The provided category ID is disabled.", thrown.getMessage());
-    }
-    
-    @Test
-    @DisplayName("Test if message is loaded correctly")
-    void testMessageSource() {
-        String message = messageSource.getMessage("vehicle.update.category.disabled", null, Locale.ENGLISH);
-        System.out.println(message); // Deve imprimir: "The provided category ID is disabled."
-        assertEquals("The provided category ID is disabled.", message); // Verifique se a mensagem está correta
+        assertEquals("The provided category ID is disabled", thrown.getMessage());
     }
 
-
     @Test
-    @DisplayName("Should not throw exception when categoryId exists and is enabled")
+    @DisplayName("Should not throw ValidationException when categoryId exists and is enabled")
     void shouldNotThrowExceptionWhenCategoryIdExistsAndIsEnabled() {
         // Arrange
         Long categoryId = faker.number().randomNumber();
         DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            categoryId, // categoryId
-            faker.number().randomNumber(), // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
+                faker.lorem().word(), // motor
+                faker.lorem().word(), // version
+                faker.number().randomNumber(), // modelId
+                categoryId, // categoryId
+                faker.number().randomNumber(), // typeId
+                faker.number().randomNumber(), // brandId
+                faker.number().randomNumber(), // propulsionId
+                faker.number().randomNumber(), // year
+                null // dataRegisterAutonomy
         );
 
         Category category = new Category();
@@ -119,19 +108,18 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
     void shouldNotThrowExceptionWhenCategoryIdIsNull() {
         // Arrange
         DataUpdateVehicle data = new DataUpdateVehicle(
-            faker.lorem().word(), // motor
-            faker.lorem().word(), // version
-            faker.number().randomNumber(), // modelId
-            null, // categoryId
-            faker.number().randomNumber(), // typeId
-            faker.number().randomNumber(), // brandId
-            faker.number().randomNumber(), // propulsionId
-            faker.number().randomNumber(), // year
-            null // dataRegisterAutonomy
+                faker.lorem().word(), // motor
+                faker.lorem().word(), // version
+                faker.number().randomNumber(), // modelId
+                null, // categoryId
+                faker.number().randomNumber(), // typeId
+                faker.number().randomNumber(), // brandId
+                faker.number().randomNumber(), // propulsionId
+                faker.number().randomNumber(), // year
+                null // dataRegisterAutonomy
         );
 
         // Act & Assert
         assertDoesNotThrow(() -> validation.validate(data, null));
     }
 }
-

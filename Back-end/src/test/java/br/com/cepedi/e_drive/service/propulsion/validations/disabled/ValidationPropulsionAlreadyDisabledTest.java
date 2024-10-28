@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.context.MessageSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,6 +22,9 @@ class ValidationPropulsionAlreadyDisabledTest {
 
     @Mock
     private PropulsionRepository propulsionRepository;
+
+    @Mock
+    private MessageSource messageSource; // Adicionando mock para MessageSource
 
     @BeforeEach
     void setUp() {
@@ -33,10 +39,12 @@ class ValidationPropulsionAlreadyDisabledTest {
         Propulsion propulsion = mock(Propulsion.class);
         when(propulsionRepository.findById(id)).thenReturn(java.util.Optional.of(propulsion));
         when(propulsion.getActivated()).thenReturn(false); // Already disabled
+        when(messageSource.getMessage("propulsion.disabled.already.disabled", new Object[]{id}, Locale.getDefault()))
+                .thenReturn("Propulsion with ID " + id + " is already disabled."); // Mocking the error message
 
         // Act & Assert
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> validation.validate(id));
-        assertEquals("Propulsion with ID 1 is already disabled.", exception.getMessage());
+        assertEquals("Propulsion with ID " + id + " is already disabled.", exception.getMessage());
     }
 
     @Test
@@ -58,10 +66,11 @@ class ValidationPropulsionAlreadyDisabledTest {
         // Arrange
         Long id = 1L;
         when(propulsionRepository.findById(id)).thenReturn(java.util.Optional.empty());
+        when(messageSource.getMessage("propulsion.disabled.not.found", new Object[]{id}, Locale.getDefault()))
+                .thenReturn("Propulsion with ID " + id + " does not exist."); // Mocking the error message
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> validation.validate(id));
-        assertEquals("Propulsion with ID 1 does not exist.", exception.getMessage());
+        assertEquals("Propulsion with ID " + id + " does not exist.", exception.getMessage());
     }
 }
-
