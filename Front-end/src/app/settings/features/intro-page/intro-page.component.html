@@ -1,103 +1,123 @@
 <!-- Tela inicial do E-Drive -->
- <div>
-	<!-- Componente de barra de navegação personalizado -->
-	<app-navbar-intro></app-navbar-intro>
+<div>
+  <!-- Componente de barra de navegação personalizado -->
+  <app-navbar-intro></app-navbar-intro>
 
-	<!-- Seção inicial com fundo em degradê e banner de boas-vindas -->
-	<div id="inicio" class="container-fluid home bkg-degrad-primary">
+  <!-- Seção inicial com fundo em degradê e banner de boas-vindas -->
+  <div id="inicio" class="container-fluid home bkg-degrad-primary">
 
-		<!-- Banner de boas-vindas com efeito parallax -->
-		<section id="banner" class="container-fluid d-flex flex-column justify-content-center banner parallax">
-			<div>
-				<!-- Texto de boas-vindas -->
-				<div class="mb-5">
-					<h1>Bem-vindo</h1>
-					<h1>ao</h1>
-					<h1>E-Drive</h1>
-				</div>
+    <!-- Banner de boas-vindas com efeito parallax -->
+    <section id="banner" class="container-fluid d-flex flex-column justify-content-center banner parallax">
+      <div>
+        <!-- Texto de boas-vindas -->
+        <div class="mb-5">
+          <h1>Bem-vindo</h1>
+          <h1>ao</h1>
+          <h1>E-Drive</h1>
+        </div>
 
-				<!-- Descrição do E-Drive -->
-				<p class="banner-text">O seu parceiro ideal para planejar viagens mais econômicas, com carros
-					elétricos.</p>
-			</div>
+        <!-- Descrição do E-Drive -->
+        <p class="banner-text">O seu parceiro ideal para planejar viagens mais econômicas, com carros
+          elétricos.</p>
+      </div>
 
-			<!-- Botão para começar a usar a aplicação, redirecionando para a página de login -->
-			<button class="btn-primary" routerLink="'/e-driver/login'">Comece Agora</button>
+      <!-- Botão para começar a usar a aplicação, redirecionando para a página de login -->
+      <button class="btn-primary" routerLink="'/e-driver/login'">Comece Agora</button>
 
-		</section>
+    </section>
 
-		<!-- Seção de serviços oferecidos pela aplicação -->
-		<section class="container-fluid" id="servicos">
-			<!-- Título da seção de serviços -->
-			<div class="container-fluid">
-				<h2>Nossos Serviços</h2>
-				<hr>
-			</div>
+    <!-- Seção de serviços oferecidos pela aplicação -->
+    <section class="container-fluid" id="servicos">
+      <!-- Título da seção de serviços -->
+      <div class="container-fluid">
+        <h2>Nossos Serviços</h2>
+        <hr>
+      </div>
 
-			<!-- Cards de serviços disponíveis no E-Drive -->
-			<div class="container-fluid servicos">
-				<!-- Serviço: Planejamento de Rotas -->
-				<div class="card-servico">
-					<h3>Planejamento de Rotas</h3>
-					<p>Obtenha as melhores rotas para sua viagem com um carro elétrico, levando em consideração pontos
-						de carregamento e condições de tráfego.
-					</p>
-				</div>
+      <!-- Cards de serviços disponíveis no E-Drive -->
+      <div class="container-fluid servicos">
+        <!-- Serviço: Planejamento de Rotas -->
+        <div class="card-servico">
+          <h3>Planejamento de Rotas</h3>
+          <p>Obtenha as melhores rotas para sua viagem com um carro elétrico, levando em consideração pontos
+            de carregamento e condições de tráfego.
+          </p>
+        </div>
 
-				<!-- Serviço: Localização de Eletropostos -->
-				<div class="card-servico">
-					<h3>Localização de Eletropostos</h3>
-					<p>Encontre rapidamente os eletropostos mais próximos e disponíveis ao longo da sua rota,
-						garantindo que você nunca fique sem carga.
-					</p>
-				</div>
+        <!-- Serviço: Localização de Eletropostos -->
+        <div class="card-servico">
+          <h3>Localização de Eletropostos</h3>
+          <p>Encontre rapidamente os eletropostos mais próximos e disponíveis ao longo da sua rota,
+            garantindo que você nunca fique sem carga.
+          </p>
+        </div>
 
-				<!-- Serviço: Gerenciamento de Energia -->
-				<div class="card-servico">
-					<h3>Gerenciamento de Energia</h3>
-					<p>Calcule o consumo de energia da sua viagem, ajudando a gerenciar a carga da bateria e otimizar
-						seu percurso.
-					</p>
-				</div>
+        <!-- Serviço: Gerenciamento de Energia -->
+        <div class="card-servico">
+          <h3>Gerenciamento de Energia</h3>
+          <p>Calcule o consumo de energia da sua viagem, ajudando a gerenciar a carga da bateria e otimizar
+            seu percurso.
+          </p>
+        </div>
 
-				<!-- Serviço: Histórico de Viagens -->
-				<div class="card-servico">
-					<h3>Histórico de Viagens</h3>
-					<p>Acesse o histórico das suas viagens anteriores, permitindo analisar seu consumo de energia e
-						melhorar o planejamento de futuras rotas.
-					</p>
-				</div>
-			</div>
-		</section>
+        <!-- Serviço: Histórico de Viagens -->
+        <div class="card-servico">
+          <h3>Histórico de Viagens</h3>
+          <p>Acesse o histórico das suas viagens anteriores, permitindo analisar seu consumo de energia e
+            melhorar o planejamento de futuras rotas.
+          </p>
+        </div>
+      </div>
+    </section>
 
-		<!-- Seção com efeito parallax, usada como separador visual -->
-		<section class="parallax vh-50"></section>
+    <!-- Seção com efeito parallax, usada como separador visual -->
+    <section class="parallax vh-50"></section>
 
-		<!-- Seção de busca de eletropostos -->
-		<section class="container-fluid busca-eletropostos">
-			<div>
-				<!-- Título da seção de busca -->
-				<h3>Encontre Eletropostos</h3>
-				<hr>
-				<!-- Descrição da funcionalidade de busca de eletropostos -->
-				<p>Encontre os eletropostos mais próximos de sua localização e aproveite o conforto do seu carro
-					elétrico.</p>
+    <section class="container-fluid" id="dicas">
+      <div class="container">
+        <div class="card-servico">
+          <div class="container-fluid">
+            <h2>Dicas para otimizar suas viagens</h2>
+            <hr>
+          </div>
+          <p><strong>Dica 1:</strong> Planeje suas rotas com antecedência para garantir que haja estações de
+            carregamento disponíveis.</p>
+          <p>Descubra mais dicas úteis em nossa página de dicada.</p>
+          <button class="btn btn-primary" routerLink="'/e-driver/dicas-eletricas'">Ver mais</button>
+        </div>
+      </div>
+    </section>
 
-				<!-- Carregamento da imagem de mapa de eletropostos com fallback para diferentes estados -->
-				@defer{
-				<img id="img-mapa" src="../../../../assets/images/mapa.png" alt="busca-eletropostos">
-				}
-				@placeholder {
-				<mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
-				}
-				@error {
-				Falha ao carregar a imagem!
-				}
-			</div>
-		</section>
-	</div>
+    <!-- Seção com efeito parallax, usada como separador visual -->
+    <section class="parallax vh-50"></section>
 
-	<!-- Componente de rodapé personalizado -->
-	<app-footer></app-footer>
+    <!-- Seção de busca de eletropostos -->
+    <section class="container-fluid busca-eletropostos">
+      <div>
+        <!-- Título da seção de busca -->
+        <h3>Encontre Eletropostos</h3>
+        <hr>
+        <!-- Descrição da funcionalidade de busca de eletropostos -->
+        <p>Encontre os eletropostos mais próximos de sua localização e aproveite o conforto do seu carro
+          elétrico.</p>
+
+        <!-- Carregamento da imagem de mapa de eletropostos com fallback para diferentes estados -->
+        @defer{
+        <img id="img-mapa" src="../../../../assets/images/mapa.png" alt="busca-eletropostos">
+        }
+        @placeholder {
+        <mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
+        }
+        @error {
+        Falha ao carregar a imagem!
+        }
+      </div>
+    </section>
+  </div>
+
+  <!-- Seção com efeito parallax, usada como separador visual -->
+  <section class="parallax vh-50"></section>
+
+  <!-- Componente de rodapé personalizado -->
+  <app-footer></app-footer>
 </div>
-
