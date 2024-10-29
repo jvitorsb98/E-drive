@@ -39,7 +39,7 @@ public class CorsConfig {
 
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:4200");
-        config.addAllowedOriginPattern("http://192.168.0.*:4200");
+        config.addAllowedOriginPattern("http://192.168.*.*:4200");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
