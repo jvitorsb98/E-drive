@@ -256,7 +256,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   openModalAddBrand() {
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
-      height: '200px',
+      height: '205px',
     }).afterClosed().subscribe(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }
 
@@ -270,7 +270,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   openModalEditBrand(brandList: Brand) {
     this.dialog.open(ModalFormBrandComponent, {
       width: '500px',
-      height: '210px',
+      height: '205px',
       data: brandList
     }).afterClosed().subscribe(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }

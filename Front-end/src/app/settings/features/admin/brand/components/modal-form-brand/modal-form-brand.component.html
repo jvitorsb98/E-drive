@@ -44,12 +44,10 @@
         </div>
       </div>
     </div>
-
     <!-- Container para os botões do formulário -->
     <div class="buttons-container">
-      <!-- Botão para finalizar o cadastro, desabilitado se o formulário não for válido -->
-      <app-ui-button typeBtn="vivid-sky-blue" [pulseAnimation]="true" [disabled]="!brandForm.valid" (click)="onSubmit()"
-        text="Finalizar cadastro"></app-ui-button>
+      <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="onSubmit()"
+        [disabled]="!brandForm.valid">{{ editBrand ? 'Atualizar Marca' : 'Finalizar cadastro'}}</app-ui-button>
     </div>
   </form>
 </div>

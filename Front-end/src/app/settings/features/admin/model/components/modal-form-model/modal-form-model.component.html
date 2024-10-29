@@ -79,11 +79,10 @@
       </div>
 
       <!-- Botão de envio, desabilitado se o formulário estiver inválido -->
-      <div class="buttons-container py-1">
-        <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!modelForm.valid" (click)="onSubmit()"
-          text="Finalizar cadastro">
-        </app-ui-button>
-      </div>
+    <div class="buttons-container py-1">
+      <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="onSubmit()"
+        [disabled]="!modelForm.valid">{{ editModel ? 'Atualizar Modelo' : 'Finalizar cadastro'}}</app-ui-button>
+    </div>
     </form>
   </div>
 </div>

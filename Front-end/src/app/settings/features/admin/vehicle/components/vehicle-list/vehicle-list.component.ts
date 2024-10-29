@@ -247,7 +247,7 @@ export class VehicleListComponent {
   openModalView(vehicle: Vehicle) {
     this.dialog.open(ModalDetailsVehicleComponent, {
       width: '80%',
-      height: '85%',
+      height: '76%',
       data: vehicle
     });
   }

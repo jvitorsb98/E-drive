@@ -234,7 +234,7 @@ export class UserVehicleListComponent {
   openModalViewVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalDetailsVehicleComponent, {
       width: '80vw',
-      height: '75vh',
+      height: '74vh',
       data: {
         vehicle: userVehicleWithDetails,
         userVehicle: userVehicleWithDetails.userVehicle
@@ -246,7 +246,7 @@ export class UserVehicleListComponent {
   openModalAddUserVehicle() {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '80vw',
-      height: '90vh',
+      height: '75vh',
       data: {}
     }).afterClosed().subscribe(() => this.getList(this.currentPage, this.pageSize));
   }
@@ -255,7 +255,7 @@ export class UserVehicleListComponent {
   openModalEditUserVehicle(userVehicleWithDetails: IVehicleWithUserVehicle) {
     this.dialog.open(ModalFormVehicleComponent, {
       width: '80vw',
-      height: '90vh',
+      height: '75vh',
       data: {
         vehicle: userVehicleWithDetails,
         userVehicle: userVehicleWithDetails.userVehicle

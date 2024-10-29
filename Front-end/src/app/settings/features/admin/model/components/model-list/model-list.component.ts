@@ -252,7 +252,7 @@ export class ModelListComponent {
   openModalViewModel(model: Model) {
     this.dialog.open(ModalDetailsModelComponent, {
       width: '300px',
-      height: '290px',
+      height: '286px',
       data: model // Passa os dados do modelo selecionado para o modal
     });
   }
@@ -263,7 +263,7 @@ export class ModelListComponent {
   openModalAddModel() {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
-      height: '285px',
+      height: '288px',
     }).afterClosed().subscribe(() =>
       this.loadModels(this.pageIndex, this.pageSize) // Recarrega a lista de modelos após o fechamento do modal
     );
@@ -276,7 +276,7 @@ export class ModelListComponent {
   openModalEditModel(model: Model) {
     this.dialog.open(ModalFormModelComponent, {
       width: '500px',
-      height: '285px',
+      height: '288px',
       data: model // Passa os dados do modelo para o modal
     }).afterClosed().subscribe(() =>
       this.loadModels(this.pageIndex, this.pageSize) // Recarrega a lista de modelos após o fechamento do modal
