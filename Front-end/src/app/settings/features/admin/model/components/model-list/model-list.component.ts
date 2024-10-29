@@ -44,16 +44,17 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./model-list.component.scss'] // Corrigido para 'styleUrls'
 })
 export class ModelListComponent {
-  totalModels: number = 0; // Total de veículos disponíveis
-  pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 5; // Tamanho da página
-  currentPage: number = 0; // Página atual
 
   // Colunas exibidas na tabela
   displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
   models: Model[] = []; // Lista de modelos
 
+  // config de paginacao e ordenacao da tabela
+  totalModels: number = 0; // Total de veículos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: Model[] = []; // Dados filtrados
   searchKey: any; // Chave de busca para filtro
@@ -179,7 +180,7 @@ export class ModelListComponent {
    * @description Desativa um modelo e atualiza a lista após confirmação do usuário.
    * @param {Model} modelData - O modelo a ser desativado.
    */
-  deleteModel(modelData: Model) {
+  disableModel(modelData: Model) {
     this.alertService.showWarning(
       'Desativar Modelo',
       `Você tem certeza que deseja desativar o modelo "${modelData.name}"?`,
@@ -194,7 +195,7 @@ export class ModelListComponent {
           })
         ).subscribe(() => {
           this.alertService.showSuccess('Sucesso!', 'O modelo foi desativado com sucesso!').then(() => {
-            this.loadModels(this.pageIndex, this.pageSize); // Atualiza a lista de modelos após a exclusão
+            this.searchKey ? this.applyFilter(this.searchKey) : this.loadModels(this.pageIndex, this.pageSize); // Atualiza a lista de modelos após a exclusão
           });
         });
       }
@@ -216,7 +217,7 @@ export class ModelListComponent {
         this.modelService.activated(model.id).subscribe({
           next: () => {
             this.alertService.showSuccess('Sucesso!', 'O modelo foi ativado com sucesso!').then(() =>
-              this.loadModels(this.pageIndex, this.pageSize)
+              this.searchKey ? this.applyFilter(this.searchKey) : this.loadModels(this.pageIndex, this.pageSize)
             );
           },
           error: (error) => {
@@ -278,7 +279,7 @@ export class ModelListComponent {
       width: '500px',
       height: '288px',
       data: model // Passa os dados do modelo para o modal
-    }).afterClosed().subscribe(() =>
+    }).afterClosed().subscribe(() => this.searchKey ? this.applyFilter(this.searchKey) :
       this.loadModels(this.pageIndex, this.pageSize) // Recarrega a lista de modelos após o fechamento do modal
     );
   }

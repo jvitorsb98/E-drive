@@ -36,14 +36,16 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./brand-list.component.scss']
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
-  totalBrands: number = 0; // Total de veículos disponíveis
-  pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 5; // Tamanho da página
-  currentPage: number = 0; // Página atual
+
   displayedColumns: string[] = ['icon', 'marck', 'activated', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brands: Brand[] = []; // Lista de marcas
 
+  // config de paginacao e ordenacao da tabela
+  totalBrands: number = 0; // Total de veículos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: Brand[] = []; // Dados filtrados
   searchKey: any; // Chave de busca para filtro
@@ -272,7 +274,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       width: '500px',
       height: '205px',
       data: brandList
-    }).afterClosed().subscribe(() => this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
+    }).afterClosed().subscribe(() => this.searchKey ? this.applyFilter(this.searchKey) :
+     this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }
 
   /**
@@ -295,7 +298,8 @@ export class BrandListComponent implements OnInit, AfterViewInit {
         this.brandService.activated(brand.id).subscribe({
           next: () => {
             this.alertService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!')
-              .then(() => this.loadBrands(this.pageIndex, this.pageSize));
+              .then(() => this.searchKey ? this.applyFilter(this.searchKey) :
+               this.loadBrands(this.pageIndex, this.pageSize));
           },
           error: (error) => {
             this.alertService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');

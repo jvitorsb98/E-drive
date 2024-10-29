@@ -97,7 +97,7 @@
             <mat-icon class="icone-table" (click)="openModalViewModel(model)">visibility</mat-icon>
             <!-- Ícone para editar o modelo -->
             <mat-icon class="icone-table" (click)="openModalEditModel(model)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">delete</mat-icon>
+            <mat-icon class="icone-table" (click)="disableModel(model)" *ngIf="model.activated">delete</mat-icon>
             <mat-icon class="icone-table" (click)="activatedModel(model)" *ngIf="!model.activated">check</mat-icon>
 
             <!-- <mat-icon class="icone-table" (click)="activateModel(model)" *ngIf="!model.activated">power</mat-icon>

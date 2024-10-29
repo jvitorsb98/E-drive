@@ -65,11 +65,8 @@ export class ModalFormModelComponent {
     this.editModel = !!this.data?.name; // Define se o modal está em modo de edição
     this.loadBrands(); // Carrega a lista de marcas
     this.buildForm(); // Constrói o formulário
-    this.setupAutocomplete(); // Configura o autocomplete
     if (this.editModel) {
       this.fillForm(); // Preenche o formulário com os dados existentes
-      this.modelForm.get('brand')?.disable(); // Desabilita o campo 'brand'
-      this.modelForm.get('modelName')?.enable(); // Habilita o campo 'name'
     }
   }
 
@@ -78,9 +75,10 @@ export class ModalFormModelComponent {
    */
   buildForm() {
     this.modelForm = this.formBuilder.group({
-      modelName: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.minLength(3)]), // Campo nome desabilitado até que uma marca seja selecionada
+      modelName: new FormControl(null, [Validators.required, Validators.minLength(3)]), // Campo nome desabilitado até que uma marca seja selecionada
       brand: new FormControl(null, [Validators.required]), // Campo marca obrigatório
     });
+    this.disableBrand(); // Habilita o campo brand para cadastro e desabilita para edição
   }
 
   /**
@@ -285,6 +283,19 @@ export class ModalFormModelComponent {
       this.autocompleteTrigger.closePanel();
     } else {
       this.autocompleteTrigger.openPanel();
+    }
+  }
+
+  /**
+  * @description Habilita ou desabilita os campos do formulário com base no modo de edição.
+  */
+  disableBrand() {
+    if (this.isEditing()) {
+      this.modelForm.get('modelName')?.enable(); // Habilita o campo modelName
+      this.modelForm.get('brand')?.disable(); // Desabilita o campo brand
+    } else {
+      this.modelForm.get('brand')?.enable(); // Habilita o campo brand
+      this.modelForm.get('modelName')?.disable(); // Desabilita o campo modelName 
     }
   }
 
