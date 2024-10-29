@@ -18,6 +18,7 @@ import { Brand } from '../../../../../core/models/brand'; // Modelo de dados par
 
 // Componentes
 import { FaqPopupComponent } from '../../../../../core/fragments/faq-popup/faq-popup.component'; // Componente de FAQ para exibir informações úteis
+import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
 
 /**
  * Componente de formulário para criar ou editar marcas em um modal.
@@ -59,6 +60,7 @@ export class ModalFormBrandComponent {
    */
   constructor(
     private brandService: BrandService, // Serviço para manipulação de marcas
+    private alertService: AlertasService, // Serviço para exibir alertas
     private formBuilder: FormBuilder, // Utilitário para construção de formulários
     private dialog: MatDialog, // Serviço para abrir modais
     public dialogRef: MatDialogRef<ModalFormBrandComponent>, // Referência ao diálogo
@@ -113,7 +115,6 @@ export class ModalFormBrandComponent {
     if (this.brandForm.valid) {
       // Determina a ação com base na edição
       const actionSucess = this.isEditing() ? 'atualizada' : 'cadastrada';
-      const actionsError = this.isEditing() ? 'atualizar' : 'cadastrar';
 
       // Definindo a requisição com base na ação (cadastro ou atualização)
       const request$ = this.isEditing()
@@ -123,41 +124,14 @@ export class ModalFormBrandComponent {
       // Realiza a requisição e separa as ações para sucesso e erro
       request$.subscribe({
         next: () => {
-          this.handleSuccess(actionSucess); // Ação de sucesso
+          this.alertService.showSuccess('Sucesso!', `A marca ${this.brandForm.value.name} foi ${actionSucess} com sucesso.`);
+          this.closeModal();
         },
         error: (response) => {
-          console.log(response.error);
-          this.handleError(response.error, actionsError); // Ação de erro
+          this.alertService.showError('Erro!', response.error);
         }
       });
     }
-  }
-
-  // Ação de sucesso
-  handleSuccess(action: string) {
-    Swal.fire({
-      title: 'Sucesso!',
-      icon: 'success',
-      text: `A marca ${this.brandForm.value.name} foi ${action} com sucesso.`,
-      showConfirmButton: true,
-      confirmButtonColor: '#19B6DD',
-    }).then((result) => {
-      if (result.isConfirmed || result.isDismissed) {
-        this.closeModal(); // Fecha o modal após a confirmação
-      }
-    });
-  }
-
-  // Ação de erro
-  handleError(error: any, action: string) {
-    const errorMessage = error || `Ocorreu um erro ao tentar ${action} a marca. Tente novamente.`;
-    Swal.fire({
-      title: 'Erro!',
-      icon: 'error',
-      text: errorMessage, // Mensagem do backend ou genérica
-      showConfirmButton: true,
-      confirmButtonColor: 'red',
-    });
   }
 
   /**

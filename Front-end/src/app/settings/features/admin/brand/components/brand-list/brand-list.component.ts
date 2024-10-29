@@ -1,4 +1,3 @@
-import { AlertasService } from './../../../../../core/services/Alertas/alertas.service';
 import { Component, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
@@ -11,6 +10,7 @@ import { PaginatedResponse } from '../../../../../core/models/paginatedResponse'
 
 // Serviços
 import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { AlertasService } from './../../../../../core/services/Alertas/alertas.service';
 
 // Componentes de modal
 import { ModalFormBrandComponent } from '../modal-form-brand/modal-form-brand.component';
