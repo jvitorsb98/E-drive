@@ -53,7 +53,7 @@ export class ModelListComponent {
   // config de paginacao e ordenacao da tabela
   totalModels: number = 0; // Total de veículos disponíveis
   pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 5; // Tamanho da página
+  pageSize: number = 10; // Tamanho da página
   currentPage: number = 0; // Página atual
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: Model[] = []; // Dados filtrados
