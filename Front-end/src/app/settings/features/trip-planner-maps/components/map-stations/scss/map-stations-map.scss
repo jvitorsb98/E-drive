@@ -1,38 +1,37 @@
 /* Map Styles */
 #map {
-    height: 100%;
-    width: 100%;
-    background: #ddd;
+  height: 100%;
+  width: 100%;
+  background: #ddd;
 }
 
-
-// .return-home-btn {
-//     position: absolute;
-//     top: 88%; /* Definir a distância do topo da página */
-//     padding: 10px 20px;
-//     background-color: #19B6DD;
-//     color: white;
-//     border: none;
-//     border-radius: 5px;
-//     cursor: pointer;
-//     z-index: 10000; /* Garante que o botão fique sobre o mapa */
-// }
-
 .icon-container {
-    position: fixed; /* Permite posicionar o ícone em relação à janela da visualização */
-    bottom: 75px;    /* Ajuste esta posição conforme necessário */
-    left: 50px;
-    z-index: 1000;   /* Certifique-se de que está na frente do mapa */
-  }
-  
-  .return-home-btn {
-    background-image: url('../../../../../../../assets/images/house-with-a-car.ico');
-    background-size: cover;
-    background-position: center;
-    border-radius: 12px;
-    color: white;
-    padding: 30px 35px;
-    border: none;
-    cursor: pointer;
-  }
-  
+  position: absolute;
+  top: 83%;
+  /* Centraliza verticalmente */
+  left: 50%;
+  /* Centraliza horizontalmente */
+  transform: translate(-50%, -50%);
+  /* Move o botão para o centro exato */
+  z-index: 1000;
+}
+
+.return-home-btn {
+  background-image: url('../../../../../../../assets/images/house-with-a-car.ico');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 12px;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border: none;
+  cursor: pointer;
+  /* Suaviza a transição do brilho ao passar o cursor */
+  transition: filter 0.3s ease;
+}
+
+/* Clareia a imagem em 5% ao passar o cursor */
+.return-home-btn:hover {
+  filter: brightness(1.06);
+}

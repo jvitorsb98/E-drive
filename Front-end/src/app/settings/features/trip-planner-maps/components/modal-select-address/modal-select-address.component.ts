@@ -27,7 +27,7 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
     public dialogRef: MatDialogRef<ModalSelectAddressComponent>,
     private dialog: MatDialog,
     private addressService: AddressService
-  ) {}
+  ) { }
 
   /**
    * Método do ciclo de vida que é executado após a inicialização do componente.

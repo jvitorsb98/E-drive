@@ -1,8 +1,6 @@
 import { MapService } from './../../../../core/services/map/map.service';
 import { GeocodingService } from './../../../../core/services/geocoding/geocoding.service';
-import { AddressService } from './../../../../core/services/Address/address.service';
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { environment } from '../../../../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 import { Step } from '../../../../core/models/step';
@@ -30,8 +28,6 @@ import { ModalSelectAddressComponent } from '../modal-select-address/modal-selec
  * 12. **handleLocationError**: Lida com erros de localização se a geolocalização do navegador falhar.
  * 13. **calculateRouteDistance**: Calcula a distância entre a localização do usuário e a estação de carregamento e exibe essa distância no modal. Usa armazenamento de sessão para cache de distâncias.
  */
-
-declare var document: Document;
 
 @Component({
   selector: 'app-map-stations',
@@ -126,7 +122,6 @@ export class MapStationsComponent implements AfterViewInit {
       return false;
     });
   }
-
 
   cancelRoute() {
     this.directionsRenderer.setMap(null); // Remove a rota do mapa
@@ -395,7 +390,7 @@ export class MapStationsComponent implements AfterViewInit {
     this.isAddressOpen = true;
     const dialogRef = this.dialog.open(ModalSelectAddressComponent, {
       width: '480px',
-      height: '530px',
+      height: '320px',
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -82,6 +82,7 @@ tr {
   font-size: 20px;
   color: #767676;
   margin-right: 10px;
+  padding: 2% 1%;
   cursor: pointer;
   transition: color 0.3s;
 
@@ -94,10 +95,8 @@ tr {
 /* Estilos para o ícone interativo na tabela, com tamanho de 18px,
        cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
 .icone-table {
-  font-size: 18px;
   color: #767676;
   margin-right: 10;
-  padding: 2% 1%;
   transform: rotate(0deg);
   transition: 0.3s linear all;
 
@@ -165,8 +164,7 @@ tr {
   }
 
   .icone-table {
-    font-size: 15px;
-    padding: 7% 1%;
+    padding: 2% 1%;
   }
 
   .no-data {
