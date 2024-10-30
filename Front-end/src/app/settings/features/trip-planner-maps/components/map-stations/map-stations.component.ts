@@ -30,6 +30,9 @@ import { ModalSelectAddressComponent } from '../modal-select-address/modal-selec
  * 12. **handleLocationError**: Lida com erros de localização se a geolocalização do navegador falhar.
  * 13. **calculateRouteDistance**: Calcula a distância entre a localização do usuário e a estação de carregamento e exibe essa distância no modal. Usa armazenamento de sessão para cache de distâncias.
  */
+
+declare var document: Document;
+
 @Component({
   selector: 'app-map-stations',
   templateUrl: './map-stations.component.html',
@@ -65,9 +68,9 @@ export class MapStationsComponent implements AfterViewInit {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private tripPlannerMapsService: TripPlannerMapsService, 
-    private geocodingService:GeocodingService,
-    private mapService:MapService,
+    private tripPlannerMapsService: TripPlannerMapsService,
+    private geocodingService: GeocodingService,
+    private mapService: MapService,
     private locationService: LocationService,
     private dialog: MatDialog
   ) {
@@ -82,19 +85,47 @@ export class MapStationsComponent implements AfterViewInit {
       await this.mapService.loadGoogleMapsScript();
       this.map = await this.mapService.initMap(this.mapContainer);
       this.userLocation = await this.locationService.getUserLocation();
-      if(this.userLocation){
+      if (this.userLocation) {
         this.map.setCenter(this.userLocation);
       }
       this.directionsRenderer = new google.maps.DirectionsRenderer();
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer.setMap(this.map);
-
       this.map.addListener('idle', () => this.searchNearbyChargingStations());
     } catch (error) {
       console.error('Erro ao carregar o Google Maps', error);
     }
+
+    const icon = document.getElementById('returnHomeIcon') as HTMLDivElement;
+
+    icon.addEventListener('dragstart', (e: DragEvent) => {
+      if (e.dataTransfer) {
+        const style = window.getComputedStyle(e.target as HTMLElement, null);
+        e.dataTransfer.setData(
+          "text/plain",
+          (parseInt(style.getPropertyValue("left"), 10) - e.clientX) + ',' +
+          (parseInt(style.getPropertyValue("top"), 10) - e.clientY)
+        );
+      }
+    });
+
+    document.body.addEventListener('dragover', (e: DragEvent) => {
+      e.preventDefault();
+      return false;
+    });
+
+    document.body.addEventListener('drop', (e: DragEvent) => {
+      const offset = e.dataTransfer?.getData("text/plain").split(',');
+      if (offset) {
+        const icon = document.getElementById('returnHomeIcon') as HTMLElement;
+        icon.style.position = 'absolute'; // Mudar para posição absoluta durante o arrasto
+        icon.style.left = (e.clientX + parseInt(offset[0], 10)) + 'px';
+        icon.style.top = (e.clientY + parseInt(offset[1], 10)) + 'px';
+      }
+      e.preventDefault();
+      return false;
+    });
   }
-  
 
 
   cancelRoute() {
@@ -103,8 +134,7 @@ export class MapStationsComponent implements AfterViewInit {
     this.isAddressOpen = false;
     this.stepsArray.splice(0, this.stepsArray.length);
     this.cdr.detectChanges(); // Força a verificação de mudanças
-}
-
+  }
 
   /**
    * Busca estações de carregamento próximas à localização atual do mapa.
@@ -141,7 +171,6 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
-
   /**
    * Remove todos os marcadores do mapa.
    */
@@ -151,7 +180,6 @@ export class MapStationsComponent implements AfterViewInit {
     });
     this.markers = [];
   }
-
 
   /**
    * Cria um marcador para uma estação de carregamento e adiciona ao mapa.
@@ -200,30 +228,30 @@ export class MapStationsComponent implements AfterViewInit {
 
     chargingStationDialogRef.afterClosed().subscribe(result => {
       if (result) {
-          console.log('Dados recebidos do modal:', result);
-          // Inicie a rota no Google Maps
-          const destination = this.currentPlace?.geometry?.location;
-          this.isRouteActive = true;
-          console.log('oi')
-          // Configure o DirectionsRenderer para não exibir os marcadores padrão
-          this.directionsRenderer.setOptions({
-            suppressMarkers: true, // Suprime os marcadores padrão
-            polylineOptions: {
-              strokeColor: '#19B6DD', // Azul claro para a linha da rota
-            },
-          });
-          
+        console.log('Dados recebidos do modal:', result);
+        // Inicie a rota no Google Maps
+        const destination = this.currentPlace?.geometry?.location;
+        this.isRouteActive = true;
+        console.log('oi')
+        // Configure o DirectionsRenderer para não exibir os marcadores padrão
+        this.directionsRenderer.setOptions({
+          suppressMarkers: true, // Suprime os marcadores padrão
+          polylineOptions: {
+            strokeColor: '#19B6DD', // Azul claro para a linha da rota
+          },
+        });
 
-          // Verifique se o destino não é undefined antes de chamar initiateRoute
-          if (destination) {
-              this.initiateRoute(destination); // Passa apenas o local de destino
-          } else {
-              console.error('Localização do destino não disponível.');
-          }
+
+        // Verifique se o destino não é undefined antes de chamar initiateRoute
+        if (destination) {
+          this.initiateRoute(destination); // Passa apenas o local de destino
+        } else {
+          console.error('Localização do destino não disponível.');
+        }
       } else {
-          this.isModalOpen = true; // Abre o modal principal novamente
+        this.isModalOpen = true; // Abre o modal principal novamente
       }
-  });
+    });
 
   }
 
@@ -232,17 +260,17 @@ export class MapStationsComponent implements AfterViewInit {
       console.error('Localização do usuário não disponível.');
       return; // Retorne se a localização for nula
     }
-  
+
     const request: google.maps.DirectionsRequest = {
       origin: this.userLocation, // Mantenha esta linha para usar a localização do usuário
       destination: destination,
       travelMode: google.maps.TravelMode.DRIVING,
     };
-  
+
     this.directionsService.route(request, (result, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
         this.directionsRenderer.setDirections(result);
-        this.directionsRenderer.setMap(this.map); 
+        this.directionsRenderer.setMap(this.map);
         this.isRouteActive = true; // Atualiza o estado da rota
         this.clearMarkers(); // Limpa os marcadores antes de adicionar novos
         this.searchNearbyChargingStations(); // Adiciona a busca após a rota
@@ -258,8 +286,8 @@ export class MapStationsComponent implements AfterViewInit {
    */
   showModal() {
     if (!this.currentPlace) {
-        console.warn('Nenhum lugar selecionado.');
-        return;
+      console.warn('Nenhum lugar selecionado.');
+      return;
     }
 
     this.modalTitle = this.currentPlace.name || 'Estação de carregamento';
@@ -267,16 +295,13 @@ export class MapStationsComponent implements AfterViewInit {
 
     // Calcule a distância se a localização do usuário e o local estiverem disponíveis
     if (this.userLocation && this.currentPlace.geometry && this.currentPlace.geometry.location) {
-        this.calculateRouteDistance(this.userLocation, this.currentPlace.geometry.location);
+      this.calculateRouteDistance(this.userLocation, this.currentPlace.geometry.location);
     }
 
     this.isModalOpen = true; // Defina a variável para abrir o modal
     this.openNow = this.currentPlace.opening_hours; // Defina a variável de abertura
     this.cdr.detectChanges(); // Força a verificação de mudanças
   }
-
-  
-
 
   /**
    * Fecha o modal principal.
@@ -304,7 +329,6 @@ export class MapStationsComponent implements AfterViewInit {
     }
   }
 
-
   /**
    * Fecha o modal de detalhes.
    */
@@ -318,7 +342,7 @@ export class MapStationsComponent implements AfterViewInit {
    * @param origin Localização do usuário.
    * @param destination Localização da estação de carregamento.
    */
- 
+
   calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng): Promise<void> {
     return new Promise((resolve, reject) => {
       this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
@@ -337,24 +361,21 @@ export class MapStationsComponent implements AfterViewInit {
     });
   }
 
-
-
- 
   geocodeAddress(address: DataAddressDetails): Promise<{ address: string; lat: number; lng: number }> {
     return new Promise((resolve, reject) => {
       // Constrói o endereço a partir dos campos da interface DataAddressDetails
       const fullAddress = `${address.number} ${address.street}, ${address.neighborhood}, ${address.city}, ${address.state}, ${address.zipCode}, ${address.country}`;
-      
+
       this.geocodingService.geocode(fullAddress).subscribe(
         (response) => {
           // Log detalhado da resposta
-  
+
           if (response && response.results && response.results.length > 0) {
             const location = response.results[0].geometry.location;
-            resolve({ 
-              address: fullAddress, 
-              lat: location.lat, 
-              lng: location.lng 
+            resolve({
+              address: fullAddress,
+              lat: location.lat,
+              lng: location.lng
             });
           } else {
             // Caso não encontre resultados
@@ -369,22 +390,21 @@ export class MapStationsComponent implements AfterViewInit {
       );
     });
   }
-  
-  
+
   openSelectAddressModal() {
     this.isAddressOpen = true;
     const dialogRef = this.dialog.open(ModalSelectAddressComponent, {
       width: '480px',
       height: '530px',
     });
-  
+
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.handleAddressSelection(result);
       }
     });
   }
-  
+
   private handleAddressSelection(address: DataAddressDetails) {
     console.log(address);
     this.geocodeAddress(address)
@@ -396,7 +416,7 @@ export class MapStationsComponent implements AfterViewInit {
         console.error('Erro ao geocodificar o endereço:', error);
       });
   }
-  
+
   private setCurrentPlace(geocodedData: { address: string; lat: number; lng: number }) {
     this.currentPlace = {
       geometry: {
@@ -405,7 +425,7 @@ export class MapStationsComponent implements AfterViewInit {
       name: geocodedData.address,
     };
   }
-  
+
   private calculateDistanceToCurrentPlace() {
     if (this.userLocation && this.currentPlace!.geometry && this.currentPlace!.geometry.location) {
       this.calculateRouteDistance(this.userLocation, this.currentPlace!.geometry.location)
@@ -415,7 +435,7 @@ export class MapStationsComponent implements AfterViewInit {
         });
     }
   }
-  
+
   private openVehicleBatteryModal() {
     const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
       width: '480px',
@@ -426,32 +446,30 @@ export class MapStationsComponent implements AfterViewInit {
         isStation: true
       },
     });
-  
+
     chargingStationDialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.handleVehicleBatteryModalClose();
       }
     });
   }
-  
+
   private handleVehicleBatteryModalClose() {
     const destination = this.currentPlace?.geometry?.location;
     this.isRouteActive = true;
-  
+
     this.directionsRenderer.setOptions({
       suppressMarkers: true,
       polylineOptions: {
         strokeColor: '#19B6DD',
       },
     });
-  
+
     if (destination) {
       this.initiateRoute(destination);
     } else {
       console.error('Localização do destino não disponível.');
     }
   }
-  
-  
 
 }
