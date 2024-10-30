@@ -104,7 +104,7 @@ export class UserPasswordModalComponent implements OnInit {
       this.userData.password = this.userPassword.value.password;
 
       this.userService.register(this.userData).subscribe({
-        next: (response) => {
+        next: () => {
           this.userPassword.reset();
           this.closeModal();
           this.alertService.showSuccess('Cadastro bem-sucedido!', `${this.userData.name} cadastrado(a) com sucesso. Um email de ativação foi enviado.`)

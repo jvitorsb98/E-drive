@@ -32,11 +32,11 @@ import { noNumbersValidator } from '../../../../shared/validators/no-numbers.val
 })
 export class UserRegistrationFormComponent {
 
+  user!: User; // Objeto que representa o usuário atual
   userForm!: FormGroup; // Formulário do usuário
   phoneType: string = 'MOBILE'; // Tipo de telefone (MOBILE por padrão)
   countries: any[] = []; // Lista de países disponíveis
   filteredCountries!: Observable<any[]>; // Observable para filtrar países
-  user!: User; // Objeto que representa o usuário atual
   minDate: Date | null = null; // Data mínima permitida para nascimento
   maxDate: Date | null = null; // Data máxima permitida para nascimento
 
@@ -115,10 +115,6 @@ export class UserRegistrationFormComponent {
           map(value => this.filterCountries(value || ''))
         );
       },
-
-      error: (error: any) => {
-        console.error('Erro ao buscar dados da API:', error); // Loga o erro ao console
-      }
     });
   }
 
@@ -179,7 +175,7 @@ export class UserRegistrationFormComponent {
   private setMinAndMaxDate() {
     const date = new Date(); // Obtém a data atual
     this.minDate = new Date(date.getFullYear() - 100, 0, 1); // Define a data mínima para 100 anos atrás
-    this.maxDate = new Date(date.getFullYear() - 10, date.getMonth(), date.getDate()); // Define a data máxima para exatamente 10 anos atrás
+    this.maxDate = new Date(date.getFullYear() - 13, date.getMonth(), date.getDate()); // Define a data máxima para exatamente 10 anos atrás
   }
 
   /**
