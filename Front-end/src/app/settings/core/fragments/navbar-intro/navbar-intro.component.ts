@@ -20,13 +20,11 @@ export class NavbarIntroComponent {
 
   openLoginModal() {
     this.closeMenu();
-    // this.modal.openModal(UserLoginModalComponent)
     this.router.navigate(['/e-driver/login']);
   }
 
   openRegisterModal() {
     this.closeMenu();
-    // this.modal.openModal(UserRegistrationModalComponent)
     this.router.navigate(['/e-driver/users/registration']);
   }
 
@@ -38,8 +36,8 @@ export class NavbarIntroComponent {
     this.isMenuOpen = false;
   }
 
-  
+
   isLoggedIn(): boolean {
-    return this.authService.isLoggedIn(); 
+    return this.authService.isLoggedIn();
   }
 }
