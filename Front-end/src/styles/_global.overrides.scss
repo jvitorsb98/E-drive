@@ -7,10 +7,14 @@ body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
   background: linear-gradient(to right, $btn-primary,$btn-secondary);
 }
 
-.btn-primary {
+.btn-secundary {
   width: 100%;
+  height: 40px;
   background-color: $btn-primary !important;
+  color: white;
   font-weight: bold;
+  border: none;
+  border-radius: 1rem;
 }
 
 .icon-row {
