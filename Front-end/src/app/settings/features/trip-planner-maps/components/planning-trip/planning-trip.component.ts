@@ -1,7 +1,5 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
-import { LocationService } from '../../../../core/services/location/location.service';
-import { GeocodingService } from '../../../../core/services/geocoding/geocoding.service';
 import { MapService } from '../../../../core/services/map/map.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
