@@ -8,7 +8,6 @@
 header {
   position: sticky;
   top: 0;
-  left: 0;
   width: 100%;
   z-index: 1000;
   box-shadow: 2px 7px 5px rgba(0, 0, 0, 0.3);
@@ -19,47 +18,45 @@ header {
   text-decoration: none;
 }
 
-.nav-link:hover{
+.nav-link:hover {
   background-color: #1389a72c;
 }
 
-/* Estilos para telas menores */
-@media (max-width: 767px) { /* Ajuste o breakpoint conforme necessário */
-  .navbar-collapse {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #fff; /* Cor de fundo do menu */
-    z-index: 1000; /* Garante que o menu fique acima de outros elementos */
-    transition: none !important; /* Remove o efeito de transição */
-  }
+.navbar-toggler {
+  border: none !important;
+}
 
-  .navbar-collapse.show {
-    transform: translateX(0); /* Abre o menu */
+.navbar-nav{
+  margin-left: auto;
+}
+
+/* Estilos para telas menores */
+@media (max-width: 767px) {
+  .navbar-collapse {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    z-index: 1000;
+    padding-top: 2rem;
   }
 
   .close-button {
-    background: none;
-    position: absolute;
-    top: 2rem;
-    right: 1rem;
-    font-size: 4rem;
-    border: none;
+    font-size: 2.5rem;
     cursor: pointer;
+    color: #5b5b5b;
   }
 
   .navbar-nav {
     display: flex;
-    margin-top: 4rem;
+    margin-left: 0;
+    gap: 1.5rem;
+    margin-top: 2rem;
   }
 
-  .nav-item{
-    .nav-link {
-      font-size: 1.6rem;
-      margin-bottom: 2.5rem;
-      color: #5b5b5b;
-    }
+  .nav-item .nav-link {
+    font-size: 1.6rem;
+    color: #5b5b5b;
   }
 }
