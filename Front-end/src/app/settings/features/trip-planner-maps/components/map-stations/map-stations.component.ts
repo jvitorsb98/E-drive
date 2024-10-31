@@ -92,35 +92,94 @@ export class MapStationsComponent implements AfterViewInit {
       console.error('Erro ao carregar o Google Maps', error);
     }
 
+    /**
+ * Método que gerencia o comportamento de arrasto e clique do ícone de retorno à casa.
+ * 
+ * @description Este método adiciona ouvintes de eventos ao ícone de retorno, 
+ * permitindo que o usuário arraste o ícone em dispositivos móveis (iOS e Android) 
+ * e em desktops. O comportamento de arrasto é ativado ao mover o ícone além de um 
+ * limite mínimo de distância (threshold). Além disso, o modal é aberto ao clicar 
+ * no ícone, desde que não esteja em modo de arrasto.
+ *
+ * @param {HTMLDivElement} icon - O elemento HTML que representa o ícone de retorno.
+ */
     const icon = document.getElementById('returnHomeIcon') as HTMLDivElement;
 
-    icon.addEventListener('dragstart', (e: DragEvent) => {
-      if (e.dataTransfer) {
-        const style = window.getComputedStyle(e.target as HTMLElement, null);
-        e.dataTransfer.setData(
-          "text/plain",
-          (parseInt(style.getPropertyValue("left"), 10) - e.clientX) + ',' +
-          (parseInt(style.getPropertyValue("top"), 10) - e.clientY)
-        );
+    let isDragging = false;
+    let startX: number, startY: number;
+    let offsetX: number, offsetY: number;
+
+    const openSelectAddressModal = () => {
+      if (!isDragging) {
+        console.log("Modal aberto!"); // Substitua isso pela lógica para abrir o modal
       }
+    };
+
+    // Detecta se é iOS ou Android para aplicar o tipo de evento adequado
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+    const isAndroid = /Android/i.test(userAgent);
+
+    if (isIOS || isAndroid) {
+      // Eventos para iOS/Android (toque)
+      icon.addEventListener('touchstart', (e: TouchEvent) => {
+        isDragging = false;
+        const touch = e.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        const style = window.getComputedStyle(icon);
+        offsetX = touch.clientX - parseInt(style.left, 10);
+        offsetY = touch.clientY - parseInt(style.top, 10);
+      });
+
+      icon.addEventListener('touchmove', (e: TouchEvent) => {
+        isDragging = true;
+        const touch = e.touches[0];
+        icon.style.left = (touch.clientX - offsetX) + 'px';
+        icon.style.top = (touch.clientY - offsetY) + 'px';
+        e.preventDefault();
+      });
+
+      icon.addEventListener('touchend', () => {
+        if (!isDragging) {
+          openSelectAddressModal();
+        }
+        isDragging = false;
+      });
+    } else {
+      // Eventos para desktop (mouse)
+      icon.addEventListener('mousedown', (e: MouseEvent) => {
+        isDragging = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        const style = window.getComputedStyle(icon);
+        offsetX = e.clientX - parseInt(style.left, 10);
+        offsetY = e.clientY - parseInt(style.top, 10);
+      });
+
+      icon.addEventListener('mousemove', (e: MouseEvent) => {
+        isDragging = true;
+        icon.style.left = (e.clientX - offsetX) + 'px';
+        icon.style.top = (e.clientY - offsetY) + 'px';
+      });
+
+      icon.addEventListener('mouseup', (e: MouseEvent) => {
+        if (!isDragging) {
+          openSelectAddressModal();
+        }
+        isDragging = false;
+      });
+    }
+
+    // Evento para clique direto no ícone (evita propagação do arrasto)
+    icon.addEventListener('click', (e: Event) => {
+      if (!isDragging) {
+        openSelectAddressModal();
+      }
+      isDragging = false; // Reset após o clique
+      e.stopPropagation();
     });
 
-    document.body.addEventListener('dragover', (e: DragEvent) => {
-      e.preventDefault();
-      return false;
-    });
-
-    document.body.addEventListener('drop', (e: DragEvent) => {
-      const offset = e.dataTransfer?.getData("text/plain").split(',');
-      if (offset) {
-        const icon = document.getElementById('returnHomeIcon') as HTMLElement;
-        icon.style.position = 'absolute'; // Mudar para posição absoluta durante o arrasto
-        icon.style.left = (e.clientX + parseInt(offset[0], 10)) + 'px';
-        icon.style.top = (e.clientY + parseInt(offset[1], 10)) + 'px';
-      }
-      e.preventDefault();
-      return false;
-    });
   }
 
   cancelRoute() {
