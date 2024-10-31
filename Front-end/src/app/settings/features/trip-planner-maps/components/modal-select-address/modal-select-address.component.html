@@ -20,15 +20,17 @@
           </mat-form-field>
         </div>
 
-        <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="addresses">
+        <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="addresses" matSort>
           <ng-container matColumnDef="icon">
-            <th class="th-table" mat-header-cell *matHeaderCellDef>
-              <mat-icon matTooltip="Selecione o endereço">location_on</mat-icon>
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon
+                matTooltip="Este ícone representa o endereço listado abaixo. Clique para ver os detalhes do endereço."
+                matTooltipPosition="above"> <!-- Ajusta a posição do tooltip se necessário -->
+                location_on
+              </mat-icon>
             </th>
             <td class="td-table" mat-cell *matCellDef="let address">
-              <mat-icon 
-                class="icone-endereco" 
-                [matTooltip]="address.street + ', ' + address.city + ', ' + address.state"
+              <mat-icon class="icone-locale" [matTooltip]="address.street + ', ' + address.city + ', ' + address.state"
                 matTooltipClass="multi-line-tooltip">
                 location_on
               </mat-icon>
@@ -36,36 +38,36 @@
           </ng-container>
 
           <ng-container matColumnDef="details">
-            <th class="th-table" mat-header-cell *matHeaderCellDef><strong>Detalhes</strong></th>
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Detalhes</strong></th>
             <td class="td-table" mat-cell *matCellDef="let address">
               <strong>{{ address.street }}, {{ address.city }}, {{ address.state }}</strong>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="chargingPoint">
-            <th class="th-table" mat-header-cell *matHeaderCellDef><strong>Carregamento</strong></th>
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Carregamento</strong></th>
             <td class="td-table" mat-cell *matCellDef="let address">
-            <span *ngIf="address.hasChargingStation">
-                <mat-icon role="img" class="mat-icon notranslate check material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">check</mat-icon>
-                </span>
-                <span *ngIf="!address.hasChargingStation">
-                <mat-icon role="img" class="mat-icon notranslate error material-icons mat-ligature-font mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">close</mat-icon>
-                </span>
+              <span *ngIf="address.hasChargingStation">
+                <mat-icon role="img"
+                  class="mat-icon notranslate check material-icons mat-ligature-font mat-icon-no-color"
+                  aria-hidden="true" data-mat-icon-type="font">check</mat-icon>
+              </span>
+              <span *ngIf="!address.hasChargingStation">
+                <mat-icon role="img"
+                  class="mat-icon notranslate error material-icons mat-ligature-font mat-icon-no-color"
+                  aria-hidden="true" data-mat-icon-type="font">close</mat-icon>
+              </span>
             </td>
           </ng-container>
 
           <ng-container matColumnDef="choose">
-            <th class="th-table" mat-header-cell *matHeaderCellDef>
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
               <strong>Escolher</strong>
             </th>
             <td class="td-table custom-radio" mat-cell *matCellDef="let address">
               <div class="form-check">
-                <input 
-                  class="form-check-input custom-radio" 
-                  type="radio" 
-                  name="selectedAddress" 
-                  (click)="onSelect(address)" 
-                  id="address{{ address.id }}">
+                <input class="form-check-input custom-radio" type="radio" name="selectedAddress"
+                  (click)="onSelect(address)" id="address{{ address.id }}">
                 <label for="address{{ address.id }}" class="visually-hidden">
                   Selecione o endereço {{ address.street }}
                 </label>
@@ -88,11 +90,9 @@
     </div>
 
     <div class="buttons-container py-3">
-      <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" [disabled]="!selectedAddress" (click)="confirmAddress()"
-      text="Confirmar "></app-ui-button>
-      <app-ui-button class="w-100 mb-0" typeBtn="outline-secondary" (click)="cancel()"
-      text="Cancelar"></app-ui-button>
+      <app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" [disabled]="!selectedAddress"
+        (click)="confirmAddress()" text="Confirmar "></app-ui-button>
+      <app-ui-button class="w-100 mb-0" typeBtn="outline-secondary" (click)="cancel()" text="Cancelar"></app-ui-button>
     </div>
   </div>
 </div>
-

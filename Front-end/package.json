@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "broadcast": "ng serve --host 0.0.0.0 --port 4200 --proxy-config proxy.conf.json --ssl --ssl-key ./src/environments/key.pem --ssl-cert ./src/environments/cert.pem",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "jest"

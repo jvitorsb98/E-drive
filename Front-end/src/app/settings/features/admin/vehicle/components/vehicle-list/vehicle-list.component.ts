@@ -30,13 +30,16 @@ import { AlertasService } from '../../../../../core/services/Alertas/alertas.ser
   styleUrls: ['./vehicle-list.component.scss']
 })
 export class VehicleListComponent {
-  totalVehicles: number = 0; // Total de veículos disponíveis
-  pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 5; // Tamanho da página
-  currentPage: number = 0; // Página atual
+  
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Vehicle>(); // Fonte de dados da tabela
   vehicles: Vehicle[] = []; // Lista de veículos
+
+  // config de paginacao e ordenacao da tabela
+  totalVehicles: number = 0; // Total de veículos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 10; // Tamanho da página
+  currentPage: number = 0; // Página atual
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: Vehicle[] = []; // Dados filtrados
   searchKey: any; // Chave de busca para filtro

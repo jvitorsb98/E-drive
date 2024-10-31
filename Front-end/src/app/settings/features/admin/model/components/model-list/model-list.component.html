@@ -97,7 +97,7 @@
             <mat-icon class="icone-table" (click)="openModalViewModel(model)">visibility</mat-icon>
             <!-- Ícone para editar o modelo -->
             <mat-icon class="icone-table" (click)="openModalEditModel(model)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="deleteModel(model)" *ngIf="model.activated">delete</mat-icon>
+            <mat-icon class="icone-table" (click)="disableModel(model)" *ngIf="model.activated">delete</mat-icon>
             <mat-icon class="icone-table" (click)="activatedModel(model)" *ngIf="!model.activated">check</mat-icon>
 
             <!-- <mat-icon class="icone-table" (click)="activateModel(model)" *ngIf="!model.activated">power</mat-icon>
@@ -120,10 +120,10 @@
 </div>
 
 <!-- Container para o paginador e botão para adicionar nova marca -->
-<div class="container coll-12 col-md-12 col-sm-12 col-lg-12">
+<div class="container coll-12 col-md-12 col-sm-12 col-lg-12 pt-5">
   <!-- Paginação da tabela -->
   <mat-paginator class="shadow-sn" [length]="totalModels" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 20, 30, 40, 50]" (page)="onPageChange($event)"
+    [pageSizeOptions]="[10, 20, 30, 40, 50]" (page)="onPageChange($event)"
     aria-label="Selecione modelos por página"></mat-paginator>
   <!-- Botão para abrir o modal de adicionar um novo modelo -->
   <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddModel()"

@@ -4,26 +4,31 @@
   </div>
 </div>
 
-<!-- Contêiner para os inputs e botões sobre o mapa, exibido apenas quando isRouteActivate é false -->
-<div class="input-overlay" *ngIf="!isRouteActive">
-  <!-- Campo para seleção do local de partida -->
-  <input #startLocationInput id="startLocation" type="text" placeholder="Escolha o local de partida" />
+<!-- Contêiner para os inputs e botões exibidos sobre o mapa. Aparece apenas quando isRouteActivate é false -->
+<div class="input-overlay">
+  <!-- Inputs de localização inicial e final, ocultados por uma classe CSS quando showInputs é false -->
+  <div [ngClass]="{'hidden': !inputsVisible}">
+    <!-- Campo para seleção do local de partida -->
+    <input #startLocationInput class="mb-1" id="startLocation" type="text" placeholder="Escolha o local de partida" />
 
-  <!-- Campo para seleção do local de destino -->
-  <input #endLocationInput id="endLocation" type="text" placeholder="Escolha o local de destino" />
+    <!-- Campo para seleção do local de destino -->
+    <input #endLocationInput class="mb-1" id="endLocation" type="text" placeholder="Escolha o local de destino" />
 
-  <!-- Botão para traçar rota -->
-  <button (click)="planTrip()">Traçar Rota</button>
+    <!-- Botão para traçar a rota entre os pontos de partida e destino -->
+    <button class="w-100" (click)="planTrip()">Traçar Rota</button>
+  </div>
+
+  <!-- Botão para alternar a exibição dos campos de entrada e do botão de rota -->
+  <button class="planejamento-button container-fluid mb-1" (click)="toggleInputs()">
+    <mat-icon>route</mat-icon>
+  </button>
 </div>
 
 <!-- Container do Mapa -->
 <div #mapContainer id="map"></div>
 
 <!-- Botão de Cancelar Rota -->
-<button *ngIf="isRouteActive" 
-        class="cancel-route-button" 
-        [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" 
-        (click)="cancelRoute()">
+<button *ngIf="isRouteActive" class="cancel-route-button"
+  [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" (click)="cancelRoute()">
   Cancelar Rota
 </button>
-

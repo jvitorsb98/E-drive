@@ -4,7 +4,7 @@
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": {
-      "^/api/maps": ""
+      "^/api/maps": "/maps" 
     },
     "logLevel": "debug"
   },

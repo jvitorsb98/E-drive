@@ -1,24 +1,37 @@
 /* Map Styles */
 #map {
-    height: 100%;
-    width: 100%;
-    background: #ddd;
+  height: 100%;
+  width: 100%;
+  background: #ddd;
 }
 
+.icon-container {
+  position: absolute;
+  top: 83%;
+  /* Centraliza verticalmente */
+  left: 50%;
+  /* Centraliza horizontalmente */
+  transform: translate(-50%, -50%);
+  /* Move o botão para o centro exato */
+  z-index: 1000;
+}
 
 .return-home-btn {
-    position: absolute;
-    top: 88%; /* Definir a distância do topo da página */
-    padding: 10px 20px;
-    background-color: #19B6DD;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    z-index: 10000; /* Garante que o botão fique sobre o mapa */
+  background-image: url('../../../../../../../assets/images/house-with-a-car.ico');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 12px;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border: none;
+  cursor: pointer;
+  /* Suaviza a transição do brilho ao passar o cursor */
+  transition: filter 0.3s ease;
 }
-  
+
+/* Clareia a imagem em 5% ao passar o cursor */
 .return-home-btn:hover {
-background-color: #0056b3;
+  filter: brightness(1.06);
 }
-  

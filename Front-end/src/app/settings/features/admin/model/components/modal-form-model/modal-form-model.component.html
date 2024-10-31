@@ -22,14 +22,13 @@
     <!-- Início do formulário reativo com o FormGroup 'modelForm' -->
     <form [formGroup]="modelForm">
       <div class="content">
-
         <!-- Seção para selecionar a marca do veículo -->
         <div class="row">
           <div class="col-12 col-md-6">
             <!-- Campo de seleção com autocomplete para escolher a marca -->
             <mat-form-field class="custom-select">
               <mat-label>Marca do veículo:</mat-label>
-              <input #brandInput type="text" matInput formControlName="brand"
+              <input #brandInput type="text" matInput formControlName="brand" [disabled]="editModel"
                 [value]="modelForm.get('brand')?.value?.name || ''" [matAutocomplete]="autoBrand"
                 aria-describedby="Help">
               <mat-autocomplete #autoBrand="matAutocomplete" (optionSelected)="onBrandSelected($event)">
@@ -38,7 +37,8 @@
                 </mat-option>
               </mat-autocomplete>
               <!-- Ícone para abrir o dropdown do autocomplete -->
-              <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
+              <mat-icon class="autocomplete-icon"
+                (click)="!editModel && toggleAutocomplete($event)">arrow_drop_down</mat-icon>
               <!-- Validação para exibir erro caso o campo 'brand' esteja vazio após interação -->
               @if(modelForm.get('brand')?.hasError('required') && modelForm.get('brand')?.touched){
               <mat-error class="mat-error-text"><strong>Marca</strong> é um campo obrigatório.</mat-error>
@@ -79,10 +79,10 @@
       </div>
 
       <!-- Botão de envio, desabilitado se o formulário estiver inválido -->
-    <div class="buttons-container py-1">
-      <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="onSubmit()"
-        [disabled]="!modelForm.valid">{{ editModel ? 'Atualizar Modelo' : 'Finalizar cadastro'}}</app-ui-button>
-    </div>
+      <div class="buttons-container py-1">
+        <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" (click)="onSubmit()" [disabled]="!modelForm.valid">{{
+          editModel ? 'Atualizar Modelo' : 'Finalizar cadastro'}}</app-ui-button>
+      </div>
     </form>
   </div>
 </div>

@@ -1,0 +1,26 @@
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+x509_extensions    = v3_ca
+prompt             = no
+
+[ req_distinguished_name ]
+C  = BR
+ST = Bahia
+L  = Ilheus
+O  = E-drive
+OU = Desenvolvimento
+CN = localhost
+
+[ v3_ca ]
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = localhost
+IP.1 = 127.0.0.1
+IP.2 = 0.0.0.0
+IP.3 = 192.168.0.110
+IP.4 = 192.168.0.108
+IP.5 = 192.168.18.5
