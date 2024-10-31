@@ -22,30 +22,66 @@ body {
 
 
 .cancel-route-button {
-    position: absolute; /* Para posicionamento absoluto */
-    top: 85%; /* 50% do topo da tela */
-    left: 50%; /* 50% da esquerda da tela */
-    transform: translate(-50%, -20%); /* Ajusta o botão para ficar 20% abaixo do centro */
-    background-color: #FF4C4C; /* Cor de fundo vermelho */
-    color: white; /* Cor do texto */
-    border: none; /* Remove bordas */
-    border-radius: 5px; /* Borda arredondada */
-    padding: 10px 15px; /* Espaçamento interno */
-    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
-    transition: background-color 0.3s; /* Efeito de transição para hover */
-    z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+    position: absolute;
+    /* Para posicionamento absoluto */
+    top: 85%;
+    /* 50% do topo da tela */
+    left: 50%;
+    /* 50% da esquerda da tela */
+    transform: translate(-50%, -20%);
+    /* Ajusta o botão para ficar 20% abaixo do centro */
+    background-color: #FF4C4C;
+    /* Cor de fundo vermelho */
+    color: white;
+    /* Cor do texto */
+    border: none;
+    /* Remove bordas */
+    border-radius: 5px;
+    /* Borda arredondada */
+    padding: 10px 15px;
+    /* Espaçamento interno */
+    cursor: pointer;
+    /* Cursor de ponteiro ao passar o mouse */
+    transition: background-color 0.3s;
+    /* Efeito de transição para hover */
+    z-index: 1000;
+    /* Garante que o botão fique acima de outros elementos */
 }
 
 .cancel-route-button:hover {
-    background-color: #D43B3B; /* Cor do botão ao passar o mouse */
+    background-color: #D43B3B;
+    /* Cor do botão ao passar o mouse */
 }
 
 .button-active {
-    opacity: 1; /* Totalmente visível quando a rota está ativa */
+    opacity: 1;
+    /* Totalmente visível quando a rota está ativa */
 }
 
 .button-inactive {
-    opacity: 0.5; /* Menos visível quando a rota não está ativa */
-    cursor: not-allowed; /* Muda o cursor para indicar que não é interativo */
+    opacity: 0.5;
+    /* Menos visível quando a rota não está ativa */
+    cursor: not-allowed;
+    /* Muda o cursor para indicar que não é interativo */
 }
 
+/* Adicione uma classe para esconder os elementos ao invés de removê-los do DOM */
+.hidden {
+    display: none;
+}
+
+.planejamento-button {
+    background-color: #8b9298 !important;
+    color: #fff;
+    padding: 2px !important;
+    /* Padding mínimo */
+    font-size: 0.875rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100px !important;
+
+    &:hover {
+        background-color: #19B6DD !important;
+    }
+}

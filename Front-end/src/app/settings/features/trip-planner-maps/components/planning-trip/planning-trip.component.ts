@@ -35,7 +35,7 @@ export class PlanningTripComponent implements AfterViewInit {
   currentLocation: google.maps.LatLng | null = null; // Localização atual do usuário
   stepsArray: Step[] = []; // Array de etapas da rota
   totalDistance: number = 0; // Distância total da rota
-  inputsVisible: boolean = true; // Controla a visibilidade dos inputs
+  inputsVisible: boolean = false; // Controla a visibilidade dos inputs de localização
 
   private autocompleteStart!: google.maps.places.Autocomplete; // Autocomplete para a localização inicial
   private autocompleteEnd!: google.maps.places.Autocomplete; // Autocomplete para a localização final
@@ -100,9 +100,9 @@ export class PlanningTripComponent implements AfterViewInit {
     });
   }
 
-/**
- * Reseta os campos de entrada do autocomplete e reinicializa o autocomplete.
- */
+  /**
+   * Reseta os campos de entrada do autocomplete e reinicializa o autocomplete.
+   */
   resetAutocomplete() {
     // Limpa os valores das localizações inicial e final
     this.startLocation = null;
@@ -112,7 +112,7 @@ export class PlanningTripComponent implements AfterViewInit {
     if (this.startLocationInput && this.startLocationInput.nativeElement) {
       this.startLocationInput.nativeElement.value = '';
     }
-    
+
     if (this.endLocationInput && this.endLocationInput.nativeElement) {
       this.endLocationInput.nativeElement.value = '';
     }
@@ -128,14 +128,13 @@ export class PlanningTripComponent implements AfterViewInit {
 
     await new Promise(resolve => setTimeout(resolve, 200));
 
-
     if (!this.startLocation || !this.endLocation) {
       console.error('Por favor, selecione os locais de início e destino.');
       return;
     }
 
-    this.map.setCenter(this.startLocation); 
-    this.inputsVisible = false; 
+    this.map.setCenter(this.startLocation);
+    this.inputsVisible = false;
 
     try {
       await this.calculateRouteDistance(this.startLocation, this.endLocation);
@@ -148,6 +147,7 @@ export class PlanningTripComponent implements AfterViewInit {
     } catch (error) {
       console.error('Erro ao calcular a distância:', error);
     }
+  
   }
 
   /**
@@ -228,7 +228,6 @@ export class PlanningTripComponent implements AfterViewInit {
     }
   }
 
-
   /**
     * Inicia a rota entre a localização inicial e o destino selecionado.
     * @param destination Localização final da rota.
@@ -302,17 +301,16 @@ export class PlanningTripComponent implements AfterViewInit {
 
     // Reseta os campos de autocomplete
     this.resetAutocomplete();
-  
-  
+
+
     // Limpa o array de passos
     this.stepsArray.splice(0, this.stepsArray.length);
-  
+
     // Limpa os marcadores no mapa
     this.clearMarkers();
-  
+
     // Detecta mudanças no estado do componente
   }
-  
 
   /**
     * Limpa todos os marcadores do mapa.
@@ -323,4 +321,23 @@ export class PlanningTripComponent implements AfterViewInit {
     }
     this.markers = [];
   }
+
+  /**
+  * @description Alterna a visibilidade dos campos de entrada para a localização inicial e final,
+  * exibindo ou ocultando-os ao inverter o valor de `showInputs`.
+  * 
+  * @returns void
+  */
+  toggleInputs() {
+    this.inputsVisible = !this.inputsVisible;
+
+    // Limpa os campos de entrada quando os inputs são ocultados
+    if (this.inputsVisible) {
+      this.startLocation = null;
+      this.endLocation = null;
+      this.startLocationInput.nativeElement.value = '';
+      this.endLocationInput.nativeElement.value = '';
+    }
+  }
+
 }
