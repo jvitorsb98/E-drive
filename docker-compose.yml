@@ -1,4 +1,4 @@
-version: '3.3'
+
 
 services:
   backend:
@@ -22,9 +22,12 @@ services:
       context: ./Front-end  # Verifique se esse é o caminho correto para o diretório do frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80"  # Mapeando a porta 80 do contêiner para a porta 4200 do host
+      - "4200:4200"  # Mapeando a porta 80 do contêiner para a porta 4200 do host
     volumes:
       - ./Front-end:/app  # Mapeando o diretório do frontend para o container
+      - /app/node_modules  # Evitando sobreposição do diretório node_modules
+    environment:
+      - NODE_ENV=development
 
 volumes:
   db_data: {}
