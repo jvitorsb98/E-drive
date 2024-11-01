@@ -7,13 +7,8 @@
 /bazel-out
 
 # Ignora toda a pasta node_modules
-node_modules/*
 
-# Exceto a pasta @angular-devkit e seu conteúdo
-!node_modules/@angular-devkit
-!node_modules/@angular-devkit/**
-!node_modules/@angular
-!node_modules/@angular/**
+
 
 # IDEs and editors
 .idea/
