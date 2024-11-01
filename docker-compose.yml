@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  backend:
+    build:
+      context: ./Back-end  # Caminho correto para o diretório do backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - backend.env  # Referenciando o arquivo backend.env
+
+  db:
+    image: postgres:16
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file:
+      - db.env  # Referenciando o arquivo db.env
+
+  frontend:
+    build:
+      context: ./Front-end  # Verifique se esse é o caminho correto para o diretório do frontend
+      dockerfile: Dockerfile
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./Front-end:/app  # Mapeando o diretório do frontend para o container
+    environment:
+      - NODE_ENV=development
+
+volumes:
+  db_data: {}
