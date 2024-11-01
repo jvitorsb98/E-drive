@@ -11,11 +11,13 @@ import { IntroPageComponent } from '../intro-page.component';
 import { FragmentsModule } from '../../../core/fragments/fragments.module';
 import { SharedModule } from '../../../shared/shared.module';
 import { AngularMaterialModule } from '../../../angular-material/angular-material.module';
+import { TravelTipsComponent } from '../../TravelTips/components/travel-tips/travel-tips.component';
 
 @NgModule({
   declarations: [
     // IntroPage component
-    IntroPageComponent
+    IntroPageComponent,
+    TravelTipsComponent
   ],
   imports: [
     CommonModule,           // Modulo comum

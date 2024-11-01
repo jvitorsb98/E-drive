@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { IntroPageComponent } from './settings/features/intro-page/intro-page.component';
 import { authGuard } from './settings/core/security/guards/auth.guard';
 import { canMatchGuard } from './settings/core/security/guards/can-match.guard';
 
@@ -9,7 +8,8 @@ const routes: Routes = [
     path: 'e-driver',
     children: [
       {
-        path: 'intro-page', component: IntroPageComponent
+        path: 'intro-page',
+        loadChildren: () => import('./settings/features/intro-page/module/intro-page.module').then(m => m.IntroPageModule)
       },
       {
         path: 'login',
