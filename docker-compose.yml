@@ -22,11 +22,9 @@ services:
       context: ./Front-end  # Verifique se esse é o caminho correto para o diretório do frontend
       dockerfile: Dockerfile
     ports:
-      - "4200:4200"
+      - "80:80"  # Mapeando a porta 80 do contêiner para a porta 4200 do host
     volumes:
       - ./Front-end:/app  # Mapeando o diretório do frontend para o container
-    environment:
-      - NODE_ENV=development
 
 volumes:
   db_data: {}
