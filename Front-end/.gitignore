@@ -6,10 +6,13 @@
 /out-tsc
 /bazel-out
 
-# Node
-/node_modules
-npm-debug.log
-yarn-error.log
+# Ignora toda a pasta node_modules
+node_modules/*
+
+# Exceto a pasta @angular-devkit e seu conteúdo
+!node_modules/@angular-devkit
+!node_modules/@angular-devkit/**
+
 
 # IDEs and editors
 .idea/
