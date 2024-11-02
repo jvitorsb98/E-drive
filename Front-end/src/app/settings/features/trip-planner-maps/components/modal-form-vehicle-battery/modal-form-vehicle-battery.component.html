@@ -86,8 +86,8 @@
 
         <div class="col-12 col-md-6 mb-1 w-100">
           <mat-form-field class="custom-select w-100">
-            <mat-label>Saúde da bateria:</mat-label>
-            <input type="text" matInput formControlName="saudeBateria" aria-describedby="Help">
+            <mat-label>Saúde da bateria (%):</mat-label>
+            <input type="number" matInput formControlName="saudeBateria" aria-describedby="Help">
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
             <!-- Exibe mensagens de erro -->
@@ -106,8 +106,8 @@
         <!-- Campos adicionais -->
         <div class="col-12 col-md-6 w-100">
           <mat-form-field class="custom-select-bater w-100">
-            <mat-label>Bateria restante:</mat-label>
-            <input type="text" matInput formControlName="bateriaRestante" aria-describedby="Help" #bateriaRestanteInput>
+            <mat-label>Bateria restante (%):</mat-label>
+            <input type="number" matInput formControlName="bateriaRestante" aria-describedby="Help" #bateriaRestanteInput>
             <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
             <mat-error class="mat-error-text"
@@ -125,16 +125,18 @@
               O valor <strong>máximo é 100%</strong>
             </mat-error>
           </mat-form-field>
+          <!-- @if(vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('notANumber')){
+          <mat-error class="mat-error-text">O valor deve ser um <strong>número</strong></mat-error>
+          } -->
         </div>
-
       </div>
       @if(vehicleStatusBatteryForm.get('selectedVehicle')?.invalid &&
       vehicleStatusBatteryForm.get('bateriaRestante')?.valid){
       <mat-error class="mat-error-text-vehicle">Por favor, <strong>selecione um veículo.</strong></mat-error>
       }
       <div class="buttons-container py-3">
-        <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid" (click)="submitBatteryStatus()"
-          text="Simular "></app-ui-button>
+        <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
+          (click)="submitBatteryStatus()" text="Simular "></app-ui-button>
         <app-ui-button class="w-100 mb-0" typeBtn="outline-secondary" (click)="closeModal()"
           text="Cancelar"></app-ui-button>
       </div>
