@@ -20,15 +20,13 @@
 </div>
 
 <!-- Botão para alternar a exibição dos campos de entrada e do botão de rota, exibido apenas se isRouteActive for false -->
-<div class="icon-container" draggable="true" id="travelPlanningIcon" [hidden]="isRouteActive">
-  <button class="travel-planning-btn" (click)="toggleInputs()"> </button>
+<div *ngIf="!isRouteActive" class="icon-container" cdkDrag>
+  <button class="travel-planning-btn" (click)="toggleInputs()"></button>
 </div>
 
 <div #mapContainer id="map"></div>
 
-<!-- Botão de Cancelar Rota -->
-<div class="icon-container" draggable="true" id="travelPlanningIcon" [hidden]="!isRouteActive">
-  <button *ngIf="isRouteActive" class="travel-planning-cancel-btn"
-    (click)="cancelRoute()">
-  </button>
+<!-- Botão de Cancelar Rota, exibido apenas se isRouteActive for true -->
+<div class="icon-container" cdkDrag *ngIf="isRouteActive">
+  <button class="travel-planning-cancel-btn" (click)="cancelRoute()"></button>
 </div>
