@@ -4,6 +4,7 @@ import { MapService } from '../../../../core/services/map/map.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
 import { Step } from '../../../../core/models/step';
+
 /**
  * Componente para planejamento de viagens.
  * Este componente utiliza a API do Google Maps para fornecer funcionalidades de
@@ -61,6 +62,73 @@ export class PlanningTripComponent implements AfterViewInit {
     this.map = await this.mapService.initMap(this.mapContainer); // Inicializa o mapa no contêiner especificado
     this.initDirectionsService(); // Inicializa o serviço de direções
     this.initAutocomplete(); // Inicializa o autocomplete para os inputs de localização
+
+    /**
+     * Método que gerencia o comportamento de arrasto do ícone de planejamento de viagem.
+     * 
+     * @description Este método adiciona ouvintes de eventos ao ícone de planejamento de viagem, 
+     * permitindo que o usuário arraste o ícone em dispositivos móveis (iOS e Android) 
+     * e em desktops. O comportamento de arrasto é ativado ao mover o ícone além de um 
+     * limite mínimo de distância (threshold). 
+     *
+     * @param {HTMLDivElement} icon - O elemento HTML que representa o ícone de planejamento de viagem.
+     */
+    const travelPlanningIcon = document.getElementById('travelPlanningIcon') as HTMLDivElement;
+
+    let isDragging = false;
+    let offsetX: number, offsetY: number;
+
+    // Função para gerenciar o arrasto do ícone
+    const handleDrag = (e: MouseEvent | TouchEvent) => {
+      if (isDragging) {
+        const clientX = e instanceof TouchEvent ? e.touches[0].clientX : e.clientX;
+        const clientY = e instanceof TouchEvent ? e.touches[0].clientY : e.clientY;
+        travelPlanningIcon.style.left = (clientX - offsetX) + 'px';
+        travelPlanningIcon.style.top = (clientY - offsetY) + 'px';
+      }
+    };
+
+    // Detecta se é iOS ou Android para aplicar o tipo de evento adequado
+    const userAgent = navigator.userAgent || navigator.vendor;
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
+    const isAndroid = /Android/i.test(userAgent);
+
+    if (isIOS || isAndroid) {
+      // Eventos para iOS/Android (toque)
+      travelPlanningIcon.addEventListener('touchstart', (e: TouchEvent) => {
+        isDragging = true;
+        const touch = e.touches[0];
+        const style = window.getComputedStyle(travelPlanningIcon);
+        offsetX = touch.clientX - parseInt(style.left, 10);
+        offsetY = touch.clientY - parseInt(style.top, 10);
+      });
+
+      travelPlanningIcon.addEventListener('touchmove', handleDrag);
+
+      travelPlanningIcon.addEventListener('touchend', () => {
+        isDragging = false;
+      });
+    } else {
+      // Eventos para desktop (mouse)
+      travelPlanningIcon.addEventListener('mousedown', (e: MouseEvent) => {
+        isDragging = true;
+        const style = window.getComputedStyle(travelPlanningIcon);
+        offsetX = e.clientX - parseInt(style.left, 10);
+        offsetY = e.clientY - parseInt(style.top, 10);
+      });
+
+      travelPlanningIcon.addEventListener('mousemove', handleDrag);
+
+      travelPlanningIcon.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    }
+
+    // Previne o comportamento de arrasto do ícone ao clicar
+    travelPlanningIcon.addEventListener('click', (e: Event) => {
+      e.stopPropagation(); // Impede a propagação do evento de clique
+    });
+
   }
 
   /**
@@ -123,7 +191,6 @@ export class PlanningTripComponent implements AfterViewInit {
    * Planeja a viagem com base nas localizações selecionadas pelo usuário.
    */
   async planTrip() {
-
     await new Promise(resolve => setTimeout(resolve, 200));
 
     if (!this.startLocation || !this.endLocation) {
@@ -145,7 +212,7 @@ export class PlanningTripComponent implements AfterViewInit {
     } catch (error) {
       console.error('Erro ao calcular a distância:', error);
     }
-  
+
   }
 
   /**

@@ -93,27 +93,20 @@ export class MapStationsComponent implements AfterViewInit {
     }
 
     /**
- * Método que gerencia o comportamento de arrasto e clique do ícone de retorno à casa.
- * 
- * @description Este método adiciona ouvintes de eventos ao ícone de retorno, 
- * permitindo que o usuário arraste o ícone em dispositivos móveis (iOS e Android) 
- * e em desktops. O comportamento de arrasto é ativado ao mover o ícone além de um 
- * limite mínimo de distância (threshold). Além disso, o modal é aberto ao clicar 
- * no ícone, desde que não esteja em modo de arrasto.
- *
- * @param {HTMLDivElement} icon - O elemento HTML que representa o ícone de retorno.
- */
-    const icon = document.getElementById('returnHomeIcon') as HTMLDivElement;
+  * Método que gerencia o comportamento de arrasto do ícone de retorno à residência.
+  * 
+  * @description Este método adiciona ouvintes de eventos ao ícone de retorno à residência, 
+  * permitindo que o usuário arraste o ícone em dispositivos móveis (iOS e Android) 
+  * e em desktops. O comportamento de arrasto é ativado ao mover o ícone além de um 
+  * limite mínimo de distância (threshold).
+  *
+  * @param {HTMLDivElement} icon - O elemento HTML que representa o ícone de retorno à residência.
+  */
+    const icon = document.getElementById('returnHomeIcon') as HTMLDivElement; // ID do ícone de retorno à residência
 
     let isDragging = false;
     let startX: number, startY: number;
     let offsetX: number, offsetY: number;
-
-    const openSelectAddressModal = () => {
-      if (!isDragging) {
-        console.log("Modal aberto!"); // Substitua isso pela lógica para abrir o modal
-      }
-    };
 
     // Detecta se é iOS ou Android para aplicar o tipo de evento adequado
     const userAgent = navigator.userAgent || navigator.vendor;
@@ -141,10 +134,7 @@ export class MapStationsComponent implements AfterViewInit {
       });
 
       icon.addEventListener('touchend', () => {
-        if (!isDragging) {
-          openSelectAddressModal();
-        }
-        isDragging = false;
+        isDragging = false; // Reset após o arrasto
       });
     } else {
       // Eventos para desktop (mouse)
@@ -163,21 +153,15 @@ export class MapStationsComponent implements AfterViewInit {
         icon.style.top = (e.clientY - offsetY) + 'px';
       });
 
-      icon.addEventListener('mouseup', (e: MouseEvent) => {
-        if (!isDragging) {
-          openSelectAddressModal();
-        }
-        isDragging = false;
+      icon.addEventListener('mouseup', () => {
+        isDragging = false; // Reset após o arrasto
       });
     }
 
     // Evento para clique direto no ícone (evita propagação do arrasto)
     icon.addEventListener('click', (e: Event) => {
-      if (!isDragging) {
-        openSelectAddressModal();
-      }
       isDragging = false; // Reset após o clique
-      e.stopPropagation();
+      e.stopPropagation(); // Impede que o clique inicie o arrasto
     });
 
   }

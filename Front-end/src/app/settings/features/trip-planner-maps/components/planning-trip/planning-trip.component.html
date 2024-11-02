@@ -4,31 +4,31 @@
   </div>
 </div>
 
-<!-- Contêiner para os inputs e botões exibidos sobre o mapa. Aparece apenas quando isRouteActivate é false -->
 <div class="input-overlay">
-  <!-- Inputs de localização inicial e final, ocultados por uma classe CSS quando showInputs é false -->
-  <div [ngClass]="{'hidden': !inputsVisible}">
-    <!-- Campo para seleção do local de partida -->
-    <input #startLocationInput class="mb-1" id="startLocation" type="text" placeholder="Escolha o local de partida" />
+  <div [ngClass]="{'d-flex align-items-start': inputsVisible, 'hidden': !inputsVisible}">
+    <!-- Contêiner para os inputs, dispostos em coluna -->
+    <div class="d-flex flex-column flex-grow-1">
+      <input #startLocationInput class="mb-1" id="startLocation" type="text" placeholder="Escolha o local de partida" />
+      <input #endLocationInput class="mb-3" id="endLocation" type="text" placeholder="Escolha o local de destino" />
+    </div>
 
-    <!-- Campo para seleção do local de destino -->
-    <input #endLocationInput class="mb-1" id="endLocation" type="text" placeholder="Escolha o local de destino" />
-
-    <!-- Botão para traçar a rota entre os pontos de partida e destino -->
-    <button class="w-100" (click)="planTrip()">Traçar Rota</button>
+    <!-- Botão para traçar a rota ao lado dos inputs -->
+    <button class="route-button ms-2" (click)="planTrip()">
+      <mat-icon>route</mat-icon>
+    </button>
   </div>
-
-  <!-- Botão para alternar a exibição dos campos de entrada e do botão de rota -->
-  <button class="planejamento-button container-fluid mb-1" (click)="toggleInputs()">
-    <mat-icon>route</mat-icon>
-  </button>
 </div>
 
-<!-- Container do Mapa -->
+<!-- Botão para alternar a exibição dos campos de entrada e do botão de rota, exibido apenas se isRouteActive for false -->
+<div class="icon-container" draggable="true" id="travelPlanningIcon" [hidden]="isRouteActive">
+  <button class="travel-planning-btn" (click)="toggleInputs()"> </button>
+</div>
+
 <div #mapContainer id="map"></div>
 
 <!-- Botão de Cancelar Rota -->
-<button *ngIf="isRouteActive" class="cancel-route-button"
-  [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" (click)="cancelRoute()">
-  Cancelar Rota
-</button>
+<div class="icon-container" draggable="true" id="travelPlanningIcon" [hidden]="!isRouteActive">
+  <button *ngIf="isRouteActive" class="travel-planning-cancel-btn"
+    (click)="cancelRoute()">
+  </button>
+</div>
