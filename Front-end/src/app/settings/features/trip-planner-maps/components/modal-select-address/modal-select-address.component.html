@@ -82,7 +82,7 @@
 
           <div *ngIf="input.value.length != 0">
             <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell no-data" colspan="4" *ngIf="input.value && !addresses.length">
+              <td class="mat-cell no-data" colspan="4" *ngIf="input.value">
                 Não foram encontrados dados para a pesquisa: "{{ input.value }}"
               </td>
             </tr>
