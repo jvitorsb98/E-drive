@@ -2,13 +2,15 @@
   <div class="col-12">
     <div class="header-container">
       <div class="ps-2">
-        <mat-icon (click)="closeModal()">arrow_back</mat-icon>
+        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
       </div>
 
       <h1 class="titulo">Simular Rota</h1>
 
-      <button (click)="openFAQModal()" class="btn">
-        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+      <button class="icon" mat-icon-button (click)="openFAQModal()">
+        <mat-icon>help_outline</mat-icon>
       </button>
     </div>
 

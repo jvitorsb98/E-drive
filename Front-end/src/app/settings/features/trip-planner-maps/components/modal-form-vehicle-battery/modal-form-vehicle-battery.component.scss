@@ -11,6 +11,17 @@
   flex-direction: column;
 }
 
+.icon {
+  color: #000; // Cor padrão do ícone
+  transition: color 0.3s, box-shadow 0.3s; // Adiciona uma transição suave para cor e sombra
+
+  &:hover {
+    cursor: pointer;
+    color: #19B6DD; // Cor do ícone quando o mouse passa sobre ele
+    box-shadow: 0px 0px 5px 3px rgba(25, 182, 221, 0.5); // Efeito de sombra suave
+  }
+}
+
 .content {
   display: flex;
   flex-direction: column; // Permite que os campos do formulário sejam empilhados
@@ -32,8 +43,8 @@
   margin-bottom: -5px; // Ajusta o espaço abaixo do último input
 }
 
-.custom-select-bater{
-  margin-bottom: -15px; 
+.custom-select-bater {
+  margin-bottom: -15px;
 }
 
 .hidden {

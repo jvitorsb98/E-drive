@@ -46,7 +46,7 @@ export class MapStationsComponent implements AfterViewInit {
   currentPlace: google.maps.places.PlaceResult | null = null;
   openNow: any = false; // Status de abertura da estação
   isRouteActive = false; // Flag para verificar se a rota está ativa
-  isAddressOpen = false;;
+  isAddressOpen = false;
   isModalOpen = false; // Estado do modal principal
   isDetailsModalOpen = false; // Estado do modal de detalhes
   modalTitle = ''; // Título do modal principal
