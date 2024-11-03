@@ -2,13 +2,15 @@
   <div class="col-12">
     <div class="header-container">
       <div class="ps-2">
-        <mat-icon (click)="cancel()">arrow_back</mat-icon>
+        <button class="icon" mat-icon-button aria-label="Back" (click)="closeModal()">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
       </div>
 
       <h1 class="titulo">Selecionar Endereço</h1>
 
-      <button (click)="openFAQModal()" class="btn">
-        <img class="filtro" src="../../../../../../assets/images/pergunta-para-fazer-login-em-circulos.svg" alt="Filto">
+      <button class="icon" mat-icon-button (click)="openFAQModal()">
+        <mat-icon>help_outline</mat-icon>
       </button>
     </div>
 
@@ -92,7 +94,7 @@
     <div class="buttons-container py-3">
       <app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" [disabled]="!selectedAddress"
         (click)="confirmAddress()" text="Confirmar "></app-ui-button>
-      <app-ui-button class="w-100 mb-0" typeBtn="outline-secondary" (click)="cancel()" text="Cancelar"></app-ui-button>
+      <app-ui-button class="w-100 mb-0" typeBtn="outline-secondary" (click)="closeModal()" text="Cancelar"></app-ui-button>
     </div>
   </div>
 </div>

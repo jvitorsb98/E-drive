@@ -36,6 +36,17 @@
   width: 20px;
 }
 
+.icon {
+  color: #000; // Cor padrão do ícone
+  transition: color 0.3s, box-shadow 0.3s; // Adiciona uma transição suave para cor e sombra
+
+  &:hover {
+    cursor: pointer;
+    color: #19B6DD; // Cor do ícone quando o mouse passa sobre ele
+    box-shadow: 0px 0px 5px 3px rgba(25, 182, 221, 0.5); // Efeito de sombra suave
+  }
+}
+
 .hover:hover {
   cursor: pointer;
 }

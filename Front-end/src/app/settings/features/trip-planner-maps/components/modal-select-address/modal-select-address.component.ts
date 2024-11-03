@@ -76,8 +76,8 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
   /**
    * Método para cancelar a seleção e fechar o diálogo.
    */
-  cancel(): void {
-    this.dialogRef.close(); // Fecha o diálogo sem retornar dados
+  closeModal(): void {
+    this.dialogRef.close();// Fecha o diálogo sem retornar dados
   }
 
   /**

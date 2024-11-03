@@ -5,8 +5,7 @@
 </div>
 
 <div class="icon-container" draggable="true" id="returnHomeIcon">
-  <button *ngIf="!isRouteActive && !isModalOpen && !isAddressOpen" (click)="openSelectAddressModal()"
-    class="return-home-btn"></button>
+  <button *ngIf="!isRouteActive && !isAddressOpen" (click)="openSelectAddressModal()" class="return-home-btn"></button>
 </div>
 
 <!-- Container do Mapa -->
@@ -68,13 +67,11 @@
         detailsModalOpenStatus }}</p>
     </div>
   </div>
-
-
-
 </div>
 
 <!-- Botão de Cancelar Rota -->
-<button *ngIf="isRouteActive" class="cancel-route-button"
-  [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" (click)="cancelRoute()">
-  Cancelar Rota
-</button>
+<div class="icon-container">
+  <button class="travel-planning-cancel-btn" *ngIf="isRouteActive"
+    [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" (click)="cancelRoute()">
+  </button>
+</div>
