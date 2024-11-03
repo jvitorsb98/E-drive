@@ -4,7 +4,7 @@
   </div>
 </div>
 
-<div class="icon-container" draggable="true" id="returnHomeIcon">
+<div class="icon-container" cdkDrag>
   <button *ngIf="!isRouteActive && !isAddressOpen" (click)="openSelectAddressModal()" class="return-home-btn"></button>
 </div>
 
@@ -70,7 +70,7 @@
 </div>
 
 <!-- Botão de Cancelar Rota -->
-<div class="icon-container">
+<div class="icon-container" cdkDrag>
   <button class="travel-planning-cancel-btn" *ngIf="isRouteActive"
     [ngClass]="{'button-active': isRouteActive, 'button-inactive': !isRouteActive}" (click)="cancelRoute()">
   </button>

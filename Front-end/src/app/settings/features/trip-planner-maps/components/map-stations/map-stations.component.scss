@@ -2,7 +2,6 @@
 @import './scss/map-stations.modal.scss';
 @import './scss/map-stations.details-modal.scss';
 
-
 /* Global Styles */
 html,
 body {
@@ -11,7 +10,6 @@ body {
     padding: 0;
 }
 
-
 .top-bar {
     position: fixed;
     width: 100%;
@@ -19,7 +17,6 @@ body {
     padding: 1.2rem 0;
     z-index: 100;
 }
-
 
 .cancel-route-button {
     position: absolute; /* Para posicionamento absoluto */
