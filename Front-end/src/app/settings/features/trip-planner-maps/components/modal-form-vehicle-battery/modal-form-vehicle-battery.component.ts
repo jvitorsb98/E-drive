@@ -1,10 +1,10 @@
 import { UserVehicle } from './../../../../core/models/user-vehicle';
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UserVehicleService } from '../../../../core/services/user/uservehicle/user-vehicle.service';
 import { IApiResponse } from '../../../../core/models/api-response';
-import { forkJoin, map } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { VehicleService } from '../../../../core/services/vehicle/vehicle.service';
 import { Vehicle } from '../../../../core/models/vehicle';
 import { FaqPopupComponent } from '../../../../core/fragments/faq-popup/faq-popup.component';
@@ -12,9 +12,11 @@ import { numberValidator } from '../../../../shared/validators/number-validator'
 import { MatTableDataSource } from '@angular/material/table';
 import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
 import { Step } from '../../../../core/models/step';
-import Swal from 'sweetalert2';
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
 import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
 
 /**
  * Componente modal para gerenciar o status da bateria do veículo.
@@ -33,6 +35,18 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   userVehicleDetails: IVehicleWithUserVehicle[] = []; // Detalhes dos veículos do usuário
   isStation: boolean = false; // Indica se o modal é para uma estação
 
+  // config de paginacao e ordenacao da tabela
+  total: number = 0; // Total de enderecos disponíveis
+  pageIndex: number = 0; // Índice da página atual
+  pageSize: number = 5; // Tamanho da página
+  currentPage: number = 0; // Página atual
+  isFilterActive: boolean = false; // Indica se o filtro está ativo
+  filteredData: IVehicleWithUserVehicle[] = []; // Dados filtrados
+  searchKey: any; // Chave de busca para filtro
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
+
   /**
    * Construtor do componente.
    * @param formBuilder Serviço para construção de formulários reativos.
@@ -50,7 +64,6 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private alertasService: AlertasService,
     private tripPlannerMapsService: TripPlannerMapsService,
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
@@ -145,17 +158,76 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   }
 
   /**
-   * Aplica um filtro à tabela com base na entrada do usuário.
-   * @param event Evento disparado pela entrada do filtro.
-   */
+    * Aplica um filtro na lista de veículos com base na entrada do usuário.
+    *
+    * @param {Event} event - Evento de entrada do usuário.
+    */
   applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase(); // Aplica o filtro
+    try {
+      this.isFilterActive = true;
+      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.searchKey = event;
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage(); // Retorna à primeira página se houver paginação
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
+
+      this.userVehicleService.listAll(0, this.total)
+        .pipe(
+          catchError((error) => {
+            this.alertasService.showError("Erro !!", error.message);
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<UserVehicle> | never[]) => {
+          if (Array.isArray(response)) {
+            // Verifica se o retorno é um array vazio
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            //TODO - melhorar esse filtro
+            this.userVehicleList = response.content;
+
+            // Filtra os veículos que estão ativados
+            const activeVehicles = this.userVehicleList.filter(vehicle => vehicle.activated);
+
+            // Cria um array de observables para buscar detalhes dos veículos ativados
+            const vehicleDetailsObservables = activeVehicles.map(userVehicle =>
+              this.vehicleService.getVehicleDetails(userVehicle.vehicleId).pipe(
+                map((vehicle: Vehicle) => ({ vehicle, userVehicle }))
+              )
+            );
+
+            //  Usa forkJoin para esperar até que todas as requisições estejam completas
+            forkJoin(vehicleDetailsObservables).subscribe((vehiclesWithUserVehicles) => {
+              // Atualiza os dados com veículo e informações de UserVehicle
+              this.userVehicleDetails = vehiclesWithUserVehicles.map(({ vehicle, userVehicle }) => {
+                return {
+                  ...vehicle,
+                  userVehicle // Inclui o UserVehicle no veículo
+                };
+              });
+
+              this.filteredData = this.userVehicleDetails.filter(vehicle =>
+                vehicle.model.name.toLowerCase().includes(filterValue) ||
+                vehicle.version.toLowerCase().includes(filterValue) ||
+                vehicle.model.brand.name.toLowerCase().includes(filterValue));
+
+              if (this.filteredData.length > 0) {
+                this.dataSource.data = this.filteredData;
+                this.dataSource.paginator = this.paginator;
+                this.dataSource.sort = this.sort;
+              } else {
+                this.dataSource.data = [];
+              }
+            });
+          }
+        });
+    } catch (error: any) {
+      this.alertasService.showError("Erro !!", error.message);
     }
-    console.log("Filtro aplicado:", filterValue);
   }
 
   /**
@@ -206,21 +278,21 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
               // Cria as linhas da tabela com os dados dos postos de carregamento
               const rows = Array.from(chargingStationsMap.entries()).map(([posto, currentBatteryPercentage]) => {
                 const displayName = posto.name.toLowerCase() === "estação de carregamento para veículos elétricos".toLowerCase() ? "Posto" : posto.name;
-            
+
                 // Extraindo o endereço e removendo o CEP e o país
-                const addressParts = posto.formatted_address.split(','); 
+                const addressParts = posto.formatted_address.split(',');
                 const filteredAddress = addressParts.slice(0, -2).join(',').trim(); // Remove as últimas duas partes (CEP e país)
-            
+
                 return [
-                    displayName,
-                    filteredAddress,
-                    `${currentBatteryPercentage.toFixed(2)}%`,
+                  displayName,
+                  filteredAddress,
+                  `${currentBatteryPercentage.toFixed(2)}%`,
                 ];
-            });
-            
+              });
 
 
-            const message = `Você precisará passar por ${chargingStationsMap.size} posto${chargingStationsMap.size > 1 ? 's' : ''}
+
+              const message = `Você precisará passar por ${chargingStationsMap.size} posto${chargingStationsMap.size > 1 ? 's' : ''}
              de carregamento para chegar ao destino com ${batteryPercentageAfterTrip.toFixed(2)}% de bateria.`;
 
               // Exibe o alerta com a tabela
