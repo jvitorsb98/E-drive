@@ -36,7 +36,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   isStation: boolean = false; // Indica se o modal é para uma estação
 
   // config de paginacao e ordenacao da tabela
-  total: number = 0; // Total de enderecos disponíveis
+  totalVehicles: number = 0; // Total de enderecos disponíveis
   pageIndex: number = 0; // Índice da página atual
   pageSize: number = 5; // Tamanho da página
   currentPage: number = 0; // Página atual
@@ -172,7 +172,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
         this.dataSource.paginator.firstPage();
       }
 
-      this.userVehicleService.listAll(0, this.total)
+      this.userVehicleService.listAll(0, this.totalVehicles)
         .pipe(
           catchError((error) => {
             this.alertasService.showError("Erro !!", error.message);
