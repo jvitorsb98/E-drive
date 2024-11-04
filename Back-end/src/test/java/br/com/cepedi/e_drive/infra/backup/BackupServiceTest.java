@@ -1,0 +1,74 @@
+//package br.com.cepedi.e_drive.infra.backup;
+//
+//import static org.mockito.Mockito.*;
+//import org.junit.Before;
+//import org.junit.Test;
+//import org.mockito.Mock;
+//import org.mockito.MockitoAnnotations;
+//import org.springframework.test.util.ReflectionTestUtils;
+//
+//import java.io.BufferedReader;
+//import java.io.ByteArrayInputStream;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.InputStreamReader;
+//
+//public class BackupServiceTest {
+//
+//    @Mock
+//    private ProcessBuilder mockProcessBuilder;
+//
+//    @Mock
+//    private Process mockProcess;
+//
+//    private BackupService backupService;
+//
+//    @Before
+//    public void setUp() throws Exception {
+//        MockitoAnnotations.initMocks(this);
+//        backupService = new BackupService();
+//        ReflectionTestUtils.setField(backupService, "user", "testUser");
+//        ReflectionTestUtils.setField(backupService, "password", "testPassword");
+//    }
+//
+//    @Test
+//    public void testSuccessfulBackup() throws IOException, InterruptedException {
+//        when(mockProcessBuilder.start()).thenReturn(mockProcess);
+//        when(mockProcess.getInputStream()).thenReturn(new ByteArrayInputStream("Backup realizado com sucesso.".getBytes()));
+//        when(mockProcess.getErrorStream()).thenReturn(new ByteArrayInputStream("".getBytes()));
+//        when(mockProcess.waitFor()).thenReturn(0);
+//
+//        backupService.performBackup();
+//
+//        verify(mockProcessBuilder).start();
+//        verify(mockProcess).waitFor();
+//    }
+//
+//    @Test
+//    public void testFailedBackup() throws IOException, InterruptedException {
+//        when(mockProcessBuilder.start()).thenReturn(mockProcess);
+//        when(mockProcess.getInputStream()).thenReturn(new ByteArrayInputStream("".getBytes()));
+//        when(mockProcess.getErrorStream()).thenReturn(new ByteArrayInputStream("Erro ao realizar o backup".getBytes()));
+//        when(mockProcess.waitFor()).thenReturn(1);
+//
+//        backupService.performBackup();
+//
+//        verify(mockProcessBuilder).start();
+//        verify(mockProcess).waitFor();
+//    }
+//
+//    @Test(expected = IOException.class)
+//    public void testIOException() throws IOException, InterruptedException {
+//        when(mockProcessBuilder.start()).thenThrow(new IOException("Error during process start"));
+//
+//        backupService.performBackup();
+//    }
+//
+//    @Test(expected = InterruptedException.class)
+//    public void testInterruptedException() throws IOException, InterruptedException {
+//        when(mockProcessBuilder.start()).thenReturn(mockProcess);
+//        when(mockProcess.waitFor()).thenThrow(new InterruptedException("Process interrupted"));
+//
+//        backupService.performBackup();
+//    }
+//}

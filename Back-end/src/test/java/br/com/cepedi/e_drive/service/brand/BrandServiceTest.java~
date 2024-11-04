@@ -240,15 +240,15 @@ class BrandServiceTest {
     @DisplayName("Should register a brand successfully")
     void register_Valid_BrandRegistered() {
         // Arrange
-        DataRegisterBrand dataRegisterBrand = new DataRegisterBrand("brandName");
-        doNothing().when(brandValidationRegisterList).forEach(any()); 
+        DataRegisterBrand dataRegisterBrand = new DataRegisterBrand("brandName", "brandDescription"); // Provide valid parameters
+        doNothing().when(brandValidationRegisterList).forEach(any()); // Mocking the behavior of validators
 
         // Act
         brandService.register(dataRegisterBrand);
 
         // Assert
-        verify(brandValidationRegisterList, times(1)).forEach(any()); 
-        verify(brandRepository, times(1)).save(any());
+        verify(brandValidationRegisterList, times(1)).forEach(any()); // Verify that the validation was called
+        verify(brandRepository, times(1)).save(any()); // Verify that the repository's save method was called
     }
 
 
