@@ -1,14 +1,25 @@
+// Importa os módulos principais do Angular
 import { Component, ElementRef, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+
+// Importa o serviço de planejamento de viagem que contém a lógica para calcular rotas e distâncias
 import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
+
+// Importa o serviço de mapa, responsável por carregar e inicializar o mapa do Google
 import { MapService } from '../../../../core/services/map/map.service';
+
+// Importa o módulo de diálogo do Angular Material para criar modais
 import { MatDialog } from '@angular/material/dialog';
+
+// Importa o componente do modal para adicionar informações sobre a bateria do veículo
 import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/modal-form-vehicle-battery.component';
+
+// Importa a interface Step que representa uma etapa na rota
 import { Step } from '../../../../core/models/step';
 
 /**
- * Componente para planejamento de viagens.
- * Este componente utiliza a API do Google Maps para fornecer funcionalidades de
- * mapeamento, geocodificação e planejamento de rotas.
+ * @description Componente responsável pela funcionalidade de planejamento de viagem,
+ * incluindo a visualização do mapa, o autocomplete de localizações e a interação com
+ * estações de carregamento.
  */
 @Component({
   selector: 'app-planning-trip',
@@ -54,9 +65,9 @@ export class PlanningTripComponent implements AfterViewInit {
   ) { }
 
   /**
-   * Método chamado após a inicialização da visualização do componente.
-   * Carrega o script do Google Maps e inicializa o mapa e serviços relacionados.
-   */
+  * @description Método chamado após a inicialização da visualização do componente.
+  * Carrega o script do Google Maps e inicializa o mapa e serviços relacionados.
+  */
   async ngAfterViewInit() {
     await this.mapService.loadGoogleMapsScript(); // Carrega o script da API do Google Maps
     this.map = await this.mapService.initMap(this.mapContainer); // Inicializa o mapa no contêiner especificado
@@ -65,7 +76,8 @@ export class PlanningTripComponent implements AfterViewInit {
   }
 
   /**
-   * Inicializa o serviço de direções e configura o renderizador.
+   * @description Inicializa o serviço de direções e configura o renderizador.
+   * Cria instâncias do renderizador e do serviço de direções e associa o renderizador ao mapa.
    */
   private initDirectionsService() {
     this.directionsRenderer = new google.maps.DirectionsRenderer(); // Cria uma nova instância do renderizador de direções
@@ -74,10 +86,10 @@ export class PlanningTripComponent implements AfterViewInit {
   }
 
   /**
-   * Inicializa os campos de autocomplete para as localizações inicial e final.
+   * @description Inicializa os campos de autocomplete para as localizações inicial e final.
+   * Adiciona ouvintes de eventos para atualizar as localizações ao selecionar um lugar.
    */
   async initAutocomplete() {
-
     const startInput = this.startLocationInput.nativeElement; // Obtém o elemento DOM do input inicial
     const endInput = this.endLocationInput.nativeElement; // Obtém o elemento DOM do input final
 
@@ -100,8 +112,9 @@ export class PlanningTripComponent implements AfterViewInit {
   }
 
   /**
-   * Reseta os campos de entrada do autocomplete e reinicializa o autocomplete.
-   */
+ * @description Reseta os campos de entrada do autocomplete e reinicializa o autocomplete.
+ * Limpa os valores das localizações inicial e final, e reinicializa os campos de autocomplete.
+ */
   resetAutocomplete() {
     // Limpa os valores das localizações inicial e final
     this.startLocation = null;
@@ -116,122 +129,128 @@ export class PlanningTripComponent implements AfterViewInit {
       this.endLocationInput.nativeElement.value = '';
     }
 
-    // // Reinicializa o autocomplete para ambos os campos
+    // Reinicializa o autocomplete para ambos os campos
     this.initAutocomplete();
   }
 
   /**
-   * Planeja a viagem com base nas localizações selecionadas pelo usuário.
+   * @description Planeja a viagem com base nas localizações selecionadas pelo usuário.
+   * @async
+   * @returns {Promise<void>} Retorna uma Promise que é resolvida após o planejamento da viagem.
    */
   async planTrip() {
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise(resolve => setTimeout(resolve, 200)); // Simula um atraso de 200ms
 
     if (!this.startLocation || !this.endLocation) {
       console.error('Por favor, selecione os locais de início e destino.');
       return;
     }
 
-    this.map.setCenter(this.startLocation);
-    this.inputsVisible = false;
+    this.map.setCenter(this.startLocation); // Centraliza o mapa na localização inicial
+    this.inputsVisible = false; // Oculta os inputs de localização
 
     try {
-      await this.calculateRouteDistance(this.startLocation, this.endLocation);
+      await this.calculateRouteDistance(this.startLocation, this.endLocation); // Calcula a distância da rota
       this.setCurrentPlace({
-        address: this.endLocation?.toString() || '',
-        lat: this.endLocation?.lat() || 0,
-        lng: this.endLocation?.lng() || 0
+        address: this.endLocation?.toString() || '', // Define o endereço do local final
+        lat: this.endLocation?.lat() || 0, // Define a latitude do local final
+        lng: this.endLocation?.lng() || 0  // Define a longitude do local final
       });
-      this.openModalAddVehicleBattery();
+      this.openModalAddVehicleBattery(); // Abre o modal para adicionar a bateria do veículo
     } catch (error) {
-      console.error('Erro ao calcular a distância:', error);
+      console.error('Erro ao calcular a distância:', error); // Loga o erro se ocorrer
     }
-
   }
 
   /**
-   * Abre um modal para adicionar informações sobre a bateria do veículo.
-   */
+  * @description Abre um modal para adicionar informações sobre a bateria do veículo.
+  * Este modal permite que o usuário insira dados relacionados à bateria em uma estação de carregamento.
+  */
   private openModalAddVehicleBattery() {
     const chargingStationDialogRef = this.dialog.open(ModalFormVehicleBatteryComponent, {
-      width: '480px',
-      height: '530px',
+      width: '480px', // Largura do modal
+      height: '530px', // Altura do modal
       data: {
-        stepsArray: this.stepsArray,
-        place: this.startLocation,
-        isStation: false
+        stepsArray: this.stepsArray, // Passa o array de etapas para o modal
+        place: this.startLocation, // Passa a localização inicial para o modal
+        isStation: false // Indica que não é uma estação de carregamento
       },
     });
 
     chargingStationDialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.handleVehicleBatteryModalClose(result.chargingStations);
+        this.handleVehicleBatteryModalClose(result.chargingStations); // Chama o método para lidar com o fechamento do modal
       }
     });
   }
 
   /**
-   * Lida com o fechamento do modal e adiciona marcadores das estações de carregamento no mapa.
-   * @param chargingStations Lista das estações de carregamento selecionadas pelo usuário.
+   * @description Lida com o fechamento do modal e adiciona marcadores das estações de carregamento no mapa.
+   * @param {any} chargingStations - Lista das estações de carregamento selecionadas pelo usuário.
+   * @returns {void}
    */
   private handleVehicleBatteryModalClose(chargingStations: any) {
-    const destination = this.currentPlace?.geometry?.location;
+    const destination = this.currentPlace?.geometry?.location; // Obtém a localização do destino atual
 
     this.directionsRenderer.setOptions({
-      suppressMarkers: true,
+      suppressMarkers: true, // Suprime marcadores padrão
       polylineOptions: {
-        strokeColor: '#19B6DD',
+        strokeColor: '#19B6DD', // Define a cor da polilinha
       },
     });
 
     if (destination) {
-      this.initiateRoute(destination);
-      this.addChargingStationMarkers(chargingStations);
+      this.initiateRoute(destination); // Inicia a rota com o destino
+      this.addChargingStationMarkers(chargingStations); // Adiciona marcadores para as estações de carregamento
     } else {
-      console.error('Localização do destino não disponível.');
+      console.error('Localização do destino não disponível.'); // Loga um erro se a localização do destino não estiver disponível
     }
   }
 
   /**
-   * Adiciona marcadores das estações de carregamento no mapa.
-   * @param chargingStations Lista das estações de carregamento a serem adicionadas como marcadores.
-   */
-  private addChargingStationMarkers(chargingStations: any) {
+  * @description Adiciona marcadores das estações de carregamento no mapa.
+  * @param {any[]} chargingStations - Lista das estações de carregamento a serem adicionadas como marcadores.
+  * Cada estação deve conter dados geocodificados com uma propriedade 'geometry' que inclui 'location'.
+  * @returns {void}
+  */
+  private addChargingStationMarkers(chargingStations: any[]) {
     console.log("OLA", chargingStations);
 
     try {
       chargingStations.forEach((station: any) => {
+        // Verifica se a estação contém a geometria e a localização
         if (station.geometry && station.geometry.location) {
           const position = new google.maps.LatLng(
             station.geometry.location.lat(),
             station.geometry.location.lng()
           );
 
+          // Cria um marcador para a estação de carregamento
           const marker = new google.maps.Marker({
             position: position,
-            map: this.map,
-            title: 'Estação de Carregamento',
+            map: this.map, // Mapa onde o marcador será exibido
+            title: 'Estação de Carregamento', // Título exibido ao passar o mouse sobre o marcador
             icon: {
-              url: "../../../../assets/images/station_open.svg",
-              scaledSize: new google.maps.Size(30, 30)
+              url: "../../../../assets/images/station_open.svg", // Caminho para o ícone da estação
+              scaledSize: new google.maps.Size(30, 30) // Tamanho escalado do ícone
             }
           });
-          this.markers.push(marker);
+          this.markers.push(marker); // Adiciona o marcador ao array de marcadores
         } else {
-          console.error('Estação de carregamento inválida:', station);
+          console.error('Estação de carregamento inválida:', station); // Loga erro se a estação não for válida
         }
       });
-
     } catch (error) {
-      console.error('Erro ao adicionar marcadores de estações de carregamento:', error);
+      console.error('Erro ao adicionar marcadores de estações de carregamento:', error); // Loga erro no bloco catch
     }
   }
 
   /**
-    * Inicia a rota entre a localização inicial e o destino selecionado.
-    * @param destination Localização final da rota.
-    */
+   * @description Inicia a rota entre a localização inicial e o destino selecionado.
+   * @param {google.maps.LatLng} destination - Localização final da rota.
+   * @returns {void}
+   */
   private initiateRoute(destination: google.maps.LatLng) {
-
     if (!this.startLocation) {
       console.error('Localização do usuário não disponível.');
       return;
@@ -240,85 +259,85 @@ export class PlanningTripComponent implements AfterViewInit {
     const request: google.maps.DirectionsRequest = {
       origin: this.startLocation,
       destination: destination,
-      travelMode: google.maps.TravelMode.DRIVING,
+      travelMode: google.maps.TravelMode.DRIVING, // Define o modo de viagem como direção
     };
 
     this.directionsService.route(request, (result, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
-        this.directionsRenderer.setDirections(result);
-        this.directionsRenderer.setMap(this.map);
-        this.isRouteActive = true;
+        this.directionsRenderer.setDirections(result); // Define as direções no renderizador
+        this.directionsRenderer.setMap(this.map); // Exibe o mapa com as direções
+        this.isRouteActive = true; // Indica que a rota está ativa
       } else {
-        console.error('Erro ao iniciar a rota:', status);
+        console.error('Erro ao iniciar a rota:', status); // Loga um erro se a rota não puder ser iniciada
       }
     });
   }
 
   /**
-    * Define a localização atual com base nos dados geocodificados recebidos.
-    * @param geocodedData Dados geocodificados contendo endereço e coordenadas.
-    */
+   * @description Define a localização atual com base nos dados geocodificados recebidos.
+   * @param {Object} geocodedData - Dados geocodificados contendo endereço e coordenadas.
+   * @param {string} geocodedData.address - Endereço geocodificado.
+   * @param {number} geocodedData.lat - Latitude da localização geocodificada.
+   * @param {number} geocodedData.lng - Longitude da localização geocodificada.
+   * @returns {void}
+   */
   private setCurrentPlace(geocodedData: { address: string; lat: number; lng: number }) {
     this.currentPlace = {
       geometry: {
         location: new google.maps.LatLng(geocodedData.lat, geocodedData.lng),
       },
-      name: geocodedData.address,
+      name: geocodedData.address, // Define o nome do lugar
     };
   }
 
   /**
-    * Calcula a distância da rota entre duas localizações usando um serviço externo.
-    * @param startLocation Localização inicial da rota.
-    * @param destination Localização final da rota.
-    * @returns Promise que resolve quando a distância é calculada com sucesso ou rejeita em caso de erro.
-    */
+   * @description Calcula a distância da rota entre duas localizações usando um serviço externo.
+   * @param {google.maps.LatLng} startLocation - Localização inicial da rota.
+   * @param {google.maps.LatLng} destination - Localização final da rota.
+   * @returns {Promise<void>} Promise que resolve quando a distância é calculada com sucesso ou rejeita em caso de erro.
+   */
   private calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng): Promise<void> {
     return new Promise((resolve, reject) => {
       this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
         .then(({ steps, totalDistance }) => {
-          this.stepsArray = steps;
-          this.totalDistance = Number(totalDistance);
-          resolve();
+          this.stepsArray = steps; // Armazena os passos da rota
+          this.totalDistance = Number(totalDistance); // Armazena a distância total
+          resolve(); // Resolve a promise
         })
         .catch(error => {
-          console.error(error);
-          reject(error);
+          console.error(error); // Loga um erro se a distância não puder ser calculada
+          reject(error); // Rejeita a promise
         });
     });
   }
 
   /**
-    * Cancela a rota atual e limpa os marcadores no mapa.
-    */
+   * @description Cancela a rota atual e limpa os marcadores no mapa.
+   * @returns {void}
+   */
   cancelRoute() {
-    // Desativa o renderizador de direções
-    this.directionsRenderer.setMap(null);
-    this.isRouteActive = false;
-    this.cdr.detectChanges();
+    this.directionsRenderer.setMap(null); // Desativa o renderizador de direções
+    this.isRouteActive = false; // Define que a rota não está mais ativa
+    this.cdr.detectChanges(); // Detecta mudanças no estado do componente
 
-    // Reseta os campos de autocomplete
-    this.resetAutocomplete();
+    this.resetAutocomplete(); // Reseta os campos de autocomplete
 
+    this.stepsArray.splice(0, this.stepsArray.length); // Limpa o array de passos
 
-    // Limpa o array de passos
-    this.stepsArray.splice(0, this.stepsArray.length);
-
-    // Limpa os marcadores no mapa
-    this.clearMarkers();
-
-    // Detecta mudanças no estado do componente
+    this.clearMarkers(); // Limpa os marcadores no mapa
   }
 
   /**
-    * Limpa todos os marcadores do mapa.
-    */
+   * @description Limpa todos os marcadores do mapa.
+   * @returns {void}
+   */
   private clearMarkers(): void {
     for (let marker of this.markers) {
-      marker.setMap(null);
+      marker.setMap(null); // Remove o marcador do mapa
     }
-    this.markers = [];
+    this.markers = []; // Limpa o array de marcadores
   }
+
 
   /**
   * @description Alterna a visibilidade dos campos de entrada para a localização inicial e final,
