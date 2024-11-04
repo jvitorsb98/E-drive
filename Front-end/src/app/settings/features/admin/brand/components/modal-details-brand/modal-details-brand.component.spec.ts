@@ -51,7 +51,7 @@ describe('ModalDetailsBrandComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.check').textContent).toContain('Ativo');
+    expect(compiled.querySelector('.check').textContent).toContain('Ativa');
   });
 
   it('should display "Desativado" when brand is not activated', () => {
@@ -59,6 +59,6 @@ describe('ModalDetailsBrandComponent', () => {
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.error').textContent).toContain('Desativado');
+    expect(compiled.querySelector('.error').textContent).toContain('Desativada');
   });
 });

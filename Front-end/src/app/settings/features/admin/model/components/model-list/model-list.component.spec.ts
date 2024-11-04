@@ -1,243 +1,173 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { ModelListComponent } from './model-list.component';
-import { of } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { ModelService } from '../../../../../core/services/model/model.service';
-import {  NoopAnimationsModule } from '@angular/platform-browser/animations';
-import Swal, { SweetAlertResult } from 'sweetalert2';
-import { ModalFormModelComponent } from '../modal-form-model/modal-form-model.component';
+import { AlertasService } from '../../../../../core/services/Alertas/alertas.service';
+import { MatDialog } from '@angular/material/dialog';
+import { of, throwError } from 'rxjs';
 import { Model } from '../../../../../core/models/model';
+import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
+
 describe('ModelListComponent', () => {
   let component: ModelListComponent;
   let fixture: ComponentFixture<ModelListComponent>;
-  let mockModelService: any;
-  let dialog: MatDialog;
-
-
-  const mockMatDialog = {
-    open: jest.fn().mockReturnValue({
-      afterClosed: jest.fn().mockReturnValue(of(true)), // Simula o retorno do afterClosed
-    }),
-  };
-
+  let modelService: jest.Mocked<ModelService>;
+  let alertService: jest.Mocked<AlertasService>;
+  let dialog: jest.Mocked<MatDialog>;
 
   beforeEach(async () => {
-    mockModelService = {
-      getAll: jest.fn(() => of({ content: [] })), // Simula a resposta do serviço
-      delete: jest.fn(() => of(null)) // Simula a exclusão de um modelo
-    };
+    modelService = {
+      getAllPaginated: jest.fn(),
+      delete: jest.fn(),
+      activated: jest.fn(),
+    } as any;
+
+    alertService = {
+      showWarning: jest.fn().mockResolvedValue(true),
+      showSuccess: jest.fn(),
+      showError: jest.fn(),
+    } as any;
+
+    dialog = {
+      open: jest.fn().mockReturnValue({ afterClosed: jest.fn().mockReturnValue(of(null)) }),
+    } as any;
 
     await TestBed.configureTestingModule({
       declarations: [ModelListComponent],
-      imports: [
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatDialogModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        NoopAnimationsModule
-      ],
       providers: [
-        { provide: ModelService, useValue: mockModelService },
-        { provide: MatDialog, useValue: mockMatDialog }
-      ]
-    })
-    .compileComponents();
-    
+        { provide: ModelService, useValue: modelService },
+        { provide: AlertasService, useValue: alertService },
+        { provide: MatDialog, useValue: dialog },
+      ],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ModelListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('deve criar o componente', () => {
     expect(component).toBeTruthy();
   });
-  
-  it('should load models on init', () => {
-    // Mock da resposta do serviço
-    const models = [{ id: 1, name: 'Model 1', brand: { name: 'Brand 1' }, activated: true }];
-    mockModelService.getAll.mockReturnValue(of({ content: models }));
 
-    component.ngOnInit(); // Chama ngOnInit para carregar os modelos
+  describe('ngOnInit', () => {
+    it('deve carregar os modelos ao iniciar', () => {
+      const mockResponse: PaginatedResponse<Model> = {
+        content: [{ id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true }],
+        totalElements: 1,
+      } as PaginatedResponse<Model>;
+      modelService.getAllPaginated.mockReturnValue(of(mockResponse));
 
-    expect(mockModelService.getAll).toHaveBeenCalled(); // Verifica se o serviço foi chamado
-    expect(component.modelList.length).toBe(1); // Verifica se um modelo foi carregado
-    expect(component.dataSource.data.length).toBe(1); // Verifica se a fonte de dados foi atualizada
-  });
-  it('should delete a model', async () => {
-    const models = [
-      {
-        id: 1,
-        name: 'Model 1',
-        brand: {
-          id: 1,
-          name: 'Brand 1',
-          activated: true
-        },
-        activated: true
-      }
-    ];
-  
-    // Mockando a resposta do serviço para retornar o modelo inicialmente
-    mockModelService.getAll.mockReturnValue(of({ content: models }));
-    component.ngOnInit(); // Carrega os modelos
-  
-    // Mock de Swal.fire
-    const SwalSpy = jest.spyOn(Swal, 'fire').mockImplementation(() => 
-      Promise.resolve({ 
-        isConfirmed: true, 
-        isDenied: false, 
-        isDismissed: false 
-      } as SweetAlertResult<unknown>)
-    );
-  
-    // Simulando a resposta do serviço para o caso de deleção (retornando uma lista vazia)
-    mockModelService.getAll.mockReturnValue(of({ content: [] }));
-  
-    await component.deleteModel(models[0]); // Chama o método de exclusão
-  
-    expect(mockModelService.delete).toHaveBeenCalledWith(1); // Verifica se o método de delete foi chamado com o ID correto
-    await component.loadModels(); // Chama loadModels para atualizar modelList
-    expect(component.modelList.length).toBe(0); // Verifica se o modelo foi removido
-  });
-  
-  it('should not load any models when service returns empty', () => {
-    mockModelService.getAll.mockReturnValue(of({ content: [] }));
-    component.ngOnInit();
+      component.ngOnInit();
 
-    expect(mockModelService.getAll).toHaveBeenCalled();
-    expect(component.modelList.length).toBe(0); // Verifica se nenhum modelo foi carregado
-    expect(component.dataSource.data.length).toBe(0); // Verifica se a fonte de dados está vazia
-  });
-
-
-  it('should sort models when clicking on a column header', () => {
-    const models = [
-      { id: 1, name: 'Model A', brand: { name: 'Brand A' }, activated: true },
-      { id: 2, name: 'Model B', brand: { name: 'Brand B' }, activated: true }
-    ];
-  
-    // Mock do serviço para retornar a lista de modelos
-    mockModelService.getAll.mockReturnValue(of({ content: models }));
-    component.ngOnInit(); // Inicializa e carrega os modelos
-  
-    // Mock do MatSort e sua aplicação
-    component.dataSource.sort = new MatSort();
-    component.dataSource.sort.active = 'name'; // Ordenar pela coluna 'name'
-    component.dataSource.sort.direction = 'desc'; // Ordenação descendente
-  
-    // Simula o comportamento do MatSort e a reordenação dos dados
-    component.dataSource.sortData(component.dataSource.data, component.dataSource.sort);
-  
-    // Força a detecção de mudanças após a ordenação
-    fixture.detectChanges(); 
-  
-    // Verifica se a ordenação descendente foi aplicada corretamente
-    expect(component.dataSource.data[0].name).toBe('Model B'); // O primeiro deve ser 'Model B'
-    expect(component.dataSource.data[1].name).toBe('Model A'); // O segundo deve ser 'Model A'
-  });
-
-  it('should open the add model modal when openModalAddModel is called', () => {
-    const dialogSpy = jest.spyOn((component as any).dialog, 'open').mockReturnValue({
-      afterClosed: () => of(true)
-    } as any);
-
-    component.openModalAddModel(); // Chama o método para abrir o modal de adicionar
-
-    expect(dialogSpy).toHaveBeenCalledWith(ModalFormModelComponent, {
-      width: '500px',
-      height: '320px',
+      expect(modelService.getAllPaginated).toHaveBeenCalledWith(0, 10);
+      expect(component.models).toEqual(mockResponse.content);
+      expect(component.totalModels).toBe(mockResponse.totalElements);
     });
   });
 
-  it('should open the edit model modal when openModalEditModel is called', () => {
-    const model: Model = { 
-      id: 1, 
-      name: 'Model 1', 
-      brand: { id: 1, name: 'Brand 1', activated: true }, 
-      activated: true 
-    };
+  describe('loadModels', () => {
+    it('deve carregar os modelos com sucesso', () => {
+      const mockResponse: PaginatedResponse<Model> = {
+        content: [{ id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true }],
+        totalElements: 1,
+      } as PaginatedResponse<Model>;
+      modelService.getAllPaginated.mockReturnValue(of(mockResponse));
 
-    const dialogSpy = jest.spyOn((component as any).dialog, 'open').mockReturnValue({
-      afterClosed: () => of(true)
-    } as any);
+      component.loadModels(0, 10);
 
-    component.openModalEditModel(model); // Chama o método para abrir o modal de editar
+      expect(modelService.getAllPaginated).toHaveBeenCalledWith(0, 10);
+      expect(component.models).toEqual(mockResponse.content);
+      expect(component.totalModels).toBe(mockResponse.totalElements);
+    });
 
-    expect(dialogSpy).toHaveBeenCalledWith(ModalFormModelComponent, {
-      width: '500px',
-      height: '320px',
-      data: model
+    it('deve tratar erro ao carregar modelos', () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+      modelService.getAllPaginated.mockReturnValue(throwError(() => new Error('Erro ao carregar modelos')));
+
+      component.loadModels(0, 10);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Error on getListModels:', 
+        expect.objectContaining({ message: 'Erro ao carregar modelos' })
+      );
+      consoleSpy.mockRestore();
     });
   });
 
-  it('should load models correctly when service returns activated models', () => {
-    const models = [
-      { id: 1, name: 'Model 1', brand: { name: 'Brand 1' }, activated: true },
-      { id: 2, name: 'Model 2', brand: { name: 'Brand 2' }, activated: true }
+  describe('disableModel', () => {
+    it('deve desativar um modelo', async () => {
+      const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
+
+      modelService.delete.mockReturnValue(of(undefined));  // Retorna void para delete
+      await component.disableModel(mockModel);
+
+      expect(alertService.showWarning).toHaveBeenCalledWith(
+        'Desativar Modelo',
+        'Você tem certeza que deseja desativar o modelo "Model 1"?',
+        'Sim, desativar!',
+        'Cancelar'
+      );
+      expect(modelService.delete).toHaveBeenCalledWith(mockModel.id);
+      expect(alertService.showSuccess).toHaveBeenCalledWith('Sucesso!', 'O modelo foi desativado com sucesso!');
+    });
+
+    it('deve lidar com erro ao desativar um modelo', async () => {
+      const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
+      modelService.delete.mockReturnValue(throwError(() => new Error('Erro ao desativar')));
+
+      await component.disableModel(mockModel);
+
+      expect(alertService.showError).toHaveBeenCalledWith('Erro!', 'Ocorreu um erro ao desativar o modelo. Tente novamente mais tarde.');
+    });
+  });
+
+  describe('activatedModel', () => {
+    it('deve ativar um modelo', async () => {
+      const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: false }, activated: false };
+
+      modelService.activated.mockReturnValue(of(undefined));  // Retorna void para activated
+      await component.activatedModel(mockModel);
+
+      expect(alertService.showWarning).toHaveBeenCalledWith(
+        'Ativar Modelo',
+        'Você tem certeza que deseja ativar o modelo "Model 1"?',
+        'Sim, ativar!',
+        'Cancelar'
+      );
+      expect(modelService.activated).toHaveBeenCalledWith(mockModel.id);
+      expect(alertService.showSuccess).toHaveBeenCalledWith('Sucesso!', 'O modelo foi ativado com sucesso!');
+    });
+  });
+
+  it('deve aplicar filtro corretamente', () => {
+    const mockModels = [
+        { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+        { id: 2, name: 'Model 2', brand: { id: 2, name: 'Brand 2', activated: true }, activated: true },
     ];
-  
-    mockModelService.getAll.mockReturnValue(of({ content: models }));
-    component.ngOnInit(); // Carrega os modelos
 
-    expect(component.modelList.length).toBe(2); // Verifica se dois modelos foram carregados
-    expect(component.modelList.every(model => model.activated)).toBe(true); // Verifica se todos os modelos estão ativados
-  });
-  
-  it('should update dataSource after adding a model', async () => {
-    const model = { id: 1, name: 'Model 1', brand: { name: 'Brand 1' }, activated: true };
-  
-    // Mock do diálogo para retornar o modelo
-    jest.spyOn(mockMatDialog, 'open').mockReturnValue({
-      afterClosed: () => of(model) // Simula o retorno de um modelo após fechar o modal
-    });
-  
-    await component.openModalAddModel(); // Chama o método para abrir o modal de adicionar
-  
-    // Aqui você deve garantir que os modelos estão sendo recarregados
-    mockModelService.getAll.mockReturnValue(of({ content: [model] })); // Mock da resposta do serviço
-    await component.loadModels(); // Chama o método que carrega os modelos
-  
-    expect(mockModelService.getAll).toHaveBeenCalled(); // Verifica se o serviço foi chamado para recarregar os modelos
-    expect(component.dataSource.data.length).toBeGreaterThan(0); // Verifica se a fonte de dados foi atualizada
-  });
-  
+    const mockResponse: PaginatedResponse<Model> = {
+        content: mockModels,
+        totalElements: mockModels.length,
+    } as PaginatedResponse<Model>;
 
+    // Mocka a resposta do serviço para a chamada getAllPaginated
+    modelService.getAllPaginated.mockReturnValue(of(mockResponse));
 
-/*  it('should handle pagination correctly', () => {
-    const models = Array.from({ length: 20 }, (_, i) => ({
-        id: i + 1,
-        name: `Model ${i + 1}`,
-        brand: { id: 1, name: 'Brand 1', activated: true },
-        activated: true
-    }));
+    // Inicializa o componente
+    component.ngOnInit(); // Carrega os modelos inicialmente
 
-    mockModelService.getAll.mockReturnValue(of({ content: models }));
-    component.loadModels(); // Carrega os modelos
+    // Simula o evento de filtro
+    const event = { target: { value: 'Model 1' } };
+    component.applyFilter(event as any);
 
-    // Verifica se a fonte de dados contém 10 itens na primeira página
-    expect(component.dataSource.data.length).toBe(10); // A primeira página deve ter 10 itens
+    // Verifica se `dataSource.data` foi atualizado corretamente
+    expect(component.dataSource.data).toEqual([
+        { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+    ]);
 
-    // Mudando para a segunda página
-    component.paginator.pageIndex = 1; // Segunda página
-    component.paginator.page.emit(); // Emite evento de mudança de página
-
-    // Aqui você deve garantir que a fonte de dados atualize corretamente os dados para a nova página
-    component.dataSource.paginator = component.paginator;
-
-    // Verifica se a fonte de dados contém 10 itens na segunda página
-    expect(component.dataSource.data.length).toBe(10); // A segunda página deve ter 10 itens
+    // Verifica se `filteredData` contém apenas o item filtrado
+    expect(component.filteredData).toEqual([
+        { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+    ]);
 });
-*/
-  
-  
-  
-  
+
 });
