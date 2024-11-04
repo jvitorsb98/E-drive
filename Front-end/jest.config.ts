@@ -2,7 +2,7 @@ import type {Config} from 'jest';
 
 
 const config: Config = {
-  collectCoverage: true, // Habilita a coleta de cobertura
+  //collectCoverage: true, // Habilita a coleta de cobertura
   coverageDirectory: 'coverage', // Define o diretório onde os relatórios de cobertura serão gerados
   coverageReporters: ['html', 'text', 'lcov'], // Define os formatos dos relatórios de cobertura a serem gerados
   collectCoverageFrom: [
