@@ -73,15 +73,73 @@ body {
 .planejamento-button {
     background-color: #8b9298 !important;
     color: #fff;
-    padding: 2px !important;
+    padding: 1px !important;
     /* Padding mínimo */
     font-size: 0.875rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    width: 100px !important;
+    width: 50px !important;
 
     &:hover {
         background-color: #19B6DD !important;
     }
+}
+
+/* CSS para manipular o tamanho do botão */
+.route-button {
+    width: 60px;
+    /* ajuste a largura conforme necessário */
+    height: 86px;
+    /* ajuste a altura conforme necessário */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 24px;
+    /* ajuste o tamanho do ícone conforme necessário */
+}
+
+.icon-container {
+    position: absolute;
+    top: 83%;
+    /* Centraliza verticalmente */
+    left: 50%;
+    /* Centraliza horizontalmente */
+    transform: translate(-50%, -50%);
+    /* Move o botão para o centro exato */
+    z-index: 1000;
+}
+
+.travel-planning-btn {
+    background-image: url('../../../../../../assets/images/3D-icon-of-an-electric-car-route.ico');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 12px;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border: none;
+    cursor: pointer;
+    /* Suaviza a transição do brilho ao passar o cursor */
+    transition: filter 0.3s ease;
+}
+
+/* Clareia a imagem em 5% ao passar o cursor */
+.travel-planning-btn:hover {
+    filter: brightness(1.06);
+}
+
+.travel-planning-cancel-btn {
+    background-image: url('../../../../../../assets/images/cancelar-rota-de-carros-elétricos.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 12px;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border: none;
+    cursor: pointer
 }

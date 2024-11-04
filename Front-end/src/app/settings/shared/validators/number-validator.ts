@@ -1,10 +1,10 @@
-import { AbstractControl, ValidationErrors } from "@angular/forms";
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-export function numberValidator(control: AbstractControl): ValidationErrors | null {
-  const value = control.value;
-  if (value !== null && value !== '') {
-    const isNumber = /^[0-9]*$/.test(value);
-    return isNumber ? null : { notANumber: true };
-  }
-  return null; // Retorna null se o campo estiver vazio
+export function numberValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    // Verifica se o valor é um número inteiro sem ponto decimal
+    const isInteger = /^-?\d+$/.test(value);
+    return isInteger ? null : { notANumber: true };
+  };
 }

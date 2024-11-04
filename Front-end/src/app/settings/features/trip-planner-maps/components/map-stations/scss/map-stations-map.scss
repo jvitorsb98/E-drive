@@ -31,6 +31,19 @@
   transition: filter 0.3s ease;
 }
 
+.travel-planning-cancel-btn {
+  background-image: url('../../../../../../../assets/images/cancelar-rota-de-carros-elétricos.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 12px;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border: none;
+  cursor: pointer
+}
+
 /* Clareia a imagem em 5% ao passar o cursor */
 .return-home-btn:hover {
   filter: brightness(1.06);
