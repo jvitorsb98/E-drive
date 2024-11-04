@@ -100,7 +100,7 @@
 
       <!-- Exibe mensagens de erro -->
       <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('pattern')">
-        O valor deve ser um <strong>número</strong>
+        O valor deve ser um <strong>número inteiro positivo</strong>
       </mat-error>
       <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('saudeBateria')!.hasError('min')">
         O valor <strong>mínimo é 0%</strong>
@@ -117,7 +117,7 @@
       <mat-icon matSuffix class="custom-icon">electric_car</mat-icon>
 
       <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('notANumber')">
-        O valor deve ser um <strong>número</strong>
+        O valor deve ser um <strong>número</strong> sem caracteres especiais
       </mat-error>
       <mat-error class="mat-error-text" *ngIf="vehicleStatusBatteryForm.get('bateriaRestante')!.hasError('required')">
         <strong>Bateria restante</strong> é obrigatória
@@ -138,7 +138,7 @@
     <mat-error class="mat-error-text-vehicle">Por favor, <strong>selecione um veículo.</strong></mat-error>
     }
     <div class="buttons-container">
-      <app-ui-button class="w-100 mb-2" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
+      <app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
         (click)="submitBatteryStatus()" text="Simular "></app-ui-button>
       <app-ui-button class="w-100 mb-1" typeBtn="outline-secondary" (click)="closeModal()"
         text="Cancelar"></app-ui-button>
