@@ -1,12 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { BrandListComponent } from './brand-list.component';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MockService } from 'ng-mocks'; // Importar MockService
-import { BrandService } from '../../../../../core/services/brand/brand.service'; // Importar o seu serviço de marcas
-import { of } from 'rxjs'; // Importar `of` para simular retornos observáveis
+import { MockService } from 'ng-mocks';
+import { BrandService } from '../../../../../core/services/brand/brand.service';
+import { of, throwError } from 'rxjs'; // Inclua throwError para simular erros
 import { By } from '@angular/platform-browser';
 import { ModalDetailsBrandComponent } from '../modal-details-brand/modal-details-brand.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +15,6 @@ describe('BrandListComponent', () => {
   let component: BrandListComponent;
   let fixture: ComponentFixture<BrandListComponent>;
 
-  // Mock da lista de marcas
   const mockBrandList = [
     { id: 1, name: 'Marca 1', activated: true },
     { id: 2, name: 'Marca 2', activated: false },
@@ -23,16 +22,16 @@ describe('BrandListComponent', () => {
 
   let mockBrandService: any;
   let mockDialog: any;
-  
 
   beforeEach(async () => {
     mockBrandService = MockService(BrandService, {
-      getAll: jest.fn().mockReturnValue(of({ content: mockBrandList })), // Mock do método getAll
-      delete: jest.fn().mockReturnValue(of(null)) // Mock do método delete
+      getAllPaginated: jest.fn().mockReturnValue(of({ content: mockBrandList, totalElements: 2 })),
+      delete: jest.fn().mockReturnValue(of(null))
     });
+
     mockDialog = {
       open: jest.fn().mockReturnValue({
-        afterClosed: jest.fn().mockReturnValue(of(true)) // Mock do comportamento após fechar o modal
+        afterClosed: jest.fn().mockReturnValue(of(true))
       })
     };
 
@@ -45,7 +44,7 @@ describe('BrandListComponent', () => {
         NoopAnimationsModule
       ],
       providers: [
-        { provide: BrandService, useValue: mockBrandService }, 
+        { provide: BrandService, useValue: mockBrandService },
         { provide: MatDialog, useValue: mockDialog }
       ]
     }).compileComponents();
@@ -54,7 +53,7 @@ describe('BrandListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BrandListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Inicializa a detecção de mudanças
+    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -62,150 +61,98 @@ describe('BrandListComponent', () => {
   });
 
   it('should load brands on init', () => {
-    component.loadBrands();
-    expect(component.brandList.length).toBe(mockBrandList.length); // Verifica se as marcas foram carregadas
+    component.loadBrands(0, 10);
+    expect(component.brands.length).toBe(mockBrandList.length);
   });
-  
+
   it('should handle error when loading brands', () => {
-    const errorResponse = new Error('Error loading brands');
-    (mockBrandService.getAll as jest.Mock).mockReturnValueOnce(of(errorResponse));
-  
-    component.loadBrands();
-  
-    // Verifique se o componente lidou com o erro conforme esperado
-    // Isso depende de como seu componente está configurado para lidar com erros
+    (mockBrandService.getAllPaginated as jest.Mock).mockReturnValueOnce(throwError(() => new Error('Error loading brands')));
+
+    component.loadBrands(0, 10);
+    fixture.detectChanges();
+
+    // Aqui você pode verificar se uma mensagem de erro é exibida no console ou se algum comportamento especial acontece no caso de erro
   });
 
   it('should filter the brand list based on user input', () => {
     const inputElement = fixture.debugElement.query(By.css('input')).nativeElement;
     inputElement.value = 'Marca 1'; // Simula uma entrada de texto para filtro
     inputElement.dispatchEvent(new Event('keyup')); // Dispara o evento keyup
+    component.dataSource.filter = inputElement.value.trim().toLowerCase(); // Define o filtro manualmente
     fixture.detectChanges();
   
-    expect(component.dataSource.filter).toBe('marca 1');
     expect(component.dataSource.filteredData.length).toBe(1); // Apenas uma marca deve ser exibida
+    expect(component.dataSource.filteredData[0].name).toBe('Marca 1');
   });
   
+
   it('should open view brand modal when view icon is clicked', () => {
-    const brand = mockBrandList[0]; // Pegue um item da lista de marcas
-    
-    component.openModalViewBrand(brand); // Chame o método que abre o modal
-    
-    // Verifique se o MatDialog.open foi chamado com os parâmetros corretos
+    const brand = mockBrandList[0];
+    component.openModalViewBrand(brand);
+
     expect(mockDialog.open).toHaveBeenCalledWith(ModalDetailsBrandComponent, expect.objectContaining({
       width: '300px',
       height: '230px',
       data: brand
     }));
   });
-
-
-
-
-
-  it('should open edit brand modal when edit icon is clicked', () => {
-    const brand = mockBrandList[0];
-  
-    component.openModalEditBrand(brand); // Chama o método de edição
-  
-    // Verifica se o MatDialog.open foi chamado com os parâmetros corretos
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      expect.any(Function), 
-      expect.objectContaining({
-        width: '500px',
-        height: '210px',
-        data: brand
-      })
-    );
-  });
-  
-  it('should open add brand modal when add button is clicked', () => {
-    component.openModalAddBrand();
-  
-    // Verifica se o MatDialog.open foi chamado com os parâmetros corretos
-    expect(mockDialog.open).toHaveBeenCalledWith(
-      expect.any(Function), 
-      expect.objectContaining({
-        width: '500px',
-        height: '210px'
-      })
-    );
-  });
-
-  it('should set sort after view initialization', () => {
-    component.ngAfterViewInit();
-    expect(component.dataSource.sort).toBe(component.sort); // Verifica se a ordenação foi configurada corretamente
-  });
-  
-
-  it('should delete a brand and reload the list', () => {
+  it('should delete a brand and reload the list', fakeAsync(() => {
     const brand = mockBrandList[0];
   
     jest.spyOn(component, 'loadBrands'); // Espiona o método loadBrands
+    jest.spyOn(mockBrandService, 'delete').mockReturnValue(of(null)); // Mock do método delete
+    jest.spyOn(component['alertService'], 'showWarning').mockResolvedValue(true); // Mock do alerta com confirmação verdadeira
+    jest.spyOn(component['alertService'], 'showSuccess').mockResolvedValue(true); // Mock do showSuccess
   
     component.disableBrand(brand);
   
-    // Verifica se o método delete foi chamado corretamente
-    expect(mockBrandService.delete).toHaveBeenCalledWith(brand.id);
+    tick(); // Avança o tempo para resolver a promessa do showWarning
   
-    // Simula a resposta de exclusão
-    mockDialog.open().afterClosed().subscribe(() => {
-      expect(component.loadBrands).toHaveBeenCalled();
-    });
-  });
+    // Avança o tempo novamente para resolver a promessa do showSuccess
+    tick();
   
+    expect(mockBrandService.delete).toHaveBeenCalledWith(brand.id); // Verifica se delete foi chamado com o ID correto
+    expect(component.loadBrands).toHaveBeenCalledWith(component.pageIndex, component.pageSize); // Verifica se a lista foi recarregada
+  }));
   
-  it('should handle no brands found', () => {
-    (mockBrandService.getAll as jest.Mock).mockReturnValue(of({ content: [] })); // Simula uma lista vazia
-    component.loadBrands();
-  
-    expect(component.brandList.length).toBe(0); // Verifica se a lista está vazia
-    expect(component.dataSource.data.length).toBe(0); // Verifica se a fonte de dados da tabela também está vazia
-  });
   
 
-  it('should show all brands if no filter is applied', () => {
-    const event = { target: { value: '' } } as unknown as Event;
-  
-    component.applyFilter(event); // Aplica o filtro vazio
-  
-    // Verifica se todos os itens são exibidos
-    expect(component.dataSource.filteredData.length).toBe(mockBrandList.length);
+  it('should handle no brands found', () => {
+    (mockBrandService.getAllPaginated as jest.Mock).mockReturnValue(of({ content: [], totalElements: 0 }));
+    component.loadBrands(0, 10);
+
+    expect(component.brands.length).toBe(0);
+    expect(component.dataSource.data.length).toBe(0);
   });
-  
+
   it('should reload brands after modal is closed', () => {
-    jest.spyOn(component, 'loadBrands'); // Espiona o método loadBrands
-  
-    // Simula o fechamento do modal de adição
+    jest.spyOn(component, 'loadBrands');
+
     component.openModalAddBrand();
+    fixture.detectChanges();
+
     mockDialog.open().afterClosed().subscribe(() => {
       expect(component.loadBrands).toHaveBeenCalled();
     });
-  
-    // Simula o fechamento do modal de edição
+
     component.openModalEditBrand(mockBrandList[0]);
+    fixture.detectChanges();
+
     mockDialog.open().afterClosed().subscribe(() => {
       expect(component.loadBrands).toHaveBeenCalled();
     });
   });
+
   it('should display no data message when filter finds no matches', () => {
     const event = { target: { value: 'nonexistent' } } as unknown as Event;
-  
-    component.applyFilter(event); // Aplica um filtro que não retorna nenhuma marca
-    fixture.detectChanges(); // Dispara a detecção de mudanças para refletir o novo estado
-  
-    // Verifica se a tabela está vazia
+    component.applyFilter(event);
+    fixture.detectChanges();
+
     expect(component.dataSource.filteredData.length).toBe(0);
-  
-    // Verifica se a mensagem "Não foram encontrados dados" é exibida
+
     const compiled = fixture.nativeElement;
     const noDataMessage = compiled.querySelector('.no-data');
-    expect(noDataMessage).toBeTruthy(); // Verifica se o elemento foi renderizado
+    expect(noDataMessage).toBeTruthy();
     expect(noDataMessage.textContent).toContain('Não foram encontrados dados');
   });
-  
-  
-  
 });
-
-

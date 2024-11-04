@@ -60,7 +60,7 @@ export class ListMyAddressesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getList(this.currentPage, this.pageSize); // Carrega os endereços ao iniciar o componente
+    this.loadAddresses(this.currentPage, this.pageSize); // Carrega os endereços ao iniciar o componente
   }
 
   ngAfterViewInit() {
@@ -70,7 +70,7 @@ export class ListMyAddressesComponent implements OnInit {
   }
 
   // Carrega a lista de endereços do serviço
-  getList(pageIndex: number, pageSize: number) {
+  loadAddresses(pageIndex: number, pageSize: number) {
     if (this.isFilterActive) {
       this.dataSource.data = this.filteredData;
       this.dataSource.paginator = this.paginator;
@@ -99,9 +99,8 @@ export class ListMyAddressesComponent implements OnInit {
   onPageChange(event: any) {
     this.pageSize = event.pageSize;
     this.currentPage = event.pageIndex;
-    this.getList(this.currentPage, this.pageSize);
+    this.loadAddresses(this.currentPage, this.pageSize);
   }
-
 
   // Navega para o formulário de adição de endereço
   addAddress() {
@@ -165,7 +164,7 @@ export class ListMyAddressesComponent implements OnInit {
           })
         ).subscribe(() => {
           this.alertasService.showSuccess('Endereço deletado', 'O endereço foi deletado com sucesso.');
-          this.searchKey ? this.applyFilter(this.searchKey) : this.getList(this.pageIndex, this.pageSize);
+          this.searchKey ? this.applyFilter(this.searchKey) : this.loadAddresses(this.pageIndex, this.pageSize);
         });
       }
     });
@@ -187,7 +186,7 @@ export class ListMyAddressesComponent implements OnInit {
       data: {
         actionTitle: 'Cadastrar Endereço'
       }
-    }).afterClosed().subscribe(() => this.getList(this.currentPage, this.pageSize)); // Atualiza a lista de endereços após o fechamento do modal
+    }).afterClosed().subscribe(() => this.loadAddresses(this.currentPage, this.pageSize)); // Atualiza a lista de endereços após o fechamento do modal
   }
 
   // Abre o modal para editar um endereço existente
@@ -201,7 +200,7 @@ export class ListMyAddressesComponent implements OnInit {
       }
     }).afterClosed().subscribe(() => {
       this.searchKey ? this.applyFilter(this.searchKey):
-      this.getList(this.currentPage, this.pageSize); // Atualiza a lista de endereços após o fechamento do modal
+      this.loadAddresses(this.currentPage, this.pageSize); // Atualiza a lista de endereços após o fechamento do modal
     });
   }
 

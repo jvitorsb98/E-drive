@@ -46,6 +46,12 @@ background-color: #0056b3;
     border: 1px solid #ccc;
     font-size: 1em;
     width: 100%;
+    outline: none; /* Remove o contorno padrão do navegador */
+}
+
+/* Estilo da borda azul quando o input está focado */
+.input-overlay input:focus {
+    border: 2px solid #19B6DD;
 }
 
 /* Estilo dos botões */

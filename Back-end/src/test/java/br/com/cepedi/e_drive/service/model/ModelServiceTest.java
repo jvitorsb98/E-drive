@@ -255,4 +255,155 @@ class ModelServiceTest {
             () -> assertFalse(model.getActivated(), "Model should be deactivated")
         );
     }
+    
+    @Test
+    @DisplayName("Should enable a model successfully")
+    void enable_ValidId_ModelEnabled() {
+        // Arrange
+        when(modelRepository.getReferenceById(anyLong())).thenReturn(model);
+
+        // Act
+        modelService.enable(model.getId());
+
+        // Assert
+        assertAll("Enable model",
+            () -> verify(modelValidatorActivatedList, times(1)).forEach(any()),
+            () -> verify(modelRepository, times(1)).getReferenceById(anyLong()),
+            () -> assertTrue(model.getActivated(), "Model should be activated")
+        );
+    }
+
+    @Test
+    @DisplayName("Should list all models by brand")
+    void listAllModelsByBrand_ValidBrandId_ModelsReturned() {
+        // Arrange
+        Long brandId = faker.number().randomNumber();
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        Page<Model> modelPage = new PageImpl<>(List.of(model));
+        when(brandRepository.findById(brandId)).thenReturn(Optional.of(brand));
+        when(modelRepository.findByBrand(any(Brand.class), eq(pageRequest))).thenReturn(modelPage);
+
+        // Act
+        Page<DataModelDetails> result = modelService.listAllModelsByBrand(brandId, pageRequest);
+
+        // Assert
+        assertAll("List all models by brand",
+            () -> assertNotNull(result, "Result should not be null"),
+            () -> assertEquals(1, result.getTotalElements(), 
+                () -> "Total elements should match the expected number of models for the given brand"),
+            () -> verify(brandRepository, times(1)).findById(brandId),
+            () -> verify(modelRepository, times(1)).findByBrand(any(Brand.class), eq(pageRequest))
+        );
+    }
+
+    @Test
+    @DisplayName("Should throw exception when brand not found by ID")
+    void listAllModelsByBrand_NonExistingBrandId_ThrowsException() {
+        // Arrange
+        Long brandId = faker.number().randomNumber();
+        when(brandRepository.findById(brandId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, 
+            () -> modelService.listAllModelsByBrand(brandId, PageRequest.of(0, 10)), 
+            () -> "Expected an exception to be thrown when brand is not found"
+        );
+        verify(brandRepository, times(1)).findById(brandId);
+    }
+    
+    @Test
+    @DisplayName("Update - Invalid Data - Validation Failed")
+    void update_InvalidData_ValidationFailed() {
+        // Arrange
+        Long id = faker.number().randomNumber();
+        Long idBrand = faker.number().randomNumber();
+        DataUpdateModel dataUpdate = new DataUpdateModel("Invalid Model Name", idBrand);
+        
+        // Mocking the validation behavior
+        doThrow(new RuntimeException("Validation failed"))
+            .when(modelValidationUpdateList).forEach(validation -> validation.validation(dataUpdate, id));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class,
+            () -> modelService.update(dataUpdate, id),
+            "Expected a validation exception to be thrown"
+        );
+        verify(modelValidationUpdateList, times(1)).forEach(any());
+    }
+
+    @Test
+    @DisplayName("Enable - Invalid Activation - Validation Failed")
+    void enable_InvalidActivation_ValidationFailed() {
+        // Arrange
+        Long id = faker.number().randomNumber();
+
+        // Mocking the validation behavior
+        doThrow(new RuntimeException("Validation failed"))
+            .when(modelValidatorActivatedList).forEach(validation -> validation.validation(id));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class,
+            () -> modelService.enable(id),
+            "Expected a validation exception to be thrown"
+        );
+        verify(modelValidatorActivatedList, times(1)).forEach(any());
+    }
+
+    @Test
+    @DisplayName("Disable - Invalid Deactivation - Validation Failed")
+    void disable_InvalidDeactivation_ValidationFailed() {
+        // Arrange
+        Long id = faker.number().randomNumber();
+
+        // Mocking the validation behavior
+        doThrow(new RuntimeException("Validation failed"))
+            .when(modelValidatorDisabledList).forEach(validation -> validation.validation(id));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class,
+            () -> modelService.disable(id),
+            "Expected a validation exception to be thrown"
+        );
+        verify(modelValidatorDisabledList, times(1)).forEach(any());
+    }
+
+    @Test
+    @DisplayName("Activate - Invalid Activation - Validation Failed")
+    void activated_InvalidActivation_ValidationFailed() {
+        // Arrange
+        Long id = faker.number().randomNumber();
+
+        // Mocking the validation behavior
+        doThrow(new RuntimeException("Validation failed"))
+            .when(modelValidatorActivatedList).forEach(validation -> validation.validation(id));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class,
+            () -> modelService.activated(id),
+            "Expected a validation exception to be thrown"
+        );
+        verify(modelValidatorActivatedList, times(1)).forEach(any());
+    }
+
+    @Test
+    @DisplayName("Register - Invalid Data - Validation Failed")
+    void register_InvalidData_ValidationFailed() {
+        // Arrange
+        DataRegisterModel dataRegisterModel = new DataRegisterModel("Invalid Model", null);
+        
+        // Mocking the validation behavior
+        doThrow(new RuntimeException("Validation failed"))
+            .when(validationRegisterModelList).forEach(validation -> validation.validation(dataRegisterModel));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class,
+            () -> modelService.register(dataRegisterModel),
+            "Expected a validation exception to be thrown"
+        );
+        verify(validationRegisterModelList, times(1)).forEach(any());
+    }
+
+
+
+    
 }

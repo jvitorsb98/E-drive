@@ -21,6 +21,7 @@ import { MatProgressSpinnerModule, MatProgressSpinner } from '@angular/material/
 import { MatGridListModule } from '@angular/material/grid-list';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -55,7 +56,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     NgxMaskDirective,
-    MatRadioModule
+    MatRadioModule,
+    DragDropModule,
   ],
   exports: [
     MatCardModule,
@@ -86,7 +88,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatProgressSpinnerModule,
     MatCheckboxModule,
     NgxMaskDirective,
-    MatRadioModule
+    MatRadioModule,
+    DragDropModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },

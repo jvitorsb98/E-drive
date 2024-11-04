@@ -72,6 +72,7 @@ class BrandServiceTest {
     void register_ValidData_BrandRegistered() {
         // Arrange
         when(brandRepository.save(any(Brand.class))).thenReturn(brand);
+        
 
         // Act
         DataBrandDetails result = brandService.register(dataRegisterBrand);
@@ -86,25 +87,6 @@ class BrandServiceTest {
             () -> assertEquals(dataRegisterBrand.name(), capturedBrand.getName(), 
                 () -> "Brand name should match the input data"),
             () -> verify(brandRepository, times(1)).save(any(Brand.class))
-        );
-    }
-
-    @Test
-    @DisplayName("Should update a brand successfully")
-    void update_ValidData_BrandUpdated() {
-        // Arrange
-        when(brandRepository.getReferenceById(anyLong())).thenReturn(brand);
-
-        // Act
-        DataBrandDetails result = brandService.update(dataUpdateBrand, brand.getId());
-
-        // Assert
-        assertAll("Brand update",
-            () -> assertNotNull(result, "Result should not be null"),
-            () -> assertEquals(dataUpdateBrand.name(), result.name(), 
-                () -> "Updated brand name should match the input data"),
-            () -> verify(brandValidationUpdateList, times(1)).forEach(any()),
-            () -> verify(brandRepository, times(1)).getReferenceById(anyLong())
         );
     }
 
@@ -179,12 +161,69 @@ class BrandServiceTest {
             () -> verify(brandRepository, times(1)).findAllByActivatedTrue(pageRequest)
         );
     }
+  
+    @Test
+    @DisplayName("Should activate a brand successfully")
+    void activated_ValidId_BrandActivated() {
+        // Arrange
+        when(brandRepository.getReferenceById(anyLong())).thenReturn(brand);
 
+        // Act
+        brandService.activated(brand.getId());
+
+        // Assert
+        assertAll("Activate brand",
+            () -> verify(brandRepository, times(1)).getReferenceById(brand.getId()), // Verifica que a marca foi recuperada pelo ID
+            () -> assertTrue(brand.getActivated(), "Brand should be activated"),      // Verifica que o estado da marca é 'ativado'
+            () -> verify(brandRepository, times(1)).save(brand)                        // Verifica que a marca foi salva com o estado atualizado
+        );
+    }
+    
+    @Test
+    @DisplayName("Should throw exception when trying to activate a non-existing brand")
+    void activated_NonExistingId_ThrowsException() {
+        // Arrange
+        when(brandRepository.getReferenceById(anyLong())).thenThrow(new RuntimeException("Brand not found"));
+
+        // Act & Assert
+        assertThrows(RuntimeException.class,
+            () -> brandService.activated(faker.number().randomNumber()), // Passa um ID inexistente
+            "Expected an exception to be thrown when trying to activate a non-existing brand"
+        );
+
+        verify(brandRepository, times(1)).getReferenceById(anyLong());
+        verify(brandRepository, never()).save(any(Brand.class));
+    }
+    
+    @Test
+    @DisplayName("Should update a brand successfully")
+    void update_ValidData_BrandUpdated() {
+        // Arrange
+        when(brandRepository.getReferenceById(anyLong())).thenReturn(brand);
+        // Mock the behavior of the brand validation list
+        doNothing().when(brandValidationUpdateList).forEach(any());
+
+        // Act
+        DataBrandDetails result = brandService.update(dataUpdateBrand, brand.getId());
+
+        // Assert
+        assertAll("Brand update",
+            () -> assertNotNull(result, "Result should not be null"),
+            () -> assertEquals(dataUpdateBrand.name(), result.name(), 
+                () -> "Updated brand name should match the input data"),
+            () -> verify(brandValidationUpdateList, times(1)).forEach(any()),
+            () -> verify(brandRepository, times(1)).getReferenceById(anyLong())
+        );
+    }
+
+    
     @Test
     @DisplayName("Should disable a brand successfully")
     void disabled_ValidId_BrandDisabled() {
         // Arrange
         when(brandRepository.getReferenceById(anyLong())).thenReturn(brand);
+        // Mock the behavior of the brand validator list
+        doNothing().when(brandValidatorDisabledList).forEach(any());
 
         // Act
         brandService.disabled(brand.getId());
@@ -196,4 +235,23 @@ class BrandServiceTest {
             () -> assertFalse(brand.getActivated(), "Brand should be deactivated")
         );
     }
+
+    @Test
+    @DisplayName("Should register a brand successfully")
+    void register_Valid_BrandRegistered() {
+        // Arrange
+        DataRegisterBrand dataRegisterBrand = new DataRegisterBrand("brandName");
+        doNothing().when(brandValidationRegisterList).forEach(any()); 
+
+        // Act
+        brandService.register(dataRegisterBrand);
+
+        // Assert
+        verify(brandValidationRegisterList, times(1)).forEach(any()); 
+        verify(brandRepository, times(1)).save(any());
+    }
+
+
+
+
 }

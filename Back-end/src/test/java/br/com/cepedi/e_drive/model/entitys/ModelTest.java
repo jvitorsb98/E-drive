@@ -2,6 +2,8 @@ package br.com.cepedi.e_drive.model.entitys;
 
 import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import br.com.cepedi.e_drive.model.records.model.input.DataUpdateModel;
+import br.com.cepedi.e_drive.security.model.records.details.DataDetailsReactivateAccountRequest;
+
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -171,5 +173,18 @@ class ModelTest {
 
         // Assert
         assertEquals(activated, retrievedActivated, () -> "The activated status should be set and retrieved correctly.");
+    }
+    
+    @Test
+    @DisplayName("Test DataDetailsReactivateAccountRequest")
+    void testDataDetailsReactivateAccountRequest() {
+        // Arrange
+        String message = "Account reactivation requested.";
+
+        // Act
+        DataDetailsReactivateAccountRequest request = new DataDetailsReactivateAccountRequest(message);
+
+        // Assert
+        assertEquals(message, request.message(), "The message should be set correctly in the record.");
     }
 }

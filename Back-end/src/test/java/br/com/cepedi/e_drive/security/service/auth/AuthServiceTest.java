@@ -13,6 +13,7 @@ import br.com.cepedi.e_drive.security.service.auth.validations.login.Validations
 import br.com.cepedi.e_drive.security.service.auth.validations.logout.ValidationLogout;
 import br.com.cepedi.e_drive.security.service.auth.validations.reactivateAccountRequest.ValidationReactivateAccountRequest;
 import br.com.cepedi.e_drive.security.service.auth.validations.reactivated.ValidationReactivate;
+import br.com.cepedi.e_drive.security.service.auth.validations.reactivated.ValidationUserNotFoundDataReactivateAccount;
 import br.com.cepedi.e_drive.security.service.auth.validations.register.ValidationRegisterUser;
 import br.com.cepedi.e_drive.security.service.auth.validations.resetPassword.ValidationResetPassword;
 import br.com.cepedi.e_drive.security.service.auth.validations.resetPasswordRequest.ValidationResetPasswordRequest;
@@ -20,6 +21,7 @@ import br.com.cepedi.e_drive.security.service.token.TokenService;
 import br.com.cepedi.e_drive.security.service.user.UserService;
 import br.com.cepedi.e_drive.security.service.user.validations.disabled.ValidationDisabledUser;
 import jakarta.mail.MessagingException;
+import jakarta.validation.ValidationException;
 import br.com.cepedi.e_drive.security.service.email.EmailService;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,8 +31,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.MethodOrderer;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,6 +47,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -50,6 +55,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 import java.util.Locale;
@@ -107,6 +113,9 @@ public class AuthServiceTest {
 
     @Mock
     private List<ValidationReactivate> validationReactivateList;
+    
+    @InjectMocks
+    private ValidationUserNotFoundDataReactivateAccount validationUserNotFoundDataReactivateAccount;
 
     private Faker faker;
 
@@ -285,26 +294,7 @@ public class AuthServiceTest {
     }
 
 
-    // Adicione o método de teste para reativação aqui se necessário
-    public void testReactivateAccountRequest_Success() throws MessagingException {
-        DataReactivateAccount dataReactivateAccount = new DataReactivateAccount(faker.internet().emailAddress());
-        User user = new User();
-        user.setEmail(dataReactivateAccount.email());
-
-        // Mocks
-        given(validationReactivateAccountRequestList.stream()).willReturn(Stream.of(mock(ValidationReactivateAccountRequest.class)));
-        given(userRepository.findByEmail(dataReactivateAccount.email())).willReturn(user);
-        given(tokenService.generateTokenForReactivation(user)).willReturn("mockedToken");
-        doNothing().when(emailService).sendReactivationEmailAsync(anyString(), anyString(), anyString());
-        given(messageSource.getMessage(any(String.class), any(Object[].class), any(Locale.class))).willReturn("Reactivation success message");
-
-        // Act
-        String result = authService.reactivateAccountRequest(dataReactivateAccount);
-
-        // Assert
-        assertEquals("Reactivation success message", result, "Success message should match");
-        verify(emailService).sendReactivationEmailAsync(user.getName(), dataReactivateAccount.email(), "mockedToken");
-    }
+    
 
 
     @Test
@@ -343,5 +333,207 @@ public class AuthServiceTest {
         // Assert
         verify(validationLogoutList, times(1)).forEach(any());
     }
+    
+    @Test
+    @DisplayName("Test Reset Password Success")
+    public void testResetPassword_Susccess() {
+        // Arrange
+        String token = "mockedToken";
+        String email = faker.internet().emailAddress();
+        String newPassword = faker.internet().password();
+        
+        DataResetPassword dataResetPassword = new DataResetPassword(token, newPassword);
 
+        // Mocks
+        given(validationResetPasswords.stream()).willReturn(Stream.of(mock(ValidationResetPassword.class)));
+        given(tokenService.getEmailByToken(token)).willReturn(email);
+        doNothing().when(userService).updatePassword(email, newPassword);
+        doNothing().when(tokenService).revokeToken(token);
+        given(messageSource.getMessage(any(String.class), any(Object[].class), any(Locale.class))).willReturn("Password reset success");
+
+        // Act
+        String result = authService.resetPassword(dataResetPassword);
+
+        // Assert
+        assertEquals("Password reset success", result, "Success message should match");
+        verify(userService).updatePassword(email, newPassword);
+        verify(tokenService).revokeToken(token);
+    }
+   
+    @Test
+    @DisplayName("Test Reactivate Account Request Email Sending Failure")
+    public void testReactivateAccountRequest_EmailSendingFailure() throws MessagingException {
+        // Arrange
+        String email = faker.internet().emailAddress();
+        String userName = faker.name().fullName();
+        DataReactivateAccount dataReactivateAccount = new DataReactivateAccount(email);
+
+        // Mock
+        User user = new User();
+        user.setName(userName);
+        user.setEmail(email);
+        
+        // Simula a validação
+        given(validationReactivateAccountRequestList.stream()).willReturn(Stream.of(mock(ValidationReactivateAccountRequest.class)));
+        
+        // Simula a recuperação do usuário
+        given(userRepository.findByEmail(email)).willReturn(user);
+        
+        // Simula a geração do token
+        String token = "mockedToken";
+        given(tokenService.generateTokenForReactivation(user)).willReturn(token);
+        
+        // Simula o lançamento da exceção durante o envio do e-mail
+        doThrow(new MessagingException("Failed to send email")).when(emailService).sendReactivationEmailAsync(userName, email, token);
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authService.reactivateAccountRequest(dataReactivateAccount);
+        });
+
+        // Verifica a mensagem da exceção
+        assertEquals("Failed to send email", exception.getCause().getMessage());
+    }
+
+
+    @Test
+    @DisplayName("Test Reactivate Account Success")
+    public void testReactivateAccount_Success() {
+        // Arrange
+        String token = "validToken";
+        String userName = "John Doe";
+
+        // Mock
+        User user = new User();
+        user.setName(userName);
+        given(validationReactivateList.stream()).willReturn(Stream.of(mock(ValidationReactivate.class)));
+        given(userService.getUserByToken(token)).willReturn(user);
+        given(messageSource.getMessage("auth.reactivated.success", new Object[]{userName}, LocaleContextHolder.getLocale()))
+            .willReturn("Account reactivated successfully for " + userName);
+
+        // Act
+        String result = authService.reactivateAccount(token);
+
+        // Assert
+        assertEquals("Account reactivated successfully for " + userName, result);
+        assertTrue(user.isActive()); // Verifica se o usuário foi ativado
+        verify(tokenService).revokeToken(token); // Verifica se o token foi revogado
+    }
+    
+    @Test
+    @DisplayName("Test User Not Found Validation")
+    public void testUserNotFoundValidation() {
+        // Arrange
+        String token = "invalidToken";
+
+        // Mock do serviço de usuário para retornar null
+        given(userService.getUserByToken(token)).willReturn(null);
+        
+        // Mock da mensagem do MessageSource
+        given(messageSource.getMessage(
+                "auth.reactivated.user.not.found",
+                new Object[]{token},
+                LocaleContextHolder.getLocale()))
+            .willReturn("No user found for the provided token: " + token);
+
+        // Act & Assert
+        ValidationException exception = assertThrows(ValidationException.class, () -> {
+            validationUserNotFoundDataReactivateAccount.validate(token);
+        });
+
+        // Assert
+        assertEquals("No user found for the provided token: invalidToken", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Test Reactivate Account Success")
+    public void testReactivateAccountSuccess() throws MessagingException {
+        // Arrange
+        String email = faker.internet().emailAddress();
+        String userName = faker.name().fullName();
+        DataReactivateAccount dataReactivateAccount = new DataReactivateAccount(email);
+
+        // Mock
+        User user = new User();
+        user.setName(userName);
+        user.setEmail(email);
+        user.setActivated(false); // Simulating that the user account is currently inactive
+
+        // Simulate validations
+        given(validationReactivateAccountRequestList.stream()).willReturn(Stream.of(mock(ValidationReactivateAccountRequest.class)));
+        
+        // Simulate user retrieval
+        given(userRepository.findByEmail(email)).willReturn(user);
+        
+        // Generate a mock token for reactivation
+        String token = "mockedToken";
+        given(tokenService.generateTokenForReactivation(user)).willReturn(token);
+        
+        // Mock email sending
+        doNothing().when(emailService).sendReactivationEmailAsync(userName, email, token);
+        given(messageSource.getMessage(any(String.class), any(Object[].class), any(Locale.class))).willReturn("Reactivation email sent successfully");
+
+        // Act
+        String result = authService.reactivateAccountRequest(dataReactivateAccount);
+
+        // Assert
+        assertEquals("Reactivation email sent successfully", result, "Success message should match");
+        verify(emailService).sendReactivationEmailAsync(userName, email, token);
+        verify(tokenService).generateTokenForReactivation(user); // Ensure the reactivation method is called
+    }
+    
+    @Test
+    @DisplayName("Test Reactivate Account Token Generation Failure")
+    public void testReactivateAccount_TokenGenerationFailure() {
+        // Arrange
+        String email = faker.internet().emailAddress();
+        String userName = faker.name().fullName();
+        DataReactivateAccount dataReactivateAccount = new DataReactivateAccount(email);
+
+        User user = new User();
+        user.setName(userName);
+        user.setEmail(email);
+        user.setActivated(false); // Simulando que a conta está inativa
+
+        // Mocks
+        given(validationReactivateAccountRequestList.stream()).willReturn(Stream.of(mock(ValidationReactivateAccountRequest.class)));
+        given(userRepository.findByEmail(email)).willReturn(user);
+        
+        // Simula uma falha ao gerar o token
+        doThrow(new RuntimeException("Token generation failed")).when(tokenService).generateTokenForReactivation(user);
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authService.reactivateAccountRequest(dataReactivateAccount);
+        });
+        assertEquals("Token generation failed", exception.getMessage());
+    }
+
+
+    private void setupUserRepositoryMock(String email, User user) {
+        given(userRepository.findByEmail(email)).willReturn(user);
+    }
+
+    @Test
+    @DisplayName("Test Load User By Username Success")
+    public void testLoadUserByUserName_Success() {
+        String email = faker.internet().emailAddress();
+        User user = new User();
+        user.setEmail(email);
+
+        setupUserRepositoryMock(email, user);
+
+        UserDetails userDetails = authService.loadUserByUsername(email);
+
+        assertNotNull(userDetails);
+        assertEquals(userDetails.getUsername(), email);
+    }
+
+
+
+
+
+
+
+    
 }

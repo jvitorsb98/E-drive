@@ -8,6 +8,7 @@ import br.com.cepedi.e_drive.security.model.records.register.DataAuth;
 import br.com.cepedi.e_drive.security.model.records.register.DataReactivateAccount;
 import br.com.cepedi.e_drive.security.model.records.register.DataRegisterUser;
 import br.com.cepedi.e_drive.security.model.records.register.DataRequestResetPassword;
+import br.com.cepedi.e_drive.security.model.records.register.DataResetPassword;
 import br.com.cepedi.e_drive.security.service.auth.AuthService;
 import br.com.cepedi.e_drive.security.service.email.EmailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -188,6 +190,113 @@ public class AuthControllerTest {
         assertEquals(expectedResponse, response.getBody());
     }
 
+    @Test
+    @DisplayName("Should reset password successfully")
+    void testResetPassword() {
+        // Arrange
+        String validToken = "validToken";
+        String newPassword = "newPassword";
+        DataResetPassword dataResetPassword = new DataResetPassword(validToken, newPassword);
+        String expectedResponse = "Password updated successfully.";
+        
+        // Simula o comportamento do authService
+        when(authService.resetPassword(dataResetPassword)).thenReturn(expectedResponse);
+
+        // Act
+        ResponseEntity<String> response = authController.resetPassword(dataResetPassword);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse, response.getBody());
+    }
+
+    @Test
+    @DisplayName("Should return Bad Request for invalid reset password token")
+    void testResetPassword_InvalidToken() {
+        // Arrange
+        String invalidToken = "invalidToken";
+        String newPassword = "newPassword";
+        DataResetPassword dataResetPassword = new DataResetPassword(invalidToken, newPassword);
+        String expectedResponse = "Invalid or expired token";
+        
+       
+        when(authService.resetPassword(dataResetPassword)).thenThrow(new RuntimeException(expectedResponse));
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authController.resetPassword(dataResetPassword);
+        });
+        
+        assertEquals(expectedResponse, exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should log out successfully")
+    void testLogout() {
+        // Arrange
+        String token = "Bearer someToken"; // O token deve incluir "Bearer "
+        String expectedMessage = "Logout successful"; // Mensagem esperada
+
+        // Simulando o comportamento do authService para o logout
+        when(authService.logout(anyString())).thenReturn(expectedMessage); // Ajuste aqui
+
+        // Act
+        ResponseEntity<String> response = authController.logout(token);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode()); // Verifique se o status é OK
+        assertEquals(expectedMessage, response.getBody()); // Verifique se o corpo é o esperado
+    }
+
+
+
+    @Test
+    @DisplayName("Should disable user successfully")
+    void testDisableUser_Success() {
+        // Arrange
+        Long userId = 1L;
+
+        // Act
+        ResponseEntity<Void> response = authController.disableUser(userId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(authService, times(1)).disableUser(userId);
+    }
+
+    @Test
+    @DisplayName("Should return Forbidden for disabling user without permission")
+    void testDisableUser_Forbidden() {
+        // Arrange
+        Long userId = 1L;
+
+        // Simula o comportamento do authService para lançar uma exceção
+        doThrow(new RuntimeException("Forbidden")).when(authService).disableUser(userId);
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authController.disableUser(userId);
+        });
+
+        assertEquals("Forbidden", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should return Not Found for disabling non-existing user")
+    void testDisableUser_NotFound() {
+        // Arrange
+        Long userId = 1L;
+
+        // Simula o comportamento do authService para lançar uma exceção
+        doThrow(new RuntimeException("User not found")).when(authService).disableUser(userId);
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authController.disableUser(userId);
+        });
+
+        assertEquals("User not found", exception.getMessage());
+    }
 
 
 }
