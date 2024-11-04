@@ -23,7 +23,7 @@
 
 <form [formGroup]="vehicleStatusBatteryForm">
   <!-- Container para a tabela de marcas de veículos -->
-  <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-1" id="table-container">
+  <div class="container col-12 col-md-12 col-sm-12 col-lg-12" id="table-container">
     <div class="row">
       <div class="container-table">
         <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
@@ -92,7 +92,7 @@
     </div>
   </div>
 
-  <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-3">
+  <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-1">
     <mat-form-field class="custom-select w-100">
       <mat-label>Saúde da bateria (%):</mat-label>
       <input type="number" matInput formControlName="saudeBateria" aria-describedby="Help">

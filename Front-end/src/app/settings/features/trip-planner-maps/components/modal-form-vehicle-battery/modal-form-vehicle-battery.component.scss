@@ -19,13 +19,13 @@
 }
 
 /* Estiliza o contêiner de filtro personalizado com display flex, 
-     ocupando 100% da largura, centralizando-o com margem de 5% e 
-     ajustando a margem inferior para -25px para alinhamento. */
+       ocupando 100% da largura, centralizando-o com margem de 5% e 
+       ajustando a margem inferior para -25px para alinhamento. */
 .custom-filter {
   display: flex;
-  margin: 3% auto;
+  width: 100%;
+  margin: 0% auto;
   margin-bottom: -25px;
-  margin-top: 1%;
 }
 
 /* Contêiner da tabela com cantos arredondados, centralizado horizontalmente, 
@@ -102,6 +102,17 @@ tr {
   }
 }
 
+.icon {
+  color: #000; // Cor padrão do ícone
+  transition: color 0.3s, box-shadow 0.3s; // Adiciona uma transição suave para cor e sombra
+
+  &:hover {
+    cursor: pointer;
+    color: #19B6DD; // Cor do ícone quando o mouse passa sobre ele
+    box-shadow: 0px 0px 5px 3px rgba(25, 182, 221, 0.5); // Efeito de sombra suave
+  }
+}
+
 .buttons-container {
   display: flex;
   flex-direction: column; // Empilha os botões verticalmente
@@ -109,6 +120,7 @@ tr {
   padding-top: 0; // Remove padding se houver
   gap: 0px; // Ajusta o espaço entre os botões
 }
+
 .mat-error-text {
   font-size: 10px;
   line-height: 1.5;
@@ -150,7 +162,11 @@ tr {
     margin-right: 0px; // Espaço à direita do botão, se necessário
     margin-left: 0px; // Espaço à esquerda do botão para movê-lo para a direita
     border: 1px solid #19B6DD; // Cor da borda do botão
-    cursor: pointer;
+   
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0px 0px 5px 3px rgba(25, 182, 221, 0.5); // Efeito de sombra suave
+    }
   }
 
   // Se quiser esconder o texto, mas ainda manter acessibilidade

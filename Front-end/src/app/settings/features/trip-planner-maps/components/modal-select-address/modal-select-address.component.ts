@@ -47,7 +47,9 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
     private dialog: MatDialog,
     private addressService: AddressService,
     private alertasService: AlertasService
-  ) { }
+  ) {
+    this.addresses = new MatTableDataSource<DataAddressDetails>(this.filteredAddresses); // Inicializa a fonte de dados da tabela
+  }
 
   /**
    * Método do ciclo de vida que é executado após a inicialização do componente.
