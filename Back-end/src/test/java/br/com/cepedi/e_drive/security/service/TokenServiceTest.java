@@ -269,6 +269,134 @@ public class TokenServiceTest {
         // Verifique se a mensagem da exceção é a esperada
         assertEquals("Erro ao gerar o token JWT", thrownException.getMessage());
     }
+    
+    ////////////////////////////////////////
+    @Test
+    @DisplayName("Test generateTokenRecoverPassword - Success")
+    void testGenerateTokenRecoverPassword_Success() {
+        // Arrange
+        User user = new User();
+        user.setId(faker.number().randomNumber());
+        user.setEmail(faker.internet().emailAddress());
+
+        // Act
+        String token = tokenService.generateTokenRecoverPassword(user);
+
+        // Mocking the repository to return a valid token
+        Token mockToken = new Token();
+        mockToken.setDisabled(false);
+        when(tokenRepository.findByToken(token)).thenReturn(Optional.of(mockToken));
+
+        // Assert
+        assertNotNull(token);
+        assertTrue(tokenService.isValidToken(token));
+        assertEquals(user.getEmail(), tokenService.getEmailByToken(token));
+    }
+
+    @Test
+    @DisplayName("Test generateTokenForReactivation - Success")
+    void testGenerateTokenForReactivation_Success() {
+        // Arrange
+        User user = new User();
+        user.setId(faker.number().randomNumber());
+        user.setEmail(faker.internet().emailAddress());
+
+        // Act
+        String token = tokenService.generateTokenForReactivation(user);
+
+        // Mock the token repository to verify token registration
+        Token mockToken = new Token();
+        mockToken.setDisabled(false);
+        when(tokenRepository.findByToken(token)).thenReturn(Optional.of(mockToken));
+
+        // Assert
+        assertNotNull(token);
+        assertTrue(tokenService.isValidToken(token));
+        assertEquals(user.getEmail(), tokenService.getEmailByToken(token));
+    }
+
+    @Test
+    @DisplayName("Test isValidToken - Disabled Token")
+    void testIsValidToken_DisabledToken_ReturnsFalse() {
+        // Arrange
+        String token = "disabledToken";
+        Token mockToken = new Token();
+        mockToken.setDisabled(true);
+        lenient().when(tokenRepository.findByToken(token)).thenReturn(Optional.of(mockToken));
+
+        // Act
+        boolean isValid = tokenService.isValidToken(token);
+
+        // Assert
+        assertFalse(isValid);
+    }
+
+
+    @Test
+    @DisplayName("Test isValidToken - Nonexistent Token")
+    void testIsValidToken_NonexistentToken_ReturnsFalse() {
+        // Arrange
+        String token = "nonexistentToken";
+        lenient().when(tokenRepository.findByToken(token)).thenReturn(Optional.empty());
+
+        // Act
+        boolean isValid = tokenService.isValidToken(token);
+
+        // Assert
+        assertFalse(isValid);
+    }
+
+
+    @Test
+    @DisplayName("Test generateTokenForReactivation with JWTCreationException")
+    void testGenerateTokenForReactivation_JWTCreationException() {
+        // Arrange
+        User user = new User();
+        user.setId(faker.number().randomNumber());
+        user.setEmail(faker.internet().emailAddress());
+
+        // Inject an invalid secret to force JWTCreationException
+        ReflectionTestUtils.setField(tokenService, "secret", "");
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> tokenService.generateTokenForReactivation(user));
+    }
+    
+    @Test
+    @DisplayName("Test getIdUserByToken - Valid Token")
+    void testGetIdUserByToken_ValidToken_ReturnsUserId() {
+        // Arrange
+        Long expectedUserId = 1L;
+        User user = new User();
+        user.setId(expectedUserId);
+        user.setEmail(faker.internet().emailAddress());
+
+        // Create token, ensuring the claim is set
+        String token = JWT.create()
+                .withClaim("id", expectedUserId)  // Ensure "id" claim is set
+                .sign(Algorithm.HMAC256("testSecret123"));  // Use matching secret
+
+        // Act
+        Long userId = tokenService.getIdUSerByToken(token);  // Should return Long, not null
+
+        // Assert
+        assertEquals(expectedUserId, userId);
+    }
+
+
+
+
+
+    @Test
+    @DisplayName("Test getIdUserByToken - Invalid Token")
+    void testGetIdUserByToken_InvalidToken_ThrowsException() {
+        // Arrange
+        String invalidToken = "invalidToken";
+
+        // Act & Assert
+        assertThrows(JWTVerificationException.class, () -> tokenService.getEmailByToken(invalidToken));
+    }
+
 }
 
 

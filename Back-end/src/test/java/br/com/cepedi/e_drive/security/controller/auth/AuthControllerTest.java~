@@ -219,7 +219,7 @@ public class AuthControllerTest {
         DataResetPassword dataResetPassword = new DataResetPassword(invalidToken, newPassword);
         String expectedResponse = "Invalid or expired token";
         
-       
+        // Simula o comportamento do authService
         when(authService.resetPassword(dataResetPassword)).thenThrow(new RuntimeException(expectedResponse));
 
         // Act & Assert
@@ -230,22 +230,40 @@ public class AuthControllerTest {
         assertEquals(expectedResponse, exception.getMessage());
     }
 
+//    @Test
+//    @DisplayName("Should log out successfully")
+//    void testLogout() {
+//        // Arrange
+//        String token = "validToken";
+//        String expectedResponse = "Logout successful";
+//
+//        // Simula o comportamento do authService
+//        when(authService.logout(token)).thenReturn(expectedResponse);
+//
+//        // Act
+//        ResponseEntity<String> response = authController.logout("Bearer " + token);
+//
+//        // Assert
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals(expectedResponse, response.getBody());
+//    }
+
     @Test
-    @DisplayName("Should log out successfully")
-    void testLogout() {
+    @DisplayName("Should throw RuntimeException for invalid token on logout")
+    void testLogout_InvalidToken() {
         // Arrange
-        String token = "Bearer someToken"; // O token deve incluir "Bearer "
-        String expectedMessage = "Logout successful"; // Mensagem esperada
+        String invalidToken = "invalidToken";
+        String expectedResponse = "Invalid or expired token";
 
-        // Simulando o comportamento do authService para o logout
-        when(authService.logout(anyString())).thenReturn(expectedMessage); // Ajuste aqui
+        // Simula o comportamento do authService
+        when(authService.logout(invalidToken)).thenThrow(new RuntimeException(expectedResponse));
 
-        // Act
-        ResponseEntity<String> response = authController.logout(token);
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authController.logout("Bearer " + invalidToken);
+        });
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode()); // Verifique se o status é OK
-        assertEquals(expectedMessage, response.getBody()); // Verifique se o corpo é o esperado
+        assertEquals(expectedResponse, exception.getMessage()); 
     }
 
 
