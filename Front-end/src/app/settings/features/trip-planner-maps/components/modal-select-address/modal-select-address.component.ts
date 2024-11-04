@@ -55,19 +55,21 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
    * Método do ciclo de vida que é executado após a inicialização do componente.
    */
   ngOnInit(): void {
-    this.getAllAddresses(this.currentPage, this.pageSize); // Obtém todos os endereços ao inicializar o componente
+    // this.getAllAddresses(this.currentPage, this.pageSize); // Obtém todos os endereços ao inicializar o componente
+    this.getAllAddresses();
   }
 
-  // Carrega a lista de endereços do serviço
-  getAllAddresses(pageIndex: number, pageSize: number) {
+  /**
+   * Método para obter todos os endereços do serviço.
+   */
+  getAllAddresses() {
     if (this.isFilterActive) {
       this.addresses.data = this.filteredData;
       this.addresses.paginator = this.paginator;
       this.addresses.sort = this.sort;
     } else {
-      this.addressService.listAll(pageIndex, pageSize).subscribe({
-        next: (response: PaginatedResponse<DataAddressDetails>) => {
-          // Extrai o array de endereços do campo 'content'
+      this.addressService.getAll().subscribe({
+        next: (response) => {
           this.filteredAddresses = response.content;
 
           if (Array.isArray(this.filteredAddresses)) {
