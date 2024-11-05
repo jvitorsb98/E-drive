@@ -17,10 +17,11 @@
 }
 
 .return-home-btn {
+  background-image: url('../../../../../../../assets/images/house-with-a-car.ico');
   // background-image: url('../../../../../../../assets/images/icons-casa.svg');
   // background-image: url('../../../../../../../assets/images/icons-casa-1.ico');
   // background-image: url('../../../../../../../assets/images/icons-house-exterior.ico');
-  background-image: url('../../../../../../../assets/images/icons-casa-de-campo.ico');
+  // background-image: url('../../../../../../../assets/images/icons-casa-de-campo.ico');
   background-color: transparent;
   /* Remove qualquer fundo sólido */
   background-size: contain;
@@ -38,8 +39,9 @@
 }
 
 .travel-planning-cancel-btn {
+  background-image: url('../../../../../../../assets/images/cancelar-rota-de-carros-elétricos.png');
   // background-image: url('../../../../../../../assets/images/icons-bussola-cancel.ico');
-  background-image: url('../../../../../../../assets/images/icons8-cancelar-101.ico');
+  // background-image: url('../../../../../../../assets/images/icons8-cancelar-101.ico');
   background-color: transparent;
   /* Remove qualquer fundo sólido */
   background-size: contain;
