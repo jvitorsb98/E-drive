@@ -12,23 +12,24 @@ describe('BrandViewComponent', () => {
       declarations: [BrandViewComponent]
     })
     .compileComponents();
-    
+
     fixture = TestBed.createComponent(BrandViewComponent);
 ========
-import { MyAddressesComponent } from './my-addresses.component';
 
-describe('MyAddressesComponent', () => {
-  let component: MyAddressesComponent;
-  let fixture: ComponentFixture<MyAddressesComponent>;
+import { MyAddressesFormComponent } from './my-addresses-form.component';
+
+describe('MyAddressesFormComponent', () => {
+  let component: MyAddressesFormComponent;
+  let fixture: ComponentFixture<MyAddressesFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [MyAddressesComponent]
+      declarations: [MyAddressesFormComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(MyAddressesComponent);
->>>>>>>> origin/develop:Front-end/src/app/settings/features/my-addresses/components/my-addresses/my-addresses.component.spec.ts
+
+    fixture = TestBed.createComponent(MyAddressesFormComponent);
+    >>>>>>>> origin/develop:Front-end/src/app/settings/features/my-addresses/components/my-addresses/my-addresses.component.spec.ts
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

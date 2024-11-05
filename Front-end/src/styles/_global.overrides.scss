@@ -3,6 +3,19 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Montserrat", sans-serif; }
 
+@media (max-height: 500px) {
+  .conteudo {
+    height: 100vh;
+    padding-bottom: 9%;
+  }
+}
+@media (max-height: 380px) {
+  .conteudo {
+    height: 100vh;
+    padding-bottom: 11%;
+  }
+}
+
 .bkg-degrad-primary {
   background: linear-gradient(to right, $btn-primary,$btn-secondary);
 }
@@ -47,7 +60,7 @@ button[type="button-confirm"], button[type="submit"] {
 }
 
 button[type="button-cancel"] {
-  background-color: #ff6b6b;
+  background-color: #721c24;
   color: #FFF;
 }
 // NOTE: Customização de Alertas Swal erro

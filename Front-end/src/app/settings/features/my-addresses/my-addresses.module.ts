@@ -11,14 +11,14 @@ import { AngularMaterialModule } from '../../angular-material/angular-material.m
 // Components
 import { ListMyAddressesComponent } from './components/list-my-addresses/list-my-addresses.component';
 import { ModalDetailsAddressComponent } from './components/modal-details-address/modal-details-address.component';
-import { MyAddressesComponent } from './components/my-addresses/my-addresses.component';
+import { MyAddressesFormComponent } from './components/my-addresses-form/my-addresses-form.component';
 
 @NgModule({
   declarations: [
     // Components
     ListMyAddressesComponent,
     ModalDetailsAddressComponent,
-    MyAddressesComponent
+    MyAddressesFormComponent
   ],
   imports: [
     CommonModule,             // Modulo comum

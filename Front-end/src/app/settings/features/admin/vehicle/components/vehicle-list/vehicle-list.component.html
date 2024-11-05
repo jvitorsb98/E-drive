@@ -10,134 +10,135 @@
     </div>
   </div>
 </div>
-
-<div class="container col-12 col-md-12 col-sm-12 col-lg-12">
-  <!-- Campo de busca para filtrar as versões -->
-  <div class="custom-filter">
-    <mat-form-field class="d-flex w-100">
-      <mat-label>Busca por versão</mat-label>
-      <!-- Campo de entrada que chama a função applyFilter ao digitar -->
-      <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
-    </mat-form-field>
-  </div>
-</div>
-
-<!-- Contêiner da tabela -->
-<div class="container col-12 col-md-12 col-sm-12 col-lg-12" id="table-container">
-  <div class="row">
-    <div class="container-table">
-      <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
-        <!-- Coluna para o ícone do veículo -->
-        <ng-container matColumnDef="icon">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <mat-icon
-              matTooltip="Este ícone representa cada versão de carro listada abaixo. Clique para ver os detalhes de cada versão.">
-              directions_car
-            </mat-icon>
-          </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <!-- Exibe o ícone do veículo com tooltip informativo -->
-            <mat-icon class="icone-emoji-carro" [matTooltip]="'ID: ' + vehicle.id 
-              + ' | Status: ' 
-              + (vehicle.activated ? 'Ativado' : 'Desativado')"
-              matTooltipClass="multi-line-tooltip">directions_car</mat-icon>
-          </td>
-        </ng-container>
-
-        <!-- Coluna para o motor do veículo -->
-        <ng-container matColumnDef="mark">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <strong>Marca</strong>
-          </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong>
-              <span *ngIf="vehicle.model.brand.name.length > 10; else noEllipsisBrand">
-                {{ vehicle.model.brand.name | slice: 0:10 }}...
-              </span>
-              <ng-template #noEllipsisBrand>
-                {{ vehicle.model.brand.name }}
-              </ng-template>
-            </strong>
-          </td>
-        </ng-container>
-
-        <!-- Coluna para o modelo do veículo -->
-        <ng-container matColumnDef="model">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <strong>Modelo</strong>
-          </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong>
-              <span *ngIf="vehicle.model.name.length > 10; else noEllipsisModel">
-                {{ vehicle.model.name | slice: 0:10 }}...
-              </span>
-              <ng-template #noEllipsisModel>
-                {{ vehicle.model.name }}
-              </ng-template>
-            </strong>
-          </td>
-        </ng-container>
-
-        <!-- Coluna para a versão do veículo -->
-        <ng-container matColumnDef="version">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
-            <strong>Versão</strong>
-          </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong>
-              <span *ngIf="vehicle.version.length > 10; else noEllipsisVersion">
-                {{ vehicle.version | slice: 0:10 }}...
-              </span>
-              <ng-template #noEllipsisVersion>
-                {{ vehicle.version }}
-              </ng-template>
-            </strong>
-          </td>
-        </ng-container>
-
-        <!-- Coluna para o status de ativação do veículo -->
-        <ng-container matColumnDef="activated">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <!-- Ícone de check para veículos ativados e ícone de erro para veículos desativados -->
-            <mat-icon class="check" *ngIf="vehicle.activated" (click)="deactivate(vehicle)">check</mat-icon>
-            <mat-icon class="error" *ngIf="!vehicle.activated" (click)="activate(vehicle)">remove</mat-icon>
-          </td>
-        </ng-container>
-
-        <!-- Coluna para ações que podem ser realizadas em cada veículo -->
-        <ng-container matColumnDef="actions">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <!-- Ícones para visualizar, editar, ativar ou desativar o veículo -->
-            <mat-icon class="icone-table" (click)="openModalView(vehicle)">visibility</mat-icon>
-            <mat-icon class="icone-table" (click)="openModalEdit(vehicle)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="deactivate(vehicle)" *ngIf="vehicle.activated">delete</mat-icon>
-            <mat-icon class="icone-table" (click)="activate(vehicle)" *ngIf="!vehicle.activated">check</mat-icon>
-          </td>
-        </ng-container>
-
-        <!-- Linhas da tabela para cabeçalho e dados -->
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-        <!-- Mensagem de sem dados encontrados -->
-        <tr class="mat-row" *matNoDataRow>
-          <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a pesquisa: "{{input.value}}"
-          </td>
-        </tr>
-      </table>
+<div class="conteudo">
+  <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
+    <!-- Campo de busca para filtrar as versões -->
+    <div class="custom-filter">
+      <mat-form-field class="d-flex w-100">
+        <mat-label>Busca por versão</mat-label>
+        <!-- Campo de entrada que chama a função applyFilter ao digitar -->
+        <input matInput (keyup)="applyFilter($event)" placeholder="Digite sua busca" #input>
+      </mat-form-field>
     </div>
   </div>
-</div>
 
-<!-- Container para o paginador e botão de adicionar nova versão de veículo -->
-<div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-10">
-  <!-- Paginador para navegação entre páginas -->
-  <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 100, totalVehicles]" (page)="onPageChange($event)"
-    aria-label="Selecione veículos por página"></mat-paginator>
-  <!-- Botão para abrir modal de adição de novo veículo-->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()"
-    text="Nova Versão de Veiculo"></app-ui-button>
+  <!-- Contêiner da tabela -->
+  <div class="container col-12 col-md-12 col-sm-12 col-lg-12" id="table-container">
+    <div class="row">
+      <div class="container-table">
+        <table class="mat-elevation-z2 fixed-header" mat-table [dataSource]="dataSource" matSort>
+          <!-- Coluna para o ícone do veículo -->
+          <ng-container matColumnDef="icon">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <mat-icon
+                matTooltip="Este ícone representa cada versão de carro listada abaixo. Clique para ver os detalhes de cada versão.">
+                directions_car
+              </mat-icon>
+            </th>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <!-- Exibe o ícone do veículo com tooltip informativo -->
+              <mat-icon class="icone-emoji-carro" [matTooltip]="'ID: ' + vehicle.id
+              + ' | Status: '
+              + (vehicle.activated ? 'Ativado' : 'Desativado')"
+                matTooltipClass="multi-line-tooltip">directions_car</mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Coluna para o motor do veículo -->
+          <ng-container matColumnDef="mark">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <strong>Marca</strong>
+            </th>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <strong>
+                <span *ngIf="vehicle.model.brand.name.length > 10; else noEllipsisBrand">
+                  {{ vehicle.model.brand.name | slice: 0:10 }}...
+                </span>
+                <ng-template #noEllipsisBrand>
+                  {{ vehicle.model.brand.name }}
+                </ng-template>
+              </strong>
+            </td>
+          </ng-container>
+
+          <!-- Coluna para o modelo do veículo -->
+          <ng-container matColumnDef="model">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <strong>Modelo</strong>
+            </th>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <strong>
+                <span *ngIf="vehicle.model.name.length > 10; else noEllipsisModel">
+                  {{ vehicle.model.name | slice: 0:10 }}...
+                </span>
+                <ng-template #noEllipsisModel>
+                  {{ vehicle.model.name }}
+                </ng-template>
+              </strong>
+            </td>
+          </ng-container>
+
+          <!-- Coluna para a versão do veículo -->
+          <ng-container matColumnDef="version">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+              <strong>Versão</strong>
+            </th>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <strong>
+                <span *ngIf="vehicle.version.length > 10; else noEllipsisVersion">
+                  {{ vehicle.version | slice: 0:10 }}...
+                </span>
+                <ng-template #noEllipsisVersion>
+                  {{ vehicle.version }}
+                </ng-template>
+              </strong>
+            </td>
+          </ng-container>
+
+          <!-- Coluna para o status de ativação do veículo -->
+          <ng-container matColumnDef="activated">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <!-- Ícone de check para veículos ativados e ícone de erro para veículos desativados -->
+              <mat-icon class="check" *ngIf="vehicle.activated" (click)="deactivate(vehicle)">check</mat-icon>
+              <mat-icon class="error" *ngIf="!vehicle.activated" (click)="activate(vehicle)">remove</mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Coluna para ações que podem ser realizadas em cada veículo -->
+          <ng-container matColumnDef="actions">
+            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
+            <td class="td-table" mat-cell *matCellDef="let vehicle">
+              <!-- Ícones para visualizar, editar, ativar ou desativar o veículo -->
+              <mat-icon class="icone-table" (click)="openModalView(vehicle)">visibility</mat-icon>
+              <mat-icon class="icone-table" (click)="openModalEdit(vehicle)">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="deactivate(vehicle)" *ngIf="vehicle.activated">delete</mat-icon>
+              <mat-icon class="icone-table" (click)="activate(vehicle)" *ngIf="!vehicle.activated">check</mat-icon>
+            </td>
+          </ng-container>
+
+          <!-- Linhas da tabela para cabeçalho e dados -->
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          <!-- Mensagem de sem dados encontrados -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a pesquisa: "{{input.value}}"
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container para o paginador e botão de adicionar nova versão de veículo -->
+  <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-10">
+    <!-- Paginador para navegação entre páginas -->
+    <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
+      [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 100, totalVehicles]" (page)="onPageChange($event)"
+      aria-label="Selecione veículos por página"></mat-paginator>
+    <!-- Botão para abrir modal de adição de novo veículo-->
+    <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()"
+      text="Nova Versão de Veiculo"></app-ui-button>
+  </div>
 </div>

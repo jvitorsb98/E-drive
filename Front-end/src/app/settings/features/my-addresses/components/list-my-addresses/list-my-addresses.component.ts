@@ -2,7 +2,7 @@
 import { ModalDetailsAddressComponent } from '../modal-details-address/modal-details-address.component';
 
 // Componente para listar endereços e editar/adicionar endereços
-import { MyAddressesComponent } from '../my-addresses/my-addresses.component';
+import { MyAddressesFormComponent } from '../my-addresses-form/my-addresses-form.component';
 
 // Serviço para operações relacionadas a endereços
 import { AddressService } from '../../../../core/services/Address/address.service';
@@ -180,7 +180,7 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Abre o modal para adicionar um novo endereço
   openModalAddAddress() {
-    this.dialog.open(MyAddressesComponent, {
+    this.dialog.open(MyAddressesFormComponent, {
       width: '700px',
       height: '515px',
       data: {
@@ -191,7 +191,7 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Abre o modal para editar um endereço existente
   openModalEditAddress(address: DataAddressDetails) {
-    this.dialog.open(MyAddressesComponent, {
+    this.dialog.open(MyAddressesFormComponent, {
       width: '650px',
       height: '515px',
       data: {

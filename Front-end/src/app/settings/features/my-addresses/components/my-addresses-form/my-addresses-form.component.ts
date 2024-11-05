@@ -26,13 +26,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 // Importa Swal para exibir alertas e notificações bonitos
 import { HttpErrorResponse } from '@angular/common/http';
 
-// Define o componente 'MyAddressesComponent'
 @Component({
-  selector: 'app-my-addresses', // Seletor para o componente
-  templateUrl: './my-addresses.component.html', // Caminho para o template HTML
-  styleUrls: ['./my-addresses.component.scss'] // Caminho para os estilos SCSS
+  selector: 'app-my-addresses-form',
+  templateUrl: './my-addresses-form.component.html',
+  styleUrl: './my-addresses-form.component.scss'
 })
-export class MyAddressesComponent implements OnInit {
+export class MyAddressesFormComponent  implements OnInit {
 
   // Input que pode ser passado de um componente pai, usado para reutilização em atualizações
   @Input() addressData: any = null;
@@ -55,7 +54,7 @@ export class MyAddressesComponent implements OnInit {
     private postalCodeService: PostalCodeService, // Serviço para buscar informações de CEP
     private dialog: MatDialog, // Serviço para abrir diálogos
     private addressService: AddressService, // Serviço para operações com endereços
-    public dialogRef: MatDialogRef<MyAddressesComponent>, // Referência ao diálogo do componente
+    public dialogRef: MatDialogRef<MyAddressesFormComponent>, // Referência ao diálogo do componente
     private router: Router, // Serviço para navegação e manipulação de rotas
     private alertasService: AlertasService,
     @Inject(MAT_DIALOG_DATA) public data: { addressData: DataAddressDetails; actionTitle: string } // Dados passados ao diálogo
