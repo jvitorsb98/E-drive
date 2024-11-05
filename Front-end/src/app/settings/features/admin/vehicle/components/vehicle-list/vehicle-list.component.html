@@ -49,8 +49,8 @@
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
             <strong>Marca</strong>
           </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong class="truncate">
+          <td class="td-table truncate" mat-cell *matCellDef="let vehicle">
+            <strong >
               {{ vehicle.model.brand.name }}
             </strong>
           </td>
@@ -61,8 +61,8 @@
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
             <strong>Modelo</strong>
           </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong class="truncate">
+          <td class="td-table truncate" mat-cell *matCellDef="let vehicle">
+            <strong >
               {{ vehicle.model.name }}
             </strong>
           </td>
@@ -73,8 +73,8 @@
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
             <strong>Versão</strong>
           </th>
-          <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong class="truncate">
+          <td class="td-table truncate" mat-cell *matCellDef="let vehicle">
+            <strong >
                 {{ vehicle.version }}
             </strong>
           </td>
@@ -123,12 +123,14 @@
 </div>
 
 <!-- Container para o paginador e botão de adicionar nova versão de veículo -->
-<div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-10">
-  <!-- Paginador para navegação entre páginas -->
+<div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-1">
+
   <mat-paginator class="shadow-sn" [length]="totalVehicles" [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 20, 30, 40, 50, 100, totalVehicles]" (page)="onPageChange($event)"
+    [pageSizeOptions]="[10, 20, 30, 40, 50, totalVehicles]" (page)="onPageChange($event)"
     aria-label="Selecione veículos por página"></mat-paginator>
-  <!-- Botão para abrir modal de adição de novo veículo-->
+
+
+  <!-- Botão para abrir modal de adição de nova marca -->
   <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAdd()"
-    text="Nova Versão de Veiculo"></app-ui-button>
+    text="Nova marca"></app-ui-button>
 </div>
