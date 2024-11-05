@@ -8,7 +8,7 @@ import { UserLoginModalComponent } from '../../core/security/login/user-login-mo
 import { AuthService } from '../../core/security/services/auth/auth.service';
 
 // Imports do Angular
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Renderer2 } from '@angular/core';
 
 /**
  * Componente responsável por exibir a página de introdução e gerenciar o modal de login.
@@ -25,7 +25,7 @@ import { Component, AfterViewInit } from '@angular/core';
 })
 export class IntroPageComponent implements AfterViewInit {
 
-  constructor(private modal: ModalService) { }
+  constructor(private modal: ModalService, private renderer: Renderer2) { }
 
   /**
    * Abre o modal de login ao chamar o serviço `ModalService`.
@@ -46,6 +46,20 @@ export class IntroPageComponent implements AfterViewInit {
    * a classe `show` quando os elementos entram na área visível da tela (threshold de 50%).
    */
   ngAfterViewInit() {
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+    const parallaxElement = document.querySelector('.parallax');
+
+    if (parallaxElement) {
+      // Aplica background-attachment de acordo com o sistema operacional
+      if (isIOS) {
+        this.renderer.setStyle(parallaxElement, 'backgroundAttachment', 'scroll');
+        this.renderer.setStyle(parallaxElement, '-webkit-overflow-scrolling', 'touch');
+      } else {
+        this.renderer.setStyle(parallaxElement, 'backgroundAttachment', 'fixed');
+      }
+    }
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
