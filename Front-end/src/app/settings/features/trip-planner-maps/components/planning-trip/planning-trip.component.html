@@ -24,6 +24,12 @@
   <button class="travel-planning-btn" (click)="toggleInputs()"></button>
 </div>
 
+<!-- <div *ngIf="!isRouteActive" class="icon-container" cdkDrag>
+  <button class="travel-planning-btn" mat-icon-button aria-label="Planejar viagem" (click)="toggleInputs()">
+    <mat-icon>explore</mat-icon>
+  </button>
+</div> -->
+
 <div #mapContainer id="map"></div>
 
 <!-- Botão de Cancelar Rota, exibido apenas se isRouteActive for true -->
