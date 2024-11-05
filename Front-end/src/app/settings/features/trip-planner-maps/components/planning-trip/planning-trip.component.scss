@@ -103,27 +103,54 @@ body {
 .icon-container {
     position: absolute;
     top: 83%;
-    /* Centraliza verticalmente */
     left: 50%;
-    /* Centraliza horizontalmente */
     transform: translate(-50%, -50%);
-    /* Move o botão para o centro exato */
     z-index: 1000;
+
+}
+
+.icon-button {
+    color: #000;
+    /* Cor inicial */
+    transition: color 0.3s, box-shadow 0.3s;
+    border-radius: 50%;
+    /* Garante que o botão fique redondo */
+    outline: none;
+    /* Remove o foco padrão */
+
+    &:hover {
+        cursor: pointer;
+        color: #19B6DD;
+        box-shadow: 0px 0px 5px 3px rgba(25, 182, 221, 0.5);
+    }
+
+    /* Estilos para forçar a cor inicial ao terminar o arraste */
+    &:active,
+    &:focus {
+        color: #000;
+    }
 }
 
 .travel-planning-btn {
     background-image: url('../../../../../../assets/images/3D-icon-of-an-electric-car-route.ico');
+    // background-image: url('../../../../../../assets/images/icons-bussola.ico');
+    // background-image: url('../../../../../../assets/images/icons-compass.ico');
+    // background-image: url('../../../../../../assets/images/icons-bussola-94.ico');
+    background-color: transparent;
+    /* Remove qualquer fundo sólido */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    border-radius: 12px;
-    color: white;
-    width: 60px;
-    height: 60px;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
     border: none;
+    /* Remove bordas */
+    box-shadow: none;
+    /* Remove qualquer sombra padrão */
     cursor: pointer;
-    /* Suaviza a transição do brilho ao passar o cursor */
-    transition: filter 0.3s ease;
+    transition: background-color 0.3s, box-shadow 0.3s;
+
 }
 
 /* Clareia a imagem em 5% ao passar o cursor */
@@ -133,13 +160,21 @@ body {
 
 .travel-planning-cancel-btn {
     background-image: url('../../../../../../assets/images/cancelar-rota-de-carros-elétricos.png');
+    // background-image: url('../../../../../../assets/images/icons-bussola-cancel.ico');
+    // background-image: url('../../../../../../assets/images/icons8-cancelar-101.ico');
+    background-color: transparent;
+    /* Remove qualquer fundo sólido */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    border-radius: 12px;
-    color: white;
-    width: 60px;
-    height: 60px;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
     border: none;
-    cursor: pointer
+    /* Remove bordas */
+    box-shadow: none;
+    /* Remove qualquer sombra padrão */
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+
 }

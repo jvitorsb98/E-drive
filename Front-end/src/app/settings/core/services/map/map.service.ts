@@ -1,6 +1,5 @@
 import { ElementRef, Injectable } from '@angular/core';
 import { environment } from '../../../../../environments/environment';
-import { LocationService } from '../location/location.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +11,6 @@ export class MapService {
   directionsRenderer!: google.maps.DirectionsRenderer;
 
   constructor(
-    private locationService:LocationService
   ) { }
 
   async initMap(mapContainer: ElementRef): Promise<google.maps.Map> {

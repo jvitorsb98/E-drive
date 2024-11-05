@@ -2,7 +2,7 @@
 import { MapService } from './../../../../core/services/map/map.service';
 
 // Importa o serviço de geocodificação, utilizado para converter endereços em coordenadas
-import { GeocodingService } from './../../../../core/services/geocoding/geocoding.service';
+import { GeocodingService } from './../../../../core/services/apis/geocoding/geocoding.service';
 
 // Importa os módulos principais do Angular, incluindo componentes e referências de elemento
 import { Component, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
@@ -23,7 +23,7 @@ import { TripPlannerMapsService } from '../../../../core/services/trip-planner-m
 import { DataAddressDetails } from '../../../../core/models/inter-Address';
 
 // Importa o serviço de localização, que pode conter lógica para gerenciar a localização do usuário
-import { LocationService } from '../../../../core/services/location/location.service';
+import { LocationService } from '../../../../core/services/apis/location/location.service';
 
 // Importa o componente do modal para seleção de endereços
 import { ModalSelectAddressComponent } from '../modal-select-address/modal-select-address.component';
