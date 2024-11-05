@@ -43,8 +43,8 @@
 
 				<ng-container matColumnDef="mark">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
-					<td class="td-table" mat-cell *matCellDef="let userVehicle">
-						<strong class="truncate">
+					<td class="td-table truncate" mat-cell *matCellDef="let userVehicle">
+						<strong >
                 			{{userVehicle.model.brand.name}}
             			</strong>
 					</td>
@@ -52,8 +52,8 @@
 
 				<ng-container matColumnDef="model">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
-					<td class="td-table" mat-cell *matCellDef="let userVehicle">
-						<strong class="truncate">
+					<td class="td-table truncate" mat-cell *matCellDef="let userVehicle">
+						<strong >
                 			{{userVehicle.model.name}}
             			</strong>
 					</td>
@@ -61,8 +61,8 @@
 
 				<ng-container matColumnDef="version">
 					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Versão</strong></th>
-					<td class="td-table" mat-cell *matCellDef="let userVehicle">
-						<strong class="truncate">
+					<td class="td-table truncate" mat-cell *matCellDef="let userVehicle">
+						<strong >
 							{{userVehicle.version}}
             			</strong>
 					</td>

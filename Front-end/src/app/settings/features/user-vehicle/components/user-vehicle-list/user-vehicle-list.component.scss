@@ -51,6 +51,12 @@ table {
   z-index: 1;
 }
 
+td, th {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
 /* Estilos para os cabeçalhos da tabela (th), com padding,
        texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
 .th-table {
@@ -94,6 +100,7 @@ tr {
   margin-right: 120%;
   cursor: pointer;
   transition: color 0.3s;
+
   /* Ao passar o mouse, a cor do ícone muda para azul claro. */
   &:hover {
     color: #19B6DD;
@@ -103,12 +110,12 @@ tr {
 /* Estilos para o ícone interativo na tabela, com tamanho de 18px,
        cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
 .icone-table {
-  font-size: 200%;
+  font-size: 160%;
   color: #767676;
   margin-right: 5px;
   transform: rotate(0deg);
   transition: 0.3s linear all;
-  
+
 
   /* Ao passar o mouse, o ícone muda de cor e faz uma rotação de 359 graus. */
   &:hover {
@@ -147,10 +154,11 @@ tr {
 
 /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
 .th-table mat-icon {
-  font-size: 20px;
+  font-size: 160%;
   padding: 1% 1%;
   text-align: left;
 }
+
 
 /* Define o campo de formulário dentro do filtro personalizado como flexível,
        ocupando todo o espaço horizontal disponível. */
@@ -172,7 +180,13 @@ tr {
   .th-table{
     font-size: 90%;
   }
+
+  .th-table mat-icon {
+    font-size: 150%;
+    padding: 1% 1%;
+    text-align: left;
+  }
+
+
   
-
-
 }
