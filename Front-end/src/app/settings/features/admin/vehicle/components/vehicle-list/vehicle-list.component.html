@@ -50,13 +50,8 @@
             <strong>Marca</strong>
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong>
-              <span *ngIf="vehicle.model.brand.name.length > 10; else noEllipsisBrand">
-                {{ vehicle.model.brand.name | slice: 0:10 }}...
-              </span>
-              <ng-template #noEllipsisBrand>
-                {{ vehicle.model.brand.name }}
-              </ng-template>
+            <strong class="truncate">
+              {{ vehicle.model.brand.name }}
             </strong>
           </td>
         </ng-container>
@@ -67,13 +62,8 @@
             <strong>Modelo</strong>
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong>
-              <span *ngIf="vehicle.model.name.length > 10; else noEllipsisModel">
-                {{ vehicle.model.name | slice: 0:10 }}...
-              </span>
-              <ng-template #noEllipsisModel>
-                {{ vehicle.model.name }}
-              </ng-template>
+            <strong class="truncate">
+              {{ vehicle.model.name }}
             </strong>
           </td>
         </ng-container>
@@ -84,13 +74,8 @@
             <strong>Versão</strong>
           </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <strong>
-              <span *ngIf="vehicle.version.length > 10; else noEllipsisVersion">
-                {{ vehicle.version | slice: 0:10 }}...
-              </span>
-              <ng-template #noEllipsisVersion>
+            <strong class="truncate">
                 {{ vehicle.version }}
-              </ng-template>
             </strong>
           </td>
         </ng-container>
@@ -107,15 +92,21 @@
 
         <!-- Coluna para ações que podem ser realizadas em cada veículo -->
         <ng-container matColumnDef="actions">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
+          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header>
+            <strong>Ações</strong>
+          </th>
           <td class="td-table" mat-cell *matCellDef="let vehicle">
-            <!-- Ícones para visualizar, editar, ativar ou desativar o veículo -->
-            <mat-icon class="icone-table" (click)="openModalView(vehicle)">visibility</mat-icon>
-            <mat-icon class="icone-table" (click)="openModalEdit(vehicle)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="deactivate(vehicle)" *ngIf="vehicle.activated">delete</mat-icon>
-            <mat-icon class="icone-table" (click)="activate(vehicle)" *ngIf="!vehicle.activated">check</mat-icon>
+            <!-- Contêiner flex para exibir ícones em linha -->
+            <div class="d-flex align-items-center">
+              <!-- Ícones para visualizar, editar, ativar ou desativar o veículo -->
+              <mat-icon class="icone-table" (click)="openModalView(vehicle)">visibility</mat-icon>
+              <mat-icon class="icone-table" (click)="openModalEdit(vehicle)">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="deactivate(vehicle)" *ngIf="vehicle.activated">delete</mat-icon>
+              <mat-icon class="icone-table" (click)="activate(vehicle)" *ngIf="!vehicle.activated">check</mat-icon>
+            </div>
           </td>
         </ng-container>
+        
 
         <!-- Linhas da tabela para cabeçalho e dados -->
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
