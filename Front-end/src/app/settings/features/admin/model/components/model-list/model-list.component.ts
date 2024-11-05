@@ -46,7 +46,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ModelListComponent {
 
   // Colunas exibidas na tabela
-  displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
+  displayedColumns: string[] = ['icon', 'marck', 'name',  'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
   models: Model[] = []; // Lista de modelos
 

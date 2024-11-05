@@ -52,13 +52,8 @@
         <ng-container matColumnDef="marck">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model">
-            <strong>
-              <span *ngIf="model.brand.name.length > 15; else noEllipsisBrand">
-                {{ model.brand.name | slice: 0:15 }}...
-              </span>
-              <ng-template #noEllipsisBrand>
-                {{ model.brand.name }}
-              </ng-template>
+            <strong class="truncate">
+              {{ model.brand.name }}
             </strong>
           </td>
         </ng-container>
@@ -67,41 +62,33 @@
         <ng-container matColumnDef="name">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model">
-            <strong>
-              <span *ngIf="model.name.length > 15; else noEllipsisModel">
-                {{ model.name | slice: 0:15 }}...
-              </span>
-              <ng-template #noEllipsisModel>
-                {{ model.name }}
-              </ng-template>
+            <strong class="truncate">
+              {{ model.name }}
             </strong>
           </td>
         </ng-container>
 
         <!-- Coluna para exibir o status do modelo (Ativado ou Desativado) -->
-        <ng-container matColumnDef="activated">
+        <!-- <ng-container matColumnDef="activated">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model">
-            <!-- Ícone de check se o modelo estiver ativado -->
             <mat-icon class="check" *ngIf="model.activated">check</mat-icon>
-            <!-- Ícone de remove se o modelo estiver desativado -->
             <mat-icon class="error" *ngIf="!model.activated">remove</mat-icon>
           </td>
-        </ng-container>
+        </ng-container> -->
 
         <!-- Coluna de ações com opções de visualizar, editar ou alterar o status do modelo -->
         <ng-container matColumnDef="actions">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
           <td class="td-table" mat-cell *matCellDef="let model">
+            <div class="d-flex align-items-center">
             <!-- Ícone para visualizar o modelo -->
-            <mat-icon class="icone-table" (click)="openModalViewModel(model)">visibility</mat-icon>
-            <!-- Ícone para editar o modelo -->
-            <mat-icon class="icone-table" (click)="openModalEditModel(model)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="disableModel(model)" *ngIf="model.activated">delete</mat-icon>
-            <mat-icon class="icone-table" (click)="activatedModel(model)" *ngIf="!model.activated">check</mat-icon>
-
-            <!-- <mat-icon class="icone-table" (click)="activateModel(model)" *ngIf="!model.activated">power</mat-icon>
-              <mat-icon class="icone-table" (click)="deactivateModel(model)" *ngIf="model.activated">power_off</mat-icon> -->
+              <mat-icon class="icone-table" (click)="openModalViewModel(model)">visibility</mat-icon>
+              <!-- Ícone para editar o modelo -->
+              <mat-icon class="icone-table" (click)="openModalEditModel(model)">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="disableModel(model)" *ngIf="model.activated">delete</mat-icon>
+              <mat-icon class="icone-table" (click)="activatedModel(model)" *ngIf="!model.activated">check</mat-icon>
+            </div>
           </td>
         </ng-container>
 

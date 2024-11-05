@@ -37,7 +37,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['icon', 'marck', 'activated', 'actions']; // Colunas a serem exibidas na tabela
+  displayedColumns: string[] = ['icon', 'marck', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brands: Brand[] = []; // Lista de marcas
 

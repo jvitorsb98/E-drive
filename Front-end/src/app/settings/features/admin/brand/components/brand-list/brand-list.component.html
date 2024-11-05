@@ -50,37 +50,26 @@
         <ng-container matColumnDef="marck">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
           <td class="td-table" mat-cell *matCellDef="let brand">
-            <strong>
-              <span *ngIf="brand.name.length > 18; else noEllipsisBrand">
-                {{ brand.name | slice: 0:18 }}...
-              </span>
-              <ng-template #noEllipsisBrand>
-                {{ brand.name }}
-              </ng-template>
+            <strong class="truncate">
+              {{ brand.name }}
             </strong>
           </td>
         </ng-container>
 
         <!-- Coluna para o status das marcas -->
-        <ng-container matColumnDef="activated">
-          <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Status</strong></th>
-          <td class="td-table" mat-cell *matCellDef="let brand">
-            <!-- Ícone de verificação se a marca está ativada -->
-            <mat-icon class="check" *ngIf="brand.activated">check</mat-icon>
-            <!-- Ícone de remoção se a marca não está ativada -->
-            <mat-icon class="error" *ngIf="!brand.activated">remove</mat-icon>
-          </td>
-        </ng-container>
+
 
         <!-- Coluna de ações -->
         <ng-container matColumnDef="actions">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
           <td class="td-table" mat-cell *matCellDef="let brand">
-            <!-- Ícones para ações: visualizar, editar e deletar a marca -->
-            <mat-icon class="icone-table" (click)="openModalViewBrand(brand)">visibility</mat-icon>
-            <mat-icon class="icone-table" (click)="openModalEditBrand(brand)">edit</mat-icon>
-            <mat-icon class="icone-table" (click)="disableBrand(brand)" *ngIf="brand.activated">delete</mat-icon>
-            <mat-icon class="icone-table" (click)="activateBrand(brand)" *ngIf="!brand.activated">check</mat-icon>
+            <div class="d-flex align-items-center">
+              <!-- Ícones para ações: visualizar, editar e deletar a marca -->
+              <mat-icon class="icone-table" (click)="openModalViewBrand(brand)">visibility</mat-icon>
+              <mat-icon class="icone-table" (click)="openModalEditBrand(brand)">edit</mat-icon>
+              <mat-icon class="icone-table" (click)="disableBrand(brand)" *ngIf="brand.activated">delete</mat-icon>
+              <mat-icon class="icone-table" (click)="activateBrand(brand)" *ngIf="!brand.activated">check</mat-icon>
+            </div>
           </td>
         </ng-container>
 

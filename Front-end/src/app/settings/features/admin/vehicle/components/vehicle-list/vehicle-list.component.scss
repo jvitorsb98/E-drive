@@ -56,8 +56,8 @@ table {
        texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
 .th-table {
   padding: 1% 1%;
-  text-align: left;
-  font-size: 80%;
+  text-align: left; 
+  font-size: 110%;
   font-weight: 350;
   color: #5a5a5a;
 }
@@ -67,7 +67,7 @@ table {
 .td-table {
   padding: 1% 1%;
   text-align: left;
-  font-size: 70%;
+  font-size: 90%;
   font-weight: 350;
   color: #767676;
 }
@@ -161,6 +161,14 @@ tr {
 
   .icone-table {
     font-size: 150%;
+  }
+
+  .td-table {
+    font-size: 70%;
+  }
+
+  .th-table{
+    font-size: 90%;
   }
   
 

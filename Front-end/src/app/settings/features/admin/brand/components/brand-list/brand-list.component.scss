@@ -39,6 +39,8 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* Garante que a tabela use o layout fixo */
+
 }
 
 /* 
@@ -55,21 +57,30 @@ table {
      texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
 .th-table {
   padding: 1% 1%;
-  text-align: left;
-  font-size: 12px;
+  text-align: left; 
+  font-size: 110%;
   font-weight: 350;
   color: #5a5a5a;
 }
 
 /* Estilos para as células da tabela (td), com padding, 
-     texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
+    texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
 .td-table {
   padding: 1% 1%;
   text-align: left;
-  font-size: 10px;
+  font-size: 90%;
   font-weight: 350;
   color: #767676;
 }
+    
+.truncate {
+  white-space: nowrap;          /* Impede a quebra de linha */
+  overflow: hidden;             /* Oculta o texto que ultrapassa o contêiner */
+  text-overflow: ellipsis;     /* Adiciona reticências (...) ao final do texto */
+  max-width: 70%;            /* Define uma largura máxima para a coluna */
+  width: 100%;                 /* A largura ocupará 100% do espaço disponível, respeitando o max-width */
+}
+
 
 /* Define a altura das linhas da tabela como automática, garantindo 
      que a altura se ajuste ao conteúdo. */
@@ -80,9 +91,9 @@ tr {
 /* Estilos para o ícone de emoji (bandeira) ao lado do texto na tabela, 
      com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
 .icone-emoji-brand {
-  font-size: 18px;
+  font-size: 200%;
   color: #767676;
-  margin-right: 10px;
+  margin-right: 120%;
   cursor: pointer;
   transition: color 0.3s;
 
@@ -95,9 +106,9 @@ tr {
 /* Estilos para o ícone interativo na tabela, com tamanho de 18px, 
      cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
 .icone-table {
-  // font-size: 10;
+  font-size: 200%;
   color: #767676;
-  margin-right: 10px;
+  margin-right: 5px;
   transform: rotate(0deg);
   transition: 0.3s linear all;
 
@@ -147,53 +158,20 @@ tr {
 .custom-filter mat-form-field {
   flex: 1;
 }
+@media (max-width: 768px) {
 
-/* Estilos adicionais para telas de até 768px */
-@media (max-width: 500px) {
-
-  .th-table {
-    font-size: 11px;
+  .icone-table {
+    font-size: 150%;
   }
 
   .td-table {
-    font-size: 8px;
+    font-size: 70%;
   }
 
-  .icone-emoji-brand {
-    font-size: 16px;
-    padding: 10% 1%;
+  .th-table{
+    font-size: 90%;
   }
+  
 
-  .icone-table {
-    font-size: 15px;
-    padding: 2% 1%;
-  }
 
-  .no-data {
-    font-size: 12px;
-  }
-
-  .th-table mat-icon {
-    font-size: 18px;
-  }
-
-  .top-bar {
-    margin-bottom: 8%;
-  }
-
-}
-
-/* Estilos adicionais para telas de até 340px */
-@media (max-width: 340px) {
-  .th-table {
-    font-size: 10px;
-  }
-
-  .td-table {
-    font-size: 8px;
-  }
-
-  .icone-table {
-    padding: 2% 1%;
-  }
 }
