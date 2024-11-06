@@ -91,9 +91,9 @@
   </div>
 </div>
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
-  <div class="buttons-container">
-    <app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" [disabled]="!selectedAddress" (click)="confirmAddress()"
-      text="Confirmar "></app-ui-button>
-    <app-ui-button class="w-100 mb-1" typeBtn="outline-secondary" (click)="closeModal()" text="Cancelar"></app-ui-button>
+  <app-ui-button typeBtn="vivid-sky-blue" [disabled]="!selectedAddress" (click)="confirmAddress()"
+    text="Confirmar"></app-ui-button>
+  <div class="mb-1 pt-1">
+    <app-ui-button typeBtn="outline-secondary" (click)="closeModal()" text="Cancelar"></app-ui-button>
   </div>
 </div>

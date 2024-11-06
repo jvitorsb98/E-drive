@@ -50,7 +50,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
   // config de paginacao e ordenacao da tabela
   totalVehicles: number = 0; // Total de enderecos disponíveis
   pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 5; // Tamanho da página
+  pageSize: number = 3; // Tamanho da página
   currentPage: number = 0; // Página atual
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: IVehicleWithUserVehicle[] = []; // Dados filtrados

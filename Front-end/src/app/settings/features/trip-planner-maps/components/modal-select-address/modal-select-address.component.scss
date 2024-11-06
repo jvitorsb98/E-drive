@@ -20,15 +20,19 @@
   margin-bottom: -25px;
 }
 
-/* Contêiner da tabela com cantos arredondados, centralizado horizontalmente, 
-             com overflow-x ativado para rolagem horizontal e altura definida. */
-#table-container {
-  border-radius: 10px;
-  margin: 1% auto;
-  overflow-x: auto;
-  height: 70vh;
-  max-height: 38vh;
-}
+/* Contêiner da tabela com bordas arredondadas, centralizado horizontalmente. 
+   Inclui rolagem horizontal e vertical para manter o conteúdo acessível, 
+   com altura adaptativa e uma altura máxima específica. */
+   #table-container {
+    border-radius: 10px;
+    margin: 1% auto 0; /* Margem superior para centralização e ajuste inferior */
+    overflow-x: auto;   /* Rolagem horizontal, caso necessário */
+    overflow-y: auto;   /* Rolagem vertical, caso o conteúdo ultrapasse a altura */
+    height: 70vh;       /* Altura adaptativa baseada na altura da janela */
+    max-height: 16vh;   /* Altura máxima definida */
+    position: relative;
+  }
+  
 
 /* Centraliza o contêiner da tabela e ajusta a largura para 100% da tela. */
 .container-table {
@@ -152,14 +156,6 @@ tr {
   font-weight: 400;
   font-size: 14px;
   color: #19B6DD;
-}
-
-.buttons-container {
-  display: flex;
-  flex-direction: column; // Empilha os botões verticalmente
-  margin-top: -15px; // Remove margem superior se houver
-  padding-top: 0; // Remove padding se houver
-  gap: 0px; // Ajusta o espaço entre os botões
 }
 
 /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
