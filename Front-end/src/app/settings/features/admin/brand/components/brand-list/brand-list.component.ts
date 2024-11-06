@@ -37,9 +37,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['icon', 'marck', 'activated', 'actions']; // Colunas a serem exibidas na tabela
+  displayedColumns: string[] = ['icon', 'marck', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brands: Brand[] = []; // Lista de marcas
+  selectedStatus: boolean | 'all' = 'all';
 
   // config de paginacao e ordenacao da tabela
   totalBrands: number = 0; // Total de veículos disponíveis
@@ -108,6 +109,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
           this.dataSource = new MatTableDataSource(this.brands); // Atualiza a fonte de dados
           this.dataSource.sort = this.sort; // Atualiza a ordenação
           this.totalBrands = response.totalElements; // Atualiza o total de marcas
+          this.filterByStatus(this.selectedStatus);
         } else {
           console.error('Esperava um array em response.content, mas recebeu:', this.brands);
         }
@@ -307,6 +309,18 @@ export class BrandListComponent implements OnInit, AfterViewInit {
         });
       }
     });
+  }
+
+  filterByStatus(status: boolean | 'all'): void {
+    this.selectedStatus = status;
+    if (status === 'all') {
+      this.dataSource.filter = ''; // Exibe todas as marcas
+    } else {
+      this.dataSource.filterPredicate = (data: Brand, filter: string) => {
+        return data.activated === status;
+      };
+      this.dataSource.filter = status.toString(); // Aplica o filtro
+    }
   }
 
 }

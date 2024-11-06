@@ -34,6 +34,7 @@ export class VehicleListComponent {
   displayedColumns: string[] = ['icon', 'mark', 'model', 'version', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Vehicle>(); // Fonte de dados da tabela
   vehicles: Vehicle[] = []; // Lista de veículos
+  selectedStatus: boolean | 'all' = 'all';
 
   // config de paginacao e ordenacao da tabela
   totalVehicles: number = 0; // Total de veículos disponíveis
@@ -98,7 +99,6 @@ export class VehicleListComponent {
         next: (response: PaginatedResponse<Vehicle>) => { // Usa a interface tipada
           // Extrai o array de veículos do campo 'content'
           this.vehicles = response.content;
-
           if (Array.isArray(this.vehicles)) {
             this.dataSource = new MatTableDataSource(this.vehicles);
             this.dataSource.sort = this.sort;
@@ -278,4 +278,20 @@ export class VehicleListComponent {
       data: vehicle
     }).afterClosed().subscribe(() => this.loadVehicles(this.pageIndex, this.pageSize)); // Atualiza a lista de veículos após fechar o modal
   }
+
+  filterByStatus(status: boolean | 'all'): void {
+
+    
+    this.selectedStatus = status;
+    if (status === 'all') {
+      this.dataSource.filter = ''; // Exibe todas as marcas
+    } else {
+      this.dataSource.filterPredicate = (data: Vehicle, filter: string) => {
+        return data.activated === status;
+      };
+      this.dataSource.filter = status.toString(); // Aplica o filtro
+    }
+  }
+
+
 }

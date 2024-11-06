@@ -39,6 +39,7 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* Garante que a tabela use o layout fixo */
 }
 
 /* 
@@ -51,25 +52,42 @@ table {
   z-index: 1;
 }
 
+td, th {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
 /* Estilos para os cabeçalhos da tabela (th), com padding, 
      texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
 .th-table {
   padding: 1% 1%;
-  text-align: left;
-  font-size: 12px;
+  text-align: left; 
+  font-size: 110%;
   font-weight: 350;
   color: #5a5a5a;
 }
 
 /* Estilos para as células da tabela (td), com padding, 
-     texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
+    texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
 .td-table {
   padding: 1% 1%;
   text-align: left;
-  font-size: 10px;
+  font-size: 90%;
   font-weight: 350;
   color: #767676;
 }
+
+
+    
+.td-table.truncate {
+  white-space: nowrap;          /* Impede a quebra de linha */
+  overflow: hidden;             /* Oculta o texto que ultrapassa o contêiner */
+  text-overflow: ellipsis;     /* Adiciona reticências (...) ao final do texto */
+  max-width: 70%;            /* Define uma largura máxima para a coluna */
+  width: 100%;                 /* A largura ocupará 100% do espaço disponível, respeitando o max-width */
+}
+
 
 /* Define a altura das linhas da tabela como automática, garantindo 
      que a altura se ajuste ao conteúdo. */
@@ -80,12 +98,12 @@ tr {
 /* Estilos para o ícone de emoji (bandeira) ao lado do texto na tabela, 
      com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
 .icone-emoji-brand {
-  font-size: 18px;
+  font-size: 200%;
   color: #767676;
-  margin-right: 10px;
+  margin-right: 120%;
   cursor: pointer;
   transition: color 0.3s;
-
+  
   /* Ao passar o mouse, a cor do ícone muda para azul claro. */
   &:hover {
     color: #19B6DD;
@@ -95,9 +113,9 @@ tr {
 /* Estilos para o ícone interativo na tabela, com tamanho de 18px, 
      cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
 .icone-table {
-  // font-size: 10;
+  font-size: 160%;
   color: #767676;
-  margin-right: 10px;
+  margin-right: 5px;
   transform: rotate(0deg);
   transition: 0.3s linear all;
 
@@ -137,7 +155,7 @@ tr {
 
 /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
 .th-table mat-icon {
-  font-size: 20px;
+  font-size: 160%;
   padding: 1% 1%;
   text-align: left;
 }
@@ -148,52 +166,52 @@ tr {
   flex: 1;
 }
 
-/* Estilos adicionais para telas de até 768px */
-@media (max-width: 500px) {
 
-  .th-table {
-    font-size: 11px;
+/* Estilo para o contêiner do filtro de status */
+.status-filter {
+  display: flex;
+  gap: 10px;
+  margin-right: auto; /* Move o filtro para a esquerda */
+}
+
+.status-filter button {
+  font-size: 0.875rem;
+  color: #767676;
+  background-color: #e0f7fa;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.status-filter button.active, .status-filter button:hover {
+  color: #ffffff;
+  background-color: #19B6DD;
+}
+
+
+
+@media (max-width: 768px) {
+
+  .icone-table {
+    font-size: 150%;
   }
 
   .td-table {
-    font-size: 8px;
+    font-size: 70%;
   }
 
-  .icone-emoji-brand {
-    font-size: 16px;
-    padding: 10% 1%;
-  }
-
-  .icone-table {
-    font-size: 15px;
-    padding: 2% 1%;
-  }
-
-  .no-data {
-    font-size: 12px;
+  .th-table{
+    font-size: 90%;
   }
 
   .th-table mat-icon {
-    font-size: 18px;
+    font-size: 150%;
+    padding: 1% 1%;
+    text-align: left;
   }
 
-  .top-bar {
-    margin-bottom: 8%;
-  }
 
-}
-
-/* Estilos adicionais para telas de até 340px */
-@media (max-width: 340px) {
-  .th-table {
-    font-size: 10px;
-  }
-
-  .td-table {
-    font-size: 8px;
-  }
-
-  .icone-table {
-    padding: 2% 1%;
-  }
+  
 }
