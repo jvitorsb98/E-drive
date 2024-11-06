@@ -106,7 +106,6 @@ body {
     left: 67.5%;
     transform: translate(-50%, -50%);
     z-index: 1000;
-
 }
 
 .icon-button {
@@ -177,4 +176,11 @@ body {
     cursor: pointer;
     transition: background-color 0.3s, box-shadow 0.3s;
 
+}
+
+@media(max-width: 400px) {
+    .icon-container {
+        top: 72%;
+        left: 87%;
+    }
 }
