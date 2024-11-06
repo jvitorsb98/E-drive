@@ -54,6 +54,9 @@ public interface BrandRepository extends JpaRepository<Brand, Long> {
     @Query("SELECT b.name FROM Brand b WHERE b.id = :brandId")
     String findBrandNameById(@Param("brandId") Long brandId);
 
+    Page<Brand> findByActivatedTrue(Pageable pageable);
+    Page<Brand> findByActivatedFalse(Pageable pageable);
+
 }
 
 

@@ -116,4 +116,14 @@ public class BrandService {
         brand.activated();
         brandRepository.save(brand);
     }
+
+    public Page<DataBrandDetails> findByActivated(Boolean activated, Pageable pageable) {
+        if (activated) {
+            return brandRepository.findByActivatedTrue(pageable).map(DataBrandDetails::new);
+        } else {
+            return brandRepository.findByActivatedFalse(pageable).map(DataBrandDetails::new);
+        }
+    }
+
+
 }
