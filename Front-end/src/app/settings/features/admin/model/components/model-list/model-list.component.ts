@@ -46,9 +46,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ModelListComponent {
 
   // Colunas exibidas na tabela
-  displayedColumns: string[] = ['icon', 'marck', 'name', 'activated', 'actions'];
+  displayedColumns: string[] = ['icon', 'marck', 'name',  'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
   models: Model[] = []; // Lista de modelos
+  selectedStatus: boolean | 'all' = 'all';
 
   // config de paginacao e ordenacao da tabela
   totalModels: number = 0; // Total de veículos disponíveis
@@ -283,5 +284,18 @@ export class ModelListComponent {
       this.loadModels(this.pageIndex, this.pageSize) // Recarrega a lista de modelos após o fechamento do modal
     );
   }
+
+  filterByStatus(status: boolean | 'all'): void {
+    this.selectedStatus = status;
+    if (status === 'all') {
+      this.dataSource.filter = ''; // Exibe todas as marcas
+    } else {
+      this.dataSource.filterPredicate = (data: Model, filter: string) => {
+        return data.activated === status;
+      };
+      this.dataSource.filter = status.toString(); // Aplica o filtro
+    }
+  }
+
 
 }

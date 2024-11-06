@@ -38,6 +38,7 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; /* Garante que a tabela use o layout fixo */
 }
 
 /*
@@ -50,25 +51,40 @@ table {
   z-index: 1;
 }
 
+td, th {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+}
+
 /* Estilos para os cabeçalhos da tabela (th), com padding,
        texto alinhado à esquerda, tamanho de fonte menor e cor cinza escuro. */
 .th-table {
   padding: 1% 1%;
-  text-align: left;
-  font-size: 16px !important;
+  text-align: left; 
+  font-size: 110%;
   font-weight: 350;
   color: #5a5a5a;
 }
 
-/* Estilos para as células da tabela (td), com padding,
-       texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
+/* Estilos para as células da tabela (td), com padding, 
+    texto alinhado à esquerda, tamanho de fonte menor e cor cinza claro. */
 .td-table {
   padding: 1% 1%;
   text-align: left;
-  font-size: 12px !important;
+  font-size: 90%;
   font-weight: 350;
   color: #767676;
 }
+
+.truncate {
+  white-space: nowrap;          /* Impede a quebra de linha */
+  overflow: hidden;             /* Oculta o texto que ultrapassa o contêiner */
+  text-overflow: ellipsis;     /* Adiciona reticências (...) ao final do texto */
+  max-width: 70%;            /* Define uma largura máxima para a coluna */
+  width: 100%;                 /* A largura ocupará 100% do espaço disponível, respeitando o max-width */
+}
+
 
 /* Define a altura das linhas da tabela como automática, garantindo
        que a altura se ajuste ao conteúdo. */
@@ -79,9 +95,9 @@ tr {
 /* Estilos para o ícone de emoji (bandeira) ao lado do texto na tabela,
        com tamanho de 20px, cor cinza claro e transição suave de cor ao passar o mouse. */
 .icone-carro {
-  font-size: 20px;
+  font-size: 200%;
   color: #767676;
-  margin-right: 10px;
+  margin-right: 120%;
   cursor: pointer;
   transition: color 0.3s;
 
@@ -94,12 +110,12 @@ tr {
 /* Estilos para o ícone interativo na tabela, com tamanho de 18px,
        cor cinza, rotação suave ao passar o mouse, e margem à direita (faltando unidade). */
 .icone-table {
-  font-size: 18px;
+  font-size: 160%;
   color: #767676;
-  margin-right: 10;
-  padding: 8% 1%;
+  margin-right: 5px;
   transform: rotate(0deg);
   transition: 0.3s linear all;
+
 
   /* Ao passar o mouse, o ícone muda de cor e faz uma rotação de 359 graus. */
   &:hover {
@@ -138,10 +154,11 @@ tr {
 
 /* Define o tamanho do ícone dentro do cabeçalho da tabela como 20px. */
 .th-table mat-icon {
-  font-size: 20px;
+  font-size: 160%;
   padding: 1% 1%;
   text-align: left;
 }
+
 
 /* Define o campo de formulário dentro do filtro personalizado como flexível,
        ocupando todo o espaço horizontal disponível. */
@@ -149,54 +166,27 @@ tr {
   flex: 1;
 }
 
-/* Estilos adicionais para telas de até 768px */
-@media (max-width: 500px) {
-  .th-table {
-    font-size: 14px !important;
+
+@media (max-width: 768px) {
+
+  .icone-table {
+    font-size: 150%;
   }
 
   .td-table {
-    font-size: 8px !important;
+    font-size: 70%;
   }
 
-  .icone-carro {
-    font-size: 13px;
-    padding: 10% 1%;
-  }
-
-  .icone-table {
-    font-size: 15px;
-    margin-right: 0px;
-  }
-
-  .no-data {
-    font-size: 12px;
+  .th-table{
+    font-size: 90%;
   }
 
   .th-table mat-icon {
-    font-size: 15px;
+    font-size: 150%;
+    padding: 1% 1%;
+    text-align: left;
   }
 
-  .top-bar {
-    margin-bottom: 8%;
-  }
-}
 
-/* Estilos adicionais para telas de até 340px */
-@media (max-width: 340px) {
-  .th-table {
-    font-size: 12px !important;
-  }
-
-  .td-table {
-    font-size: 8px !important;
-  }
-
-  .icone-table {
-    font-size: 13px;
-  }
-
-  .th-table mat-icon {
-    font-size: 13px;
-  }
+  
 }

@@ -40,57 +40,44 @@
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="mark">
-            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <strong>
-                <span *ngIf="userVehicle.model.brand.name.length > 10; else noEllipsisMark">
-                  {{userVehicle.model.brand.name | slice: 0:10}}...
-                </span>
-                <ng-template #noEllipsisMark>
-                  {{userVehicle.model.brand.name}}
-                </ng-template>
-              </strong>
-            </td>
-          </ng-container>
+				<ng-container matColumnDef="mark">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
+					<td class="td-table truncate" mat-cell *matCellDef="let userVehicle">
+						<strong >
+                			{{userVehicle.model.brand.name}}
+            			</strong>
+					</td>
+				</ng-container>
 
-          <ng-container matColumnDef="model">
-            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <strong>
-                <span *ngIf="userVehicle.model.name.length > 10; else noEllipsisModel">
-                  {{userVehicle.model.name | slice: 0:10}}...
-                </span>
-                <ng-template #noEllipsisModel>
-                  {{userVehicle.model.name}}
-                </ng-template>
-              </strong>
-            </td>
-          </ng-container>
+				<ng-container matColumnDef="model">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Modelo</strong></th>
+					<td class="td-table truncate" mat-cell *matCellDef="let userVehicle">
+						<strong >
+                			{{userVehicle.model.name}}
+            			</strong>
+					</td>
+				</ng-container>
 
-          <ng-container matColumnDef="version">
-            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Versão</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <strong>
-                <span *ngIf="userVehicle.version.length > 10; else noEllipsisVersion">
-                  {{userVehicle.version | slice: 0:10}}...
-                </span>
-                <ng-template #noEllipsisVersion>
-                  {{userVehicle.version}}
-                </ng-template>
-              </strong>
-            </td>
-          </ng-container>
+				<ng-container matColumnDef="version">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Versão</strong></th>
+					<td class="td-table truncate" mat-cell *matCellDef="let userVehicle">
+						<strong >
+							{{userVehicle.version}}
+            			</strong>
+					</td>
+				</ng-container>
 
-          <!-- Actions Column -->
-          <ng-container matColumnDef="actions">
-            <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
-            <td class="td-table" mat-cell *matCellDef="let userVehicle">
-              <mat-icon class="icone-table" (click)="openModalViewVehicle(userVehicle)">visibility</mat-icon>
-              <mat-icon class="icone-table" (click)="openModalEditUserVehicle(userVehicle)">edit</mat-icon>
-              <mat-icon class="icone-table" (click)="deleteUserVehicle(userVehicle)">delete</mat-icon>
-            </td>
-          </ng-container>
+				<!-- Actions Column -->
+				<ng-container matColumnDef="actions">
+					<th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Ações</strong></th>
+					<td class="td-table" mat-cell *matCellDef="let userVehicle">
+						<div class="d-flex align-items-center">
+							<mat-icon class="icone-table" (click)="openModalViewVehicle(userVehicle)">visibility</mat-icon>
+							<mat-icon class="icone-table" (click)="openModalEditUserVehicle(userVehicle)">edit</mat-icon>
+							<mat-icon class="icone-table" (click)="deleteUserVehicle(userVehicle)">delete</mat-icon>
+						</div>
+					</td>
+				</ng-container>
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
