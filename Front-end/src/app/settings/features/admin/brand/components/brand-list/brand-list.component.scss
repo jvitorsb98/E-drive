@@ -80,7 +80,7 @@ td, th {
 
 
     
-.truncate {
+.td-table.truncate {
   white-space: nowrap;          /* Impede a quebra de linha */
   overflow: hidden;             /* Oculta o texto que ultrapassa o contêiner */
   text-overflow: ellipsis;     /* Adiciona reticências (...) ao final do texto */
@@ -103,7 +103,7 @@ tr {
   margin-right: 120%;
   cursor: pointer;
   transition: color 0.3s;
-
+  
   /* Ao passar o mouse, a cor do ícone muda para azul claro. */
   &:hover {
     color: #19B6DD;

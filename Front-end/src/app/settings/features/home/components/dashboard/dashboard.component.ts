@@ -14,7 +14,7 @@ export class DashboardComponent implements OnInit {
 
   menuLinks = [
     { route: '/e-driver/users/my-addresses', icon: 'home', label: 'Meus Endereços' },
-    { route: '/e-driver/users/my-vehicles', icon: 'directions_car', label: 'Meus Carros' },
+    { route: '/e-driver/users/my-vehicles', icon: 'directions_car', label: 'Meus Veículos' },
     { route: '/e-driver/map/plan-trip', icon: 'map', label: 'Planejar Viagem' }, // Rota para Planejar Viagem
   ];
 
