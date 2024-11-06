@@ -48,7 +48,7 @@
         
 
         <!-- Coluna para o nome das marcas -->
-        <ng-container matColumnDef="marck">
+        <ng-container matColumnDef="mark">
           <th class="th-table" mat-header-cell *matHeaderCellDef mat-sort-header><strong>Marca</strong></th>
           <td class="td-table truncate" mat-cell *matCellDef="let brand">
             <strong >
@@ -87,16 +87,25 @@
   </div>
 </div>
 
-<!-- Container para o paginador e botão para adicionar nova marca -->
+<!-- Container para o paginador, dropdown de filtro e botão para adicionar nova marca -->
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-1">
+  <div class="d-flex justify-content-between align-items-center">
+      <!-- Dropdown para selecionar o filtro de status -->
+      <mat-form-field appearance="outline" class="filter-dropdown mr-3">
+        <mat-select [(value)]="selectedStatus" (selectionChange)="filterByStatus($event.value)">
+          <mat-option value="all">Todos</mat-option>
+          <mat-option [value]="true">Ativos</mat-option>
+          <mat-option [value]="false">Desativados</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-paginator class="shadow-sn" [length]="totalBrands" [pageSize]="pageSize"
-    [pageSizeOptions]="[10, 20, 30, 40, 50, totalBrands]" (page)="onPageChange($event)"
-    aria-label="Selecione veículos por página"></mat-paginator>
+      <!-- Paginator -->
+      <mat-paginator class="shadow-sn" [length]="totalBrands" [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 20, 30, 40, 50, totalBrands]" (page)="onPageChange($event)"
+        aria-label="Selecione veículos por página"></mat-paginator>
+    </div>
 
-
-  <!-- Botão para abrir modal de adição de nova marca -->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
-    text="Nova marca"></app-ui-button>
+    <!-- Botão para abrir modal de adição de nova marca -->
+    <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
+      text="Nova marca"></app-ui-button>
 </div>
-
