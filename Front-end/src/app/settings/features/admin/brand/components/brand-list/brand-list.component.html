@@ -89,10 +89,10 @@
 
 <!-- Container para o paginador, dropdown de filtro e botão para adicionar nova marca -->
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-1">
-  <div class="d-flex justify-content-between align-items-center">
-      <!-- Dropdown para selecionar o filtro de status -->
+  <div class="d-flex justify-content-between align-items-start">
+    <!-- Dropdown para selecionar o filtro de status -->
       <mat-form-field appearance="outline" class="filter-dropdown mr-3">
-        <mat-select [(value)]="selectedStatus" (selectionChange)="filterByStatus($event.value)">
+        <mat-select [(value)]="selectedStatus" (selectionChange)="filterByStatus($event.value)" class="custom-select">
           <mat-option value="all">Todos</mat-option>
           <mat-option [value]="true">Ativos</mat-option>
           <mat-option [value]="false">Desativados</mat-option>
