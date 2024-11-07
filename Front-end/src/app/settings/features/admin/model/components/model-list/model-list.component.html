@@ -106,15 +106,25 @@
   </div>
 </div>
 
-<!-- Container para o paginador e botão para adicionar nova marca -->
+<!-- Container para o paginador e botão para adicionar um novo modelo -->
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12 pt-1">
+  <div class="d-flex justify-content-between align-items-start">
+    <!-- Dropdown para selecionar o filtro de status -->
+      <mat-form-field appearance="outline" class="filter-dropdown mr-3">
+        <mat-select [(value)]="selectedStatus" (selectionChange)="filterByStatus($event.value)" class="custom-select">
+          <mat-option value="all">Todos</mat-option>
+          <mat-option [value]="true">Ativos</mat-option>
+          <mat-option [value]="false">Desativados</mat-option>
+        </mat-select>
+      </mat-form-field>
 
-  <mat-paginator class="shadow-sn" [length]="totalModels" [pageSize]="pageSize"
-    [pageSizeOptions]="[10, 20, 30, 40, 50, totalModels]" (page)="onPageChange($event)"
-    aria-label="Selecione veículos por página"></mat-paginator>
+      <!-- Paginator -->
+      <mat-paginator class="shadow-sn" [length]="totalModels" [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 20, 30, 40, 50, totalModels]" (page)="onPageChange($event)"
+      aria-label="Selecione veículos por página"></mat-paginator>
+    </div>
 
-
-  <!-- Botão para abrir modal de adição de nova marca -->
-  <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddModel()"
+    <!-- Botão para abrir modal de adição de nova marca -->
+    <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddModel()"
     text="Nova marca"></app-ui-button>
 </div>

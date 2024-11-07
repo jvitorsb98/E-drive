@@ -145,4 +145,19 @@ public class ModelService {
 
         model.activated();
     }
+
+    /**
+     * Encontra modelos com base no status de ativação.
+     *
+     * @param activated Status de ativação dos modelos a serem buscados.
+     * @param pageable  Informações de paginação e ordenação.
+     * @return Uma página de detalhes dos modelos filtrados pelo status de ativação.
+     */
+    public Page<DataModelDetails> findByActivated(Boolean activated, Pageable pageable) {
+        if (activated) {
+            return modelRepository.findAllByActivatedTrue(pageable).map(DataModelDetails::new);
+        } else {
+            return modelRepository.findAllByActivatedFalse(pageable).map(DataModelDetails::new);
+        }
+    }
 }

@@ -138,15 +138,23 @@ public class ModelController {
                     content = @Content)
     })
     public ResponseEntity<Page<DataModelDetails>> listAll(
+            @Parameter(description = "Filter by activation status")
+            @RequestParam(required = false) Boolean activated,
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
     ) {
         LOGGER.info("Retrieving all models");
-        Page<DataModelDetails> models = modelService.listAllModels(pageable);
+
+        Page<DataModelDetails> models;
+        if (activated != null) {
+            models = modelService.findByActivated(activated, pageable);
+        } else {
+            models = modelService.listAllModels(pageable);
+        }
+
         LOGGER.info("All models retrieved successfully");
         return new ResponseEntity<>(models, HttpStatus.OK);
     }
-
     /**
      * Atualiza os detalhes de um modelo existente.
      * <p>
