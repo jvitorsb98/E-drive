@@ -14,7 +14,7 @@
 
 <!-- Container para o filtro de busca -->
 <div class="container col-12 col-md-12 col-sm-12 col-lg-12">
-  <div class="custom-filter pt-5">
+  <div class="custom-filter pt-1">
     <mat-form-field class="d-flex w-100">
       <input matInput (keyup)="applyFilter($event)" placeholder="Busca por versão" #input>
     </mat-form-field>
@@ -138,9 +138,9 @@
     <mat-error class="mat-error-text-vehicle">Por favor, <strong>selecione um veículo.</strong></mat-error>
     }
     <div class="buttons-container">
-      <app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
+      <app-ui-button class="mb-1" typeBtn="vivid-sky-blue" [disabled]="!vehicleStatusBatteryForm.valid"
         (click)="submitBatteryStatus()" text="Simular "></app-ui-button>
-      <app-ui-button class="w-100 mb-1" typeBtn="outline-secondary" (click)="closeModal()"
+      <app-ui-button typeBtn="outline-secondary" (click)="closeModal()"
         text="Cancelar"></app-ui-button>
     </div>
   </div>

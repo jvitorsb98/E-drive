@@ -56,9 +56,7 @@ export class UserRegistrationFormComponent {
     public dialog: MatDialog,
     private router: Router,
     private formBuilder: FormBuilder
-  ) {
-    this.buildForm(); // @ Inicializa o formulário do componente
-  }
+  ) { }
 
   /**
  * @description Inicializa o formulário do usuário com os campos necessários e aplica validações específicas.
@@ -92,30 +90,8 @@ export class UserRegistrationFormComponent {
  */
   ngOnInit() {
     this.setMinAndMaxDate(); // Define as datas mínima e máxima para o campo de data de nascimento
-
-    // Busca a lista de países da API e configura o formulário e o filtro após obter os dados
-    this.countryService.getCountries().subscribe({
-      next: (data: any[]) => {
-        this.countries = data.map((country: any) => {
-          const idd = country.idd || {};
-          const code = (idd.root || '') + (idd.suffixes?.[0] || '');
-
-          return {
-            name: country.name?.common || 'Unknown',
-            code: code
-          };
-        });
-
-        this.buildForm(this.countries); // Inicializa o formulário com a lista de países
-
-        // Configura o filtro reativo para `countryCode` baseado no valor digitado
-        this.filteredCountries = this.userForm.get('countryCode')!.valueChanges.pipe(
-          startWith(''),
-          distinctUntilChanged(),
-          map(value => this.filterCountries(value || ''))
-        );
-      },
-    });
+    this.loadCountries()
+    this.buildForm(this.countries); // Inicializa o formulário com a lista de países
   }
 
   /**
@@ -135,6 +111,47 @@ export class UserRegistrationFormComponent {
 
       this.openModalPasswordUser(); // Abre o modal para a etapa de senha
     }
+  }
+
+  /**
+  * @description Carrega a lista de países usando o serviço `CountryService`,
+  *              transforma os dados de cada país para incluir o código do país e
+  *              o nome, e configura um filtro reativo para o campo `countryCode`.
+  *              Este filtro permite ao usuário buscar e selecionar o código do país
+  *              de forma dinâmica com base no valor digitado.
+  * 
+  * @param {CountryService} countryService - Serviço responsável por obter a lista de países.
+  * @param {FormGroup} userForm - Formulário Angular onde o campo `countryCode` será filtrado.
+  *  @param {any[]} data - Lista de objetos representando os países obtidos através do serviço `CountryService`.
+  */
+  private loadCountries(): void {
+    this.countryService.getCountries().subscribe({
+      next: (data: any[]) => {
+        // Mapeia cada país para extrair o nome e o código do país
+        this.countries = data.map((country: any) => {
+          const idd = country.idd || {};
+          const code = (idd.root || '') + (idd.suffixes?.[0] || '');
+
+          return {
+            name: country.name?.common || 'Unknown',
+            code: code
+          };
+        });
+
+        // Inicializa o formulário com a lista de países
+        this.buildForm(this.countries);
+
+        // Configura o filtro reativo para `countryCode` baseado no valor digitado
+        this.filteredCountries = this.userForm.get('countryCode')!.valueChanges.pipe(
+          startWith(''),
+          distinctUntilChanged(),
+          map(value => this.filterCountries(value || ''))
+        );
+      },
+      error: (err) => {
+        console.error('Erro ao carregar países:', err);
+      }
+    });
   }
 
   /**

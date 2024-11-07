@@ -102,11 +102,10 @@ body {
 
 .icon-container {
     position: absolute;
-    top: 83%;
-    left: 50%;
+    top: 72%;
+    left: 67.5%;
     transform: translate(-50%, -50%);
     z-index: 1000;
-
 }
 
 .icon-button {
@@ -132,9 +131,9 @@ body {
 }
 
 .travel-planning-btn {
-    background-image: url('../../../../../../assets/images/3D-icon-of-an-electric-car-route.ico');
+    // background-image: url('../../../../../../assets/images/3D-icon-of-an-electric-car-route.ico');
     // background-image: url('../../../../../../assets/images/icons-bussola.ico');
-    // background-image: url('../../../../../../assets/images/icons-compass.ico');
+    background-image: url('../../../../../../assets/images/icons-compass.ico');
     // background-image: url('../../../../../../assets/images/icons-bussola-94.ico');
     background-color: transparent;
     /* Remove qualquer fundo sólido */
@@ -177,4 +176,11 @@ body {
     cursor: pointer;
     transition: background-color 0.3s, box-shadow 0.3s;
 
+}
+
+@media(max-width: 400px) {
+    .icon-container {
+        top: 72%;
+        left: 87%;
+    }
 }
