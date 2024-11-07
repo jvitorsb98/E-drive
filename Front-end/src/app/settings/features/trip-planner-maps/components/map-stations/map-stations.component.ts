@@ -462,8 +462,8 @@ export class MapStationsComponent implements AfterViewInit {
   */
   openSelectAddressModal() {
     const dialogRef = this.dialog.open(ModalSelectAddressComponent, {
-      width: '800px',
-      height: '340px',
+      width: '500px',
+      height: '365px',
     });
 
     dialogRef.afterClosed().subscribe(result => {
