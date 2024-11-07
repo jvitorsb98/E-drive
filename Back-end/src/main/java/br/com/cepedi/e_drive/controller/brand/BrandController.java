@@ -146,10 +146,8 @@ public class BrandController {
 
         Page<DataBrandDetails> brands;
         if (activated != null) {
-            // Busca marcas ativas ou inativas com base no parâmetro `activated`
             brands = brandService.findByActivated(activated, pageable);
         } else {
-            // Se `activated` for null, retorna todas as marcas
             brands = brandService.listAll(pageable);
         }
 
