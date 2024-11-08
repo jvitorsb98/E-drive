@@ -22,7 +22,7 @@ export class TravelTipsComponent {
 
     this.utterance = new SpeechSynthesisUtterance(textContent);
     this.utterance.lang = 'pt-BR'; // Configura para português do Brasil
-    this.utterance.rate = 3; // Ajuste a velocidade da fala se necessário
+    this.utterance.rate = 1.8; // Ajuste a velocidade da fala se necessário
 
     // Detecta quando a fala termina para mudar o botão
     this.utterance.onend = () => {
