@@ -1,3 +1,4 @@
+import { version } from './../../../../../../../../node_modules/@types/babel__core/index.d';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -35,6 +36,7 @@ export class VehicleListComponent {
   dataSource = new MatTableDataSource<Vehicle>(); // Fonte de dados da tabela
   vehicles: Vehicle[] = []; // Lista de veículos
   selectedStatus: boolean | 'all' = 'all';
+  filterValueName: string = '';
 
   // config de paginacao e ordenacao da tabela
   totalVehicles: number = 0; // Total de veículos disponíveis
@@ -199,7 +201,7 @@ export class VehicleListComponent {
   applyFilter(event: Event) {
     try {
       this.isFilterActive = true;
-      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.filterValueName = (event.target as HTMLInputElement).value.trim().toLowerCase();
       this.searchKey = event;
 
       if (this.dataSource.paginator) {
@@ -221,10 +223,16 @@ export class VehicleListComponent {
               return;
             }
           } else {
-            this.filteredData = response.content.filter(vehicle =>
-              vehicle.version.toLowerCase().includes(filterValue) ||
-              vehicle.motor.toLowerCase().includes(filterValue)
-            );
+            this.filteredData = response.content.filter(vehicle => {
+              // Filtro pelo nome
+              const nameMatches = vehicle.version.toLowerCase().includes(this.filterValueName);
+  
+              // Filtro pelo status, se não for "all"
+              const statusMatches = this.selectedStatus === 'all' || vehicle.activated === this.selectedStatus;
+  
+              // Retorna verdadeiro se ambos os filtros forem verdadeiros
+              return nameMatches && statusMatches;
+            });
 
             if (this.filteredData.length > 0) {
               this.dataSource.data = this.filteredData;
@@ -280,18 +288,53 @@ export class VehicleListComponent {
   }
 
   filterByStatus(status: boolean | 'all'): void {
-
-    
     this.selectedStatus = status;
-    if (status === 'all') {
-      this.dataSource.filter = ''; // Exibe todas as marcas
-    } else {
-      this.dataSource.filterPredicate = (data: Vehicle, filter: string) => {
-        return data.activated === status;
-      };
-      this.dataSource.filter = status.toString(); // Aplica o filtro
-    }
+    console.log(this.selectedStatus)
+      this.applyStatus();
   }
 
+
+  applyStatus() {
+
+      this.vehicleService.getAll(0, this.totalVehicles , this.selectedStatus.toString())
+        .pipe(
+          catchError((error) => {
+            this.handleError(new HttpErrorResponse({ error: error }));
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<Vehicle> | never[]) => {
+          if (Array.isArray(response)) {
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            // Aplica o filtro por nome da marca
+            this.filteredData = response.content.filter(vehicle => {
+              // Filtro pelo nome
+              const nameMatches = vehicle.version.toLowerCase().includes(this.filterValueName);
+  
+              // Filtro pelo status, se não for "all"
+              const statusMatches = this.selectedStatus === 'all' || vehicle.activated === this.selectedStatus;
+  
+              // Retorna verdadeiro se ambos os filtros forem verdadeiros
+              return nameMatches && statusMatches;
+            });
+
+
+            console.log(this.filteredData)
+  
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+
+  }
 
 }

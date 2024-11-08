@@ -116,4 +116,22 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
     boolean existsByModelIdAndVersionIgnoreCase(Long aLong, String trim);
 
     boolean existsByModelIdAndVersionIgnoreCaseAndIdNot(Long modelId, String version, Long id);
+
+    /**
+     * Encontra todos os veículos ativados com paginação.
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Uma página de veículos ativados.
+     */
+    @Query("SELECT v FROM Vehicle v WHERE v.activated = true")
+    Page<Vehicle> findByActivatedTrue(Pageable pageable);
+
+    /**
+     * Encontra todos os veículos desativados com paginação.
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Uma página de veículos desativados.
+     */
+    @Query("SELECT v FROM Vehicle v WHERE v.activated = false")
+    Page<Vehicle> findByActivatedFalse(Pageable pageable);
 }
