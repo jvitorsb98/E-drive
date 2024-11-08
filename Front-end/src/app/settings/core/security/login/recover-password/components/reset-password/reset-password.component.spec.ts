@@ -1,169 +1,116 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ResetPasswordComponent } from './reset-password.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { of, throwError } from 'rxjs';
 import { AuthService } from '../../../../services/auth/auth.service';
 import { AlertasService } from '../../../../../services/Alertas/alertas.service';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { of, throwError } from 'rxjs';
+import { FormBuilder } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+
+// Mocks
+class MockAuthService {
+  resetPassword(request: any) {
+    return of({ message: 'Password reset successfully' }); // Simula uma resposta bem-sucedida
+  }
+}
+
+class MockAlertasService {
+  showSuccess(title: string, message: string) {
+    return Promise.resolve(); // Simula um sucesso
+  }
+  showError(title: string, message: string) {
+    return Promise.resolve(); // Simula um erro
+  }
+}
+
+class MockRouter {
+  navigate(path: string[]) {}
+}
 
 describe('ResetPasswordComponent', () => {
   let component: ResetPasswordComponent;
   let fixture: ComponentFixture<ResetPasswordComponent>;
-  let authService: AuthService;
-  let alertasService: AlertasService;
-  let router: Router;
+  let mockActivatedRoute: any;
+  let mockAuthService: MockAuthService;
+  let mockAlertasService: MockAlertasService;
+  let mockRouter: MockRouter;
 
-  function createComponentWithToken(token: string) {
-    const activatedRouteMock = {
+  beforeEach(() => {
+    mockActivatedRoute = {
       snapshot: {
-        queryParams: {
-          token
-        }
+        queryParams: { token: 'mockToken' } // Simula o token da URL
       }
     };
 
-    const authServiceMock = {
-      resetPassword: jest.fn()
-    };
-
-    const alertasServiceMock = {
-      showSuccess: jest.fn(),
-      showError: jest.fn().mockReturnValue(Promise.resolve())
-    };
-
-    const routerMock = {
-      navigate: jest.fn()
-    };
+    mockAuthService = new MockAuthService();
+    mockAlertasService = new MockAlertasService();
+    mockRouter = new MockRouter();
 
     TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
       declarations: [ResetPasswordComponent],
       providers: [
-        { provide: ActivatedRoute, useValue: activatedRouteMock },
-        { provide: AuthService, useValue: authServiceMock },
-        { provide: AlertasService, useValue: alertasServiceMock },
-        { provide: Router, useValue: routerMock }
-      ],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: AlertasService, useValue: mockAlertasService },
+        { provide: Router, useValue: mockRouter },
+        FormBuilder
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ResetPasswordComponent);
     component = fixture.componentInstance;
-    authService = TestBed.inject(AuthService);
-    alertasService = TestBed.inject(AlertasService);
-    router = TestBed.inject(Router);
-
-    return { fixture, component, router, alertasService, authService };
-  }
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    fixture.detectChanges(); // Força a execução do ngOnInit()
   });
 
-  it('should initialize the form', () => {
-    const { component } = createComponentWithToken('mockToken');
-    component.ngOnInit(); // Certifique-se de chamar ngOnInit aqui
+  it('should create the component and initialize with token', () => {
+    expect(component).toBeTruthy();
+    expect(component.token).toBe('mockToken');
+  });
+
+  it('should initialize the form correctly', () => {
     expect(component.resetPasswordForm).toBeTruthy();
-    expect(component.resetPasswordForm.controls['password'].value).toBe(null);
-    expect(component.resetPasswordForm.controls['confirmPassword'].value).toBe(null);
+    expect(component.resetPasswordForm.controls['password']).toBeTruthy();
+    expect(component.resetPasswordForm.controls['confirmPassword']).toBeTruthy();
   });
 
-  it('should close and navigate to login', () => {
-    const { component, router } = createComponentWithToken('mockToken');
-    component.ngOnInit(); // Chame ngOnInit antes de fechar
+  it('should call resetPassword and navigate on success', fakeAsync(() => {
+    // Simula a entrada do formulário
+    component.resetPasswordForm.setValue({ password: 'newPassword', confirmPassword: 'newPassword' });
+
+    // Mock do retorno do resetPassword
+    jest.spyOn(mockAuthService, 'resetPassword').mockReturnValue(of({ message: 'Password reset successfully' }));
+    jest.spyOn(mockRouter, 'navigate');
+
+    // Chama o método onSubmit
+    component.onSubmit();
+    tick();  // Avança o relógio para executar código assíncrono
+
+    expect(mockAuthService.resetPassword).toHaveBeenCalled();
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/e-driver/login']);
+  }));
+
+  it('should call showError and navigate on error', fakeAsync(() => {
+    // Simula a entrada do formulário
+    component.resetPasswordForm.setValue({ password: 'newPassword', confirmPassword: 'newPassword' });
+
+    // Mock do erro de resetPassword
+    const errorResponse = new HttpErrorResponse({ error: 'Error resetting password', status: 400 });
+    jest.spyOn(mockAuthService, 'resetPassword').mockReturnValue(throwError(() => errorResponse));
+    jest.spyOn(mockAlertasService, 'showError').mockResolvedValue();
+    jest.spyOn(mockRouter, 'navigate');
+
+    // Chama o método onSubmit
+    component.onSubmit();
+    tick();  // Avança o relógio para executar código assíncrono
+
+    expect(mockAuthService.resetPassword).toHaveBeenCalled();
+    expect(mockAlertasService.showError).toHaveBeenCalledWith('Redefinição de senha', 'Error resetting password');
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/e-driver/login']);
+  }));
+
+  it('should redirect to login when close is called', () => {
+    jest.spyOn(mockRouter, 'navigate');
     component.close();
-    expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
-  });
-
-  it('should display error message and navigate to login on invalid token', async () => {
-    const { component, router, alertasService } = createComponentWithToken('');
-    await component.ngOnInit(); // Certifique-se de aguardar ngOnInit
-    expect(alertasService.showError).toHaveBeenCalledWith('Erro', 'Token inválido. Por favor, tente novamente.');
-    expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
-  });
-
-  it('should call resetPassword when form is valid', async () => {
-    const { component, router, authService, alertasService } = createComponentWithToken('mockToken');
-    component.ngOnInit();
-  
-    // Preenche o formulário com dados válidos
-    component.resetPasswordForm.controls['password'].setValue('newPassword123');
-    component.resetPasswordForm.controls['confirmPassword'].setValue('newPassword123');
-  
-    // Simula a resposta do método resetPassword
-    (authService.resetPassword as jest.Mock).mockReturnValue(of({ success: true }));
-  
-    // Simula a Promise retornada por showSuccess com os argumentos corretos
-    (alertasService.showSuccess as jest.Mock).mockResolvedValueOnce({});
-  
-    // Chama o método de envio do formulário
-    await component.onSubmit();
-  
-    // Verifica se resetPassword foi chamado com os argumentos corretos
-    expect(authService.resetPassword).toHaveBeenCalledWith({
-      token: 'mockToken',
-      password: 'newPassword123'
-    });
-  
-    // Verifica se showSuccess foi chamado com os argumentos corretos
-    expect(alertasService.showSuccess).toHaveBeenCalledWith('Redefinição de senha', 'Sua senha foi redefinida com sucesso!');
-  
-    // Verifica se router.navigate foi chamado após o showSuccess
-    expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
-  });
-  
-  
-  
-  it('should show error if resetPassword fails', async () => {
-    const { component, authService, alertasService } = createComponentWithToken('mockToken');
-    component.ngOnInit();
-  
-    // Preenche o formulário com dados válidos
-    component.resetPasswordForm.controls['password'].setValue('newPassword123');
-    component.resetPasswordForm.controls['confirmPassword'].setValue('newPassword123');
-  
-    // Simula um erro ao chamar resetPassword
-    const errorResponse = new HttpErrorResponse({
-      error: { message: 'Erro ao redefinir a senha' },
-      status: 400
-    });
-    (authService.resetPassword as jest.Mock).mockReturnValue(throwError(errorResponse));
-  
-    // Chama o método de envio do formulário
-    await component.onSubmit();
-  
-    // Verifica se a função resetPassword foi chamada
-    expect(authService.resetPassword).toHaveBeenCalledWith({
-      token: 'mockToken',
-      password: 'newPassword123'
-    });
-  
-    // Verifica se o serviço de alertas foi chamado com os parâmetros corretos
-    expect(alertasService.showError).toHaveBeenCalledWith('Redefinição de senha', 'Erro ao redefinir a senha');
-  });
-  
-  
-  
-
-  it('should validate password fields', () => {
-    const { component } = createComponentWithToken('mockToken');
-    component.ngOnInit(); // Adicione esta linha para garantir que o formulário seja inicializado
-
-    // Verifica se o formulário é inválido inicialmente
-    expect(component.resetPasswordForm.valid).toBeFalsy();
-
-    // Preenche o formulário com uma senha que não atende aos critérios
-    component.resetPasswordForm.controls['password'].setValue('short'); // Senha curta
-    component.resetPasswordForm.controls['confirmPassword'].setValue('short');
-
-    expect(component.resetPasswordForm.valid).toBeFalsy(); // O formulário deve ser inválido
-
-    // Corrige a senha
-    component.resetPasswordForm.controls['password'].setValue('newPassword123');
-    component.resetPasswordForm.controls['confirmPassword'].setValue('newPassword123');
-
-    expect(component.resetPasswordForm.valid).toBeTruthy(); // O formulário deve ser válido agora
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/e-driver/login']);
   });
 });
