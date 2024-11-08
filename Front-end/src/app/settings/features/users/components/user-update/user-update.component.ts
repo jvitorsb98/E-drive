@@ -56,10 +56,10 @@ export class UserUpdateComponent implements OnInit {
  * @method loadUserData Carrega os dados do usuário para preencher o formulário, se disponíveis.
  */
   ngOnInit(): void {
-    this.setMinAndMaxDate(); // Define a data mínima e máxima para o campo de data
-    this.loadCountries(); // Carrega a lista de países
-    this.buildForm(this.countries); // Inicializa o formulário com a lista de países
-    this.loadUserData(); // Carrega os dados do usuário
+    this.setMinAndMaxDate();
+    this.buildForm();
+    this.loadCountries();
+    this.loadUserData();
   }
 
   /**
@@ -113,13 +113,11 @@ export class UserUpdateComponent implements OnInit {
    *              de forma dinâmica com base no valor digitado.
    * 
    * @param {CountryService} countryService - Serviço responsável por obter a lista de países.
-   * @param {FormGroup} userForm - Formulário Angular onde o campo `countryCode` será filtrado.
    *  @param {any[]} data - Lista de objetos representando os países obtidos através do serviço `CountryService`.
    */
   private loadCountries(): void {
     this.countryService.getCountries().subscribe({
       next: (data: any[]) => {
-        // Mapeia cada país para extrair o nome e o código do país
         this.countries = data.map((country: any) => {
           const idd = country.idd || {};
           const code = (idd.root || '') + (idd.suffixes?.[0] || '');
@@ -130,10 +128,10 @@ export class UserUpdateComponent implements OnInit {
           };
         });
 
-        // Inicializa o formulário com a lista de países
-        this.buildForm(this.countries);
+        // Aplica o validador personalizado agora que `countries` está carregado
+        this.userForm.setValidators(countryCodeValidator(this.countries));
 
-        // Configura o filtro reativo para `countryCode` baseado no valor digitado
+        // Configura o filtro reativo para `countryCode`
         this.filteredCountries = this.userForm.get('countryCode')!.valueChanges.pipe(
           startWith(''),
           distinctUntilChanged(),
