@@ -157,11 +157,9 @@ tr {
   text-align: left;
 }
 
-/* Define o campo de formulário dentro do filtro personalizado como flexível, 
-       ocupando todo o espaço horizontal disponível. */
-.custom-filter mat-form-field {
-  flex: 1;
-}
+
+
+
 
 @media (max-width: 768px) {
 

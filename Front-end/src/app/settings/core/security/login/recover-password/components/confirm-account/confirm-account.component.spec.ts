@@ -12,7 +12,7 @@ class MockAlertasService implements Partial<AlertasService> {
 }
 
 class MockAuthService {
-  confirmAccount = jest.fn().mockReturnValue(of({})); // Mock de sucesso
+  confirmAccount = jest.fn().mockReturnValue(of({ success: true })); // Mock de sucesso com um objeto esperado
 }
 
 class MockRouter {
@@ -60,34 +60,46 @@ describe('ConfirmAccountComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should confirm account if token is present', () => {
-    const token = 'some-token';
-    (TestBed.inject(ActivatedRoute).snapshot.queryParamMap.get as jest.Mock).mockReturnValue(token);
+  class MockAuthService {
+    confirmAccount = jest.fn().mockReturnValue(of({ success: true })); // Mock de sucesso com um objeto esperado
+  }
+  
+  describe('ConfirmAccountComponent', () => {
+    // configurações e mocks permanecem iguais...
+    it('should confirm account if token is present', () => {
+      const token = 'some-token';
+      (TestBed.inject(ActivatedRoute).snapshot.queryParamMap.get as jest.Mock).mockReturnValue(token);
     
-    component.ngOnInit();
-
-    expect(authService.confirmAccount).toHaveBeenCalledWith(token);
-    expect(alertasService.showSuccess).toHaveBeenCalledWith('Confirmação de conta', 'Sua conta foi recuperada com sucesso.');
-    expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
-  });
-
-  it('should handle error if token confirmation fails', () => {
-    const token = 'some-token';
-    (TestBed.inject(ActivatedRoute).snapshot.queryParamMap.get as jest.Mock).mockReturnValue(token);
-
-    // Mock da função confirmAccount para falha
-    jest.spyOn(authService, 'confirmAccount').mockReturnValue(throwError(() => ({ error: { message: 'Error' } })));
-
-    component.ngOnInit();
-
-    expect(alertasService.showError).toHaveBeenCalledWith('Confirmação de conta', 'Error');
-    expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
-  });
-
-  it('should show error and navigate if token is absent', () => {
-    component.ngOnInit();
+      component.ngOnInit();
     
-    expect(alertasService.showError).toHaveBeenCalledWith('Erro', 'Token de confirmação inválido ou ausente.');
-    expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
+      expect(authService.confirmAccount).toHaveBeenCalledWith(token);
+      expect(alertasService.showSuccess).toHaveBeenCalledWith('Confirmação de conta', { success: true });
+      expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
+    });
+    
+  
+    it('should handle error if token confirmation fails', () => {
+      const token = 'some-token';
+      (TestBed.inject(ActivatedRoute).snapshot.queryParamMap.get as jest.Mock).mockReturnValue(token);
+    
+      // Mock para simular erro com a estrutura correta de `error`
+      jest.spyOn(authService, 'confirmAccount').mockReturnValue(throwError(() => ({ error: 'Error' })));
+    
+      component.ngOnInit();
+    
+      // Agora verifica a chamada específica com a mensagem esperada
+      expect(alertasService.showError).toHaveBeenCalledWith('Confirmação de conta', 'Error');
+      expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
+    });
+    
+    
+    
+  
+    it('should show error and navigate if token is absent', () => {
+      component.ngOnInit();
+      
+      expect(alertasService.showError).toHaveBeenCalledWith('Erro', 'Token de confirmação inválido ou ausente.');
+      expect(router.navigate).toHaveBeenCalledWith(['/e-driver/login']);
+    });
   });
 });

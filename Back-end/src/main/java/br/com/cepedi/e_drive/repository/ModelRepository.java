@@ -25,6 +25,14 @@ public interface ModelRepository extends JpaRepository<Model, Long> {
     Page<Model> findAllByActivatedTrue(Pageable pageable);
 
     /**
+     * Encontra todos os modelos que estão desativados e paginados.
+     *
+     * @param pageable Informações de paginação e ordenação.
+     * @return Uma página de modelos desativados.
+     */
+    Page<Model> findAllByActivatedFalse(Pageable pageable);
+
+    /**
      * Encontra todos os modelos associados a uma marca específica e paginados.
      *
      * @param brand A marca cuja associação de modelos está sendo pesquisada.

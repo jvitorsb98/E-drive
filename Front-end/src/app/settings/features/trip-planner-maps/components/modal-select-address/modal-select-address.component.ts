@@ -40,7 +40,7 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
   // config de paginacao e ordenacao da tabela
   total: number = 0; // Total de enderecos disponíveis
   pageIndex: number = 0; // Índice da página atual
-  pageSize: number = 5; // Tamanho da página
+  pageSize: number = 3; // Tamanho da página
   currentPage: number = 0; // Página atual
   isFilterActive: boolean = false; // Indica se o filtro está ativo
   filteredData: DataAddressDetails[] = []; // Dados filtrados
@@ -68,7 +68,20 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
    * @description Método do ciclo de vida que é executado após a inicialização do componente.
    */
   ngOnInit(): void {
-    this.getAllAddresses();
+    this.pageSize = this.total;
+    this.getAllAddresses(this.currentPage, this.pageSize);
+  }
+
+  /**
+   * @description Método chamado após a visualização do componente ser inicializada.
+   * Configura o paginador e a ordenação da tabela.
+   *
+   * @returns {void}
+   */
+  ngAfterViewInit() {
+    this.addresses.paginator = this.paginator; // Configura o paginador
+    this.addresses.sort = this.sort; // Configura a ordenação
+    this.paginator._intl.itemsPerPageLabel = 'Itens por página'; // Label para itens por página
   }
 
   /**
@@ -79,7 +92,7 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
  * @param {boolean} isFilterActive - Indica se o filtro está ativo.
  * @param {any[]} filteredData - Dados filtrados a serem utilizados se o filtro estiver ativo.
  */
-  getAllAddresses() {
+  getAllAddresses(pageIndex: number, pageSize: number) {
     if (this.isFilterActive) {
       // Se o filtro estiver ativo, usa os dados filtrados
       this.addresses.data = this.filteredData;
@@ -87,10 +100,10 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
       this.addresses.sort = this.sort;
     } else {
       // Carrega todos os endereços do serviço
-      this.addressService.getAll().subscribe({
+      this.addressService.listAll(pageIndex, pageSize).subscribe({
         next: (response) => {
           this.filteredAddresses = response.content;
-
+          
           if (Array.isArray(this.filteredAddresses)) {
             // Se a resposta contiver um array de endereços, atualiza a fonte de dados da tabela
             this.addresses = new MatTableDataSource(this.filteredAddresses);
@@ -107,6 +120,52 @@ export class ModalSelectAddressComponent implements OnInit { // Define a classe 
         }
       });
     }
+  }
+
+  // getAllAddresses(pageIndex: number, pageSize: number) {
+  //   if (this.isFilterActive) {
+  //     // Se o filtro estiver ativo, usa os dados filtrados
+  //     this.addresses.data = this.filteredData;
+  //     this.addresses.paginator = this.paginator;
+  //     this.addresses.sort = this.sort;
+  //   } else {
+  //     // Carrega todos os endereços do serviço
+  //     this.addressService.getAll().subscribe({
+  //       next: (response) => {
+  //         this.filteredAddresses = response.content;
+
+  //         if (Array.isArray(this.filteredAddresses)) {
+  //           // Se a resposta contiver um array de endereços, atualiza a fonte de dados da tabela
+  //           this.addresses = new MatTableDataSource(this.filteredAddresses);
+  //           this.addresses.sort = this.sort;
+  //           this.total = response.totalElements; // Armazena o total de elementos
+  //         } else {
+  //           // Se a resposta não for um array, exibe um erro
+  //           this.alertasService.showError('Erro ao carregar endereços', 'Ocorreu um erro ao carregar os endereços.');
+  //         }
+  //       },
+  //       error: (error: HttpErrorResponse) => {
+  //         // Tratamento de erro ao carregar endereços
+  //         this.alertasService.showError('Erro ao carregar endereços', error.error.message || 'Ocorreu um erro ao carregar os endereços.');
+  //       }
+  //     });
+  //   }
+  // }
+  //-------------------------------------------------------------
+
+   /**
+   * @description Trata a mudança de página na tabela e atualiza a lista de marcas.
+   *
+   * Este método é chamado quando a página da tabela é alterada. Ele atualiza o tamanho da página e 
+   * o índice da página, e recarrega as marcas.
+   *
+   * @param {any} event - Evento de mudança de página.
+   * @returns {void}
+   */
+   onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.currentPage = event.pageIndex;
+    this.getAllAddresses(this.currentPage, this.pageSize);
   }
 
   /**

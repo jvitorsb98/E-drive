@@ -77,7 +77,6 @@ public class SettingsSecurity {
                     req.requestMatchers(HttpMethod.POST, "/api/v1/brands").hasRole("ADMIN");
                     req.requestMatchers(HttpMethod.PUT, "/api/v1/brands/{id}").authenticated();
                     req.requestMatchers(HttpMethod.DELETE, "/api/v1/brands/**").hasRole("ADMIN");
-                    req.requestMatchers(HttpMethod.GET, "/api/v1/brands/**").hasRole("ADMIN");
 
                     // Endpoints de categoria
 //                    req.requestMatchers(HttpMethod.POST, "/api/v1/categories").hasRole("ADMIN");

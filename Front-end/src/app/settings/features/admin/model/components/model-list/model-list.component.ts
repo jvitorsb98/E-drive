@@ -49,7 +49,8 @@ export class ModelListComponent {
   displayedColumns: string[] = ['icon', 'marck', 'name',  'actions'];
   dataSource = new MatTableDataSource<Model>(); // Fonte de dados para a tabela
   models: Model[] = []; // Lista de modelos
-  selectedStatus: boolean | 'all' = 'all';
+  selectedStatus: Boolean | 'all' = 'all';
+  filterValueName: string = '';
 
   // config de paginacao e ordenacao da tabela
   totalModels: number = 0; // Total de veículos disponíveis
@@ -136,7 +137,7 @@ export class ModelListComponent {
   applyFilter(event: Event) {
     try {
       this.isFilterActive = true;
-      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.filterValueName = (event.target as HTMLInputElement).value.trim().toLowerCase();
       this.searchKey = event;
 
       if (this.dataSource.paginator) {
@@ -158,10 +159,16 @@ export class ModelListComponent {
               return;
             }
           } else {
-            this.filteredData = response.content.filter(model =>
-              model.brand.name.toLowerCase().includes(filterValue) ||
-              model.name.toLowerCase().includes(filterValue)
-            );
+            this.filteredData = response.content.filter(model => {
+              // Filtro pelo nome
+              const nameMatches = model.name.toLowerCase().includes(this.filterValueName);
+  
+              // Filtro pelo status, se não for "all"
+              const statusMatches = this.selectedStatus === 'all' || model.activated === this.selectedStatus;
+  
+              // Retorna verdadeiro se ambos os filtros forem verdadeiros
+              return nameMatches && statusMatches;
+            });
 
             if (this.filteredData.length > 0) {
               this.dataSource.data = this.filteredData;
@@ -285,17 +292,58 @@ export class ModelListComponent {
     );
   }
 
+  
   filterByStatus(status: boolean | 'all'): void {
     this.selectedStatus = status;
-    if (status === 'all') {
-      this.dataSource.filter = ''; // Exibe todas as marcas
-    } else {
-      this.dataSource.filterPredicate = (data: Model, filter: string) => {
-        return data.activated === status;
-      };
-      this.dataSource.filter = status.toString(); // Aplica o filtro
-    }
+    console.log(this.selectedStatus)
+      this.applyStatus();
   }
+
+
+  applyStatus() {
+
+      this.modelService.getAllPaginated(0, this.totalModels , this.selectedStatus.toString())
+        .pipe(
+          catchError((error) => {
+            this.handleError(new HttpErrorResponse({ error: error }));
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<Model> | never[]) => {
+          if (Array.isArray(response)) {
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            // Aplica o filtro por nome da marca
+            this.filteredData = response.content.filter(model => {
+              // Filtro pelo nome
+              const nameMatches = model.name.toLowerCase().includes(this.filterValueName);
+  
+              // Filtro pelo status, se não for "all"
+              const statusMatches = this.selectedStatus === 'all' || model.activated === this.selectedStatus;
+  
+              // Retorna verdadeiro se ambos os filtros forem verdadeiros
+              return nameMatches && statusMatches;
+            });
+
+
+
+            console.log(this.filteredData)
+  
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+
+  }
+
 
 
 }

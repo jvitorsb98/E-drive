@@ -76,19 +76,26 @@ class BrandControllerTest {
     @Test
     @DisplayName("Should retrieve a paginated list of all brands")
     void listAll_ShouldRetrievePaginatedListOfAllBrands() {
+        // Arrange
         PageRequest pageable = PageRequest.of(0, 10);
         DataBrandDetails brand1 = new DataBrandDetails(1L, faker.company().name(), true);
         DataBrandDetails brand2 = new DataBrandDetails(2L, faker.company().name(), true);
-        Page<DataBrandDetails> expectedPage = new PageImpl<>(List.of(brand1, brand2), pageable, 2);
+        List<DataBrandDetails> brandsList = List.of(brand1, brand2);
+        Page<DataBrandDetails> expectedPage = new PageImpl<>(brandsList, pageable, brandsList.size());
 
         when(brandService.listAll(pageable)).thenReturn(expectedPage);
 
-        ResponseEntity<Page<DataBrandDetails>> response = brandController.listAll(pageable);
+        // Act
+        ResponseEntity<Page<DataBrandDetails>> response = brandController.listAll(null, pageable);
 
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(expectedPage, response.getBody());
+        assertEquals(expectedPage.getContent(), response.getBody().getContent());
+        assertEquals(expectedPage.getTotalElements(), response.getBody().getTotalElements());
+        assertEquals(expectedPage.getTotalPages(), response.getBody().getTotalPages());
         verify(brandService, times(1)).listAll(pageable);
     }
+
 
     @Test
     @DisplayName("Should update a brand and return its updated details")

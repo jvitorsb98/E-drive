@@ -89,7 +89,7 @@ class VehicleControllerTest {
         Pageable pageable = Pageable.ofSize(10);
         when(vehicleService.getAllVehicles(pageable)).thenReturn(page);
 
-        ResponseEntity<Page<DataVehicleDetails>> response = vehicleController.getAllVehicles(pageable);
+        ResponseEntity<Page<DataVehicleDetails>> response = vehicleController.getAllVehicles(pageable, null);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(page, response.getBody());

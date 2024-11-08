@@ -7,89 +7,41 @@
   padding: .2rem 0;
 }
 
-@media (max-width: 767px) {
-  .top-bar {
-    position: fixed;
-    width: 100%;
-    background-color: #19B6DD;
-    padding: .5rem 0;
-    padding-top: 1rem;
-  }
-}
-
-
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-}
-
 .container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.container-form {
-  width: 100%;
-  padding: 1rem;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.title {
-  text-align: center;
-  color: #19B6DD;
-  font-size: 1.5rem;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.mat-form-field {
-  width: 100%;
-}
-
-.mat-label {
-  color: #aaa;
-}
-.phone-group {
-  display: flex;
-  gap: 10px;
-}
-
-.country-code {
-  flex: 1;
-}
-
-.phone-number {
-  flex: 2;
-}
-/* Button group */
-.button-group {
+  margin-top: 0%;
+  position: relative;
+  min-height: 85vh;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  padding-bottom: 60px;
 }
 
-.button-group button {
-  background-color: #e0f7fa;
-  color: #000;
-  font-weight: bold;
+.mt-custom {
+  margin-top: -10%;
 }
 
-.custom-icon {
+.icon-row button {
+  position: absolute;
+  left: 0;
+  margin-left: -5px;
+}
+
+.custom-icon-cellfone {
+  font-size: 20px;
   color: #19B6DD;
+}
+
+.custom-icon-data .mat-datepicker-toggle-default-icon {
+  width: 16px;
+  height: 16px;
+  fill: #19B6DD;
+}
+
+::ng-deep .custom-icon-data .mat-datepicker-toggle-default-icon {
+  width: 20px;
+  height: 20px;
+  fill: #19B6DD;
 }
 
 .apply-button {
@@ -97,32 +49,149 @@ body {
   color: white !important;
 }
 
-.delete-account-button {
-  color: #ffacac !important;
-  cursor: pointer;
-  outline: none;
-  text-decoration: none;
+.cancel-button {
+  background-color: red !important;
+  color: white !important;
 }
 
-.logout-button {
-  background-color: #19B6DD !important;
+.custom-label {
+  font-size: 15px;
+  font-weight: normal;
 }
 
-.edit-button {
-  cursor: pointer;
+#Help {
+  color: #b5abab;
 }
-/* Desktop-specific styles */
-@media (min-width: 768px) {
-  .container-form {
-    max-width: 600px;
+
+.mat-error-text {
+  margin-top: 0px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -15px;
+}
+
+.mat-error-name {
+  white-space: nowrap;
+  margin-top: -22px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 2px;
+}
+
+.mat-error-name-email {
+  white-space: nowrap;
+  margin-top: -22px;
+  margin-bottom: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 1px;
+}
+
+.mat-error-codigo-text {
+  white-space: nowrap;
+  margin-top: 0px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -15px;
+}
+
+.error-codigo-pais-text {
+  white-space: nowrap;
+}
+
+.mat-error-text-cellPhone {
+  white-space: nowrap;
+  margin-top: 0px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -5px;
+}
+
+.custom-autocomplete-option {
+  font-size: 12px;
+}
+
+#form-container .form-floating .form-control:focus label {
+  color: #222;
+}
+
+// Customização do select e input de telefone
+.custom-select {
+  width: 40%;
+}
+
+.custom-input {
+  width: 60%;
+}
+
+@media(max-width: 395px) {
+
+  .mat-error-codigo-text {
+    font-size: 11px;
+    white-space: nowrap;
   }
 
-  .button-group {
-    flex-direction: row;
-    justify-content: space-between;
+  .mat-error-text-cellPhone {
+    margin-left: -20px;
   }
 
-  .button-group button {
-    flex: 1;
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    margin-left: 0px;
+    font-size: 12px;
+  }
+}
+
+@media(max-width: 370px) {
+  .custom-label {
+    font-size: 13px;
+  }
+
+  .mat-error-codigo-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    font-size: 12px;
+  }
+
+  .mat-error-text-cellPhone {
+    font-size: 10px;
+    white-space: nowrap;
+    margin-left: -5px;
+  }
+}
+
+@media(max-width: 340px) {
+  // .custom-select {
+  //   width: 100%;
+  // }
+
+  // .custom-input {
+  //   width: 100%;
+  // }
+
+  .mat-error-text-cellPhone#error-text-obrigadotio {
+    font-size: 11px;
+  }
+
+  .error-codigo-pais-text {
+    font-size: 11px;
+  }
+
+  .mat-error-codigo-text {
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .mat-error-text-cellPhone {
+    font-size: 10px;
+    white-space: nowrap;
+    margin-left: -15px;
   }
 }

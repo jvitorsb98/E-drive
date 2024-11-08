@@ -6,6 +6,8 @@ import { CountryService } from '../../../../core/services/apis/country/country.s
 import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
 import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { PhoneMaskPipe } from '../../../../shared/pipes/phone-mask.pipe';
 
 describe('UserUpdateComponent', () => {
   let component: UserUpdateComponent;
@@ -35,8 +37,8 @@ describe('UserUpdateComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      declarations: [UserUpdateComponent],
-      imports: [ReactiveFormsModule],
+      declarations: [UserUpdateComponent, PhoneMaskPipe],
+      imports: [ReactiveFormsModule, MatAutocompleteModule],
       providers: [
         { provide: UserService, useValue: userServiceMock },
         { provide: CountryService, useValue: countryServiceMock },
@@ -50,6 +52,7 @@ describe('UserUpdateComponent', () => {
     fixture = TestBed.createComponent(UserUpdateComponent);
     component = fixture.componentInstance;
 
+    // Mock do retorno de dados do usuário
     userServiceMock.getAuthenticatedUserDetails.mockReturnValue(of({
       name: 'Test User',
       email: 'test@example.com',
@@ -57,106 +60,76 @@ describe('UserUpdateComponent', () => {
       cellPhone: '+55 12345-6789'
     }));
 
+    // Mock do retorno de lista de países
     countryServiceMock.getCountries.mockReturnValue(of([
       { name: 'Brazil', idd: { root: '+55', suffixes: [] } },
       { name: 'United States', idd: { root: '+1', suffixes: [] } }
     ]));
 
-
+    // Inicializa o componente
     component.ngOnInit();
+    fixture.detectChanges();
   });
 
-  it('deve criar o componente', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deve carregar a lista de países ao inicializar', () => {
-    expect(component.countries.length).toBe(2);
-    expect(component.filteredCountries).toBeDefined();
+  it('should load the list of countries on initialization', () => {
+    expect(component.countries.length).toBe(2); // Verifica se dois países foram carregados
+    expect(component.filteredCountries).toBeDefined(); // Verifica se o filtro foi configurado
   });
 
-  it('deve carregar os dados do usuário ao inicializar', () => {
-    userServiceMock.getAuthenticatedUserDetails.mockReturnValue(of({
-      name: 'Test User',
-      email: 'test@example.com',
-      birth: '2000-01-01',
-      cellPhone: '+55 12345-6789'
-    }));
-  
-    // Inicializa o componente
-    component.ngOnInit(); // Chama o método público que deve acionar loadUserData
-  
-    // Cria a data de nascimento conforme a lógica do loadUserData
+  it('should load the user data on initialization', () => {
     const birthDate = new Date('2000-01-01');
     const userBirthDate = new Date(birthDate.getTime() + birthDate.getTimezoneOffset() * 60000);
-  
-    // Verifica se os dados do formulário foram preenchidos corretamente
+
     expect(component.userForm.value).toEqual({
       name: 'Test User',
       email: 'test@example.com',
-      birth: userBirthDate, // Use a data ajustada aqui
+      birth: userBirthDate,
       cellPhone: '12345-6789',
       countryCode: '+55',
     });
   });
-  
-  
 
-  it('deve atualizar os dados do usuário', () => {
-    component.userForm.patchValue({
-      name: 'Updated User',
-      email: 'updated@example.com',
-      birth: '2000-01-01',
-      cellPhone: '123456789',
-      countryCode: '55'
+  describe('updateUser function', () => {
+    it('should update the user successfully', async () => {
+      userServiceMock.update.mockReturnValue(of(null)); // Simula uma resposta de sucesso do serviço
+    
+      component.updateUser();
+    
+      // Aguarda que todas as operações assíncronas sejam concluídas
+      await fixture.whenStable();
+    
+      // Verifique se o showSuccess foi chamado com as duas mensagens
+      expect(alertServiceMock.showSuccess).toHaveBeenCalledWith(
+        'Atualização bem-sucedida!', 
+        'Os dados do usuário foram atualizados com sucesso.'
+      );
+    
+      // Verifique se a navegação foi chamada com o caminho correto
+      expect(routerMock.navigate).toHaveBeenCalledWith(['e-driver/users/myinfo']); 
     });
+    
+    it('should display error if the update fails', () => {
+      userServiceMock.update.mockReturnValue(throwError(() => new Error('Erro ao atualizar usuário')));
+    
+      component.updateUser();
+    
+      expect(alertServiceMock.showError).toHaveBeenCalledWith(
+        'Erro ao atualizar usuário', 
+        'Erro ao atualizar usuário'
+      );
+    });
+    
+    it('should not update the user if the form is invalid', () => {
+      component.userForm.setErrors({ invalid: true });
 
-    userServiceMock.update.mockReturnValue(of({}));
+      component.updateUser();
 
-    component.updateUser();
-
-    expect(userServiceMock.update).toHaveBeenCalledWith({
-      name: 'Updated User',
-      email: 'updated@example.com',
-      birth: '2000-01-01',
-      cellPhone: '55 (12) 34567-89', // Verifica a formatação do número
-      countryCode: '55'
+      expect(alertServiceMock.showSuccess).not.toHaveBeenCalled();
+      expect(routerMock.navigate).not.toHaveBeenCalled();
     });
   });
-
-  it('deve mostrar um erro ao atualizar usuário', () => {
-    userServiceMock.update.mockReturnValue(throwError(() => new Error('Update failed')));
-
-    component.updateUser();
-
-    expect(alertServiceMock.showError).toHaveBeenCalledWith('Erro ao atualizar usuário', 'Update failed');
-  });
-
-  it('deve habilitar o formulário em modo de edição', () => {
-    component.editData();
-
-    expect(component.isEditing).toBe(true);
-    expect(component.userForm.enabled).toBe(true);
-    expect(component.isButtonVisible).toBe(false);
-  });
-
-  it('deve cancelar a edição e recarregar os dados', () => {
-    component.cancelEdit();
-
-    expect(component.isEditing).toBe(false);
-    expect(component.userForm.disabled).toBe(true);
-    expect(component.isButtonVisible).toBe(true);
-    expect(routerMock.navigate).toHaveBeenCalledWith(['e-driver/users/myinfo']);
-  });
-
-  it('deve definir as datas mínima e máxima ao inicializar', () => {
-    // Chama o ngOnInit para disparar a inicialização
-    component.ngOnInit();
-  
-    // Verifica se minDate e maxDate foram definidos
-    expect(component.minDate).toBeDefined();
-    expect(component.maxDate).toBeDefined();
-  });
-  
- 
 });

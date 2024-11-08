@@ -1,6 +1,7 @@
 package br.com.cepedi.e_drive.service.vehicle;
 
 import br.com.cepedi.e_drive.model.entitys.*;
+import br.com.cepedi.e_drive.model.records.model.details.DataModelDetails;
 import br.com.cepedi.e_drive.model.records.vehicle.details.DataVehicleDetails;
 import br.com.cepedi.e_drive.model.records.vehicle.register.DataRegisterVehicle;
 import br.com.cepedi.e_drive.model.records.vehicle.update.DataUpdateVehicle;
@@ -238,6 +239,14 @@ public class VehicleService {
     public Page<DataVehicleDetails> getVehiclesByVersion(String version, Pageable pageable) {
         return vehicleRepository.findByVersion(version, pageable)
                 .map(DataVehicleDetails::new);
+    }
+
+    public Page<DataVehicleDetails> findByActivated(Boolean activated, Pageable pageable) {
+        if (activated) {
+            return vehicleRepository.findByActivatedTrue(pageable).map(DataVehicleDetails::new);
+        } else {
+            return vehicleRepository.findByActivatedFalse(pageable).map(DataVehicleDetails::new);
+        }
     }
 
 }

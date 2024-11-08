@@ -82,21 +82,32 @@ public class VehicleController {
     }
 
     /**
-     * Recupera uma lista paginada de todos os veículos.
+     * Recupera uma lista paginada de veículos, filtrando por status de ativação.
      * <p>
-     * Retorna todos os veículos com base nas informações de paginação fornecidas.
+     * Retorna os veículos com base nas informações de paginação e no status de ativação fornecido.
      * </p>
      *
      * @param pageable Informações de paginação e ordenação.
+     * @param activated Status de ativação dos veículos (true para ativos, false para inativos).
      * @return Página de detalhes dos veículos.
      */
     @GetMapping
-    @Operation(summary = "Get all Vehicles", method = "GET")
-    public ResponseEntity<Page<DataVehicleDetails>> getAllVehicles(Pageable pageable) {
-        LOGGER.info("Retrieving all vehicles");
-        Page<DataVehicleDetails> vehicles = vehicleService.getAllVehicles(pageable);
+    @Operation(summary = "Get Vehicles by Activation Status", method = "GET")
+    public ResponseEntity<Page<DataVehicleDetails>> getAllVehicles(
+            Pageable pageable,
+            @RequestParam(required = false) Boolean activated) {
+        LOGGER.info("Retrieving vehicles, activated: {}", activated);
+        Page<DataVehicleDetails> vehicles;
+
+        if (activated == null) {
+            vehicles = vehicleService.getAllVehicles(pageable);
+        } else {
+            vehicles = vehicleService.findByActivated(activated, pageable);
+        }
+
         return ResponseEntity.ok(vehicles);
     }
+
 
     /**
      * Recupera um veículo pelo ID.
