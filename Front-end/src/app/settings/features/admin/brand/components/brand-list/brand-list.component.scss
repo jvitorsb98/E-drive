@@ -160,36 +160,6 @@ tr {
   text-align: left;
 }
 
-/* Define o campo de formulário dentro do filtro personalizado como flexível, 
-     ocupando todo o espaço horizontal disponível. */
-.custom-filter mat-form-field {
-  flex: 1;
-}
-
-
-/* Estilo para o contêiner do filtro de status */
-.status-filter {
-  display: flex;
-  gap: 10px;
-  margin-right: auto; /* Move o filtro para a esquerda */
-}
-
-.status-filter button {
-  font-size: 0.875rem;
-  color: #767676;
-  background-color: #e0f7fa;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.status-filter button.active, .status-filter button:hover {
-  color: #ffffff;
-  background-color: #19B6DD;
-}
-
 
 
 
