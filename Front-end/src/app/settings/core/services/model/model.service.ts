@@ -27,11 +27,15 @@ export class ModelService {
  * (page e size) e a ordenação pelo nome em ordem ascendente. Caso ocorra algum erro, o método retorna
  * uma mensagem de erro genérica: 'Failed to load models'.
  */
-  getAllPaginated(page: number, size: number): Observable<PaginatedResponse<Model>> {
-    const params = new HttpParams()
+  getAllPaginated(page: number, size: number ,  statusFilter: string ='all'): Observable<PaginatedResponse<Model>> {
+    let params = new HttpParams()
       .set('page', page.toString())
       .set('size', size.toString())
       .set('sort', 'name'); // Ordenação pelo nome em ordem ascendente
+
+      if (statusFilter != 'all') {
+        params = params.set('activated', statusFilter); // Adiciona o filtro de status
+      }
 
     return this.http.get<PaginatedResponse<Model>>(this.modelUrl, { params: params }).pipe(
       catchError(() => throwError(() => new Error('Failed to load models')))

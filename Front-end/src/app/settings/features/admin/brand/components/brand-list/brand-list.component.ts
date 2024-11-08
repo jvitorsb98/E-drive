@@ -37,10 +37,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class BrandListComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['icon', 'marck', 'actions']; // Colunas a serem exibidas na tabela
+  displayedColumns: string[] = ['icon', 'mark', 'actions']; // Colunas a serem exibidas na tabela
   dataSource = new MatTableDataSource<Brand>(); // Fonte de dados da tabela
   brands: Brand[] = []; // Lista de marcas
-  selectedStatus: boolean | 'all' = 'all';
+  selectedStatus: Boolean | 'all' = 'all';
+  filterValueName: string = '';
 
   // config de paginacao e ordenacao da tabela
   totalBrands: number = 0; // Total de veículos disponíveis
@@ -109,7 +110,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
           this.dataSource = new MatTableDataSource(this.brands); // Atualiza a fonte de dados
           this.dataSource.sort = this.sort; // Atualiza a ordenação
           this.totalBrands = response.totalElements; // Atualiza o total de marcas
-          this.filterByStatus(this.selectedStatus);
+          console.log(this.totalBrands)
         } else {
           console.error('Esperava um array em response.content, mas recebeu:', this.brands);
         }
@@ -177,14 +178,14 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   applyFilter(event: Event) {
     try {
       this.isFilterActive = true;
-      const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+      this.filterValueName = (event.target as HTMLInputElement).value.trim().toLowerCase();
       this.searchKey = event;
-
+  
       if (this.dataSource.paginator) {
-        this.dataSource.paginator.firstPage();
+        this.dataSource.paginator.firstPage(); // Reseta a página para a primeira
       }
-
-      this.brandService.getAllPaginated(0, this.totalBrands)
+      console.log(this.selectedStatus)
+      this.brandService.getAllPaginated(0, this.totalBrands , this.selectedStatus.toString())
         .pipe(
           catchError((error) => {
             this.handleError(new HttpErrorResponse({ error: error }));
@@ -199,10 +200,19 @@ export class BrandListComponent implements OnInit, AfterViewInit {
               return;
             }
           } else {
-            this.filteredData = response.content.filter(brand =>
-              brand.name.toLowerCase().includes(filterValue) // Filtra as marcas pelo nome
-            );
-
+            // Aplica o filtro por nome da marca
+            this.filteredData = response.content.filter(brand => {
+              // Filtro pelo nome
+              const nameMatches = brand.name.toLowerCase().includes(this.filterValueName);
+  
+              // Filtro pelo status, se não for "all"
+              const statusMatches = this.selectedStatus === 'all' || brand.activated === this.selectedStatus;
+  
+              // Retorna verdadeiro se ambos os filtros forem verdadeiros
+              return nameMatches && statusMatches;
+            });
+  
+  
             if (this.filteredData.length > 0) {
               this.dataSource.data = this.filteredData;
               this.dataSource.paginator = this.paginator;
@@ -313,14 +323,55 @@ export class BrandListComponent implements OnInit, AfterViewInit {
 
   filterByStatus(status: boolean | 'all'): void {
     this.selectedStatus = status;
-    if (status === 'all') {
-      this.dataSource.filter = ''; // Exibe todas as marcas
-    } else {
-      this.dataSource.filterPredicate = (data: Brand, filter: string) => {
-        return data.activated === status;
-      };
-      this.dataSource.filter = status.toString(); // Aplica o filtro
-    }
+    console.log(this.selectedStatus)
+      this.applyStatus();
   }
+
+
+  applyStatus() {
+
+      this.brandService.getAllPaginated(0, this.totalBrands , this.selectedStatus.toString())
+        .pipe(
+          catchError((error) => {
+            this.handleError(new HttpErrorResponse({ error: error }));
+            return of([]); // Retorna um array vazio em caso de erro
+          })
+        )
+        .subscribe((response: PaginatedResponse<Brand> | never[]) => {
+          if (Array.isArray(response)) {
+            if (response.length === 0) {
+              this.dataSource.data = [];
+              return;
+            }
+          } else {
+            // Aplica o filtro por nome da marca
+            this.filteredData = response.content.filter(brand => {
+              // Filtro pelo nome
+              const nameMatches = brand.name.toLowerCase().includes(this.filterValueName);
+  
+              // Filtro pelo status, se não for "all"
+              const statusMatches = this.selectedStatus === 'all' || brand.activated === this.selectedStatus;
+  
+              // Retorna verdadeiro se ambos os filtros forem verdadeiros
+              return nameMatches && statusMatches;
+            });
+
+
+            console.log(this.filteredData)
+  
+            if (this.filteredData.length > 0) {
+              this.dataSource.data = this.filteredData;
+              this.dataSource.paginator = this.paginator;
+              this.dataSource.sort = this.sort;
+            } else {
+              this.dataSource.data = [];
+            }
+          }
+        });
+
+  }
+
+
+  
 
 }

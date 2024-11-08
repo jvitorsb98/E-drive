@@ -27,17 +27,16 @@ export class BrandService {
   * enviando os parâmetros de paginação (page e size) e a ordenação pelo nome em ordem ascendente. 
   * Se ocorrer algum erro durante a requisição, o método retorna um erro genérico: 'Failed to load brands'.
   */
-  getAllPaginated(page: number = 0, size: number = 10): Observable<PaginatedResponse<Brand>> {
-    const params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString())
-      .set('sort', 'name'); // Ordenação pelo nome em ordem ascendente
-
-    return this.http.get<PaginatedResponse<Brand>>(this.brandUrl, { params: params }).pipe(
-      catchError(() => throwError(() => new Error('Failed to load brands')))
-    );
+  getAllPaginated(pageIndex: number, pageSize: number, statusFilter: string ='all') {
+    let params = new HttpParams()
+      .set('page', pageIndex.toString())
+      .set('size', pageSize.toString());
+  
+    if (statusFilter != 'all') {
+      params = params.set('activated', statusFilter); // Adiciona o filtro de status
+    }
+    return this.http.get<PaginatedResponse<Brand>>(`${this.brandUrl}`, { params });
   }
-
   /**
    * Método para carregar todas as marcas (Brand) de uma só vez após descobrir o total de registros.
    *

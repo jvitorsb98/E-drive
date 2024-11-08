@@ -47,11 +47,15 @@ export class VehicleService {
    * @param size Quantidade de veículos por página
    * @returns Um Observable que emite uma resposta paginada com os veículos
    */
-  getAll(page: number, size: number): Observable<PaginatedResponse<Vehicle>> {
-    const params = new HttpParams()
+  getAll(page: number, size: number , statusFilter: string ='all'): Observable<PaginatedResponse<Vehicle>> {
+    let params = new HttpParams()
     .set('page', page.toString())
     .set('size', size.toString())
     .set('sort', 'year');
+
+    if (statusFilter != 'all') {
+      params = params.set('activated', statusFilter); // Adiciona o filtro de status
+    }
 
     return this.http.get<PaginatedResponse<Vehicle>>(`${this.vehicleUrl}/api/v1/vehicles`, { params: params }).pipe(
     );

@@ -137,11 +137,20 @@ public class BrandController {
                     content = @Content)
     })
     public ResponseEntity<Page<DataBrandDetails>> listAll(
+            @Parameter(description = "Filter by activation status")
+            @RequestParam(required = false) Boolean activated,
             @Parameter(description = "Pagination and sorting information")
             @PageableDefault(size = 10, sort = {"name"}) Pageable pageable
     ) {
         LOGGER.info("Retrieving all brands");
-        Page<DataBrandDetails> brands = brandService.listAll(pageable);
+
+        Page<DataBrandDetails> brands;
+        if (activated != null) {
+            brands = brandService.findByActivated(activated, pageable);
+        } else {
+            brands = brandService.listAll(pageable);
+        }
+
         LOGGER.info("All brands retrieved successfully");
         return new ResponseEntity<>(brands, HttpStatus.OK);
     }
