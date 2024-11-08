@@ -1,4 +1,4 @@
-import { AlertasService } from './../../../../core/services/Alertas/alertas.service';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
 // Importa o decorador Component, a função Inject, o decorador Input e o ciclo de vida OnInit do Angular core
 import { Component, Inject, Input, OnInit } from '@angular/core';
 
@@ -28,10 +28,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-my-addresses-form',
-  templateUrl: './my-addresses-form.component.html',
-  styleUrl: './my-addresses-form.component.scss'
+  templateUrl: './modal-form-my-addresses.component.html',
+  styleUrl: './modal-form-my-addresses.component.scss'
 })
-export class MyAddressesFormComponent  implements OnInit {
+export class ModalFormMyAddressesComponent  implements OnInit {
 
   // Input que pode ser passado de um componente pai, usado para reutilização em atualizações
   @Input() addressData: any = null;
@@ -54,7 +54,7 @@ export class MyAddressesFormComponent  implements OnInit {
     private postalCodeService: PostalCodeService, // Serviço para buscar informações de CEP
     private dialog: MatDialog, // Serviço para abrir diálogos
     private addressService: AddressService, // Serviço para operações com endereços
-    public dialogRef: MatDialogRef<MyAddressesFormComponent>, // Referência ao diálogo do componente
+    public dialogRef: MatDialogRef<ModalFormMyAddressesComponent>, // Referência ao diálogo do componente
     private router: Router, // Serviço para navegação e manipulação de rotas
     private alertasService: AlertasService,
     @Inject(MAT_DIALOG_DATA) public data: { addressData: DataAddressDetails; actionTitle: string } // Dados passados ao diálogo

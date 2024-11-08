@@ -90,7 +90,7 @@
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-          <div *ngIf="input.value.length != 0">
+          <div *ngIf="[dataSource.data.length != 0]">
             <tr class="mat-row" *matNoDataRow>
               <td class="mat-cell no-data" colspan="4">Não foram encontrados dados para a
                 pesquisa:

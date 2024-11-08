@@ -2,7 +2,7 @@
 import { ModalDetailsAddressComponent } from '../modal-details-address/modal-details-address.component';
 
 // Componente para listar endereços e editar/adicionar endereços
-import { MyAddressesFormComponent } from '../my-addresses-form/my-addresses-form.component';
+import { ModalFormMyAddressesComponent } from '../modal-form-my-addresses/modal-form-my-addresses.component';
 
 // Serviço para operações relacionadas a endereços
 import { AddressService } from '../../../../core/services/Address/address.service';
@@ -136,7 +136,7 @@ export class ListMyAddressesComponent implements OnInit {
           } else {
             this.filteredData = response.content.filter(anddres =>
               anddres.city.toLowerCase().includes(filterValue) ||
-              anddres.street.toLowerCase().includes(filterValue)
+              anddres.neighborhood.toLowerCase().includes(filterValue)
             );
 
             if (this.filteredData.length > 0) {
@@ -180,7 +180,7 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Abre o modal para adicionar um novo endereço
   openModalAddAddress() {
-    this.dialog.open(MyAddressesFormComponent, {
+    this.dialog.open(ModalFormMyAddressesComponent, {
       width: '700px',
       height: '515px',
       data: {
@@ -191,7 +191,7 @@ export class ListMyAddressesComponent implements OnInit {
 
   // Abre o modal para editar um endereço existente
   openModalEditAddress(address: DataAddressDetails) {
-    this.dialog.open(MyAddressesFormComponent, {
+    this.dialog.open(ModalFormMyAddressesComponent, {
       width: '650px',
       height: '515px',
       data: {
@@ -201,20 +201,6 @@ export class ListMyAddressesComponent implements OnInit {
     }).afterClosed().subscribe(() => {
       this.searchKey ? this.applyFilter(this.searchKey):
       this.loadAddresses(this.currentPage, this.pageSize); // Atualiza a lista de endereços após o fechamento do modal
-    });
-  }
-
-  // Abre o modal de FAQ
-  openFAQModal() {
-    this.dialog.open(FaqPopupComponent, {
-      data: {
-        faqs: [
-          {
-            question: 'O que é o CEP?',
-            answer: 'O CEP (Código de Endereçamento Postal) é um código numérico utilizado pelos Correios para identificar os logradouros no Brasil. Ele é essencial para que suas correspondências e encomendas sejam entregues corretamente.',
-          }
-        ]
-      }
     });
   }
 }
