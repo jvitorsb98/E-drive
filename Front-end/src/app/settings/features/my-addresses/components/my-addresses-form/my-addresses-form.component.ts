@@ -228,16 +228,37 @@ export class MyAddressesFormComponent  implements OnInit {
   openFAQModal() {
     // Abre o modal com FAQs para fornecer informações adicionais ao usuário
     this.dialog.open(FaqPopupComponent, {
+      width: '500px',
       data: {
         faqs: [
           {
-            question: 'O que é o CEP?',
-            answer: 'O CEP (Código de Endereçamento Postal) é um código numérico utilizado pelos Correios para identificar os logradouros no Brasil. Ele é essencial para que suas correspondências e encomendas sejam entregues corretamente.',
+            question: 'Como preencher o CEP?',
+            answer: 'Digite o CEP no formato 00000-000. O sistema buscará automaticamente o endereço quando você sair do campo.'
           },
           {
-            question: 'Por que preciso preencher o CEP?',
-            answer: 'Ao preencher o CEP, o sistema busca automaticamente as informações de endereço relacionadas, como cidade, estado e bairro, facilitando o preenchimento do formulário e garantindo a precisão dos dados.',
+            question: 'Qual é o formato esperado para o número?',
+            answer: 'O número deve conter apenas letras, números e hífens. Não utilize caracteres especiais.'
           },
+          {
+            question: 'Como corrijo um erro de campo obrigatório?',
+            answer: 'Certifique-se de preencher todos os campos obrigatórios indicados com * antes de enviar o formulário.'
+          },
+          {
+            question: 'O que fazer se o endereço não for encontrado?',
+            answer: 'Verifique se o CEP foi digitado corretamente. Caso o problema persista, complete manualmente os campos de endereço.'
+          },
+          {
+            question: 'Como adicionar um ponto de recarga para veículos elétricos?',
+            answer: 'Marque a caixa "Possui ponto de recarga para veículo elétrico" para indicar a presença de uma estação de recarga.'
+          },
+          {
+            question: 'Posso enviar o formulário com campos em branco?',
+            answer: 'Não. Todos os campos obrigatórios devem ser preenchidos para habilitar o botão de finalização.'
+          },
+          {
+            question: 'Como posso atualizar meu endereço?',
+            answer: 'Altere as informações nos campos desejados e clique no botão "Finalizar" para salvar as atualizações.'
+          }
         ]
       }
     });

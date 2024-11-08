@@ -2,7 +2,7 @@
 import { ModalService } from '../../core/services/modal/modal.service';
 
 // Componente para o modal de login
-import { UserLoginModalComponent } from '../../core/security/login/user-login-modal/user-login-modal.component';
+import { UserLoginComponent } from '../../core/security/login/user-login/user-login.component';
 
 // Serviço de autenticação
 import { AuthService } from '../../core/security/services/auth/auth.service';
@@ -33,7 +33,7 @@ export class IntroPageComponent implements AfterViewInit {
    * o mesmo é capturado e exibido no console.
    */
   openLoginModal() {
-    this.modal.openModal(UserLoginModalComponent).subscribe(result => {
+    this.modal.openModal(UserLoginComponent).subscribe(result => {
       if (result) {
         console.log(result);
       }

@@ -1,10 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserLoginModalComponent } from './user-login-modal.component';
-import { AuthService } from '../../../../core/security/services/auth/auth.service';
+import { UserLoginComponent } from './user-login.component';
+import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import { AlertasService } from './../../../services/Alertas/alertas.service';
-import { ModalService } from '../../../../core/services/modal/modal.service';
+import { AlertasService } from '../../../services/Alertas/alertas.service';
+import { ModalService } from '../../../services/modal/modal.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -14,8 +14,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('UserLoginModalComponent', () => {
-  let component: UserLoginModalComponent;
-  let fixture: ComponentFixture<UserLoginModalComponent>;
+  let component: UserLoginComponent;
+  let fixture: ComponentFixture<UserLoginComponent>;
   let authServiceMock: jest.Mocked<AuthService>;
   let routerMock: jest.Mocked<Router>;
   let alertasServiceMock: jest.Mocked<AlertasService>;
@@ -48,7 +48,7 @@ describe('UserLoginModalComponent', () => {
       imports: [ReactiveFormsModule,  MatDialogModule,
         MatInputModule,
         MatFormFieldModule,  NoopAnimationsModule],
-      declarations: [UserLoginModalComponent],
+      declarations: [UserLoginComponent],
       providers: [
         { provide: AuthService, useValue: authServiceMock },
         { provide: Router, useValue: routerMock },
@@ -58,7 +58,7 @@ describe('UserLoginModalComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(UserLoginModalComponent);
+    fixture = TestBed.createComponent(UserLoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -74,12 +74,12 @@ describe('UserLoginModalComponent', () => {
   });
 
   it('should navigate to dashboard on successful login', async () => {
-    const mockResponse: ILoginResponse = { token: 'mockToken' }; 
-    authServiceMock.login.mockReturnValue(of(mockResponse)); 
-  
+    const mockResponse: ILoginResponse = { token: 'mockToken' };
+    authServiceMock.login.mockReturnValue(of(mockResponse));
+
     component.loginForm.setValue({ email: 'test@example.com', password: 'newPassword123' });
     await component.onSubmit();
-  
+
     expect(authServiceMock.login).toHaveBeenCalledWith({
       login: 'test@example.com',
       password: 'newPassword123',
@@ -94,15 +94,15 @@ describe('UserLoginModalComponent', () => {
         status: 401,
         statusText: 'Unauthorized',
     });
-  
+
     // Mock da resposta para simular erro ao fazer login
     authServiceMock.login.mockReturnValue(throwError(() => errorResponse));
-  
+
     // Configurar o formulário com dados inválidos
     component.loginForm.setValue({ email: 'test@example.com', password: 'newPassword123' });
-  
+
     await component.onSubmit();
-  
+
     // Verifica se o método de login foi chamado
     expect(authServiceMock.login).toHaveBeenCalled();
     // Ajusta a expectativa para a mensagem de erro que seu componente realmente emite
@@ -110,7 +110,7 @@ describe('UserLoginModalComponent', () => {
     expect(component.loginForm.controls['email'].errors).toEqual({ invalid: true });
     expect(component.loginForm.controls['password'].errors).toEqual({ invalid: true });
   });
-  
+
 
   it('should call modalResetPassword method', () => {
     component.modalResetPassword(true);

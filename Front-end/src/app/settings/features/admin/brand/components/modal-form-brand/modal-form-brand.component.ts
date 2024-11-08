@@ -104,11 +104,11 @@ export class ModalFormBrandComponent {
   /**
  * Envia o formulário para cadastrar ou atualizar a marca.
  * Exibe alertas de sucesso ou erro conforme a ação realizada.
- * 
+ *
  * @description Este método verifica se o formulário é válido, determina se está em modo de edição ou de cadastro,
  *              e realiza a requisição correspondente ao serviço de marcas. Após a requisição, ele trata as respostas
  *              para exibir alertas apropriados ao usuário.
- * 
+ *
  * @returns {void}
  */
   onSubmit() {
@@ -156,15 +156,29 @@ export class ModalFormBrandComponent {
    */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
-      width: '350px',
-      height: '230px',
+      width: '500px',
       data: {
         faqs: [
           {
             question: 'Como cadastrar uma nova marca?',
-            answer: 'Para cadastrar uma nova marca, clique no botão "Nova marca"...'
+            answer: 'Para cadastrar uma nova marca, preencha o campo "Marca" com o nome desejado e clique no botão "Finalizar cadastro". Todos os campos obrigatórios devem ser preenchidos corretamente para habilitar a opção de finalização.'
           },
-          // Mais perguntas e respostas...
+          {
+            question: 'Como editar uma marca existente?',
+            answer: 'Para editar uma marca, selecione a marca desejada na lista principal e, em seguida, clique em "Editar Marca". Faça as alterações necessárias e clique em "Atualizar Marca" para salvar.'
+          },
+          {
+            question: 'Quais são os requisitos para o nome da marca?',
+            answer: 'O nome da marca é um campo obrigatório e deve conter pelo menos 3 caracteres. Certifique-se de que o nome esteja correto antes de salvar.'
+          },
+          {
+            question: 'Posso cancelar a operação de cadastro ou edição?',
+            answer: 'Sim, você pode cancelar a operação a qualquer momento clicando no ícone de seta para voltar no canto superior esquerdo da tela. Nenhuma alteração será salva até que você clique em "Finalizar cadastro" ou "Atualizar Marca".'
+          },
+          {
+            question: 'Por que não consigo clicar em "Finalizar cadastro"?',
+            answer: 'Certifique-se de que todos os campos obrigatórios estão preenchidos corretamente. O botão "Finalizar cadastro" será habilitado apenas quando todos os requisitos forem atendidos.'
+          }
         ]
       }
     });

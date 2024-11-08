@@ -37,7 +37,7 @@ export class UserPasswordModalComponent implements OnInit {
   * @description Construtor do componente UserPasswordModalComponent.
   * Injeta os serviços necessários para manipular dados do usuário, navegação, construção de formulários,
   * renderização dinâmica, exibição de alertas e controle de diálogos modais.
-  * 
+  *
   * @param userService Serviço responsável por manipular os dados dos usuários.
   * @param router Serviço de roteamento Angular para navegação entre páginas.
   * @param formBuilder Serviço para construir formulários reativos.
@@ -74,7 +74,7 @@ export class UserPasswordModalComponent implements OnInit {
    */
   buildForm() {
     this.userPassword = this.formBuilder.group({
-      password: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+      password: new FormControl(null, [Validators.required, Validators.minLength(6)]),
       confirmPassword: new FormControl(null, Validators.required),
       newsletter: new FormControl(false, Validators.requiredTrue)
     }, { validators: passwordMatchValidator });
@@ -96,7 +96,7 @@ export class UserPasswordModalComponent implements OnInit {
    * @description Função para cadastrar um novo usuário. Se o formulário estiver válido, os dados de senha são salvos,
    * e o serviço de registro de usuário é chamado. Ao final, um modal de confirmação é exibido e, após confirmação,
    * o usuário é redirecionado para a página de login.
-   * 
+   *
    * @returns void
    */
   createUser(): void {
@@ -131,7 +131,7 @@ export class UserPasswordModalComponent implements OnInit {
  * @description Abre o modal da LGPD (Lei Geral de Proteção de Dados) com perguntas frequentes relacionadas aos direitos
  * e consentimento de dados do usuário. O modal é aberto somente se o controle de 'newsletter' for inválido.
  * Após o fechamento do modal, o valor de 'newsletter' é atualizado com base na resposta do usuário.
- * 
+ *
  * @param lgpdFaqs {Array} - Lista de perguntas e respostas sobre a LGPD a serem exibidas no modal.
  */
   openLGPDModal() {

@@ -120,9 +120,9 @@ export class ModalFormModelComponent {
   /**
   * @description Carrega modelos (models) com base no ID da marca (brandId) fornecido.
   *
-  * Este método faz uma requisição para o serviço de modelos, buscando todos os modelos associados 
-  * à marca especificada pelo ID. Ao receber a resposta, ele processa os dados, convertendo 
-  * cada modelo para um formato que inclui o nome capitalizado, o ID do modelo e o ID da marca. 
+  * Este método faz uma requisição para o serviço de modelos, buscando todos os modelos associados
+  * à marca especificada pelo ID. Ao receber a resposta, ele processa os dados, convertendo
+  * cada modelo para um formato que inclui o nome capitalizado, o ID do modelo e o ID da marca.
   * Em seguida, reconfigura o autocomplete com os modelos carregados.
   *
   * @param {number} brandId - O ID da marca cujos modelos devem ser carregados.
@@ -153,9 +153,9 @@ export class ModalFormModelComponent {
   /**
  * @description Configura o autocomplete para a seleção de marcas.
  *
- * Este método inicializa o Observable `filteredBrands`, que escuta as alterações de valor do 
- * controle de formulário correspondente à marca. Sempre que o valor é alterado, ele aplica um 
- * filtro à lista de marcas, verificando se há marcas correspondentes e atualizando 
+ * Este método inicializa o Observable `filteredBrands`, que escuta as alterações de valor do
+ * controle de formulário correspondente à marca. Sempre que o valor é alterado, ele aplica um
+ * filtro à lista de marcas, verificando se há marcas correspondentes e atualizando
  * a variável `noBrandFound` adequadamente.
  *
  * @returns {void} - Não retorna nenhum valor.
@@ -175,8 +175,8 @@ export class ModalFormModelComponent {
   /**
  * @description Método privado para filtrar um array de objetos com base em um valor de busca.
  *
- * Este método aplica um filtro a um array de objetos, retornando apenas os itens cujo campo 
- * especificado (por padrão, o campo 'name') contém o valor de busca, ignorando diferenças de 
+ * Este método aplica um filtro a um array de objetos, retornando apenas os itens cujo campo
+ * especificado (por padrão, o campo 'name') contém o valor de busca, ignorando diferenças de
  * maiúsculas e minúsculas. É utilizado para filtrar as opções disponíveis no autocomplete.
  *
  * @param {T[]} array - O array de objetos a ser filtrado.
@@ -196,8 +196,8 @@ export class ModalFormModelComponent {
   /**
  * @description Submete o formulário para criar ou atualizar um modelo de veículo.
  *
- * Este método verifica se o formulário é válido e, em seguida, determina se a operação é 
- * uma atualização ou um cadastro. Com base nisso, ele coleta os dados do modelo, incluindo 
+ * Este método verifica se o formulário é válido e, em seguida, determina se a operação é
+ * uma atualização ou um cadastro. Com base nisso, ele coleta os dados do modelo, incluindo
  * o nome e o ID da marca selecionada, e faz uma requisição ao serviço correspondente.
  * Após a requisição, exibe uma mensagem de sucesso ou erro, conforme o resultado.
  *
@@ -295,7 +295,7 @@ export class ModalFormModelComponent {
       this.modelForm.get('brand')?.disable(); // Desabilita o campo brand
     } else {
       this.modelForm.get('brand')?.enable(); // Habilita o campo brand
-      this.modelForm.get('modelName')?.disable(); // Desabilita o campo modelName 
+      this.modelForm.get('modelName')?.disable(); // Desabilita o campo modelName
     }
   }
 
@@ -318,21 +318,24 @@ export class ModalFormModelComponent {
    */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
+      width: '500px',
       data: {
         faqs: [
           {
-            question: 'Como cadastrar um novo modelo?',
-            answer: 'Para cadastrar um novo modelo, clique no botão "Novo modelo" localizado na parte inferior direita da tabela.'
+            question: 'Como cadastrar um novo modelo de veículo?',
+            answer: 'Para cadastrar um novo modelo, clique no botão "Novo Modelo" localizado na parte inferior direita da tabela de modelos. Preencha o formulário com os dados necessários e clique em "Finalizar Cadastro" para concluir.'
           },
           {
-            question: 'Como visualizar os detalhes de um modelo?',
-
-            answer: 'Para visualizar os detalhes de um modelo existente, localize o modelo desejado na tabela e clique no botão de edição (ícone de lápis) ao lado do modelo. Isso abrirá um formulário com os detalhes do modelo, onde você poderá visualizar e editar as informações conforme necessário.'
+            question: 'Como acessar e editar os detalhes de um modelo?',
+            answer: 'Para visualizar ou editar os detalhes de um modelo existente, localize-o na lista e clique no ícone de edição (representado por um lápis). Isso abrirá um formulário onde você pode revisar e atualizar as informações do modelo conforme necessário.'
+          },
+          {
+            question: 'O que fazer se uma marca de veículo não estiver listada?',
+            answer: 'Caso a marca desejada não esteja disponível na lista, utilize o campo de busca para verificar se ela está registrada. Se a marca ainda não aparecer, entre em contato com o administrador para inclusão.'
           }
         ]
-      },
-      width: '500px',
-      height: '400px'
+      }
     });
   }
+
 }

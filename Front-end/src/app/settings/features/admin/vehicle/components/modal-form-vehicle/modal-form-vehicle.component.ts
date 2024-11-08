@@ -743,6 +743,7 @@ export class ModalFormVehicleComponent {
  */
   openFAQModal() {
     this.dialog.open(FaqPopupComponent, {
+      width: '500px',
       data: {
         faqs: [
           { question: 'Como criar um veículo?', answer: 'Preencha todos os campos obrigatórios e clique em "Cadastrar Veículo".' },

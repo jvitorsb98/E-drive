@@ -1,22 +1,22 @@
-import { AlertasService } from './../../../services/Alertas/alertas.service';
+import { AlertasService } from '../../../services/Alertas/alertas.service';
 import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ModalService } from '../../../../core/services/modal/modal.service';
-import { AuthService } from '../../../../core/security/services/auth/auth.service';
+import { ModalService } from '../../../services/modal/modal.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { ILoginRequest } from '../../../models/inter-Login';
-import { ModalRecoverPasswordComponent } from '../../login/recover-password/components/modal-recover-password/modal-recover-password.component';
+import { ModalRecoverPasswordComponent } from '../recover-password/components/modal-recover-password/modal-recover-password.component';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FaqPopupComponent } from '../../../fragments/faq-popup/faq-popup.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { PasswordVisibilityToggle } from '../../../../shared/validators/password-visibility-toggle';
 
 @Component({
-  selector: 'app-user-login-modal',
-  templateUrl: './user-login-modal.component.html',
-  styleUrl: './user-login-modal.component.scss'
+  selector: 'app-user-login',
+  templateUrl: './user-login.component.html',
+  styleUrl: './user-login.component.scss'
 })
-export class UserLoginModalComponent implements OnInit {
+export class UserLoginComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
   successMessage: string | null = null;
@@ -124,24 +124,29 @@ export class UserLoginModalComponent implements OnInit {
   openFAQModal(): void {
     const faqData = [
       {
-        question: 'Como faço para redefinir minha senha?',
-        answer: 'Para redefinir sua senha, clique no link "Esqueceu a senha?".'
+        question: 'Como posso redefinir minha senha se a esqueci?',
+        answer: 'Clique em "Esqueceu a senha?" para iniciar o processo de redefinição. Um e-mail com as instruções será enviado para que você possa criar uma nova senha com segurança.'
       },
       {
-        question: 'Ainda não tenho uma conta, como faço para me cadastrar?',
-        answer: 'Para se cadastrar, clique no botão "Cadastre-se".'
+        question: 'Ainda não possui uma conta na plataforma?',
+        answer: 'Para ter acesso completo, cadastre-se clicando em "Cadastre-se". Preencha os dados solicitados e comece a usar nossos serviços.'
       },
       {
-        question: 'Quais são os requisitos para a senha?',
-        answer: 'A senha deve ter pelo menos 6 caracteres.'
+        question: 'Quais são os requisitos para uma senha segura?',
+        answer: 'Para proteger sua conta, sua senha deve atender aos seguintes requisitos mínimos:\n' +
+                '- Ter pelo menos 6 caracteres;\n' +
+                '- Incluir ao menos 1 número;\n' +
+                '- Conter 1 letra minúscula e 1 letra maiúscula;\n' +
+                '- Incluir ao menos 1 símbolo especial (ex.: @, #, $, etc.).\n' +
+                'Esses critérios ajudam a manter sua conta mais segura contra acessos não autorizados.'
       },
       {
-        question: 'Preciso confirmar meu e-mail após o cadastro?',
-        answer: 'Essa informação não está disponível na página. Consulte a documentação ou entre em contato com o suporte para mais detalhes.'
+        question: 'Por que preciso confirmar meu e-mail ao me cadastrar?',
+        answer: 'A confirmação do e-mail é uma etapa de segurança para garantir que você é o proprietário do endereço fornecido. Após o cadastro, um link de confirmação será enviado ao seu e-mail.'
       },
       {
-        question: 'O que acontece se eu digitar meu e-mail ou senha incorretamente?',
-        answer: 'A página exibirá mensagens de erro indicando se o e-mail é inválido ou se a senha está incorreta.'
+        question: 'O que devo fazer se digitar e-mail ou senha incorretos?',
+        answer: 'Se o e-mail ou senha estiverem incorretos, mensagens de erro específicas serão exibidas para orientá-lo. Revise as informações e tente novamente.'
       }
     ];
 

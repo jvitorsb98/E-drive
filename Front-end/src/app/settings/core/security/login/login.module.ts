@@ -11,7 +11,7 @@ import { AngularMaterialModule } from '../../../angular-material/angular-materia
 import { SharedModule } from '../../../shared/shared.module';
 
 // Componentes específicos para o módulo de login
-import { UserLoginModalComponent } from './user-login-modal/user-login-modal.component';
+import { UserLoginComponent } from './user-login/user-login.component';
 import { ModalRecoverPasswordComponent } from './recover-password/components/modal-recover-password/modal-recover-password.component';
 import { ResetPasswordComponent } from './recover-password/components/reset-password/reset-password.component';
 import { ConfirmAccountComponent } from './recover-password/components/confirm-account/confirm-account.component';
@@ -19,7 +19,7 @@ import { ConfirmAccountComponent } from './recover-password/components/confirm-a
 @NgModule({
   declarations: [
     // Declaração dos componentes que pertencem a este módulo
-    UserLoginModalComponent,
+    UserLoginComponent,
     ModalRecoverPasswordComponent,
     ResetPasswordComponent,
     ConfirmAccountComponent
