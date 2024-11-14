@@ -107,14 +107,19 @@
       <mat-accordion>
         <mat-expansion-panel *ngFor="let tip of tips">
           <mat-expansion-panel-header>
+            <mat-icon>{{ tip.icon }}</mat-icon>
             <mat-panel-title>{{ tip.title }}</mat-panel-title>
           </mat-expansion-panel-header>
           <p>{{ tip.description }}</p>
-          <ul>
-            <li *ngFor="let point of tip.points">{{ point }}</li>
+          <ul class="custom-list">
+            <li *ngFor="let point of tip.points">
+              <mat-icon class="custom-icon">directions_car</mat-icon>
+              {{ point }}
+            </li>
           </ul>
         </mat-expansion-panel>
       </mat-accordion>
+
 
       <p class="conclusion">
         Usar um carro elétrico requer algumas adaptações em comparação aos veículos tradicionais. Com um pouco de

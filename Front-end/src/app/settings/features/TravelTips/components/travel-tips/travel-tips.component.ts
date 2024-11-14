@@ -22,7 +22,7 @@ export class TravelTipsComponent {
 
     this.utterance = new SpeechSynthesisUtterance(textContent);
     this.utterance.lang = 'pt-BR'; // Configura para português do Brasil
-    this.utterance.rate = 1.8; // Ajuste a velocidade da fala se necessário
+    this.utterance.rate = 1.4; // Ajuste a velocidade da fala se necessário
 
     // Detecta quando a fala termina para mudar o botão
     this.utterance.onend = () => {
@@ -40,9 +40,11 @@ export class TravelTipsComponent {
     }
   }
 
+
   tips = [
     {
-      title: 'Planejamento de Rotas e Pontos de Carregamento.',
+      icon: 'map', // Ícone para Planejamento de Rotas
+      title: 'Planejamento de Rotas e Pontos de Carregamento',
       description: 'Uma das principais considerações ao usar um carro elétrico é planejar a rota de forma eficiente.',
       points: [
         'Conhecer os pontos de carregamento disponíveis por meio de aplicativos especializados.',
@@ -51,6 +53,7 @@ export class TravelTipsComponent {
       ]
     },
     {
+      icon: 'battery_charging_full', // Ícone para Gerenciamento de Energia
       title: 'Gerenciamento de Energia e Otimização da Bateria',
       description: 'Para obter o máximo de autonomia da bateria, siga essas práticas:',
       points: [
@@ -61,6 +64,7 @@ export class TravelTipsComponent {
       ]
     },
     {
+      icon: 'ev_station', // Ícone para Carregamento Eficiente
       title: 'Práticas para Carregamento Eficiente da Bateria',
       description: 'Para prolongar a vida útil da bateria e manter o desempenho ideal, considere estas práticas de carregamento:',
       points: [
@@ -70,6 +74,7 @@ export class TravelTipsComponent {
       ]
     },
     {
+      icon: 'thermostat', // Ícone para Cuidado com a Temperatura
       title: 'Cuidado com a Temperatura',
       description: 'Temperaturas extremas podem afetar a performance e a durabilidade da bateria, então siga estas recomendações:',
       points: [
@@ -78,6 +83,7 @@ export class TravelTipsComponent {
       ]
     },
     {
+      icon: 'update', // Ícone para Manter o Carro Atualizado
       title: 'Mantenha o Carro Atualizado',
       description: 'Manter o software do carro atualizado é essencial para garantir a eficiência e a segurança do veículo.',
       points: [
@@ -86,6 +92,7 @@ export class TravelTipsComponent {
       ]
     },
     {
+      icon: 'eco', // Ícone para Utilização Consciente e Sustentável
       title: 'Utilização Consciente e Sustentável',
       description: 'A utilização consciente do carro elétrico contribui para a economia de energia e o meio ambiente.',
       points: [
@@ -94,6 +101,5 @@ export class TravelTipsComponent {
       ]
     }
   ];
-
 
 }
