@@ -14,21 +14,34 @@ export class TravelTipsComponent {
   constructor() { }
 
   ngAfterViewInit() {
-    let textContent = this.fullContentElement.nativeElement.textContent;
-    // Remove pontos finais e outras pontuações que você quer ignorar
+    // Clona o conteúdo para manipular o DOM sem afetar a página real
+    const clonedContent = this.fullContentElement.nativeElement.cloneNode(true);
+
+    // Remove todos os elementos <mat-icon> clonados
+    const icons = clonedContent.querySelectorAll('mat-icon');
+    icons.forEach((icon: { remove: () => any; }) => icon.remove());
+
+    // Obtém apenas o texto, sem tags HTML nem os ícones
+    let textContent = clonedContent.textContent || '';
+
+    // Adiciona espaçamento para pausas em pontuações, se necessário
     textContent = textContent
-      .replace(/\./g, '.   ')  // Adiciona espaço após ponto para criar pausa
-      .replace(/,/g, ',  ');  // Adiciona espaço após vírgula para pequena pausa
+        .replace(/\./g, '.   ')  // Espaço após pontos para pausa
+        .replace(/,/g, ',  ');   // Espaço após vírgulas para pausa
 
+    // Configura a síntese de fala com o texto limpo
     this.utterance = new SpeechSynthesisUtterance(textContent);
-    this.utterance.lang = 'pt-BR'; // Configura para português do Brasil
-    this.utterance.rate = 1.4; // Ajuste a velocidade da fala se necessário
+    this.utterance.lang = 'pt-BR'; // Português do Brasil
+    this.utterance.rate = 1.4;     // Ajusta a velocidade da fala
 
-    // Detecta quando a fala termina para mudar o botão
+    // Detecta quando a fala termina para atualizar o botão
     this.utterance.onend = () => {
-      this.isReading = false;
+        this.isReading = false;
     };
-  }
+}
+
+
+
 
   toggleRead() {
     if (this.isReading) {

@@ -21,16 +21,19 @@ h1 {
 }
 
 #read-btn {
-  background-color: #00a2c7 !important;
+  position: sticky;
+  top: 85px;
+  left: 10px;
+  background-color: #00c2eb;
   color: #ffffff;
   border: none;
-  padding: 12px;
-  font-size: calc(18px + 0.2vw);
+  padding: 10px 20px;
+  font-size: 16px;
   font-weight: bold;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.3s ease;
+  z-index: 1000;
 }
 
 #read-btn:hover {
@@ -46,54 +49,70 @@ h1 {
   display: flex;
   align-items: center;
   font-size: calc(16px + 0.2vw);
-  padding: 8px; /* Ajuste o padding conforme necessário */
-  flex-wrap: wrap; /* Permite que o conteúdo quebre em linhas, se necessário */
-  white-space: normal; /* Permite que o texto quebre para a linha seguinte */
+  padding: 8px;
+  /* Ajuste o padding conforme necessário */
+  flex-wrap: wrap;
+  /* Permite que o conteúdo quebre em linhas, se necessário */
+  white-space: normal;
+  /* Permite que o texto quebre para a linha seguinte */
 }
 
 .mat-expansion-panel-header mat-icon {
   margin-right: 8px;
   color: #007ea7;
   font-size: calc(16px + 0.3vw);
-  flex-shrink: 0; /* Evita que o ícone seja comprimido em telas menores */
+  flex-shrink: 0;
+  /* Evita que o ícone seja comprimido em telas menores */
 }
 
 .mat-panel-title {
-  flex-grow: 1; /* Faz o título ocupar o espaço restante */
-  min-width: 0; /* Permite que o título reduza o tamanho em telas menores */
-  word-wrap: break-word; /* Quebra o texto se ele for muito longo */
+  flex-grow: 1;
+  /* Faz o título ocupar o espaço restante */
+  min-width: 0;
+  /* Permite que o título reduza o tamanho em telas menores */
+  word-wrap: break-word;
+  /* Quebra o texto se ele for muito longo */
 }
 
 /* Remove o estilo padrão da lista */
 .custom-list {
   list-style: none;
-  padding-left: 0; /* Remove qualquer padding da lista */
-  margin: 0; /* Remove qualquer margem da lista */
+  padding-left: 0;
+  /* Remove qualquer padding da lista */
+  margin: 0;
+  /* Remove qualquer margem da lista */
 }
 
 .custom-list li {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  padding-left: 0; /* Remove qualquer padding do item de lista */
-  flex-wrap: nowrap; /* Garante que o ícone e o texto não quebrem de linha */
+  padding-left: 0;
+  /* Remove qualquer padding do item de lista */
+  flex-wrap: nowrap;
+  /* Garante que o ícone e o texto não quebrem de linha */
 }
 
 /* Estilização do ícone do carro */
 .custom-icon {
   margin-right: 8px;
-  color: #007ea7; /* Cor personalizada para o ícone */
-  font-size: 20px; /* Ajuste o tamanho do ícone conforme necessário */
-  flex-shrink: 0; /* Evita que o ícone encolha em telas menores */
+  color: #007ea7;
+  /* Cor personalizada para o ícone */
+  font-size: 20px;
+  /* Ajuste o tamanho do ícone conforme necessário */
+  flex-shrink: 0;
+  /* Evita que o ícone encolha em telas menores */
 }
 
 /* Ajustes para telas menores */
 @media (max-width: 600px) {
   .custom-list li {
-    font-size: 14px; /* Reduz o tamanho da fonte para caber em telas menores */
+    font-size: 14px;
+    /* Reduz o tamanho da fonte para caber em telas menores */
   }
+
   .custom-icon {
-    font-size: 18px; /* Ajuste o tamanho do ícone em telas menores, se necessário */
+    font-size: 18px;
+    /* Ajuste o tamanho do ícone em telas menores, se necessário */
   }
 }
-
