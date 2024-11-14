@@ -1,14 +1,16 @@
 .home {
-	padding: 0;
-	margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .article-container {
-  color: white;
+  color: #f0f0f0;
   padding: 30px;
   border-radius: 8px;
-  width: 80%;
-  margin: 0px auto;
+  width: 100%;
+  max-width: 800px;
+  height: 100% !important;
+  // margin: 0 auto;
   font-family: Arial, sans-serif;
 }
 
@@ -16,11 +18,11 @@ h1 {
   font-size: 32px;
   margin-bottom: 20px;
   color: #ffffff;
+  text-align: center;
 }
 
 #read-btn {
-
-  position:sticky;
+  position: sticky;
   top: 85px;
   left: 10px;
   background-color: #00c2eb;
@@ -29,8 +31,10 @@ h1 {
   padding: 10px 20px;
   font-size: 16px;
   font-weight: bold;
-  border-radius: 15px;
+  border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
 }
 
 #read-btn:hover {
@@ -42,19 +46,15 @@ h1 {
   margin-bottom: 20px;
 }
 
-.tip-section {
-  margin-bottom: 25px;
+.mat-accordion {
+  background-color: rgba(0, 130, 185, 0.1);
+  border-radius: 8px;
+  padding: 10px;
 }
 
-h2 {
-  font-size: 24px;
+.mat-expansion-panel-header {
   color: #00c2eb;
-  margin-bottom: 10px;
-}
-
-p, ul {
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 20px;
 }
 
 ul {
@@ -63,7 +63,8 @@ ul {
 }
 
 li {
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+
 }
 
 .conclusion {

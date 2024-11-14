@@ -1,5 +1,5 @@
-<div>
-  <!-- Componente de barra de navegação personalizado -->
+<!-- <div>
+
   <app-navbar-intro></app-navbar-intro>
 
   <div class="container-fluid home bkg-degrad-primary">
@@ -73,7 +73,7 @@
         </ul>
       </div>
 
-      <!-- Continue com o resto do conteúdo do artigo conforme o exemplo acima -->
+
 
       <p class="conclusion">
         Usar um carro elétrico requer algumas adaptações em comparação aos veículos tradicionais. Com um pouco de
@@ -82,6 +82,48 @@
       </p>
     </div>
   </div>
+
+  <app-footer></app-footer>
+</div> -->
+
+<div class="bkg-degrad-primary">
+  <!-- Componente de barra de navegação personalizado -->
+  <app-navbar-intro></app-navbar-intro>
+
+  <div class="container-fluid home ">
+    <button (click)="toggleRead()" id="read-btn" aria-hidden="true">
+      <mat-icon>{{ isReading ? 'stop' : 'play_arrow' }}</mat-icon>
+    </button>
+
+    <div class="container my-5 article-container mat-elevation-z4" #fullContent>
+      <h1>Dicas e Boas Práticas para Otimizar o Uso de Carros Elétricos.</h1>
+
+      <p class="intro">
+        Os carros elétricos estão ganhando popularidade como uma alternativa sustentável aos veículos movidos a
+        combustíveis fósseis. Aqui estão algumas dicas e práticas recomendadas para você aproveitar ao máximo seu carro
+        elétrico, otimizando sua autonomia e melhorando sua experiência de uso.
+      </p>
+
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let tip of tips">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ tip.title }}</mat-panel-title>
+          </mat-expansion-panel-header>
+          <p>{{ tip.description }}</p>
+          <ul>
+            <li *ngFor="let point of tip.points">{{ point }}</li>
+          </ul>
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <p class="conclusion">
+        Usar um carro elétrico requer algumas adaptações em comparação aos veículos tradicionais. Com um pouco de
+        planejamento e práticas sustentáveis, você pode maximizar a autonomia do seu carro, prolongar a vida útil da
+        bateria e desfrutar de uma experiência de condução mais ecológica.
+      </p>
+    </div>
+  </div>
+
   <!-- Componente de rodapé personalizado -->
   <app-footer></app-footer>
 </div>

@@ -22,6 +22,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 // Mask para aplicar a configuração de máscara de input de texto.
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -58,6 +59,8 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     NgxMaskDirective,
     MatRadioModule,
     DragDropModule,
+    MatExpansionModule,
+
   ],
   exports: [
     MatCardModule,
@@ -90,6 +93,7 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     NgxMaskDirective,
     MatRadioModule,
     DragDropModule,
+    MatExpansionModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
