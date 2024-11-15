@@ -8,10 +8,15 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 export class TravelTipsComponent {
   @ViewChild('fullContent') fullContentElement!: ElementRef;
   isReading = false;
+  isLoggedIn = false;
   private synth = window.speechSynthesis;
   private utterance!: SpeechSynthesisUtterance;
 
   constructor() { }
+
+  ngOnInit() {
+    this.isLoggedIn = localStorage.getItem('token') !== null;
+  }
 
   ngAfterViewInit() {
     // Clona o conteúdo para manipular o DOM sem afetar a página real
