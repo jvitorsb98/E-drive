@@ -24,7 +24,7 @@ import java.util.Map;
 public class JasperService {
 
     private final ResourceLoader resourceLoader;
-    private  final DataSource dataSource;
+    private final DataSource dataSource;
 
     private Map<String, Object> params = new HashMap<>();
 
