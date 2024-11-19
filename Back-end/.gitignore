@@ -1,8 +1,7 @@
 HELP.md
 target/
-!target/e-drive-0.0.1-SNAPSHOT.jar
+!target/*.jar
 !.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
 !**/src/test/**/target/
 
 ### STS ###
