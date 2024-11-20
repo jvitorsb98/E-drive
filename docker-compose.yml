@@ -25,6 +25,7 @@ services:
       context: ./Front-end  # Caminho correto para o diretório do frontend
       dockerfile: Dockerfile
     ports:
+      - "443:443"
       - "80:80"  # Mapear a porta 80 do container (Nginx) para a porta 80 do host
     environment:
       - NODE_ENV=production  # Definir o ambiente como produção
