@@ -22,17 +22,19 @@ services:
 
   frontend:
     build:
-      context: ./Front-end  # Caminho correto para o diretório do frontend
+      context: ./Front-end
       dockerfile: Dockerfile
     ports:
       - "443:443"
       - "80:80"  # Mapear a porta 80 do container (Nginx) para a porta 80 do host
     environment:
-      - NODE_ENV=production  # Definir o ambiente como produção
+      - NODE_ENV=production
     depends_on:
-      - backend  # Garantir que o backend esteja rodando antes do frontend
+      - backend
     networks:
-      - e_drive_network  # Adiciona à rede personalizada
+      - e_drive_network
+    volumes:
+      - ./certs:/etc/nginx/certs  # Adicione esta linha para montar os certificados
 
 volumes:
   db_data: {}
