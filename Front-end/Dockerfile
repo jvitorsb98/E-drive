@@ -26,8 +26,8 @@ FROM nginx:alpine AS production
 # O caminho agora aponta para dist/browser, conforme seu comentário
 COPY --from=build /app/dist/browser/ /usr/share/nginx/html
 
-# Expor a porta 80 para acesso HTTP
-EXPOSE 80
+# Expor a porta 443 para acesso HTTPS
+EXPOSE 443
 
 # Rodar o Nginx para servir a aplicação
 CMD ["nginx", "-g", "daemon off;"]
