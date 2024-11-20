@@ -27,8 +27,8 @@ FROM nginx:alpine AS production
 COPY --from=build /app/dist/browser/ /usr/share/nginx/html
 
 # Copiar os certificados SSL para o contêiner
-COPY ./Front-end/src/environments/server.crt /etc/nginx/ssl/server.crt
-COPY ./Front-end/src/environments/server.key /etc/nginx/ssl/server.key
+COPY src/environments/server.crt /etc/nginx/ssl/server.crt
+COPY src/environments/server.key /etc/nginx/ssl/server.key
 
 # Expor a porta 443 para acesso HTTPS
 EXPOSE 443
