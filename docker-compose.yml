@@ -5,6 +5,7 @@ services:
       context: ./Back-end  # Caminho correto para o diretório do backend
       dockerfile: Dockerfile
     ports:
+      - "8443:8443"
       - "8080:8080"
     env_file:
       - backend.env  # Referenciando o arquivo backend.env
