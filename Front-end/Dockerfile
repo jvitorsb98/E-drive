@@ -26,6 +26,10 @@ FROM nginx:alpine AS production
 # O caminho agora aponta para dist/browser, conforme seu comentário
 COPY --from=build /app/dist/browser/ /usr/share/nginx/html
 
+# Copiar os certificados SSL para o contêiner
+COPY ./Front-end/src/environments/server.crt /etc/nginx/ssl/server.crt
+COPY ./Front-end/src/environments/server.key /etc/nginx/ssl/server.key
+
 # Expor a porta 443 para acesso HTTPS
 EXPOSE 443
 
