@@ -24,7 +24,7 @@ FROM nginx:alpine AS production
 
 # Copiar os arquivos gerados no build para o diretório de conteúdo estático do Nginx
 # O caminho agora aponta para dist/browser, conforme seu comentário
-COPY --from=build /app/dist/browser/ /usr/share/nginx/html
+COPY --from=build /app/dist/browser/ /usr/share/nginx/html/e-drive
 
 # Copiar os certificados SSL para o contêiner
 COPY src/environments/server.crt /etc/nginx/ssl/server.crt
