@@ -25,7 +25,7 @@ services:
       context: ./Front-end
       dockerfile: Dockerfile
     ports:
-      - "443:443"
+      # - "443:443"
       - "80:80"  # Mapear a porta 80 do container (Nginx) para a porta 80 do host
     environment:
       - NODE_ENV=production
