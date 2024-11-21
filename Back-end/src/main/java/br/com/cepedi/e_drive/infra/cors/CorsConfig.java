@@ -42,6 +42,7 @@ public class CorsConfig {
         config.addAllowedOriginPattern("https://192.168.*.*:4200");
         config.addAllowedOrigin("http://localhost");
         config.addAllowedOrigin("http://54.200.23.253");
+        config.addAllowedOrigin("http://54.200.23.253:8080");
         config.addAllowedOrigin("https://54.200.23.253");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
