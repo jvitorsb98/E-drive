@@ -17,7 +17,7 @@ RUN npm install @angular/cli@17.3.6 --save-dev
 COPY . .
 
 # Executar o build da aplicação para produção
-RUN npx ng build --configuration production  --deploy.url ./e-drive/
+RUN npx ng build --configuration production  
 
 # Etapa 2: Criar uma imagem para servir a aplicação com Nginx (ou outro servidor)
 FROM nginx:alpine AS production
