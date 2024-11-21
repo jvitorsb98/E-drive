@@ -222,7 +222,7 @@ export class MapStationsComponent implements AfterViewInit {
     }
 
     // Define o URL do ícone com base nos horários de funcionamento da estação
-    const iconUrl = place.opening_hours ? "../../../../assets/images/station_open.svg" : "../../../../assets/images/station_closed.svg";
+    const iconUrl = place.opening_hours ? "../../../../e-drive/assets/images/station_open.svg" : "../../../../e-drive/assets/images/station_closed.svg";
 
     // Cria um novo marcador para a estação de carregamento
     const marker = new google.maps.Marker({

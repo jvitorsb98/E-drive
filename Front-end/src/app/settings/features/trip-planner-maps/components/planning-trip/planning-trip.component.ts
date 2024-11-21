@@ -231,7 +231,7 @@ export class PlanningTripComponent implements AfterViewInit {
             map: this.map, // Mapa onde o marcador será exibido
             title: 'Estação de Carregamento', // Título exibido ao passar o mouse sobre o marcador
             icon: {
-              url: "../../../../assets/images/station_open.svg", // Caminho para o ícone da estação
+              url: "../../../../e-drive/assets/images/station_open.svg", // Caminho para o ícone da estação
               scaledSize: new google.maps.Size(30, 30) // Tamanho escalado do ícone
             }
           });
