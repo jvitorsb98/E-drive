@@ -27,6 +27,7 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "/e-drive/",
             "polyfills": [
               "zone.js"
             ],
