@@ -35,8 +35,8 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "src/e-drive/favicon.ico",
+              "src/e-drive/assets"
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
