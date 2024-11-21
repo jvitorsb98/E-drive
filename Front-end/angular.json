@@ -28,7 +28,7 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "baseHref": "/e-drive/",
-            "deployUrl": "/e-drive/", 
+            "deployUrl": "/e-drive/",  
             "polyfills": [
               "zone.js"
             ],
