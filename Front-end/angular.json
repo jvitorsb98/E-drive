@@ -24,11 +24,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": "dist/e-drive", 
             "index": "src/index.html",
             "browser": "src/main.ts",
             "baseHref": "/e-drive/",
-            "deployUrl": "/e-drive/",  
             "polyfills": [
               "zone.js"
             ],
