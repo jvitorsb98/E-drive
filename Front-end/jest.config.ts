@@ -15,7 +15,7 @@ const config: Config = {
     "!**/*.config.{js,ts}", // Ignora arquivos de configuração
   ],
   preset: 'jest-preset-angular',
-  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts', '<rootDir>/src/setup-jest.ts'],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/dist/',
