@@ -18,14 +18,14 @@ describe('GeocodingService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // Verifica se não há requisições pendentes
+    httpMock.verify(); // Verifies that there are no pending requests
   });
 
-  it('deve ser criado', () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('deve chamar o endpoint correto ao geocodificar um endereço', () => {
+  it('should call the correct endpoint when geocoding an address', () => {
     const mockResponse: GeocodingResponse = {
       results: [
         {
@@ -50,18 +50,18 @@ describe('GeocodingService', () => {
     const req = httpMock.expectOne(expectedUrl);
     expect(req.request.method).toBe('GET');
 
-    req.flush(mockResponse); // Simula a resposta do servidor
+    req.flush(mockResponse); // Simulates server response
   });
 
-  it('deve lidar com erros ao geocodificar um endereço', () => {
-    const address = 'Endereço Inválido';
+  it('should handle errors when geocoding an address', () => {
+    const address = 'Invalid Address';
     const apiKey = environment.googleMapsApiKey;
     const expectedUrl = `/api/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
 
-    const errorMessage = 'Erro ao geocodificar o endereço';
+    const errorMessage = 'Error while geocoding the address';
 
     service.geocode(address).subscribe(
-      () => fail('Deveria ter falhado com o erro'),
+      () => fail('Should have failed with an error'),
       (error) => {
         expect(error.status).toBe(404);
         expect(error.statusText).toBe('Not Found');
@@ -71,6 +71,6 @@ describe('GeocodingService', () => {
     const req = httpMock.expectOne(expectedUrl);
     expect(req.request.method).toBe('GET');
 
-    req.flush(errorMessage, { status: 404, statusText: 'Not Found' }); // Simula erro no servidor
+    req.flush(errorMessage, { status: 404, statusText: 'Not Found' }); // Simulates server error
   });
 });

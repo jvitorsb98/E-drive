@@ -11,7 +11,7 @@ describe('LocationService', () => {
     service = TestBed.inject(LocationService);
   });
 
-  it('deve ser criado', () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
@@ -20,14 +20,14 @@ describe('LocationService', () => {
     let getCurrentPositionMock: jest.Mock;
 
     beforeEach(() => {
-      // Mock para google.maps.LatLng
+      // Mock for google.maps.LatLng
       global.google = {
         maps: {
           LatLng: jest.fn((lat, lng) => ({ lat, lng })),
         },
       } as any;
 
-      // Mock para navigator.geolocation
+      // Mock for navigator.geolocation
       getCurrentPositionMock = jest.fn();
       mockGeolocation = {
         getCurrentPosition: getCurrentPositionMock,
@@ -38,7 +38,7 @@ describe('LocationService', () => {
       });
     });
 
-    it('deve retornar a localização do usuário quando geolocalização for suportada', async () => {
+    it("should return the user's location when geolocation is supported", async () => {
       const mockPosition = {
         coords: {
           latitude: 37.7749,
@@ -55,8 +55,8 @@ describe('LocationService', () => {
       expect(result).toEqual({ lat: 37.7749, lng: -122.4194 });
     });
 
-    it('deve rejeitar com erro quando a obtenção da localização falhar', async () => {
-      const mockError = new Error('Usuário negou a permissão para localização');
+    it('should reject with an error when obtaining the location fails', async () => {
+      const mockError = new Error('User denied the location permission');
       getCurrentPositionMock.mockImplementation((_: any, errorCallback: any) =>
         errorCallback(mockError)
       );
@@ -64,7 +64,7 @@ describe('LocationService', () => {
       await expect(service.getUserLocation()).rejects.toThrow(mockError);
     });
 
-    it('deve rejeitar com null quando geolocalização não for suportada', async () => {
+    it('should reject with null when geolocation is not supported', async () => {
       Object.defineProperty(global.navigator, 'geolocation', { value: undefined });
 
       await expect(service.getUserLocation()).rejects.toBeNull();

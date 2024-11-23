@@ -17,17 +17,17 @@ describe('PostalCodeService', () => {
   });
 
   afterEach(() => {
-    httpMock.verify(); // Verifica se nenhuma solicitação HTTP ficou pendente
+    httpMock.verify(); // Verifies that no HTTP requests are pending
   });
 
-  it('deve ser criado', () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   describe('searchPostalCode', () => {
-    it('deve formatar o CEP, fazer uma chamada HTTP e retornar os dados esperados', () => {
-      const postalCode = '12345-678'; // CEP com máscara
-      const formattedPostalCode = '12345678'; // CEP sem máscara
+    it('should format the postal code, make an HTTP call, and return the expected data', () => {
+      const postalCode = '12345-678'; // Postal code with mask
+      const formattedPostalCode = '12345678'; // Postal code without mask
       const mockResponse = {
         cep: '12345-678',
         logradouro: 'Rua Exemplo',
@@ -45,7 +45,7 @@ describe('PostalCodeService', () => {
       req.flush(mockResponse);
     });
 
-    it('deve remover caracteres não numéricos do CEP antes de fazer a chamada HTTP', () => {
+    it('should remove non-numeric characters from the postal code before making the HTTP call', () => {
       const postalCode = '12a3b4c5d6-7e8';
       const formattedPostalCode = '12345678';
 

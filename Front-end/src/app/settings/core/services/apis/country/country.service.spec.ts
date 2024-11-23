@@ -19,11 +19,11 @@ describe('CountryService', () => {
     httpMock.verify(); 
   });
 
-  it('deve ser criado', () => {
+  it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  it('deve chamar o endpoint correto ao buscar os países', () => {
+  it('should call the correct endpoint when fetching countries', () => {
     const mockResponse = [
       { name: { common: 'Brazil' }, population: 213993437 },
       { name: { common: 'Argentina' }, population: 45376763 },
@@ -36,14 +36,14 @@ describe('CountryService', () => {
     const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
     expect(req.request.method).toBe('GET');
 
-    req.flush(mockResponse); // Simula a resposta do servidor
+    req.flush(mockResponse); // Simulates the server response
   });
 
-  it('deve lidar com erros ao buscar os países', () => {
-    const errorMessage = 'Erro ao buscar os países';
+  it('should handle errors when fetching countries', () => {
+    const errorMessage = 'Error fetching countries';
 
     service.getCountries().subscribe(
-      () => fail('Deveria ter falhado com o erro'),
+      () => fail('Should have failed with an error'),
       (error) => {
         expect(error.status).toBe(500);
         expect(error.statusText).toBe('Internal Server Error');
@@ -53,6 +53,6 @@ describe('CountryService', () => {
     const req = httpMock.expectOne('https://restcountries.com/v3.1/all');
     expect(req.request.method).toBe('GET');
 
-    req.flush(errorMessage, { status: 500, statusText: 'Internal Server Error' }); // Simula erro no servidor
+    req.flush(errorMessage, { status: 500, statusText: 'Internal Server Error' }); // Simulates server error
   });
 });
