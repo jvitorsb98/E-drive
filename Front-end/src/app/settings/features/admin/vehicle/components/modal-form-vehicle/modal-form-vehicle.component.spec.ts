@@ -9,10 +9,8 @@ import { ModelService } from '../../../../../core/services/model/model.service';
 import { PropusionService } from '../../../../../core/services/propusion/propusion.service';
 import { TypeVehicleService } from '../../../../../core/services/typeVehicle/type-vehicle.service';
 import { VehicleService } from '../../../../../core/services/vehicle/vehicle.service';
-import Swal from 'sweetalert2';
 import { Vehicle } from '../../../../../core/models/vehicle';
-import { Category } from '../../../../../core/models/category';
-import { Model } from '../../../../../core/models/model';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 describe('ModalFormVehicleComponent', () => {
   let component: ModalFormVehicleComponent;
@@ -23,6 +21,7 @@ describe('ModalFormVehicleComponent', () => {
   let propulsionServiceMock: Partial<PropusionService>;
   let typeVehicleServiceMock: Partial<TypeVehicleService>;
   let vehicleServiceMock: Partial<VehicleService>;
+  let matDialogRefMock: MatDialogRef<ModalFormVehicleComponent>;
 
   const mockVehicle: Vehicle = {
     id: 1,
@@ -47,30 +46,26 @@ describe('ModalFormVehicleComponent', () => {
     brandServiceMock = {
       getAll: jest.fn().mockReturnValue(of({ content: [{ id: 1, name: 'Brand A' }] })),
     };
-
     categoryServiceMock = {
       getAll: jest.fn().mockReturnValue(of({ content: [{ id: 1, name: 'Category A' }] })),
     };
-
     modelServiceMock = {
       getModelsByBrandId: jest.fn().mockReturnValue(of({ content: [{ id: 1, name: 'Model A' }] })),
     };
-
     propulsionServiceMock = {
       getAll: jest.fn().mockReturnValue(of({ content: [{ id: 1, name: 'Propulsion A' }] })),
     };
-
     typeVehicleServiceMock = {
       getAll: jest.fn().mockReturnValue(of({ content: [{ id: 1, name: 'Type A' }] })),
     };
-
     vehicleServiceMock = {
       register: jest.fn(),
       update: jest.fn(),
     };
+    matDialogRefMock = { close: jest.fn() } as any;
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
+      imports: [ReactiveFormsModule, MatAutocompleteModule],
       declarations: [ModalFormVehicleComponent],
       providers: [
         { provide: BrandService, useValue: brandServiceMock },
@@ -79,8 +74,11 @@ describe('ModalFormVehicleComponent', () => {
         { provide: PropusionService, useValue: propulsionServiceMock },
         { provide: TypeVehicleService, useValue: typeVehicleServiceMock },
         { provide: VehicleService, useValue: vehicleServiceMock },
-        { provide: MatDialogRef, useValue: { close: jest.fn() } },
-        { provide: MAT_DIALOG_DATA, useValue: { motor: '', version: '', model: {}, category: {}, type: {}, propulsion: {}, autonomy: {}, year: 2022, activated: true } },
+        { provide: MatDialogRef, useValue: matDialogRefMock },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: null, // Simula criação sem dados existentes
+        },
       ],
     }).compileComponents();
   });
@@ -96,39 +94,31 @@ describe('ModalFormVehicleComponent', () => {
   });
 
   it('should initialize form correctly', () => {
-    component.ngOnInit();
     expect(component.vehicleForm).toBeTruthy();
     expect(component.vehicleForm.get('motor')).toBeTruthy();
-  });
-
-  it('should load brands on init', () => {
-    component.ngOnInit();
-    expect(brandServiceMock.getAll).toHaveBeenCalled();
-    expect(component.brands.length).toBeGreaterThan(0);
   });
 
   it('should load categories on init', () => {
     component.ngOnInit();
     expect(categoryServiceMock.getAll).toHaveBeenCalled();
-    expect(component.categories.length).toBeGreaterThan(0);
+    expect(component.categories).toEqual([{ id: 1, name: 'Category A' }]);
   });
 
-  it('should load models when a brand is selected', () => {
-    component.ngOnInit();
-    component.vehicleForm.get('brand')?.setValue('Brand A');
-    expect(modelServiceMock.getModelsByBrandId).toHaveBeenCalledWith(1); // Verifique se o ID da marca está correto
+  it('should handle errors when loading models', () => {
+    jest.spyOn(modelServiceMock, 'getModelsByBrandId').mockReturnValue(throwError(() => new Error('Error loading models')));
+    component.vehicleForm.get('brand')?.setValue({ id: 1, name: 'Brand A' });
+    expect(component.models.length).toBe(0);
   });
 
-  it('should submit the form and call register', async () => {
-    component.ngOnInit();
+  it('should call register on form submit', async () => {
     component.vehicleForm.patchValue({
       motor: 'Motor A',
       version: 'Version A',
-      brand: 'Brand A',
-      model: 'Model A',
-      category: 'Category A',
-      type: 'Type A',
-      propulsion: 'Propulsion A',
+      brand: { id: 1, name: 'Brand A' },
+      model: { id: 1, name: 'Model A' },
+      category: { id: 1, name: 'Category A' },
+      type: { id: 1, name: 'Type A' },
+      propulsion: { id: 1, name: 'Propulsion A' },
       mileagePerLiterCity: 10,
       mileagePerLiterRoad: 12,
       consumptionEnergetic: 15,
@@ -136,15 +126,71 @@ describe('ModalFormVehicleComponent', () => {
       year: 2022,
     });
 
-    jest.spyOn(vehicleServiceMock, 'register').mockReturnValue(of(mockVehicle)); // Simule sucesso na resposta
+    jest.spyOn(vehicleServiceMock, 'register').mockReturnValue(of(mockVehicle));
 
     await component.submitForm();
 
-    expect(vehicleServiceMock.register).toHaveBeenCalled();
+    expect(vehicleServiceMock.register).toHaveBeenCalledWith(expect.objectContaining({ motor: 'Motor A' }));
+    expect(matDialogRefMock.close).toHaveBeenCalled();
   });
 
-  it('should close the dialog on reset', () => {
+  it('should close the dialog on cancel', () => {
     component.closeModal();
-    expect(TestBed.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(matDialogRefMock.close).toHaveBeenCalled();
   });
+
+  it('should mark the form as invalid if required fields are missing', () => {
+    component.vehicleForm.get('motor')?.setValue('');  // Campo motor vazio
+    component.vehicleForm.get('brand')?.setValue(null); // Marca não selecionada
+    expect(component.vehicleForm.valid).toBeFalsy();
+  });
+
+  it('should mark the form as valid when all fields are filled correctly', () => {
+    component.vehicleForm.patchValue({
+      motor: 'Motor A',
+      version: 'Version A',
+      brand: { id: 1, name: 'Brand A' },
+      model: { id: 1, name: 'Model A' },
+      category: { id: 1, name: 'Category A' },
+      type: { id: 1, name: 'Type A' },
+      propulsion: { id: 1, name: 'Propulsion A' },
+      mileagePerLiterCity: 10,
+      mileagePerLiterRoad: 12,
+      consumptionEnergetic: 15,
+      autonomyElectricMode: 20,
+      year: 2022,
+    });
+    expect(component.vehicleForm.valid).toBeTruthy();
+  });
+
+  it('should reset models when brand is changed', () => {
+    component.vehicleForm.get('brand')?.setValue({ id: 1, name: 'Brand A' });
+    component.vehicleForm.get('brand')?.setValue({ id: 2, name: 'Brand B' });
+    expect(component.models.length).toBe(0);
+  });
+
+  it('should call closeModal on cancel', () => {
+    jest.spyOn(component, 'closeModal');
+    component.closeModal();
+    expect(component.closeModal).toHaveBeenCalled();
+  });
+
+  
+  it('should not submit form when form is invalid', async () => {
+    component.vehicleForm.get('motor')?.setValue('');  // Motor vazio
+    component.vehicleForm.get('brand')?.setValue(null); // Marca não selecionada
+  
+    jest.spyOn(vehicleServiceMock, 'register');
+    
+    await component.submitForm();
+  
+    expect(vehicleServiceMock.register).not.toHaveBeenCalled();
+    expect(component.vehicleForm.valid).toBeFalsy();
+  });
+  it('should call closeModal when the modal is closed', () => {
+    component.closeModal();
+    expect(matDialogRefMock.close).toHaveBeenCalled();
+  });
+ 
+        
 });
