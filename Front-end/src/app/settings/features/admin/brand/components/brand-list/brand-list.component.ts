@@ -180,12 +180,12 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       this.isFilterActive = true;
       this.filterValueName = (event.target as HTMLInputElement).value.trim().toLowerCase();
       this.searchKey = event;
-  
+
       if (this.dataSource.paginator) {
         this.dataSource.paginator.firstPage(); // Reseta a página para a primeira
       }
       console.log(this.selectedStatus)
-      this.brandService.getAllPaginated(0, this.totalBrands , this.selectedStatus.toString())
+      this.brandService.getAllPaginated(0, this.totalBrands, this.selectedStatus.toString())
         .pipe(
           catchError((error) => {
             this.handleError(new HttpErrorResponse({ error: error }));
@@ -204,15 +204,15 @@ export class BrandListComponent implements OnInit, AfterViewInit {
             this.filteredData = response.content.filter(brand => {
               // Filtro pelo nome
               const nameMatches = brand.name.toLowerCase().includes(this.filterValueName);
-  
+
               // Filtro pelo status, se não for "all"
               const statusMatches = this.selectedStatus === 'all' || brand.activated === this.selectedStatus;
-  
+
               // Retorna verdadeiro se ambos os filtros forem verdadeiros
               return nameMatches && statusMatches;
             });
-  
-  
+
+
             if (this.filteredData.length > 0) {
               this.dataSource.data = this.filteredData;
               this.dataSource.paginator = this.paginator;
@@ -287,7 +287,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
       height: '205px',
       data: brandList
     }).afterClosed().subscribe(() => this.searchKey ? this.applyFilter(this.searchKey) :
-     this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
+      this.loadBrands(this.pageIndex, this.pageSize)); // Atualiza a lista após fechamento do modal
   }
 
   /**
@@ -311,7 +311,7 @@ export class BrandListComponent implements OnInit, AfterViewInit {
           next: () => {
             this.alertService.showSuccess('Sucesso!', 'A marca foi ativada com sucesso!')
               .then(() => this.searchKey ? this.applyFilter(this.searchKey) :
-               this.loadBrands(this.pageIndex, this.pageSize));
+                this.loadBrands(this.pageIndex, this.pageSize));
           },
           error: (error) => {
             this.alertService.showError('Erro!', 'Ocorreu um erro ao ativar a marca. Tente novamente mais tarde.');
@@ -324,54 +324,51 @@ export class BrandListComponent implements OnInit, AfterViewInit {
   filterByStatus(status: boolean | 'all'): void {
     this.selectedStatus = status;
     console.log(this.selectedStatus)
-      this.applyStatus();
+    this.applyStatus();
   }
 
 
   applyStatus() {
 
-      this.brandService.getAllPaginated(0, this.totalBrands , this.selectedStatus.toString())
-        .pipe(
-          catchError((error) => {
-            this.handleError(new HttpErrorResponse({ error: error }));
-            return of([]); // Retorna um array vazio em caso de erro
-          })
-        )
-        .subscribe((response: PaginatedResponse<Brand> | never[]) => {
-          if (Array.isArray(response)) {
-            if (response.length === 0) {
-              this.dataSource.data = [];
-              return;
-            }
-          } else {
-            // Aplica o filtro por nome da marca
-            this.filteredData = response.content.filter(brand => {
-              // Filtro pelo nome
-              const nameMatches = brand.name.toLowerCase().includes(this.filterValueName);
-  
-              // Filtro pelo status, se não for "all"
-              const statusMatches = this.selectedStatus === 'all' || brand.activated === this.selectedStatus;
-  
-              // Retorna verdadeiro se ambos os filtros forem verdadeiros
-              return nameMatches && statusMatches;
-            });
-
-
-            console.log(this.filteredData)
-  
-            if (this.filteredData.length > 0) {
-              this.dataSource.data = this.filteredData;
-              this.dataSource.paginator = this.paginator;
-              this.dataSource.sort = this.sort;
-            } else {
-              this.dataSource.data = [];
-            }
+    this.brandService.getAllPaginated(0, this.totalBrands, this.selectedStatus.toString())
+      .pipe(
+        catchError((error) => {
+          this.handleError(new HttpErrorResponse({ error: error }));
+          return of([]); // Retorna um array vazio em caso de erro
+        })
+      )
+      .subscribe((response: PaginatedResponse<Brand> | never[]) => {
+        if (Array.isArray(response)) {
+          if (response.length === 0) {
+            this.dataSource.data = [];
+            return;
           }
-        });
+        } else {
+          // Aplica o filtro por nome da marca
+          this.filteredData = response.content.filter(brand => {
+            // Filtro pelo nome
+            const nameMatches = brand.name.toLowerCase().includes(this.filterValueName);
+
+            // Filtro pelo status, se não for "all"
+            const statusMatches = this.selectedStatus === 'all' || brand.activated === this.selectedStatus;
+
+            // Retorna verdadeiro se ambos os filtros forem verdadeiros
+            return nameMatches && statusMatches;
+          });
+
+
+          console.log(this.filteredData)
+
+          if (this.filteredData.length > 0) {
+            this.dataSource.data = this.filteredData;
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+          } else {
+            this.dataSource.data = [];
+          }
+        }
+      });
 
   }
-
-
-  
 
 }

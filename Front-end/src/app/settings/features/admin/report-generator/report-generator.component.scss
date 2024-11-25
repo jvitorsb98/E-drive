@@ -1,0 +1,8 @@
+/* Define a barra superior com posição fixa (sticky), ocupando 100% da largura, 
+   com cor de fundo azul e espaçamento interno (padding) de 0.5rem. */
+.top-bar {
+  position: sticky;
+  width: 100%;
+  background-color: #19B6DD;
+  padding: .5rem 0;
+}
