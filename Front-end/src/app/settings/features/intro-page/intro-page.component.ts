@@ -9,6 +9,7 @@ import { AuthService } from '../../core/security/services/auth/auth.service';
 
 // Imports do Angular
 import { Component, AfterViewInit, Renderer2 } from '@angular/core';
+import { Router } from '@angular/router';
 
 /**
  * Componente responsável por exibir a página de introdução e gerenciar o modal de login.
@@ -25,7 +26,15 @@ import { Component, AfterViewInit, Renderer2 } from '@angular/core';
 })
 export class IntroPageComponent implements AfterViewInit {
 
-  constructor(private modal: ModalService, private renderer: Renderer2) { }
+  constructor(private modal: ModalService, private renderer: Renderer2, private authService: AuthService, private router: Router) { }
+
+
+  ngOnInit(): void {
+    // Verifica se o usuário está autenticado e redireciona para o Dashboard
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/e-driver/dashboard']);
+    }
+  }
 
   /**
    * Abre o modal de login ao chamar o serviço `ModalService`.
