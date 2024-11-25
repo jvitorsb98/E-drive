@@ -22,6 +22,21 @@ export class DashboardComponent implements OnInit {
     { route: '/e-driver/admin/vehicles', icon: 'directions_car', label: 'Veículos' },
     { route: '/e-driver/admin/brands', icon: 'emoji_flags', label: 'Marcas' },
     { route: '/e-driver/admin/models', icon: 'view_carousel', label: 'Modelos' },
+    { route: '/e-driver/admin/reports', icon: 'analytics', label: 'Reports' },
+
+
+
+    // <mat-icon > analytics </mat-icon>
+    // < mat - icon > assessment </mat-icon>
+    // < mat - icon > bar_chart </mat-icon>
+    // < mat - icon > pie_chart </mat-icon>
+    // < mat - icon > insert_chart </mat-icon>
+    // < mat - icon > table_chart </mat-icon>
+    // < mat - icon > list_alt </mat-icon>
+    // < mat - icon > description </mat-icon>
+    // < mat - icon > dashboard </mat-icon>
+    // < mat - icon > data_usage </mat-icon>
+
   ];
 
   constructor(private userService: UserService) { }
@@ -29,14 +44,14 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.userService.getAuthenticatedUserDetails().subscribe(user => {
       this.user = user;
-      this.isAdmin = user.roles.some(role => role.name === 'ADMIN'); 
+      this.isAdmin = user.roles.some(role => role.name === 'ADMIN');
     });
   }
 
 
   getColumnClass(index: number): string {
     const totalItems = this.menuLinks.length;
-    const itemsPerRow = 3;
+    const itemsPerRow = 4;
     const remainingItems = totalItems % itemsPerRow;
     const isLastRow = index >= totalItems - remainingItems;
 
