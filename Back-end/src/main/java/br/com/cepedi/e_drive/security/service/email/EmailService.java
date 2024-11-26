@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.repository.UserRepository;
 import br.com.cepedi.e_drive.security.service.mail.MailService;
 import br.com.cepedi.e_drive.security.service.token.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -27,6 +28,12 @@ import jakarta.mail.internet.MimeMessage;
  */
 @Service
 public class EmailService {
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+    @Value("${backend.url}")
+    private String backendUrl;
 
     @Autowired
     private JavaMailSender emailSender;
@@ -87,35 +94,29 @@ public class EmailService {
          * @param token O token para redefinir a senha.
          * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
          */
-    public void sendResetPasswordEmail(String name, String email, String token) throws MessagingException {
-        MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
+        public void sendResetPasswordEmail(String name, String email, String token) throws MessagingException {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
 
-        helper.setTo(email);
-        helper.setSubject("Redefinição de Senha");
+            helper.setTo(email);
+            helper.setSubject("Redefinição de Senha");
 
-        // Configura o contexto do template
-        Context context = new Context();
-        context.setVariable("nome", name);
-        context.setVariable("token", token);
-        context.setVariable("titulo", "Redefinição de Senha");
-        context.setVariable("linkConfirmacao", "http://localhost:4200/e-driver/login/reset-password?token=" + token);
+            Context context = new Context();
+            context.setVariable("nome", name);
+            context.setVariable("token", token);
+            context.setVariable("titulo", "Redefinição de Senha");
+            context.setVariable("linkConfirmacao", frontendUrl + "/e-driver/login/reset-password?token=" + token);
 
-        // Processa o template Thymeleaf
-        String htmlBody = templateEngine.process("reset_password_email_template", context);
-        helper.setText(htmlBody, true);
-        helper.setFrom("nao-responder@park.com.br");
+            String htmlBody = templateEngine.process("reset_password_email_template", context);
+            helper.setText(htmlBody, true);
+            helper.setFrom("nao-responder@park.com.br");
+            helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
 
-        // Adiciona a imagem inline
-        helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
+            emailSender.send(message);
 
-        // Envia o e-mail
-        emailSender.send(message);
-
-        // Registra o e-mail enviado
-        DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Password Reset");
-        mailService.register(dataRegisterMail);
-    }
+            DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Password Reset");
+            mailService.register(dataRegisterMail);
+        }
 
 
     /**
@@ -128,38 +129,29 @@ public class EmailService {
      * @throws MessagingException Se ocorrer um erro ao enviar o e-mail.
      */
     public void sendActivationEmail(String name, String email, String tokenForActivate) throws MessagingException {
-
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, "UTF-8");
 
         helper.setTo(email);
         helper.setSubject("Confirmação de Cadastro");
 
-        // Contexto para o template
         Context context = new Context();
         context.setVariable("nome", name);
         context.setVariable("titulo", "Bem-vindo ao e-Drive, " + name + "!");
         context.setVariable("texto", "Estamos felizes em tê-lo(a) conosco. Para começar a usar o e-Drive, confirme seu cadastro clicando no link abaixo.");
-        context.setVariable("linkConfirmacao", "http://localhost:8080/auth/activate?token=" + tokenForActivate);
+        context.setVariable("linkConfirmacao", backendUrl + "/auth/activate?token=" + tokenForActivate);
 
-        // TODO:  criar a tela de ativação e redirecionar para a tela principal no front
-
-        // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("activate_user_by_email_template", context);
         helper.setText(htmlBody, true);
         helper.setFrom("nao-responder@park.com.br");
-
-        // Adiciona a imagem inline
         helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
 
-        // Envia o e-mail
         emailSender.send(message);
 
-        // Registra o e-mail enviado
         DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Activation Email");
         mailService.register(dataRegisterMail);
-
     }
+
     /**
      * Envia um e-mail de reativação de conta.
      *
@@ -176,28 +168,21 @@ public class EmailService {
         helper.setTo(email);
         helper.setSubject("Reativação de Conta");
 
-        // Contexto para o template
         Context context = new Context();
         context.setVariable("nome", name);
         context.setVariable("titulo", "Bem-vindo de volta ao e-Drive, " + name + "!");
         context.setVariable("texto", "Estamos felizes que você deseja reativar sua conta. Para reativá-la e voltar a usar o e-Drive, clique no link abaixo.");
-        context.setVariable("linkConfirmacao", "http://localhost:4200/e-driver/login/recover-account?token=" + tokenForReactivation);
+        context.setVariable("linkConfirmacao", frontendUrl + "/e-driver/login/recover-account?token=" + tokenForReactivation);
 
-        // Processa o template Thymeleaf
         String htmlBody = templateEngine.process("reactivate_user_by_email_template", context);
         helper.setText(htmlBody, true);
         helper.setFrom("nao-responder@park.com.br");
-
-        // Adiciona a imagem inline
         helper.addInline("logo", new ClassPathResource("/static/image/logo-ingenico-site.png"));
 
-        // Envia o e-mail
         emailSender.send(message);
 
-        // Registra o e-mail enviado
         DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Reactivation Email");
         mailService.register(dataRegisterMail);
-
     }
 
 

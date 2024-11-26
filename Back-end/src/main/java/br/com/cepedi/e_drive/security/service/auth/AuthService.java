@@ -22,6 +22,7 @@ import com.auth0.jwt.JWT;
 import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -55,6 +56,9 @@ public class AuthService implements UserDetailsService {
 
     @Autowired
     private UserRepository repository;
+
+    @Value("${frontend.url}")
+    private String frontendUrl;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -236,9 +240,8 @@ public class AuthService implements UserDetailsService {
     }
 
     public ResponseEntity<String> activateAccount(String token) {
-
         if (!tokenService.isValidToken(token)) {
-            String redirectUrl = "http://localhost:4200/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
+            String redirectUrl = frontendUrl + "/e-driver/login?error=O+token+de+ativação+é+inválido+ou+expirou";
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(redirectUrl))
                     .build();
@@ -246,17 +249,17 @@ public class AuthService implements UserDetailsService {
 
         validationsActivatedAccountList.forEach(v -> v.validate(token));
 
-
         String email = JWT.decode(token).getClaim("email").asString();
         User user = repository.findByEmail(email);
         user.activate();
         tokenService.revokeToken(token);
 
-        String redirectUrl = "http://localhost:4200/e-driver/login?success=Conta+ativada+com+sucesso";
+        String redirectUrl = frontendUrl + "/e-driver/login?success=Conta+ativada+com+sucesso";
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(redirectUrl))
                 .build();
     }
+
 
     public String reactivateAccountRequest(DataReactivateAccount dataReactivateAccount) {
         validationReactivateAccountRequestList.forEach(v -> v.validate(dataReactivateAccount));

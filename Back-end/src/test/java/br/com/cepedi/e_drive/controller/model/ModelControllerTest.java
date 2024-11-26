@@ -61,21 +61,21 @@ class ModelControllerTest {
         verify(modelService, times(1)).getModelById(1L);
     }
 
-//    @Test
-//    @DisplayName("Should list all models with pagination")
-//    void testListAll() {
-//        DataModelDetails model = new DataModelDetails(1L, null, "Model Name", true);
-//        Page<DataModelDetails> page = new PageImpl<>(List.of(model));
-//
-//        when(modelService.listAllModels(any(Pageable.class))).thenReturn(page);
-//
-//        Pageable pageable = PageRequest.of(0, 10);
-//        ResponseEntity<Page<DataModelDetails>> response = modelController.listAll(pageable);
-//
-//        assertEquals(HttpStatus.OK, response.getStatusCode());
-//        assertEquals(page, response.getBody());
-//        verify(modelService, times(1)).listAllModels(any(Pageable.class));
-//    }
+    @Test
+    @DisplayName("Should list all models with pagination")
+    void testListAll() {
+        DataModelDetails model = new DataModelDetails(1L, null, "Model Name", true);
+        Page<DataModelDetails> page = new PageImpl<>(List.of(model));
+
+        when(modelService.listAllModels(any(Pageable.class))).thenReturn(page);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        ResponseEntity<Page<DataModelDetails>> response = modelController.listAll(null,pageable);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(page, response.getBody());
+        verify(modelService, times(1)).listAllModels(any(Pageable.class));
+    }
 
     @Test
     @DisplayName("Should update an existing model and return updated details")
