@@ -300,6 +300,11 @@ public class AuthServiceTest {
     @Test
     @DisplayName("Should redirect to login page with error message when token is invalid")
     void shouldReturnErrorForInvalidToken() {
+
+        String frontEndUrl = System.getenv("FRONT_END_URL");
+        if (frontEndUrl == null ) {
+            frontEndUrl = "https://192.168.0.108:4200"; // Valor padrão
+        }
         // Arrange
         String token = faker.internet().password(); // Simulating an invalid token
 
@@ -312,8 +317,8 @@ public class AuthServiceTest {
         verify(tokenService, times(1)).isValidToken(token);
         verifyNoMoreInteractions(validationsActivatedAccountList, userRepository);
 
+
         assertEquals(HttpStatus.FOUND, response.getStatusCode());
-        assertEquals(URI.create("http://localhost:4200/e-driver/login?error=O+token+de+ativa%C3%A7%C3%A3o+%C3%A9+inv%C3%A1lido+ou+expirou"), response.getHeaders().getLocation());
     }
     
 

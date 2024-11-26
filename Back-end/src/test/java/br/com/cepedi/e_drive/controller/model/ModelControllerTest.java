@@ -70,7 +70,7 @@ class ModelControllerTest {
         when(modelService.listAllModels(any(Pageable.class))).thenReturn(page);
 
         Pageable pageable = PageRequest.of(0, 10);
-        ResponseEntity<Page<DataModelDetails>> response = modelController.listAll(pageable);
+        ResponseEntity<Page<DataModelDetails>> response = modelController.listAll(null,pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(page, response.getBody());
