@@ -100,11 +100,11 @@
 
       <!-- Paginator -->
       <mat-paginator class="shadow-sn" [length]="totalBrands" [pageSize]="pageSize"
-        [pageSizeOptions]="[10, 20, 30, 40, 50, totalBrands]" (page)="onPageChange($event)"
+        [pageSizeOptions]="[10, 20, 30, 40, 50]" (page)="onPageChange($event)"
         aria-label="Selecione marcas por página"></mat-paginator>
     </div>
 
     <!-- Botão para abrir modal de adição de nova marca -->
     <app-ui-button class="custom-button" typeBtn="vivid-sky-blue" (click)="openModalAddBrand()"
-      text="Nova marca"></app-ui-button>
+      text="Nova Marca"></app-ui-button>
 </div>

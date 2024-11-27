@@ -1,0 +1,58 @@
+/* Define a barra superior com posição fixa (sticky), ocupando 100% da largura, 
+   com cor de fundo azul e espaçamento interno (padding) de 0.5rem. */
+.top-bar {
+  position: sticky;
+  width: 100%;
+  background-color: #19B6DD;
+  padding: .5rem 0;
+}
+
+.content {
+  flex: 1; // Faz com que a área de conteúdo cresça para ocupar o espaço disponível
+  display: flex;
+  flex-direction: column; // Permite que os campos do formulário sejam empilhados
+}
+
+.custom-select {
+  margin-bottom: 0;
+}
+
+.custom-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+
+.mat-autocomplete-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 1000;
+}
+
+.autocomplete-icon {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #19B6DD;
+  pointer-events: none;
+  margin-right: 5px;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.mat-error-text {
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -15px;
+}
+
+.mat-error-text-isexists {
+  margin-top: -20px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 0px;
+}

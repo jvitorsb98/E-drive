@@ -22,6 +22,7 @@ import { ModalFormModelComponent } from './model/components/modal-form-model/mod
 import { BrandListComponent } from './brand/components/brand-list/brand-list.component';
 import { ModalDetailsBrandComponent } from './brand/components/modal-details-brand/modal-details-brand.component';
 import { ModalFormBrandComponent } from './brand/components/modal-form-brand/modal-form-brand.component';
+import { ReportGeneratorComponent } from './report-generator/report-generator.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,10 @@ import { ModalFormBrandComponent } from './brand/components/modal-form-brand/mod
     // Vehicle Components
     VehicleListComponent,
     ModalDetailsVehicleComponent,
-    ModalFormVehicleComponent
+    ModalFormVehicleComponent,
+
+    // Report Generator
+    ReportGeneratorComponent
   ],
   imports: [
     CommonModule,   
