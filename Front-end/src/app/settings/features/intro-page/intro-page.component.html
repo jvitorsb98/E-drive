@@ -7,7 +7,7 @@
   <div id="inicio" class="container-fluid home bkg-degrad-primary">
 
     <!-- Banner de boas-vindas com efeito parallax -->
-    <section id="banner" class="container-fluid d-flex flex-column justify-content-center banner parallax">
+    <section id="banner" class="container-fluid d-flex flex-column justify-content-center banner parallax" #parallaxElement>
       <div>
         <!-- Texto de boas-vindas -->
         <div class="mb-5">
@@ -103,7 +103,7 @@
 
         <!-- Carregamento da imagem de mapa de eletropostos com fallback para diferentes estados -->
         @defer{
-        <img id="img-mapa" src="../../../../assets/images/mapa.png" alt="busca-eletropostos">
+        <img id="img-mapa" src="../../../../e-drive/assets/images/mapa.png" alt="busca-eletropostos">
         }
         @placeholder {
         <mat-spinner diameter="40"></mat-spinner> Carregando imagem ...
