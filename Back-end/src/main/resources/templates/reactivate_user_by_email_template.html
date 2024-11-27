@@ -82,14 +82,12 @@
             <img src="cid:logo" alt="e-Drive"
                  style="display: block; margin-left: auto; margin-right: auto; width: 20%; color:black" />
             <h1 style="font-weight: 100;">Bem-vindo(a) de volta ao e-Drive, <span th:text="${nome}">[Nome]</span>!</h1>
-            <p style="margin-bottom: 0;">Estamos felizes em tê-lo(a) conosco novamente.</p>
         </td>
     </tr>
     </thead>
     <tbody>
     <tr>
         <td align="center" colspan="2" style="padding: 2px;">
-            <h4 class="text-center" th:text="${titulo}"><strong>Reative sua conta</strong></h4>
             <p th:text="${texto}">Para reativar sua conta e voltar a usar o e-Drive, clique no botão abaixo.
             </p>
             <p class="text-center mb-0" th:if="${linkConfirmacao != null}">
