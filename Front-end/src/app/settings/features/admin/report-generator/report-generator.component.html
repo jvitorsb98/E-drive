@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between container-fluid">
     <div class="justify-content-start">
       <!-- Ícone de voltar, redireciona para o dashboard -->
-      <mat-icon class="arrow-back-icon" routerLink="/e-driver/dashboard">arrow_back</mat-icon>
+      <mat-icon class="arrow-back-icon" (click)="goBack()">arrow_back</mat-icon>
     </div>
     <div class="flex-grow-1 text-center">
       <!-- Título da página -->
@@ -11,6 +11,24 @@
   </div>
 </div>
 
-<button mat-raised-button color="primary" (click)="loadMostRegisteredCarsReport()">
-  Baixar Relatório de Carros Mais Cadastrados
-</button>
+<form [formGroup]="reportForm">
+  <div class="container col-md-12 col-md-12 col-sm-12 col-lg-5 justify-content-cente form-floating pt-5">
+    <!-- Campo para selecionar a marca -->
+    <mat-form-field class="custom-select pt-5">
+      <mat-label>Relatórios E-Drive Navigator:</mat-label>
+      <input #reportInput type="text" matInput [matAutocomplete]="autoReport" formControlName="report"
+        aria-describedby="Help">
+      <mat-autocomplete #autoReport="matAutocomplete" [displayWith]="displayReportName">
+        <mat-option *ngFor="let report of filteredReports | async" [value]="report">
+          {{ report.name }}
+        </mat-option>
+      </mat-autocomplete>
+      <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
+    </mat-form-field>
+    <app-ui-button typeBtn="vivid-sky-blue" text="Gerar Relatório" (click)="gerarReport()"
+      [disabled]="!reportForm.valid"></app-ui-button>
+    <div class="pt-2">
+      <app-ui-button typeBtn="outline-secondary" text="Cancelar" (click)="goBack()"></app-ui-button>
+    </div>
+  </div>
+</form>
