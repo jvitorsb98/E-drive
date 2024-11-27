@@ -31,9 +31,10 @@ COPY nginx.conf /etc/nginx/nginx.conf
 COPY src/environments/server.crt /etc/nginx/ssl/server.crt
 COPY src/environments/server.key /etc/nginx/ssl/server.key
 
-# Expor a porta 443 para acesso HTTPS
-# EXPOSE 443
 EXPOSE 80
+
+# Expor a porta 443 para acesso HTTPS
+EXPOSE 443
 
 # Rodar o Nginx para servir a aplicação
 CMD ["nginx", "-g", "daemon off;"]
