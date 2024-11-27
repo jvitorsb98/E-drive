@@ -1,0 +1,49 @@
+<div class="top-bar pt-3">
+  <div class="d-flex justify-content-between container-fluid">
+    <div class="justify-content-start">
+      <!-- Ícone de voltar, redireciona para o dashboard -->
+      <mat-icon class="arrow-back-icon" (click)="goBack()">arrow_back</mat-icon>
+    </div>
+    <div class="flex-grow-1 text-center">
+      <!-- Título da página -->
+      <h1 class="text-white">Gerar Relatórios</h1>
+    </div>
+  </div>
+</div>
+
+<form [formGroup]="reportForm" (ngSubmit)="gerarReport()">
+  <div class="container col-md-12 col-md-12 col-sm-12 col-lg-5 justify-content-cente form-floating pt-5">
+    <!-- Campo para selecionar a marca -->
+    <mat-form-field class="custom-select pt-5">
+      <mat-label>Selecione o Relatório:</mat-label>
+      <input #reportInput type="text" matInput [matAutocomplete]="autoReport" formControlName="report"
+        (blur)="checkNoReportFound(reportForm.get('report')?.value, [])" aria-describedby="Help">
+      <mat-autocomplete #autoReport="matAutocomplete" [displayWith]="displayReportName">
+        <mat-option *ngFor="let report of filteredReports | async" [value]="report">
+          {{ report.name }}
+        </mat-option>
+        <ng-container *ngIf="(filteredReports | async)?.length === 0">
+          <mat-option disabled>
+            Nenhum <strong>relatório</strong> encontrado.
+          </mat-option>
+        </ng-container>
+      </mat-autocomplete>
+      <mat-icon class="autocomplete-icon" (click)="toggleAutocomplete($event)">arrow_drop_down</mat-icon>
+      <mat-error class="mat-error-text"
+        *ngIf="reportForm.get('report')?.hasError('required') && reportForm.get('report')?.touched">
+        Por favor, selecione um <strong>relatório</strong>.
+      </mat-error>
+    </mat-form-field>
+    @if(noReportFound && reportForm.get('report')?.valid &&
+    reportForm.get('report')?.touched) {
+    <mat-error class="mat-error-text-isexists">
+      Nenhum relatório encontrado. Selecione um <strong>válido</strong>.
+    </mat-error>
+    }
+    <app-ui-button typeBtn="vivid-sky-blue" text="Gerar Relatório"
+      [disabled]="!reportForm.valid || noReportFound"></app-ui-button>
+    <div class="pt-2">
+      <app-ui-button typeBtn="outline-secondary" text="Cancelar" (click)="goBack()"></app-ui-button>
+    </div>
+  </div>
+</form>
