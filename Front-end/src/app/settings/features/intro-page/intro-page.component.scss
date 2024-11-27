@@ -96,6 +96,8 @@
 	height: 30vh !important;
 }
 
+
+
 .parallax {
 	position: relative;
 	background-image: url('../../../../assets/images/e-drive-background.png');
@@ -103,7 +105,16 @@
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
-}
+	background-attachment: fixed; /* Fundamental para o efeito parallax */  }
+  
+  @supports (-webkit-touch-callout: none) and (not (translate: none)) {
+	.parallax {
+	  background-attachment: scroll; /* Fallback para iOS */
+	}
+  }
+  
+
+
 
 .parallax::before {
 	content: "";
