@@ -16,8 +16,8 @@
     <!-- Campo para selecionar a marca -->
     <mat-form-field class="custom-select pt-5">
       <mat-label>Relatórios E-Drive Navigator:</mat-label>
-      <input #reportInput type="text" matInput [matAutocomplete]="autoReport" formControlName="report"
-        aria-describedby="Help">
+        <input #reportInput type="text" matInput [matAutocomplete]="autoReport" formControlName="report"
+       (blur)="checkNoReportFound(reportForm.get('report')?.value, [])" aria-describedby="Help">
       <mat-autocomplete #autoReport="matAutocomplete" [displayWith]="displayReportName">
         <mat-option *ngFor="let report of filteredReports | async" [value]="report">
           {{ report.name }}
@@ -40,7 +40,8 @@
       Nenhum relatório encontrado. Selecione um <strong>válido</strong>.
     </mat-error>
     }
-    <app-ui-button typeBtn="vivid-sky-blue" text="Gerar Relatório" [disabled]="!reportForm.valid"></app-ui-button>
+    <app-ui-button typeBtn="vivid-sky-blue" text="Gerar Relatório"
+      [disabled]="!reportForm.valid || noReportFound"></app-ui-button>
     <div class="pt-2">
       <app-ui-button typeBtn="outline-secondary" text="Cancelar" (click)="goBack()"></app-ui-button>
     </div>

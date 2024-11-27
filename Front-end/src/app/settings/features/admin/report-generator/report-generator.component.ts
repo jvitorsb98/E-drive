@@ -4,6 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { map, Observable, of, startWith } from 'rxjs';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
+import { AlertasService } from '../../../core/services/Alertas/alertas.service';
 
 @Component({
   selector: 'app-report-generator',
@@ -20,9 +21,9 @@ export class ReportGeneratorComponent {
     { id: 3, name: 'Relatório de Logs de Auditoria' },
     { id: 4, name: 'Relatório de Autonomia de Veículos' },
     { id: 5, name: 'Relatório de Veículos por Categoria' },
-    { id: 5, name: 'Relatório de Usuários Mais Ativos' },
-    { id: 6, name: 'Relatório de Viagens Realizadas' },
-    { id: 7, name: 'Relatório de Viagens por Carro' },
+    { id: 6, name: 'Relatório de Usuários Mais Ativos' },
+    { id: 7, name: 'Relatório de Viagens Realizadas' },
+    { id: 8, name: 'Relatório de Viagens por Carro' },
   ];
   filteredReports: Observable<{ id: number; name: string }[]> = of([]); // Lista de relatórios filtrada para o autocomplete
 
@@ -36,6 +37,7 @@ export class ReportGeneratorComponent {
   constructor(
     private reportService: ReportService,
     private formBuilder: FormBuilder,
+    private alertService: AlertasService,
     private router: Router,) { }
 
   ngOnInit(): void {
@@ -58,7 +60,8 @@ export class ReportGeneratorComponent {
       map(value => {
         const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
         const filtered = this.reports.filter(report => report.name.toLowerCase().includes(filterValue));
-        this.noReportFound = filtered.length === 0; // Verifica se há relatórios filtrados
+
+        this.checkNoReportFound(value, filtered);
         return filtered;
       })
     );
@@ -83,14 +86,9 @@ export class ReportGeneratorComponent {
       case 1:
         this.loadMostRegisteredCarsReport();
         break;
-      case 2:
 
-        break;
-      case 3:
-
-        break;
       default:
-        console.error('Relatório não implementado:', this.reportForm.get("report"));
+        this.alertService.showWarning('Relatório não encontrado', 'O relatório selecionado não foi encontrado.');
     }
   }
 
@@ -135,6 +133,16 @@ export class ReportGeneratorComponent {
       this.autocompleteTrigger.openPanel();  // Abre o painel
     } else {
       this.autocompleteTrigger.closePanel();  // Se já estiver aberto, fecha
+    }
+  }
+
+  checkNoReportFound(value: string | { id: number; name: string }, filtered: any[]) {
+    if (!value || typeof value === 'string' && value.trim() === '') {
+      this.noReportFound = true; // Campo vazio, desabilitar o botão
+    } else if (typeof value === 'string') {
+      this.noReportFound = filtered.length === 0;
+    } else {
+      this.noReportFound = !this.reports.some(report => report.id === (value as { id: number }).id);
     }
   }
 

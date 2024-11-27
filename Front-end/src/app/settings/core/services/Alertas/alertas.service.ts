@@ -86,8 +86,6 @@ export class AlertasService {
     });
   }
 
-
-
   showTableAlert(
     title: string,
     headers: string[],
@@ -107,12 +105,12 @@ export class AlertasService {
   }
 
   private generateTableHtml(headers: string[], rows: string[][]): string {
-    const headerHtml = headers.map(header => 
-        `<th style="border: 1px solid #ddd; padding: 3px; background-color: #f2f2f2; font-size: 10px;">${header}</th>`).join('');
-        
+    const headerHtml = headers.map(header =>
+      `<th style="border: 1px solid #ddd; padding: 3px; background-color: #f2f2f2; font-size: 10px;">${header}</th>`).join('');
+
     const rowsHtml = rows
-        .map(row => `<tr>${row.map(cell => `<td style="border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 10px;">${cell}</td>`).join('')}</tr>`)
-        .join('');
+      .map(row => `<tr>${row.map(cell => `<td style="border: 1px solid #ddd; padding: 3px; text-align: left; font-size: 10px;">${cell}</td>`).join('')}</tr>`)
+      .join('');
 
     return `
       <div style="overflow-x:auto; max-width: 100%;">
@@ -124,6 +122,6 @@ export class AlertasService {
         </table>
       </div>
     `;
-}
+  }
 
 }
