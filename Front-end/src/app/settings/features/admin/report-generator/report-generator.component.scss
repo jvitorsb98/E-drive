@@ -41,3 +41,18 @@
   pointer-events: auto;
   cursor: pointer;
 }
+
+.mat-error-text {
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: -15px;
+}
+
+.mat-error-text-isexists {
+  margin-top: -20px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+  margin-left: 0px;
+}

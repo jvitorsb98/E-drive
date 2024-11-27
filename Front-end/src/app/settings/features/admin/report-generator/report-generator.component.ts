@@ -16,8 +16,13 @@ export class ReportGeneratorComponent {
   noReportFound: boolean = false; // Indica se nenhum relatório foi encontrado
   reports = [ // Lista mockada de relatórios
     { id: 1, name: 'Relatório de Carros Mais Registrados' },
-    { id: 2, name: 'Relatório de Atividades dos Usuários' },
-    { id: 3, name: 'Relatório de Estações de Carregamento' }
+    { id: 2, name: 'Relatório de Endereços de Usuários' },
+    { id: 3, name: 'Relatório de Logs de Auditoria' },
+    { id: 4, name: 'Relatório de Autonomia de Veículos' },
+    { id: 5, name: 'Relatório de Veículos por Categoria' },
+    { id: 5, name: 'Relatório de Usuários Mais Ativos' },
+    { id: 6, name: 'Relatório de Viagens Realizadas' },
+    { id: 7, name: 'Relatório de Viagens por Carro' },
   ];
   filteredReports: Observable<{ id: number; name: string }[]> = of([]); // Lista de relatórios filtrada para o autocomplete
 
@@ -49,12 +54,12 @@ export class ReportGeneratorComponent {
 
   setupAutocomplete() {
     this.filteredReports = this.reportForm.get('report')!.valueChanges.pipe(
-      startWith(''), // Inicia com um valor vazio para o filtro
+      startWith(''),
       map(value => {
-        const filterValue = typeof value === 'string' ? value.toLowerCase() : ''; // Converte o valor para minúsculas
-        const filtered = this.reports.filter(report => report.name.toLowerCase().includes(filterValue)); // Filtra as marcas
-        this.noReportFound = filtered.length === 0; // Verifica se há marcas filtradas
-        return filtered; // Retorna a lista filtrada
+        const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+        const filtered = this.reports.filter(report => report.name.toLowerCase().includes(filterValue));
+        this.noReportFound = filtered.length === 0; // Verifica se há relatórios filtrados
+        return filtered;
       })
     );
   }
@@ -123,11 +128,13 @@ export class ReportGeneratorComponent {
    * @param event Evento disparado pelo clique do botão.
    */
   toggleAutocomplete(event: Event) {
-    event.stopPropagation();
-    if (this.autocompleteTrigger.panelOpen) {
-      this.autocompleteTrigger.closePanel();
+    event.stopPropagation(); // Previne a propagação do evento, para evitar o fechamento inesperado
+
+    // Abra o painel sempre, independentemente dos resultados
+    if (!this.autocompleteTrigger.panelOpen) {
+      this.autocompleteTrigger.openPanel();  // Abre o painel
     } else {
-      this.autocompleteTrigger.openPanel();
+      this.autocompleteTrigger.closePanel();  // Se já estiver aberto, fecha
     }
   }
 
