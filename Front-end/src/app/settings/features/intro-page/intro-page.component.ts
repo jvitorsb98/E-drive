@@ -8,7 +8,7 @@ import { UserLoginComponent } from '../../core/security/login/user-login/user-lo
 import { AuthService } from '../../core/security/services/auth/auth.service';
 
 // Imports do Angular
-import { Component, AfterViewInit, Renderer2 } from '@angular/core';
+import { Component, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 
 /**
@@ -28,6 +28,7 @@ export class IntroPageComponent implements AfterViewInit {
 
   constructor(private modal: ModalService, private renderer: Renderer2, private authService: AuthService, private router: Router) { }
 
+  @ViewChild('parallaxElement') parallaxElement!: ElementRef;
 
   ngOnInit(): void {
     // Verifica se o usuário está autenticado e redireciona para o Dashboard
@@ -55,19 +56,16 @@ export class IntroPageComponent implements AfterViewInit {
    * a classe `show` quando os elementos entram na área visível da tela (threshold de 50%).
    */
   ngAfterViewInit() {
-
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-    const parallaxElement = document.querySelector('.parallax');
-
-    if (parallaxElement) {
-      // Aplica background-attachment de acordo com o sistema operacional
-      if (isIOS) {
-        this.renderer.setStyle(parallaxElement, 'backgroundAttachment', 'scroll');
-        this.renderer.setStyle(parallaxElement, '-webkit-overflow-scrolling', 'touch');
-      } else {
-        this.renderer.setStyle(parallaxElement, 'backgroundAttachment', 'fixed');
+    setTimeout(() => {
+      if (this.parallaxElement) {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOS) {
+          this.renderer.setStyle(this.parallaxElement.nativeElement, 'background-attachment', 'scroll');
+        } else {
+          this.renderer.setStyle(this.parallaxElement.nativeElement, 'background-attachment', 'fixed');
+        }
       }
-    }
+    }, 100);
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -86,3 +84,4 @@ export class IntroPageComponent implements AfterViewInit {
     });
   }
 }
+
