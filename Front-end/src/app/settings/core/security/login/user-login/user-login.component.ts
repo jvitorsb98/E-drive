@@ -14,15 +14,13 @@ import { PasswordVisibilityToggle } from '../../../../shared/validators/password
 @Component({
   selector: 'app-user-login',
   templateUrl: './user-login.component.html',
-  styleUrl: './user-login.component.scss'
+  styleUrls: ['./user-login.component.scss']
 })
 export class UserLoginComponent implements OnInit {
   loginForm!: FormGroup;
   isLoading = false;
   successMessage: string | null = null;
-  //TODO - remoção de opção de login com imagem
   userProfileImage = 'assets/images/DALL·E 2024-10-17.jpeg';
-
 
   constructor(
     private fb: FormBuilder,
@@ -59,7 +57,14 @@ export class UserLoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+
     PasswordVisibilityToggle.togglePasswordVisibility(this.renderer, this.el);
+
+    // Remove erros quando os campos são corrigidos
+    this.loginForm.valueChanges.subscribe(() => {
+      this.loginForm.get('email')?.setErrors(null);
+      this.loginForm.get('password')?.setErrors(null);
+    });
   }
 
   modalResetPassword(isPasswordRecovery: boolean): void {
@@ -106,15 +111,18 @@ export class UserLoginComponent implements OnInit {
   }
 
   private handleLoginError(error: HttpErrorResponse): void {
-    console.log(error)
+    console.log(error);
     this.isLoading = false;
     this.alertasService.showError('Erro de Autenticação', error.message);
     this.setFormErrors();
   }
 
   private setFormErrors(): void {
-    this.loginForm.get('password')?.setErrors({ invalid: true });
-    this.loginForm.get('email')?.setErrors({ invalid: true });
+    const emailControl = this.loginForm.get('email');
+    const passwordControl = this.loginForm.get('password');
+
+    emailControl?.setErrors({ invalid: true });
+    passwordControl?.setErrors({ invalid: true });
   }
 
   closeDialog(): void {
