@@ -1,18 +1,16 @@
-<div class="container-fluid p-3">
+<div class="mat-dialog-container">
+  <div class="container-fluid col-12 col-md-12 col-sm-12 col-lg-12 p-3">
+    <div class="lgpd-popup">
+      <!-- Título e subtítulo da seção de perguntas frequentes -->
+      <h1 class="titulo">Política de Privacidade e Proteção de Dados</h1>
+      <h2 class="subtitulo">Entenda como seus dados são tratados e seus direitos sob a LGPD</h2>
 
-  <div class="lgpd-popup">
-    <!-- Título e subtítulo da seção de perguntas frequentes -->
-    <h1 class="titulo">Política de Privacidade e Proteção de Dados</h1>
-    <h2 class="subtitulo">Entenda como seus dados são tratados e seus direitos sob a LGPD</h2>
-
-    <!-- Conteúdo do modal -->
-    <mat-dialog-content>
+      <!-- Conteúdo do modal -->
       <!-- Loop para exibir as perguntas e respostas -->
       <div *ngFor="let lgpd of lgpdFaqs">
         <h3>{{ lgpd.question }}</h3>
         <p>{{ lgpd.answer }}</p>
       </div>
-      <!-- </mat-dialog-content> -->
 
       <!-- Checkbox para aceitar os termos e políticas -->
       <div class="form-container">
@@ -27,16 +25,13 @@
       @if(acceptTermsControl.touched && !acceptTermsControl.valid){
       <mat-error class="mat-error-text">Você deve <strong>aceitar os termos</strong> para continuar.</mat-error>
       }
-    </mat-dialog-content>
-
-    <!-- Botões de ação -->
-    <mat-dialog-actions>
-      <!-- Botão para confirmar aceitação dos termos -->
-      <app-ui-button class="w-100 mb-1" typeBtn="vivid-sky-blue" (click)="onConfirm()"
-        [disabled]="!acceptTermsControl.valid" text="Aceitar"></app-ui-button>
-
-      <!-- Botão para fechar o modal -->
-      <app-ui-button class="w-100" typeBtn="outline-secondary" mat-dialog-close text="Fechar"></app-ui-button>
-    </mat-dialog-actions>
+    </div>
+    <!-- Botão para confirmar aceitação dos termos -->
+    <div class="pt-1 mb-1">
+      <app-ui-button class="w-100" typeBtn="vivid-sky-blue" (click)="onConfirm()" [disabled]="!acceptTermsControl.valid"
+        text="Aceitar"></app-ui-button>
+    </div>
+    <!-- Botão para fechar o modal -->
+    <app-ui-button class="w-100" typeBtn="outline-secondary" mat-dialog-close text="Fechar"></app-ui-button>
   </div>
 </div>

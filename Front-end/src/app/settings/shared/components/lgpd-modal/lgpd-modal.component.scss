@@ -1,3 +1,14 @@
+.mat-dialog-container {
+  overflow-y: auto;
+  /* Habilita a rolagem vertical */
+  max-height: 90vh;
+  /* Evita que o modal ultrapasse a altura da tela */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  /* Garante que o conteúdo comece do topo */
+}
+
 .titulo {
   font-size: 12px;
   /* 20px */

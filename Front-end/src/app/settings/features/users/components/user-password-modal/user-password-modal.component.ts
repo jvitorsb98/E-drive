@@ -159,18 +159,56 @@ export class UserPasswordModalComponent implements OnInit {
       }
     ];
 
-    this.dialog.open(LgpdModalComponent, {
-      width: '600px',
-      height: '500px',
-      disableClose: true,
+    // Abre o modal do LGPD com configurações de tamanho e dados
+    const dialogRef = this.dialog.open(LgpdModalComponent, {
+      width: '600px', // Largura do modal
+      height: '562px', // Altura do modal
+      disableClose: true, // Impede que o modal seja fechado ao clicar fora dele
       data: { lgpds: lgpdFaqs } // Passa os FAQs relacionados à LGPD
-    }).afterClosed().subscribe(result => {
+    });
+
+    /**
+     * @description Método para ajustar a rolagem do modal após sua abertura.
+     * Esse método garante que, ao abrir o modal, a rolagem do conteúdo seja ajustada para o topo.
+     * O setTimeout com 0 milissegundos é usado para garantir que o código seja executado após a renderização completa do modal.
+     * Isso faz com que a rolagem seja ajustada somente após o DOM ser atualizado, evitando problemas de renderização de conteúdo.
+     * 
+     * @function afterOpened
+     * @param {void}
+     * @returns {void}
+     */
+    dialogRef.afterOpened().subscribe(() => {
+      setTimeout(() => {
+        // Seleciona o contêiner do modal para aplicar a rolagem
+        const container = document.querySelector('.mat-dialog-container') as HTMLElement;
+
+        // Se o contêiner foi encontrado, ajusta a posição da rolagem para o topo
+        if (container) {
+          // Garante que a rolagem do modal comece no topo (scrollTop = 0)
+          container.scrollTop = 0;
+        }
+      });
+    });
+
+    /**
+     * @description Método que executa uma ação quando o modal é fechado.
+     * Após o fechamento do modal, verifica o resultado (se o usuário aceitou os termos) e atualiza o controle 'newsletter'.
+     * Caso o usuário tenha aceitado, o valor do controle será alterado para verdadeiro, caso contrário, será falso.
+     * 
+     * @function afterClosed
+     * @param {boolean} result - Resultado do modal, indicando se o usuário aceitou os termos.
+     * @returns {void}
+     */
+    dialogRef.afterClosed().subscribe(result => {
+      // Se o usuário aceitou os termos, define o valor do controle 'newsletter' como verdadeiro
       if (result) {
         this.userPassword.get('newsletter')?.setValue(true);
       } else {
+        // Caso contrário, define o valor como falso
         this.userPassword.get('newsletter')?.setValue(false);
       }
     });
+
   }
 
   // Função para fechar o modal

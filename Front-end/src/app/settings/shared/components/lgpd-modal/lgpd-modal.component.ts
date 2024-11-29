@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Inject, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -8,6 +8,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrl: './lgpd-modal.component.scss'
 })
 export class LgpdModalComponent {
+  @ViewChild('lgpdTitle') lgpdTitle!: ElementRef;
 
   // Controlador para aceitação dos termos da LGPD
   acceptTermsControl = new FormControl(false, [Validators.requiredTrue, Validators.required]);
