@@ -207,4 +207,126 @@ describe('AddressService', () => {
     req.flush(null, errorResponse); 
   });
 
+  // Teste para o método selectAddress
+it('should set the selected address', () => {
+  const mockAddress = {
+    id: 1,
+    country: 'Brazil',
+    zipCode: '12345-678',
+    state: 'SP',
+    city: 'São Paulo',
+    neighborhood: 'Centro',
+    number: 1000,
+    street: 'Av. Paulista',
+    userId: 1,
+    hasChargingStation: true,
+    complement: 'Apto 101',
+    activated: true
+  };
+
+  service.selectAddress(mockAddress);
+
+  service.selectedAddress$.subscribe(address => {
+    expect(address).toEqual(mockAddress);
+  });
+});
+
+// Teste para o método clearSelectedAddress
+it('should clear the selected address', () => {
+  service.clearSelectedAddress();
+
+  service.selectedAddress$.subscribe(address => {
+    expect(address).toBeNull();
+  });
+});
+
+  // Teste para o método setTitle
+it('should set the page title', () => {
+  const title = 'Cadastrar endereço';
+
+  service.setTitle(title);
+
+  service.selectedTitle$.subscribe(currentTitle => {
+    expect(currentTitle).toBe(title);
+  });
+});
+
+// Teste para o método clearTitle
+it('should reset the page title', () => {
+  service.clearTitle();
+
+  service.selectedTitle$.subscribe(currentTitle => {
+    expect(currentTitle).toBe('Registrar endereço');
+  });
+});
+
+// Teste para o método handleError com erro 404
+it('should handle 404 error correctly', () => {
+  const errorResponse = { status: 404, statusText: 'Not Found' };
+  const errorMessage = 'Endereço não encontrado.';
+
+  jest.spyOn(snackBar, 'open'); // Mock do método open do MatSnackBar
+
+  service.getById(999).subscribe(
+    () => {},
+    error => {
+      expect(error).toBe(errorMessage);
+      expect(snackBar.open).toHaveBeenCalledWith(errorMessage, 'Fechar', { duration: 5000 });
+    }
+  );
+
+  const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/address/999`);
+  expect(req.request.method).toBe('GET');
+  req.flush(null, errorResponse);
+});
+
+ // Teste para o método listAll
+it('should retrieve paginated addresses', () => {
+  const mockResponse = {
+    content: [{
+      id: 1,
+      country: 'Brazil',
+      zipCode: '12345-678',
+      state: 'SP',
+      city: 'São Paulo',
+      neighborhood: 'Centro',
+      number: 1000,
+      street: 'Av. Paulista',
+      userId: 1,
+      hasChargingStation: true,
+      complement: 'Apto 101',
+      activated: true
+    }],
+    pageable: {
+      pageNumber: 0,
+      pageSize: 1,
+      offset: 0,
+      paged: true,
+      unpaged: false,
+      sort: { empty: false, sorted: true, unsorted: false }
+    } as IPageable,  
+    last: true,
+    totalPages: 1,
+    totalElements: 1,
+    first: true,
+    size: 1,
+    number: 0,
+    numberOfElements: 1,
+    empty: false
+  };
+
+  const page = 1;
+  const size = 1;
+
+  service.listAll(page, size).subscribe(response => {
+    expect(response).toEqual(mockResponse);
+    expect(response.content.length).toBe(1);
+  });
+
+  const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/address/user?page=1&size=1&sort=city`);
+  expect(req.request.method).toBe('GET');
+  req.flush(mockResponse);
+});
+ 
+
 });

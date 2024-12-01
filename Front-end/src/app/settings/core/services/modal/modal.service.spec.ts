@@ -64,4 +64,93 @@ describe('ModalService', () => {
     service.openModal(component, data);
     expect(mockDialogRef.close).toHaveBeenCalled();
   });
+
+  it('should open a modal with default options when no options are provided', () => {
+    const component = {}; // O componente que você quer abrir
+    const data = { exampleData: 'test' };
+  
+    const result$ = service.openModal(component, data);
+  
+    expect(dialog.open).toHaveBeenCalledWith(component, {
+      data,
+      width: undefined,
+      height: undefined,
+      disableClose: false
+    });
+  
+    result$.subscribe(result => {
+      expect(result).toBe(true);
+    });
+  });
+
+  it('should call afterClosed when modal is closed', () => {
+    const component = {};
+    const data = {};
+  
+    const result$ = service.openModal(component, data);
+  
+    result$.subscribe(result => {
+      expect(result).toBe(true);
+    });
+  
+    expect(mockDialogRef.afterClosed).toHaveBeenCalled();
+  });
+
+  it('should close the dialog when openModal is called again', () => {
+    const component = {};
+    const data = {};
+  
+    // Chama o método openModal pela primeira vez
+    service.openModal(component, data);
+  
+    // Espera que o modal tenha sido aberto
+    expect(dialog.open).toHaveBeenCalled();
+  
+    // Chama openModal novamente, o modal anterior deve ser fechado
+    service.openModal(component, data);
+  
+    // Verifica se o close foi chamado
+    expect(mockDialogRef.close).toHaveBeenCalled();
+  });
+  
+
+
+  it('should pass disableClose as false if not specified', () => {
+    const component = {};
+    const data = { exampleData: 'test' };
+  
+    const result$ = service.openModal(component, data);
+  
+    expect(dialog.open).toHaveBeenCalledWith(component, {
+      data,
+      width: undefined,
+      height: undefined,
+      disableClose: false
+    });
+  
+    result$.subscribe(result => {
+      expect(result).toBe(true);
+    });
+  });
+  
+  it('should call dialog.open with the correct component type', () => {
+    const component = {}; // O componente que você quer abrir
+    const data = { exampleData: 'test' };
+  
+    const result$ = service.openModal(component, data);
+  
+    // Verifica se dialog.open foi chamado com o componente correto
+    expect(dialog.open).toHaveBeenCalledWith(component, expect.objectContaining({
+      data,
+      width: undefined,
+      height: undefined,
+      disableClose: false
+    }));
+  
+    result$.subscribe(result => {
+      expect(result).toBe(true);
+    });
+  });
+  
+  
 });

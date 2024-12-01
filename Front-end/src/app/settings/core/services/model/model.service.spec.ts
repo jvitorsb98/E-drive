@@ -128,4 +128,114 @@ describe('ModelService', () => {
     req.flush({});
   });
 
+  it('should handle error when retrieving paginated models', () => {
+    const errorMessage = 'Failed to load models';
+  
+    service.getAllPaginated(0, 1).subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/models?page=0&size=1&sort=name`);
+    expect(req.request.method).toBe('GET');
+    req.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+
+  it('should handle error when retrieving models by brand id', () => {
+    const brandId = 1;
+    const errorMessage = 'Failed to load models by brand';
+  
+    service.getModelsByBrandId(brandId).subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/models/brand/${brandId}`);
+    expect(req.request.method).toBe('GET');
+    req.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+
+  it('should handle error when retrieving all models', () => {
+    const errorMessage = 'Failed to load all models';
+  
+    service.getAll().subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const firstRequest = httpMock.expectOne(`${environment.apiUrl}/api/v1/models?page=0&size=1&sort=name`);
+    firstRequest.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+
+  it('should handle error when registering a new model', () => {
+    const newModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
+    const errorMessage = 'Failed to register model';
+  
+    service.register(newModel).subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/models`);
+    expect(req.request.method).toBe('POST');
+    req.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+  
+  it('should handle error when updating a model', () => {
+    const updatedModel: Model = { id: 1, name: 'Updated Model', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
+    const errorMessage = 'Failed to update model';
+  
+    service.update(updatedModel).subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/models/1`);
+    expect(req.request.method).toBe('PUT');
+    req.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+  
+  it('should handle error when deleting a model', () => {
+    const modelId = 1;
+    const errorMessage = 'Failed to delete model';
+  
+    service.delete(modelId).subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/models/1`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+  
+  it('should handle error when activating a model', () => {
+    const modelId = 1;
+    const errorMessage = 'Failed to activate model';
+  
+    service.activated(modelId).subscribe({
+      next: () => fail('Expected error, but got success'),
+      error: (error) => {
+        expect(error.message).toBe(errorMessage);
+      }
+    });
+  
+    const req = httpMock.expectOne(`${environment.apiUrl}/api/v1/models/1/activate`);
+    expect(req.request.method).toBe('PUT');
+    req.flush('', { status: 500, statusText: 'Internal Server Error' });
+  });
+  
+  
 });
