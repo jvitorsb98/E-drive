@@ -18,9 +18,12 @@
     </ng-template>
   </div>
   <div class="container-fluid home article-container">
-    <button (click)="toggleRead()" id="read-btn" aria-hidden="true">
-      <mat-icon>{{ isReading ? 'stop' : 'play_arrow' }}</mat-icon>
-    </button>
+    <div class="d-flex align-items-center">
+      <button (click)="toggleRead()" id="read-btn" aria-hidden="true">
+        <mat-icon>{{ isReading ? 'stop' : 'play_arrow' }}</mat-icon>
+      </button>
+      <span class="ms-2">{{ isReading ? 'Parar leitura' : 'Iniciar leitura' }}</span>
+    </div>
 
     <div class="container my-4" #fullContent>
       <h1>Dicas e Boas Práticas para Otimizar o Uso de Carros Elétricos.</h1>

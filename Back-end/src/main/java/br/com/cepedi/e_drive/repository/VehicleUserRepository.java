@@ -16,14 +16,17 @@ import org.springframework.data.repository.query.Param;
 public interface VehicleUserRepository extends JpaRepository<VehicleUser, Long> {
 
     /**
-     * Encontra todos os registros de {@link VehicleUser} associados a um usuário específico.
+     * Encontra todos os registros de {@link VehicleUser} associados a um usuário específico,
+     * filtrando apenas os veículos ativos.
      *
      * @param userId O identificador do usuário.
      * @param pageable Informações de paginação e ordenação.
-     * @return Uma página de registros de {@link VehicleUser} associados ao usuário especificado.
+     * @return Uma página de registros de {@link VehicleUser} ativos associados ao usuário especificado.
      */
-    @Query("SELECT vu FROM VehicleUser vu WHERE vu.user.id = :userId")
+    @Query("SELECT vu FROM VehicleUser vu WHERE vu.user.id = :userId AND vu.activated = true")
     Page<VehicleUser> findByUserId(@Param("userId") Long userId, Pageable pageable);
+
+
 
     /**
      * Encontra todos os registros de {@link VehicleUser} associados a um veículo específico.
