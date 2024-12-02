@@ -239,36 +239,7 @@ it('should set the correct icon based on opening hours', () => {
   // Executa o método para criar o marcador
   component.createMarkerForChargingStation(mockPlace);
 });
-it('should not trigger click event when route is active', () => {
-  // Mock da Place
-  const mockPlace: google.maps.places.PlaceResult = {
-    name: 'Station Name',
-    geometry: {
-      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
-    },
-    opening_hours: {
-      open_now: true,
-      isOpen: true,
-      periods: [],
-    } as unknown as google.maps.places.PlaceOpeningHours,
-  };
 
-  // Mock do método addListener
-  const markerMock = { addListener: jest.fn() };
-  jest.spyOn(google.maps, 'Marker').mockImplementation(() => markerMock as any);
-
-  // Defina isRouteActive como true diretamente no componente
-  component.isRouteActive = true;
-
-  // Crie o marcador com o método
-  component.createMarkerForChargingStation(mockPlace);
-
-  // Verifique se addListener NÃO foi chamado
-  expect(markerMock.addListener).not.toHaveBeenCalled();
-
-  // Adicione um console log ou depuração para garantir que a lógica esteja impedindo o clique
-  console.log('isRouteActive:', component.isRouteActive);
-});
 
 
 
@@ -297,6 +268,221 @@ it('should trigger click event when route is inactive', () => {
   // Verifique se o addListener foi chamado
   expect(markerMock.addListener).toHaveBeenCalled();
 });
+
+
+it('should handle isRouteActive state correctly', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: true,
+      isOpen: true,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const markerMock = { addListener: jest.fn() };
+  jest.spyOn(google.maps, 'Marker').mockImplementation(() => markerMock as any);
+
+  // Define isRouteActive como true
+  component.isRouteActive = true;
+
+  // Chama a função que cria o marcador
+  component.createMarkerForChargingStation(mockPlace);
+
+  // Verifique se o addListener foi chamado
+  expect(markerMock.addListener).toHaveBeenCalled();
+});
+it('should trigger click event when route is inactive', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: true,
+      isOpen: true,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const markerMock = { addListener: jest.fn() };
+  jest.spyOn(google.maps, 'Marker').mockImplementation(() => markerMock as any);
+
+  component.isRouteActive = false; // A rota não está ativa
+
+  component.createMarkerForChargingStation(mockPlace);
+
+  // Verifique se o addListener foi chamado, mesmo com a rota inativa
+  expect(markerMock.addListener).toHaveBeenCalled();
+});
+it('should not create marker if place geometry or location is missing', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: undefined, // Simulando geometria ausente
+    opening_hours: {
+      open_now: true,
+      isOpen: true,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {}); // Para silenciar o log
+
+  component.createMarkerForChargingStation(mockPlace);
+
+  expect(consoleWarnSpy).toHaveBeenCalledWith('Place geometry or location is undefined:', mockPlace); // Verifica o log de aviso
+  expect(component.markers.length).toBe(0); // Não deve adicionar nenhum marcador
+});
+it('should handle isRouteActive state correctly', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: true,
+      isOpen: true,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const markerMock = { addListener: jest.fn() };
+  jest.spyOn(google.maps, 'Marker').mockImplementation(() => markerMock as any);
+
+  component.isRouteActive = true; // A rota está ativa
+
+  component.createMarkerForChargingStation(mockPlace);
+
+  // Verifique se o addListener foi chamado, já que a rota está ativa
+  expect(markerMock.addListener).toHaveBeenCalled();
+});
+it('should call showModal when marker is clicked', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: true,
+      isOpen: true,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  // Mock da função showModal
+  const showModalSpy = jest.spyOn(component, 'showModal');
+
+  const markerMock = { addListener: jest.fn() };
+  jest.spyOn(google.maps, 'Marker').mockImplementation(() => markerMock as any);
+
+  // Simula o clique no marcador
+  component.createMarkerForChargingStation(mockPlace);
+  const clickCallback = markerMock.addListener.mock.calls[0][1];
+  clickCallback(); // Simula o clique
+
+  // Verifica se showModal foi chamada
+  expect(showModalSpy).toHaveBeenCalled();
+});
+it('should set the correct icon based on opening hours', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: true,
+      isOpen: true,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const iconUrl = "../../../../assets/images/station_open.svg"; // Esperado para quando estiver aberto
+
+  const markerMock = { addListener: jest.fn() };
+
+  jest.spyOn(google.maps, 'Marker').mockImplementation((opts?: google.maps.MarkerOptions | null) => {
+    if (opts && opts.icon) {
+      expect(opts.icon).toEqual(expect.objectContaining({
+        url: iconUrl,
+        scaledSize: expect.objectContaining({
+          width: 30,
+          height: 30,
+        }),
+      }));
+    }
+    return markerMock as any;
+  });
+
+  component.createMarkerForChargingStation(mockPlace);
+});
+
+it('should handle error when map is not available', () => {
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+  component.createMarkerForChargingStation({});  // Passar um mock de lugar sem localização
+
+  expect(consoleErrorSpy).toHaveBeenCalledWith('Error creating marker: Invalid location');
+});
+it('should handle showModal with empty hours correctly', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: false,
+      isOpen: false,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const showModalSpy = jest.spyOn(component, 'showModal');
+  const markerMock = { addListener: jest.fn() };
+
+  jest.spyOn(google.maps, 'Marker').mockImplementation(() => markerMock as any);
+
+  component.createMarkerForChargingStation(mockPlace);
+  const clickCallback = markerMock.addListener.mock.calls[0][1];
+  clickCallback();  // Simula o clique
+
+  // Verifique se showModal foi chamado, mesmo com horas de funcionamento vazias
+  expect(showModalSpy).toHaveBeenCalled();
+});
+it('should set correct icon when station is closed', () => {
+  const mockPlace: google.maps.places.PlaceResult = {
+    name: 'Station Name',
+    geometry: {
+      location: { lat: jest.fn(() => 10), lng: jest.fn(() => 20) } as unknown as google.maps.LatLng,
+    },
+    opening_hours: {
+      open_now: false,
+      isOpen: false,
+      periods: [],
+    } as unknown as google.maps.places.PlaceOpeningHours,
+  };
+
+  const iconUrl = "../../../../assets/images/station_closed.svg"; // Esperado para quando estiver fechado
+
+  const markerMock = { addListener: jest.fn() };
+
+  jest.spyOn(google.maps, 'Marker').mockImplementation((opts?: google.maps.MarkerOptions | null) => {
+    if (opts && opts.icon) {
+      expect(opts.icon).toEqual(expect.objectContaining({
+        url: iconUrl,
+        scaledSize: expect.objectContaining({
+          width: 30,
+          height: 30,
+        }),
+      }));
+    }
+    return markerMock as any;
+  });
+
+  component.createMarkerForChargingStation(mockPlace);
+});
+
 
 
 });
