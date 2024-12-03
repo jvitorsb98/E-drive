@@ -15,6 +15,7 @@ import { ModalFormVehicleBatteryComponent } from '../modal-form-vehicle-battery/
 
 // Importa a interface Step que representa uma etapa na rota
 import { Step } from '../../../../core/models/step';
+import { RouteService } from '../../../../core/services/trip-planner-maps/route/route.service';
 
 /**
  * @description Componente responsável pela funcionalidade de planejamento de viagem,
@@ -60,6 +61,7 @@ export class PlanningTripComponent implements AfterViewInit {
   constructor(
     private tripPlannerMapsService: TripPlannerMapsService,
     private mapService: MapService,
+    private routeService: RouteService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog
   ) { }
@@ -298,7 +300,7 @@ export class PlanningTripComponent implements AfterViewInit {
    */
   private calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
+      this.routeService.calculateRouteDistance(startLocation, destination)
         .then(({ steps, totalDistance }) => {
           this.stepsArray = steps; // Armazena os passos da rota
           this.totalDistance = Number(totalDistance); // Armazena a distância total
