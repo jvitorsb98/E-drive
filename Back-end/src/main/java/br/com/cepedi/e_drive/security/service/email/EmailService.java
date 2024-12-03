@@ -114,7 +114,7 @@ public class EmailService {
 
             emailSender.send(message);
 
-            DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Password Reset");
+            DataRegisterMail dataRegisterMail = new DataRegisterMail("edrivenavigatornavigator@gmail.com", email, htmlBody, "Password Reset");
             mailService.register(dataRegisterMail);
         }
 
@@ -148,7 +148,7 @@ public class EmailService {
 
         emailSender.send(message);
 
-        DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Activation Email");
+        DataRegisterMail dataRegisterMail = new DataRegisterMail("edrivenavigatornavigator@gmail.com", email, htmlBody, "Activation Email");
         mailService.register(dataRegisterMail);
     }
 
@@ -181,7 +181,7 @@ public class EmailService {
 
         emailSender.send(message);
 
-        DataRegisterMail dataRegisterMail = new DataRegisterMail("shoppingstoreclient@gmail.com", email, htmlBody, "Reactivation Email");
+        DataRegisterMail dataRegisterMail = new DataRegisterMail("edrivenavigatornavigator@gmail.com", email, htmlBody, "Reactivation Email");
         mailService.register(dataRegisterMail);
     }
 
