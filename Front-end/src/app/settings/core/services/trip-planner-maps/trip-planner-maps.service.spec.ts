@@ -1,306 +1,217 @@
 import { TestBed } from '@angular/core/testing';
 import { TripPlannerMapsService } from './trip-planner-maps.service';
+import { BatteryService } from './baterry/battery.service';
+import { FingChargingService } from './findCharging/fing-charging.service';
+import { Step } from '../../models/step';
 
 describe('TripPlannerMapsService', () => {
   let service: TripPlannerMapsService;
+  let batteryServiceMock: jest.Mocked<BatteryService>;
+  let findChargingServiceMock: jest.Mocked<FingChargingService>;
+
+  beforeAll(() => {
+    global.google = {
+        maps: {
+            geometry: {
+                spherical: {
+                    computeDistanceBetween: jest.fn((pointA, pointB) => 1000), // Retorna 1 km
+                    computeArea: jest.fn(),
+                    computeHeading: jest.fn(),
+                    computeLength: jest.fn(),
+                    computeOffset: jest.fn(),
+                    computeOffsetOrigin: jest.fn(),
+                    interpolate: jest.fn(),
+                    computeSignedArea: jest.fn(() => 0), // Mock de computeSignedArea
+                },
+                encoding: {
+                    decodePath: jest.fn(() => []),  // Mock de decodePath
+                    encodePath: jest.fn(() => '')  // Mock de encodePath
+                },
+                poly: {
+                    containsLocation: jest.fn(() => true), // Mock de containsLocation
+                    isLocationOnEdge: jest.fn(() => true), // Mock de isLocationOnEdge
+                },
+            },
+        },
+    } as any;
+});
+
+
+
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    const batteryMock = {
+      getBatteryHealth: jest.fn(),
+      getConsumptionEnergetic: jest.fn(),
+      getBatteryCapacity: jest.fn(),
+      calculateRealAutonomy: jest.fn(),
+      calculateBatteryConsumption: jest.fn(),
+    };
+
+    const chargingMock = {
+      findAllChargingStationsBetween: jest.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        TripPlannerMapsService,
+        { provide: BatteryService, useValue: batteryMock },
+        { provide: FingChargingService, useValue: chargingMock },
+      ],
+    });
+
     service = TestBed.inject(TripPlannerMapsService);
+    batteryServiceMock = TestBed.inject(BatteryService) as jest.Mocked<BatteryService>;
+    findChargingServiceMock = TestBed.inject(FingChargingService) as jest.Mocked<FingChargingService>;
   });
 
-  describe('getBatteryHealth', () => {
-    it('should return 100% when the provided battery health is given', () => {
-      const result = service.getBatteryHealth({ year: 2020 }, 90);
-      expect(result).toBe(90);
-    });
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
 
-    it('should calculate battery health based on the vehicle year', () => {
-      const currentYear = new Date().getFullYear();
-      const vehicleYear = currentYear - 5; // Vehicle with 5 years of use
-      const result = service.getBatteryHealth({ year: vehicleYear }, 0);
-      expect(result).toBeCloseTo(100 - 5 * 2.3, 1);
-    });
+  it('should complete the trip without stops if battery is sufficient', async () => {
+    const stepsArray: Step[] = [
+      { distance: 10, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+    ];
 
-    it('should return 0 when calculated health is negative', () => {
-      const result = service.getBatteryHealth({ year: 1900 }, 0);
-      expect(result).toBe(0);
-    });
-    it('should handle null vehicle year gracefully', () => {
-      const result = service.getBatteryHealth(null, 90);
-      expect(result).toBe(90); // No vehicle data, returns given health
-    });
+    batteryServiceMock.getBatteryHealth.mockReturnValue(100);
+    batteryServiceMock.getConsumptionEnergetic.mockReturnValue(15); // MJ/km
+    batteryServiceMock.getBatteryCapacity.mockReturnValue(50); // kWh
+    batteryServiceMock.calculateRealAutonomy.mockReturnValue(333); // km
+    batteryServiceMock.calculateBatteryConsumption.mockReturnValue(3); // %
+
+    const result = await service.calculateChargingStations(
+      {}, // selectedVehicle
+      50, // remainingBattery
+      100, // batteryHealth
+      stepsArray
+    );
+
+    expect(result.canCompleteTrip).toBe(true);
+    expect(result.canCompleteWithoutStops).toBe(true);
+    expect(result.chargingStationsMap.size).toBe(0);
+  });
+
+  it('should return false if battery is insufficient and no stations are found', async () => {
+    const stepsArray: Step[] = [
+      { distance: 200, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+    ];
+
+    batteryServiceMock.getBatteryHealth.mockReturnValue(100);
+    batteryServiceMock.getConsumptionEnergetic.mockReturnValue(15);
+    batteryServiceMock.getBatteryCapacity.mockReturnValue(50);
+    batteryServiceMock.calculateRealAutonomy.mockReturnValue(333);
+    batteryServiceMock.calculateBatteryConsumption.mockReturnValue(80); // Consome 80% da bateria para o percurso
+
+    findChargingServiceMock.findAllChargingStationsBetween.mockResolvedValue([]); // Sem estações
+
+    const result = await service.calculateChargingStations(
+      {},
+      20, // Apenas 20% de bateria restante
+      100,
+      stepsArray
+    );
+
+    expect(result.canCompleteTrip).toBe(false);
+    expect(result.chargingStationsMap.size).toBe(0);
+  });
+
+  it('should add charging station stops if battery is insufficient', async () => {
+    const stepsArray: Step[] = [
+      { distance: 100, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+      { distance: 100, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+    ];
   
-    it('should return 100 for a brand new vehicle', () => {
-      const currentYear = new Date().getFullYear();
-      const result = service.getBatteryHealth({ year: currentYear }, 100);
-      expect(result).toBe(100); // A new vehicle should have full battery health
-    });
-  });
-
-  describe('getConsumptionEnergetic', () => {
-    it('should return the vehicle energy consumption', () => {
-      const result = service.getConsumptionEnergetic({ userVehicle: { consumptionEnergetic: 15 } });
-      expect(result).toBe(15);
-    });
-
-    it('should return the correct energy consumption with different values', () => {
-      const result = service.getConsumptionEnergetic({ userVehicle: { consumptionEnergetic: 10 } });
-      expect(result).toBe(10);
-    });
-
-    it('should handle extremely low consumptionEnergetic values gracefully', () => {
-      const result = service.getConsumptionEnergetic({ userVehicle: { consumptionEnergetic: 0.01 } });
-      expect(result).toBe(0.01); // Very low energy consumption should be handled properly
-    });
+    const mockStation = {
+      station: { place_id: 'station1', name: 'Station 1', geometry: { location: { lat: 0, lng: 0 } } },
+      step: stepsArray[1],
+    };
   
-    it('should handle extremely high consumptionEnergetic values gracefully', () => {
-      const result = service.getConsumptionEnergetic({ userVehicle: { consumptionEnergetic: 1000 } });
-      expect(result).toBe(1000); // High energy consumption should not cause errors
-    });
-  });
-
-  describe('getBatteryCapacity', () => {
-    it('should return the vehicle battery capacity if provided', () => {
-      const result = service.getBatteryCapacity({ userVehicle: { batteryCapacity: 50 } }, 90);
-      expect(result).toBe(50);
-    });
-
-    it('should return the correct battery capacity for different vehicles', () => {
-      const result = service.getBatteryCapacity({ userVehicle: { batteryCapacity: 75 } }, 100);
-      expect(result).toBe(75);
-    });
-  });
-
-  describe('calculateRealAutonomy', () => {
-    it('should calculate the real autonomy in km', () => {
-      const result = service.calculateRealAutonomy(50, 15);
-      expect(result).toBeCloseTo(3.6 * (50 / 15), 1);
-    });
-
-    it('should calculate real autonomy with different consumption rates', () => {
-      const result = service.calculateRealAutonomy(100, 25); // 100 km battery, 25 consumption rate
-      expect(result).toBeCloseTo(3.6 * (100 / 25), 1);
-    });
-
-    it('should calculate real autonomy for very large values', () => {
-      const result = service.calculateRealAutonomy(1000, 20); // 1000 km battery, 20 consumption rate
-      expect(result).toBeCloseTo(3.6 * (1000 / 20), 1); // Expect large autonomy to be calculated correctly
-    });
+    batteryServiceMock.getBatteryHealth.mockReturnValue(100);
+    batteryServiceMock.getConsumptionEnergetic.mockReturnValue(15);
+    batteryServiceMock.getBatteryCapacity.mockReturnValue(50);
+    batteryServiceMock.calculateRealAutonomy.mockReturnValue(333);
+    batteryServiceMock.calculateBatteryConsumption.mockImplementation((distance: number) => distance * 0.3);
   
-    it('should calculate real autonomy for very small values', () => {
-      const result = service.calculateRealAutonomy(1, 0.1); // 1 km battery, 0.1 consumption rate
-      expect(result).toBeCloseTo(3.6 * (1 / 0.1), 1); // Expect very small autonomy to be calculated correctly
-    });
-  });
-
-  describe('calculateBatteryConsumption', () => {
-    it('should calculate battery consumption in percentage', () => {
-      const result = service.calculateBatteryConsumption(100, 300);
-      expect(result).toBeCloseTo((100 / 300) * 100, 1);
-    });
-    it('should calculate battery consumption in percentage for a given distance', () => {
-      const distance = 100; // km
-      const calculatedAutonomyReal = 200; // km
-      const result = service.calculateBatteryConsumption(distance, calculatedAutonomyReal);
-      expect(result).toBe(50); // 50% of battery
-    });
-
-    it('should calculate battery consumption with different distances and total autonomy', () => {
-      const result = service.calculateBatteryConsumption(50, 200); // 50 km out of 200 km total range
-      expect(result).toBe(25); // Expect 25% consumption
-    });
+    findChargingServiceMock.findAllChargingStationsBetween.mockResolvedValue([mockStation]);
   
-    it('should return 100% for zero distance', () => {
-      const result = service.calculateBatteryConsumption(0, 300);
-      expect(result).toBe(0); // No distance traveled means no consumption
-    });
-
-    it('should handle full battery (100%) correctly', () => {
-      const distance = 100; // km
-      const calculatedAutonomyReal = 100; // km
-      const result = service.calculateBatteryConsumption(distance, calculatedAutonomyReal);
-      expect(result).toBe(100); // 100% of the battery should be used for the full distance
-    });
+    const result = await service.calculateChargingStations(
+      {},
+      30, // Apenas 30% de bateria restante
+      100,
+      stepsArray
+    );
+  
+    console.log(result); // Diagnóstico detalhado
+    expect(result.canCompleteTrip).toBe(true); // Verifique as condições
+    expect(result.canCompleteWithoutStops).toBe(false);
+    expect(result.chargingStationsMap.size).toBe(1);
+    expect(result.chargingStationsMap.has(mockStation.station)).toBe(true);
   });
+  
 
-  describe('calculateBatteryStatus', () => {
-    it('should return that the trip cannot be completed due to insufficient battery', () => {
-      const steps = [{ distance: 100 }, { distance: 300 }];
-      const result = service.calculateBatteryStatus(
-        { userVehicle: { consumptionEnergetic: 15, batteryCapacity: 10 } },
-        50,
+  it('should skip a station if a further one is reachable', async () => {
+    const stepsArray: Step[] = [
+      { distance: 100, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+      { distance: 200, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+    ];
+  
+    const stations = [
+      { station: { place_id: 'station1', name: 'Station 1', geometry: { location: { lat: 0, lng: 0 } } }, step: stepsArray[0] },
+      { station: { place_id: 'station2', name: 'Station 2', geometry: { location: { lat: 0.0001, lng: 0.0001 } } }, step: stepsArray[1] },
+    ];
+  
+    batteryServiceMock.getBatteryHealth.mockReturnValue(100);
+    batteryServiceMock.getConsumptionEnergetic.mockReturnValue(15);
+    batteryServiceMock.getBatteryCapacity.mockReturnValue(50);
+    batteryServiceMock.calculateRealAutonomy.mockReturnValue(333);
+    batteryServiceMock.calculateBatteryConsumption.mockImplementation((distance: number) => distance * 0.3);
+  
+    findChargingServiceMock.findAllChargingStationsBetween.mockResolvedValue(stations);
+  
+    const result = await service.calculateChargingStations(
+      {},
+      60, // 60% de bateria restante
+      100,
+      stepsArray
+    );
+  
+    expect(result.canCompleteTrip).toBe(true);
+    expect(result.canCompleteWithoutStops).toBe(false);
+    expect(result.chargingStationsMap.size).toBe(1);
+    expect(result.chargingStationsMap.has(stations[1].station)).toBe(true); // Verificando se a estação mais distante foi escolhida
+  });
+  
+
+  it('should correctly calculate stops for a long trip with multiple stations', async () => {
+    const stepsArray: Step[] = [
+        { distance: 100, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+        { distance: 150, path: [], duration: '', instructions: '', travelMode: '', maneuver: '', roadType: '' },
+    ];
+
+    const stations = [
+        { station: { place_id: 'station1', name: 'Station 1', geometry: { location: { lat: 0, lng: 0 } } }, step: stepsArray[0] },
+        { station: { place_id: 'station2', name: 'Station 2', geometry: { location: { lat: 0, lng: 0 } } }, step: stepsArray[1] },
+    ];
+
+    batteryServiceMock.getBatteryHealth.mockReturnValue(100);
+    batteryServiceMock.getConsumptionEnergetic.mockReturnValue(0.41);
+    batteryServiceMock.calculateRealAutonomy.mockReturnValue(280);
+    batteryServiceMock.calculateBatteryConsumption.mockImplementation((distance) => distance * 0.3);
+
+    findChargingServiceMock.findAllChargingStationsBetween.mockResolvedValue(stations);
+
+    const result = await service.calculateChargingStations(
+        {}, // selectedVehicle
+        40, // remainingBattery
         100,
-        steps
-      );
-      expect(result.canCompleteTrip).toBe(false);
-      expect(result.batteryPercentageAfterTrip).toBe(0);
-    });
-
-    it('should not complete the trip with insufficient battery', () => {
-      const selectedVehicle = {
-        userVehicle: {
-          consumptionEnergetic: 20,
-          autonomyElectricMode: 100,
-          batteryCapacity: 50,
-        },
-      };
-      const remainingBattery = 10;
-      const batteryHealth = 100;
-      const stepsArray = [
-        { distance: 50 }, // km
-        { distance: 30 },
-      ];
-
-      const result = service.calculateBatteryStatus(
-        selectedVehicle,
-        remainingBattery,
-        batteryHealth,
         stepsArray
-      );
+    );
 
-      expect(result.canCompleteTrip).toBe(false);
-      expect(result.batteryPercentageAfterTrip).toBe(0);
-    });
+    expect(result.canCompleteTrip).toBe(true);
+    expect(result.chargingStationsMap.size).toBe(1);
+    expect(result.chargingStationsMap.has(stations[0].station)).toBe(true); // Station 1 chosen
+    expect(result.chargingStationsMap.has(stations[1].station)).toBe(false);  // Station 2 skipped
+});
 
-    it('should calculate the battery status for a trip with multiple steps', () => {
-      const steps = [{ distance: 100 }, { distance: 50 }, { distance: 150 }];
-      const result = service.calculateBatteryStatus(
-        { userVehicle: { consumptionEnergetic: 15, batteryCapacity: 50 } },
-        100,
-        100,
-        steps
-      );
-      expect(result.canCompleteTrip).toBe(false);
-      expect(result.batteryPercentageAfterTrip).toBe(0);
-    });
-
-    it('should return that the trip can be completed if no steps are provided', () => {
-      const result = service.calculateBatteryStatus(
-        { userVehicle: { consumptionEnergetic: 15, batteryCapacity: 50 } },
-        100,
-        100,
-        [] // No steps
-      );
-      expect(result.canCompleteTrip).toBe(true);
-      expect(result.batteryPercentageAfterTrip).toBe(100); // Full battery left
-    });
-  });
-
-  describe('getBatteryHealth', () => {
-    it('should return the given battery health if provided', () => {
-      const selectedVehicle = { year: 2018 };
-      const batteryHealth = 85;
-
-      const result = service.getBatteryHealth(selectedVehicle, batteryHealth);
-
-      expect(result).toBe(85);
-    });
-  });
-
-  describe('calculateBatteryConsumption', () => {
-    it('should calculate correct battery consumption for a given distance', () => {
-      const distance = 100; // km
-      const calculatedAutonomyReal = 200; // km
-
-      const result = service.calculateBatteryConsumption(distance, calculatedAutonomyReal);
-
-      expect(result).toBe(50); // 50% of battery
-    });
-  });
-
-
-  describe('getBatteryHealth', () => {
-    it('should return the given battery health if provided', () => {
-      const selectedVehicle = { year: 2018 };
-      const batteryHealth = 85;
-      const result = service.getBatteryHealth(selectedVehicle, batteryHealth);
-      expect(result).toBe(85);
-    });
-
-    it('should calculate battery health based on the vehicle year', () => {
-      const currentYear = new Date().getFullYear();
-      const vehicleYear = currentYear - 5; // Vehicle with 5 years of use
-      const result = service.getBatteryHealth({ year: vehicleYear }, 0);
-      expect(result).toBeCloseTo(100 - 5 * 2.3, 1); // Assumed decay rate per year
-    });
-
-    it('should return 0 when calculated health is negative', () => {
-      const result = service.getBatteryHealth({ year: 1900 }, 0);
-      expect(result).toBe(0); // Vehicle too old, negative health becomes 0
-    });
-  });
-
-  describe('getConsumptionEnergetic', () => {
-    it('should return the vehicle energy consumption', () => {
-      const result = service.getConsumptionEnergetic({ userVehicle: { consumptionEnergetic: 15 } });
-      expect(result).toBe(15);
-    });
-  });
-
-  describe('getBatteryCapacity', () => {
-    it('should return the vehicle battery capacity if provided', () => {
-      const result = service.getBatteryCapacity({ userVehicle: { batteryCapacity: 50 } }, 90);
-      expect(result).toBe(50);
-    });
-
-  });
-
-  describe('calculateRealAutonomy', () => {
-    it('should calculate the real autonomy in km', () => {
-      const result = service.calculateRealAutonomy(50, 15); // 50 km battery, 15 consumption rate
-      expect(result).toBeCloseTo(3.6 * (50 / 15), 1);
-    });
-  });
-
-  describe('calculateBatteryConsumption', () => {
-    it('should calculate battery consumption in percentage', () => {
-      const result = service.calculateBatteryConsumption(100, 300); // 100 km, 300 km total range
-      expect(result).toBeCloseTo((100 / 300) * 100, 1); // Expect 33.33%
-    });
-
-  });
-
-  describe('calculateBatteryStatus', () => {
-    it('should return that the trip cannot be completed due to insufficient battery', () => {
-      const steps = [{ distance: 100 }, { distance: 300 }];
-      const result = service.calculateBatteryStatus(
-        { userVehicle: { consumptionEnergetic: 15, batteryCapacity: 10 } },
-        50,
-        100,
-        steps
-      );
-      expect(result.canCompleteTrip).toBe(false);
-      expect(result.batteryPercentageAfterTrip).toBe(0);
-    });
-
-    it('should not complete the trip if the remaining battery is too low', () => {
-      const selectedVehicle = {
-        userVehicle: {
-          consumptionEnergetic: 20,
-          autonomyElectricMode: 100,
-          batteryCapacity: 50,
-        },
-      };
-      const remainingBattery = 10;
-      const batteryHealth = 100;
-      const stepsArray = [
-        { distance: 50 }, // km
-        { distance: 30 },
-      ];
-
-      const result = service.calculateBatteryStatus(
-        selectedVehicle,
-        remainingBattery,
-        batteryHealth,
-        stepsArray
-      );
-
-      expect(result.canCompleteTrip).toBe(false);
-      expect(result.batteryPercentageAfterTrip).toBe(0);
-    });
-
-  });
-
-  
 });
