@@ -28,6 +28,7 @@ import { numberValidator } from '../../../../shared/validators/number-validator'
 
 // Operadores RxJS para manipulação de observables
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { BatteryService } from '../../../../core/services/trip-planner-maps/baterry/battery.service';
 
 
 /**
@@ -76,6 +77,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
     private userVehicleService: UserVehicleService,
     private vehicleService: VehicleService,
     private dialog: MatDialog,
+    private batteryService: BatteryService,
     private alertasService: AlertasService,
     private tripPlannerMapsService: TripPlannerMapsService,
     public dialogRef: MatDialogRef<ModalFormVehicleBatteryComponent>,
@@ -286,7 +288,7 @@ export class ModalFormVehicleBatteryComponent implements OnInit {
 
       // Verifica se o modo é "estação" e se a saúde da bateria não foi informada (assume 100%)
       if (this.data.isStation) {
-        const { canCompleteTrip, batteryPercentageAfterTrip } = this.tripPlannerMapsService.calculateBatteryStatus(
+        const { canCompleteTrip, batteryPercentageAfterTrip } = this.batteryService.calculateBatteryStatus(
           formValue.selectedVehicle,
           remainingBattery,
           batteryHealth,

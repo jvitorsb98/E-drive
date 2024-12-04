@@ -27,6 +27,7 @@ import { LocationService } from '../../../../core/services/apis/location/locatio
 
 // Importa o componente do modal para seleção de endereços
 import { ModalSelectAddressComponent } from '../modal-select-address/modal-select-address.component';
+import { RouteService } from '../../../../core/services/trip-planner-maps/route/route.service';
 
 /**
  * Componente responsável por exibir e gerenciar um mapa com estações de carregamento elétrico.
@@ -86,6 +87,7 @@ export class MapStationsComponent implements AfterViewInit {
     private tripPlannerMapsService: TripPlannerMapsService,
     private geocodingService: GeocodingService,
     private mapService: MapService,
+    private routeService: RouteService,
     private locationService: LocationService,
     private dialog: MatDialog
   ) {
@@ -403,7 +405,7 @@ export class MapStationsComponent implements AfterViewInit {
  */
   calculateRouteDistance(startLocation: google.maps.LatLng, destination: google.maps.LatLng): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.tripPlannerMapsService.calculateRouteDistance(startLocation, destination)
+      this.routeService.calculateRouteDistance(startLocation, destination)
         .then(({ steps, totalDistance }) => {
           this.stepsArray = steps; // Atualiza o array de passos
           this.modalDistance = totalDistance; // Exibe a distância total
