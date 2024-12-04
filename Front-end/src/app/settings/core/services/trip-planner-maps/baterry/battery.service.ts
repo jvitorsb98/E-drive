@@ -64,7 +64,8 @@ export class BatteryService {
   }
 
   calculateBatteryConsumption(distance: number, calculatedAutonomyReal: number): number {
-    return (distance / calculatedAutonomyReal) * 100; // Porcentagem de consumo de bateria
+    const consumption = (distance / calculatedAutonomyReal) * 100;
+    return consumption > 0 ? consumption : 0;  // Retorna 0 se o consumo for negativo ou zero
   }
 
 }
