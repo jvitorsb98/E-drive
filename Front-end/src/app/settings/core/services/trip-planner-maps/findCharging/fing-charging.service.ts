@@ -36,28 +36,28 @@ export class FingChargingService {
 
 // Método para buscar todas as estações de carregamento entre o ponto de partida e o ponto de chegada
 async findAllChargingStationsBetween(stepsArray: Step[]): Promise<any[]> {
-const allChargingStations: any[] = [];
-console.log(stepsArray);
+  const allChargingStations: any[] = [];
+  console.log(stepsArray);
 
-// Cria uma lista de promessas para buscar as estações de carregamento em paralelo
-const chargingStationsPromises = stepsArray.map(async (step) => {
-  const chargingStation = await this.findChargingStationWithinDistance([step], 5);
+  // Cria uma lista de promessas para buscar as estações de carregamento em paralelo
+  const chargingStationsPromises = stepsArray.map(async (step) => {
+    const chargingStation = await this.findChargingStationWithinDistance([step], 5);
 
-  // Verifica se encontrou uma estação de carregamento e se não há duplicata
-  if (chargingStation && !allChargingStations.some(station => station.place_id === chargingStation.place_id)) {
-    // Retorna a estação de carregamento com o passo correspondente
-    return { station: chargingStation, step };
-  }
+    // Verifica se encontrou uma estação de carregamento e se não há duplicata
+    if (chargingStation && !allChargingStations.some(station => station.place_id === chargingStation.place_id)) {
+      // Retorna a estação de carregamento com o passo correspondente
+      return { station: chargingStation, step };
+    }
 
-  // Retorna null caso não encontre uma estação ou já exista duplicata
-  return null;
-});
+    // Retorna null caso não encontre uma estação ou já exista duplicata
+    return null;
+  });
 
-// Aguarda a resolução de todas as promessas
-const results = await Promise.all(chargingStationsPromises);
+  // Aguarda a resolução de todas as promessas
+  const results = await Promise.all(chargingStationsPromises);
 
-// Filtra os resultados para remover os valores nulos
-return results.filter(result => result !== null);
+  // Filtra os resultados para remover os valores nulos
+  return results.filter(result => result !== null);
 }
 
 

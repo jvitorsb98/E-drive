@@ -38,9 +38,10 @@ export class TripPlannerMapsService {
     let canCompleteWithoutStops = true;
 
     let distanciaRestante: number = stepsArray.reduce((total, step) => total + step.distance, 0);
-
+    console.log("distancia restante " + distanciaRestante)
+    console.log("calculatedAutonomyReal" + calculatedAutonomyReal)
     const totalBatteryConsumption = this.batteryService.calculateBatteryConsumption(distanciaRestante, calculatedAutonomyReal);
-    
+
     // Verifica se a bateria restante é suficiente para completar a viagem
     if (currentBatteryPercentage >= totalBatteryConsumption) {
         console.log("A viagem pode ser completada sem paradas.");

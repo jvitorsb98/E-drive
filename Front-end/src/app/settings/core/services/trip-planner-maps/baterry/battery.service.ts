@@ -35,7 +35,6 @@ export class BatteryService {
       batteryPercentageAfterTrip: Math.max(batteryPercentageAfterTrip, 0)
     };
   }
-
   // Submétodos para modularizar a lógica de cálculo da bateria
 
   getBatteryHealth(selectedVehicle: any, batteryHealth: number): number {
