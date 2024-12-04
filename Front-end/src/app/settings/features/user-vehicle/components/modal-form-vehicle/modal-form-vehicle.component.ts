@@ -105,7 +105,7 @@ export class ModalFormVehicleComponent implements OnInit {
         console.log(selectedVehicle)
         this.userVehicleForm.patchValue({
           autonomyElectricMode: averageStats.avgAutonomyElectricMode,
-          batteryCapacity: Number(((averageStats.avgAutonomyElectricMode * 3.6) / Number(this.userVehicleForm.get('consumptionEnergetic')?.value)).toFixed(2))
+          batteryCapacity: Number((( Number(this.userVehicleForm.get('consumptionEnergetic')?.value) / 3.6) * averageStats.avgAutonomyElectricMode ).toFixed(2))
         });
         this.isAutonomyGeneratedByAverage = true;
       },
@@ -273,10 +273,8 @@ export class ModalFormVehicleComponent implements OnInit {
       this.userVehicleForm.get('autonomyElectricMode')?.setValue(selectedVehicle.autonomy.autonomyElectricMode);
     }
 
-    const consumptionEnergetic = Number(selectedVehicle.autonomy.consumptionEnergetic);
-    const autonomyElectricMode = Number(selectedVehicle.autonomy.autonomyElectricMode);
 
-    if (Number(selectedVehicle.autonomy.autonomyElectricMode) != null) {
+    if (selectedVehicle.autonomy.autonomyElectricMode == null) {
       this.loadAverageAutonomy(selectedVehicle);
     }
 
@@ -297,7 +295,7 @@ export class ModalFormVehicleComponent implements OnInit {
       const formData = this.userVehicleForm.value;
 
       if (formData.batteryCapacity == null) {
-        formData.batteryCapacity = (Number(formData.consumptionEnergetic) * 3.6) / Number(formData.autonomyElectricMode)
+        formData.batteryCapacity = (Number(formData.consumptionEnergetic) / 3.6) * Number(formData.autonomyElectricMode)
       } else if (formData.autonomyElectricMode == null) {
         formData.autonomyElectricMode = Number(formData.batteryCapacity) / (Number(formData.consumptionEnergetic) * 3.6)
       }
