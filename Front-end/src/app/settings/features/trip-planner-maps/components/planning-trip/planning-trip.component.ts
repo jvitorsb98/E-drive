@@ -216,7 +216,6 @@ export class PlanningTripComponent implements AfterViewInit {
   * @returns {void}
   */
   private addChargingStationMarkers(chargingStations: any[]) {
-    console.log("OLA", chargingStations);
 
     try {
       chargingStations.forEach((station: any) => {

@@ -276,6 +276,10 @@ export class ModalFormVehicleComponent implements OnInit {
 
     if (selectedVehicle.autonomy.autonomyElectricMode == null) {
       this.loadAverageAutonomy(selectedVehicle);
+    }else{
+      this.userVehicleForm.patchValue({
+        batteryCapacity: Number((( Number(this.userVehicleForm.get('consumptionEnergetic')?.value) / 3.6) * selectedVehicle.autonomy.autonomyElectricMode ).toFixed(2))
+      });
     }
 
 
