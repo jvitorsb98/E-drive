@@ -58,7 +58,7 @@ async findAllChargingStationsBetween(stepsArray: Step[]): Promise<any[]> {
 
   // Busca estações em cada substep
   const chargingStationsPromises = allSubsteps.map(async (substep, index) => {
-    const chargingStation = await this.findChargingStationWithinDistance([substep], 25);
+    const chargingStation = await this.findChargingStationWithinDistance([substep], 20);
 
     if (chargingStation) {
       const stationExists = allChargingStations.some(station => station.station.place_id === chargingStation.place_id);
