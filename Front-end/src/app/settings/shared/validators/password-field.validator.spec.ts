@@ -6,19 +6,11 @@ describe('PasswordFieldValidator', () => {
   let elementRef: ElementRef;
 
   beforeEach(() => {
-    // Mock do Renderer2
-    renderer = {
-      listen: jest.fn(),
-      addClass: jest.fn(),
-      removeClass: jest.fn(),
-      setAttribute: jest.fn(),
-    } as unknown as Renderer2;
-
-    // Mock do ElementRef
+    // Mock do ElementRef com estrutura HTML
     const mockElement = document.createElement('div');
     mockElement.innerHTML = `
-      <input class="password-input" />
-      <input class="confirm-password-input" />
+      <input type="password" class="password-input" />
+      <input type="password" class="confirm-password-input" />
       <i class="password-eye-icon"></i>
       <i class="confirm-password-eye-icon"></i>
       <ul class="requirement-list">
@@ -29,7 +21,34 @@ describe('PasswordFieldValidator', () => {
         <li><span></span> Pelo menos 1 letra maiúscula</li>
       </ul>
     `;
-    elementRef = { nativeElement: mockElement } as ElementRef;
+    elementRef = { nativeElement: mockElement };
+
+    // Mock do Renderer2
+    renderer = {
+      listen: jest.fn((_, __, handler) => handler),
+      setAttribute: jest.fn(),
+      addClass: jest.fn(),
+      removeClass: jest.fn(),
+    } as unknown as Renderer2;
+  });
+
+  it('deve validar os requisitos da senha ao digitar', () => {
+    PasswordFieldValidator.initializePasswordField(renderer, elementRef);
+
+    const passwordInput = elementRef.nativeElement.querySelector('.password-input');
+    const requirementList = elementRef.nativeElement.querySelectorAll('.requirement-list li');
+
+    // Simula a digitação na senha
+    const keyupHandler = (renderer.listen as jest.Mock).mock.calls.find(call => call[1] === 'keyup')[2];
+    passwordInput.value = 'Abc1@xyz';
+    keyupHandler({ target: passwordInput });
+
+    // Verifica se os requisitos foram validados
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementList[0], 'valid'); // Mínimo de 8 caracteres
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementList[1], 'valid'); // Pelo menos 1 número
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementList[2], 'valid'); // Pelo menos 1 letra minúscula
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementList[3], 'valid'); // Pelo menos 1 caractere especial
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementList[4], 'valid'); // Pelo menos 1 letra maiúscula
   });
 
   it('deve validar os requisitos da senha corretamente', () => {
@@ -38,75 +57,98 @@ describe('PasswordFieldValidator', () => {
     const passwordInput = elementRef.nativeElement.querySelector('.password-input');
     const requirementItems = elementRef.nativeElement.querySelectorAll('.requirement-list li');
 
-    // Simula o estado inicial do DOM
-    requirementItems.forEach((item: { classList: { remove: (arg0: string) => void; }; firstElementChild: any; }) => {
-      item.classList.remove('valid');
-      renderer.setAttribute(item.firstElementChild, 'class', 'bi bi-bag-x-fill');
-    });
+    // Simula a digitação no campo de senha
+    const keyupHandler = (renderer.listen as jest.Mock).mock.calls.find(call => call[0] === passwordInput && call[1] === 'keyup')[2];
 
-    // Simula a digitação de uma senha válida
-    const event = new KeyboardEvent('keyup', { bubbles: true });
-    passwordInput.value = 'Senha123!';
-    passwordInput.dispatchEvent(event);
+    // Mock do evento keyup com valor que NÃO atende os requisitos
+    keyupHandler({ target: { value: 'abc' } });
 
-    // Verifica se os requisitos foram validados
-    expect(renderer.addClass).toHaveBeenNthCalledWith(1, requirementItems[0], 'valid'); // 8 caracteres
-    expect(renderer.addClass).toHaveBeenNthCalledWith(2, requirementItems[1], 'valid'); // Pelo menos 1 número
-    expect(renderer.addClass).toHaveBeenNthCalledWith(3, requirementItems[2], 'valid'); // Pelo menos 1 letra minúscula
-    expect(renderer.addClass).toHaveBeenNthCalledWith(4, requirementItems[3], 'valid'); // Pelo menos 1 caractere especial
-    expect(renderer.addClass).toHaveBeenNthCalledWith(5, requirementItems[4], 'valid'); // Pelo menos 1 letra maiúscula
+    // Verifica se as classes 'valid' foram REMOVIDAS dos requisitos inválidos
+    expect(renderer.removeClass).toHaveBeenCalledWith(requirementItems[0], 'valid'); // 8 caracteres
+    expect(renderer.removeClass).toHaveBeenCalledWith(requirementItems[1], 'valid'); // Pelo menos 1 número
+    expect(renderer.removeClass).toHaveBeenCalledWith(requirementItems[4], 'valid'); // Pelo menos 1 letra maiúscula
+
+    // Verifica se os ícones foram alterados para 'bi-bag-x-fill'
+    expect(renderer.setAttribute).toHaveBeenCalledWith(
+      requirementItems[0].firstElementChild,
+      'class',
+      'bi bi-bag-x-fill'
+    );
+    expect(renderer.setAttribute).toHaveBeenCalledWith(
+      requirementItems[1].firstElementChild,
+      'class',
+      'bi bi-bag-x-fill'
+    );
+    expect(renderer.setAttribute).toHaveBeenCalledWith(
+      requirementItems[4].firstElementChild,
+      'class',
+      'bi bi-bag-x-fill'
+    );
+
+    // Mock do evento keyup com valor que ATENDE os requisitos
+    keyupHandler({ target: { value: 'Abc123$%' } });
+
+    // Verifica se as classes 'valid' foram ADICIONADAS aos requisitos válidos
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementItems[0], 'valid'); // 8 caracteres
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementItems[1], 'valid'); // Pelo menos 1 número
+    expect(renderer.addClass).toHaveBeenCalledWith(requirementItems[4], 'valid'); // Pelo menos 1 letra maiúscula
+
+    // Verifica se os ícones foram alterados para 'bi-check-circle-fill'
+    expect(renderer.setAttribute).toHaveBeenCalledWith(
+      requirementItems[0].firstElementChild,
+      'class',
+      'bi bi-check-circle-fill'
+    );
+    expect(renderer.setAttribute).toHaveBeenCalledWith(
+      requirementItems[1].firstElementChild,
+      'class',
+      'bi bi-check-circle-fill'
+    );
+    expect(renderer.setAttribute).toHaveBeenCalledWith(
+      requirementItems[4].firstElementChild,
+      'class',
+      'bi bi-check-circle-fill'
+    );
   });
 
-  it('deve alternar a visibilidade da senha corretamente', () => {
+
+  it('deve alternar a visibilidade da senha', () => {
     PasswordFieldValidator.initializePasswordField(renderer, elementRef);
 
     const passwordInput = elementRef.nativeElement.querySelector('.password-input');
     const passwordEyeIcon = elementRef.nativeElement.querySelector('.password-eye-icon');
 
-    // Simula o estado inicial do DOM
-    passwordInput.classList.add('hidden-text'); // Inicia com senha oculta
-    renderer.setAttribute(passwordEyeIcon, 'class', 'bi bi-eye');
+    // Simula o clique no ícone de visibilidade
+    const clickHandler = (renderer.listen as jest.Mock).mock.calls.find(call => call[1] === 'click')[2];
+    passwordInput.classList.toggle = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
 
-    // Simula o clique no ícone de olho
-    passwordEyeIcon.dispatchEvent(new Event('click'));
-
-    // Verifica se a classe de visibilidade foi alterada
-    expect(passwordInput.classList.contains('hidden-text')).toBeFalsy(); // Deve remover a classe
-    expect(renderer.setAttribute).toHaveBeenCalledWith(passwordEyeIcon, 'class', 'bi bi-eye');
-
-    // Simula outro clique no ícone de olho
-    passwordInput.classList.remove('hidden-text');
-    passwordEyeIcon.dispatchEvent(new Event('click'));
-
-    // Verifica se a classe de visibilidade foi alternada novamente
-    expect(passwordInput.classList.contains('hidden-text')).toBeTruthy(); // Deve adicionar a classe
+    clickHandler();
+    expect(passwordInput.classList.toggle).toHaveBeenCalledWith('hidden-text');
     expect(renderer.setAttribute).toHaveBeenCalledWith(passwordEyeIcon, 'class', 'bi bi-eye-slash-fill');
+
+    clickHandler();
+    expect(passwordInput.classList.toggle).toHaveBeenCalledWith('hidden-text');
+    expect(renderer.setAttribute).toHaveBeenCalledWith(passwordEyeIcon, 'class', 'bi bi-eye');
   });
 
-  it('deve alternar a visibilidade da confirmação de senha corretamente', () => {
+  it('deve alternar a visibilidade da confirmação de senha', () => {
     PasswordFieldValidator.initializePasswordField(renderer, elementRef);
 
     const confirmPasswordInput = elementRef.nativeElement.querySelector('.confirm-password-input');
     const confirmPasswordEyeIcon = elementRef.nativeElement.querySelector('.confirm-password-eye-icon');
 
-    // Simula o estado inicial do DOM
-    confirmPasswordInput.classList.add('hidden-text'); // Inicia com senha oculta
-    renderer.setAttribute(confirmPasswordEyeIcon, 'class', 'bi bi-eye');
+    // Simula o clique no ícone de visibilidade
+    const clickHandler = (renderer.listen as jest.Mock).mock.calls.find(call => call[0] === confirmPasswordEyeIcon && call[1] === 'click')[2];
+    confirmPasswordInput.classList.toggle = jest.fn().mockReturnValueOnce(true).mockReturnValueOnce(false);
 
-    // Simula o clique no ícone de olho para confirmação de senha
-    confirmPasswordEyeIcon.dispatchEvent(new Event('click'));
-
-    // Verifica se a classe de visibilidade foi alterada
-    expect(confirmPasswordInput.classList.contains('hidden-text')).toBeFalsy();
-    expect(renderer.setAttribute).toHaveBeenCalledWith(confirmPasswordEyeIcon, 'class', 'bi bi-eye');
-
-    // Simula outro clique no ícone de olho para confirmação de senha
-    confirmPasswordInput.classList.remove('hidden-text');
-    confirmPasswordEyeIcon.dispatchEvent(new Event('click'));
-
-    // Verifica se a classe de visibilidade foi alternada novamente
-    expect(confirmPasswordInput.classList.contains('hidden-text')).toBeTruthy();
+    // Primeiro clique
+    clickHandler();
+    expect(confirmPasswordInput.classList.toggle).toHaveBeenCalledWith('hidden-text');
     expect(renderer.setAttribute).toHaveBeenCalledWith(confirmPasswordEyeIcon, 'class', 'bi bi-eye-slash-fill');
-  });
 
+    // Segundo clique
+    clickHandler();
+    expect(confirmPasswordInput.classList.toggle).toHaveBeenCalledWith('hidden-text');
+    expect(renderer.setAttribute).toHaveBeenCalledWith(confirmPasswordEyeIcon, 'class', 'bi bi-eye');
+  });
 });

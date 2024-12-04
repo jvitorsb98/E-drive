@@ -97,4 +97,25 @@ describe('Email Does Not Exist Validator', () => {
       done();
     });
   });
+
+  it('should return null if the control value is empty', (done) => {
+    const control = new FormControl('');
+
+    const validator = emailnoExistsValidator(mockUserService);
+    (validator(control) as Observable<null>).subscribe((result) => {
+      expect(result).toBeNull();
+      done();
+    });
+  });
+
+  it('should return null if the control value is null', (done) => {
+    const control = new FormControl(null);
+
+    const validator = emailnoExistsValidator(mockUserService);
+    (validator(control) as Observable<null>).subscribe((result) => {
+      expect(result).toBeNull();
+      done();
+    });
+  });
+
 });
