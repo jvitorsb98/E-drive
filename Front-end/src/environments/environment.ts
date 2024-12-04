@@ -6,5 +6,5 @@
 export const environment = {
   production: false,
   apiUrl: '/api/backend', 
-  googleMapsApiKey: 'AIzaSyCVzPB0CvNAoAR96FJ0pPrlQBXcO4v9yZs' // Substitua pela chave de API
+  googleMapsApiKey: 'AIzaSyAqc5PG3FrkaRF8xxdIYhaDe2qqFyGzm0Y' // Substitua pela chave de API
 };
