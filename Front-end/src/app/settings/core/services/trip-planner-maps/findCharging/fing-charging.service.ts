@@ -77,8 +77,25 @@ async findAllChargingStationsBetween(stepsArray: Step[]): Promise<any[]> {
   await Promise.all(chargingStationsPromises);
 
   // Ordenar as estações pela distância acumulada
+// Ordena as estações pelo accumulatedDistance
   allChargingStations.sort((a, b) => a.accumulatedDistance - b.accumulatedDistance);
 
+  // Calcula as distâncias entre as estações
+  for (let i = 0; i < allChargingStations.length - 1; i++) {
+    const currentStation = allChargingStations[i];
+    const nextStation = allChargingStations[i + 1];
+    
+    // Distância até a próxima estação
+    const distanceToNext = nextStation.accumulatedDistance - currentStation.accumulatedDistance;
+    
+    // Adiciona a distância calculada na estação atual
+    currentStation.distanceToNext = distanceToNext;
+  }
+
+  // A última estação não tem próxima, define como 0 ou nulo
+  if (allChargingStations.length > 0) {
+    allChargingStations[allChargingStations.length - 1].distanceToNext = null;
+  }
   console.log(allChargingStations);
   return allChargingStations;
 }
