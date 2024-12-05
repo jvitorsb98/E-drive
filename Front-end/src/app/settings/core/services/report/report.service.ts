@@ -33,5 +33,18 @@ export class ReportService {
       responseType: 'blob' // Indica que a resposta será do tipo binário
     });
   }
+
+  /**
+ * Método para obter o relatório de carros com a maior autonomia elétrica
+ * Faz uma requisição HTTP GET e retorna um Blob contendo o arquivo do relatório
+ * @returns Observable<Blob> - Resposta com o arquivo em formato binário
+ */
+  getHighestElectricAutonomyCarsReport(): Observable<Blob> {
+    return this.http.get(`${this.reportUrl}/highest-electric-autonomy-cars`, {
+      responseType: 'blob' // Indica que a resposta será do tipo binário
+    });
+  }
+
+
 }
 

@@ -19,13 +19,15 @@ export class ReportGeneratorComponent {
   noReportFound: boolean = false; // Indica se nenhum relatório foi encontrado
   reports = [ // Lista mockada de relatórios
     { id: 1, name: 'Relatório de Carros Mais Registrados' },
-    { id: 2, name: 'Relatório de Endereços de Usuários' },
+    { id: 2, name: 'Relatório de Autonomia de Veículos' },
     { id: 3, name: 'Relatório de Logs de Auditoria' },
     { id: 4, name: 'Relatório de Autonomia de Veículos' },
     { id: 5, name: 'Relatório de Veículos por Categoria' },
     { id: 6, name: 'Relatório de Usuários Mais Ativos' },
     { id: 7, name: 'Relatório de Viagens Realizadas' },
     { id: 8, name: 'Relatório de Viagens por Carro' },
+    { id: 9, name: 'Relatório de Viagens por Usuário' },
+    { id: 10, name: 'Relatório de Endereços de Usuários' },
   ];
   filteredReports: Observable<{ id: number; name: string }[]> = of([]); // Lista de relatórios filtrada para o autocomplete
 
@@ -95,6 +97,9 @@ export class ReportGeneratorComponent {
       case 1:
         this.loadMostRegisteredCarsReport();
         break;
+      case 2:
+        this.loadHighestElectricAutonomyCarsReport();
+        break;
       default:
         this.alertService.showWarning('Relatório não encontrado', 'O relatório selecionado não foi encontrado.');
     }
@@ -109,6 +114,17 @@ export class ReportGeneratorComponent {
       error: (err) => console.error('Erro ao gerar relatório:', err)
     });
   }
+
+  /**
+ * @description Carrega o relatório de carros com a maior autonomia elétrica.
+ */
+  loadHighestElectricAutonomyCarsReport() {
+    this.reportService.getHighestElectricAutonomyCarsReport().subscribe({
+      next: (data) => this.openInNewTab(data),
+      error: (err) => console.error('Erro ao gerar relatório:', err)
+    });
+  }
+
 
   /**
    * @description Abre o relatório em uma nova aba do navegador.

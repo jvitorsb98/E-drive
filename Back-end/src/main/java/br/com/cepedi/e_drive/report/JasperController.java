@@ -65,5 +65,39 @@ public class JasperController {
 
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Gera um relatório PDF dos modelos de veículos com maior autonomia elétrica.
+     * <p>
+     * O relatório gerado é retornado no corpo da resposta como um arquivo PDF,
+     * incluindo os modelos que possuem a maior autonomia elétrica registrada.
+     * </p>
+     *
+     * @param response Objeto {@link HttpServletResponse} para configurar a resposta HTTP.
+     * @return Resposta HTTP com o relatório PDF no corpo.
+     * @throws IOException Se ocorrer algum erro ao escrever os bytes no fluxo de saída.
+     */
+    @GetMapping("/highest-electric-autonomy-cars")
+    @Operation(summary = "Generate report of cars with highest electric autonomy", method = "GET",
+            description = "Generates a PDF report of vehicle models with the highest electric autonomy.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Report generated successfully",
+                    content = @Content(mediaType = "application/pdf")),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content)
+    })
+    public ResponseEntity<Void> getHighestElectricAutonomyCarsReport(
+            @Parameter(description = "HTTP response object to configure the response")
+            HttpServletResponse response) throws IOException {
+        byte[] bytes = jasperService.gerarPdf("vehicle_autonomy.jasper");
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        response.setHeader("Content-Disposition", "inline; filename=" + System.currentTimeMillis() + ".pdf");
+        response.getOutputStream().write(bytes);
+
+        return ResponseEntity.ok().build();
+    }
+
 }
 
