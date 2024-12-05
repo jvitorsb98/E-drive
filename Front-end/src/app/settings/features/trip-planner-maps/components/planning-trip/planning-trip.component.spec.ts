@@ -1,59 +1,74 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlanningTripComponent } from './planning-trip.component'; // ajuste o caminho conforme necessário
-import { MatIconModule } from '@angular/material/icon'; // Importa o MatIconModule para testes
-import { CommonModule } from '@angular/common'; // Caso precise de módulos comuns
-import { NO_ERRORS_SCHEMA } from '@angular/core'; // Para ignorar erros de elementos desconhecidos
-import { AngularMaterialModule } from '../../../../angular-material/angular-material.module';
+import { PlanningTripComponent } from './planning-trip.component';
+import { TripPlannerMapsService } from '../../../../core/services/trip-planner-maps/trip-planner-maps.service';
+import { MapService } from '../../../../core/services/map/map.service';
+import { RouteService } from '../../../../core/services/trip-planner-maps/route/route.service';
+import { MatDialog } from '@angular/material/dialog';
+import { of } from 'rxjs';
+import { ChangeDetectorRef } from '@angular/core';
+import { ElementRef } from '@angular/core';
+
+// Mockando google.maps
+global['google'] = {
+  maps: {
+    LatLng: jest.fn().mockImplementation((lat: number, lng: number) => {
+      return { lat: () => lat, lng: () => lng }; // Mock de LatLng
+    }),
+    Map: jest.fn().mockImplementation(() => ({
+      setCenter: jest.fn(),
+      setZoom: jest.fn(),
+      setMapTypeId: jest.fn(),
+      setOptions: jest.fn(),
+      DEMO_MAP_ID: 'mockMapId',
+    })),
+    DirectionsService: jest.fn(),
+    DirectionsRenderer: jest.fn(),
+    MapTypeId: { ROADMAP: 'ROADMAP' },
+  }
+} as any;
+
+jest.mock('../../../../core/services/trip-planner-maps/trip-planner-maps.service');
+jest.mock('../../../../core/services/map/map.service');
+jest.mock('../../../../core/services/trip-planner-maps/route/route.service');
+jest.mock('@angular/material/dialog');
 
 describe('PlanningTripComponent', () => {
   let component: PlanningTripComponent;
   let fixture: ComponentFixture<PlanningTripComponent>;
+  let tripPlannerMapsService: TripPlannerMapsService;
+  let mapService: MapService;
+  let routeService: RouteService;
+  let dialog: MatDialog;
 
   beforeEach(async () => {
-    // Mock do google.maps
-    window['google'] = {
-      maps: {
-        Map: jest.fn(), // Mock do Map
-        MapTypeId: {
-          ROADMAP: 'roadmap',
-          SATELLITE: 'satellite',
-          HYBRID: 'hybrid',
-          TERRAIN: 'terrain',
-        },
-        DirectionsService: jest.fn().mockImplementation(() => {
-          return { route: jest.fn() }; // Mock da função 'route'
-        }),
-        DirectionsRenderer: jest.fn().mockImplementation(() => {
-          return {
-            setMap: jest.fn(), // Mock do método 'setMap'
-            setDirections: jest.fn(), // Mock do método 'setDirections' se necessário
-          };
-        }),
-        Autocomplete: jest.fn().mockImplementation(() => {
-          return { addListener: jest.fn() }; // Mock do método 'addListener'
-        }),
-        // Adicione mais mocks conforme necessário
-      }
-    };
-
     await TestBed.configureTestingModule({
-      declarations: [PlanningTripComponent], // Declarar o componente a ser testado
-      imports: [
-        CommonModule,
-        MatIconModule, // Importa o MatIconModule para garantir que 'mat-icon' será reconhecido
-        AngularMaterialModule, // Adiciona outros módulos Angular Material se necessário
-      ],
-      schemas: [NO_ERRORS_SCHEMA] // Ignora erros de elementos desconhecidos durante os testes
-    }).compileComponents(); // Compila o módulo de teste
-  });
+      declarations: [ PlanningTripComponent ],
+      providers: [
+        ChangeDetectorRef,
+        { provide: TripPlannerMapsService, useClass: TripPlannerMapsService },
+        { provide: MapService, useClass: MapService },
+        { provide: RouteService, useClass: RouteService },
+        { provide: MatDialog, useClass: MatDialog },
+        { provide: ElementRef, useValue: { nativeElement: {} } } // Mockando o ElementRef
+      ]
+    })
+    .compileComponents();
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(PlanningTripComponent); // Cria uma instância do componente
+    fixture = TestBed.createComponent(PlanningTripComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges(); // Detecta mudanças para garantir que o componente foi inicializado corretamente
+
+    tripPlannerMapsService = TestBed.inject(TripPlannerMapsService);
+    mapService = TestBed.inject(MapService);
+    routeService = TestBed.inject(RouteService);
+    dialog = TestBed.inject(MatDialog);
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy(); // Verifica se o componente foi criado com sucesso
+
+  it('deve criar o componente', () => {
+    expect(component).toBeTruthy();
   });
+
+
+
+
 });
