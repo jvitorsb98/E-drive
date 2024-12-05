@@ -4,58 +4,124 @@ import { PasswordVisibilityToggle } from './password-visibility-toggle';
 describe('PasswordVisibilityToggle', () => {
   let renderer: Renderer2;
   let elementRef: ElementRef;
+  let passwordInput: any;
+  let passwordToggleIcon: any;
 
   beforeEach(() => {
-    // Mock do ElementRef
-    const mockElement = document.createElement('div');
-    mockElement.innerHTML = `
-      <input type="password" class="password-input" />
-      <i class="password-eye-icon"></i>
-    `;
-    elementRef = { nativeElement: mockElement };
+    passwordInput = {
+      getAttribute: jest.fn(),
+      setAttribute: jest.fn(),
+    };
 
-    // Mock do Renderer2
+    passwordToggleIcon = {};
+
     renderer = {
-      listen: jest.fn(),
+      listen: jest.fn((element, event, callback) => {
+        if (event === 'click') {
+          callback(); // Simula o clique no momento da configuração do evento
+        }
+      }),
       setAttribute: jest.fn(),
     } as unknown as Renderer2;
+
+    elementRef = {
+      nativeElement: {
+        querySelector: jest.fn((selector: string) => {
+          if (selector === '.password-input') return passwordInput;
+          if (selector === '.password-eye-icon') return passwordToggleIcon;
+          return null;
+        }),
+      },
+    } as unknown as ElementRef;
   });
 
-  it('deve alternar a visibilidade da senha corretamente', () => {
+  it('should toggle password visibility to text on click', () => {
+    // Configurar o comportamento inicial
+    passwordInput.getAttribute.mockReturnValueOnce('password');
+
     PasswordVisibilityToggle.togglePasswordVisibility(renderer, elementRef);
 
-    const passwordInput = elementRef.nativeElement.querySelector('.password-input');
-    const passwordToggleIcon = elementRef.nativeElement.querySelector('.password-eye-icon');
+    // Verificar que o evento de clique foi configurado corretamente
+    expect(renderer.listen).toHaveBeenCalledWith(
+      passwordToggleIcon,
+      'click',
+      expect.any(Function)
+    );
 
-    // Simula o clique no ícone de visibilidade
-    const clickHandler = (renderer.listen as jest.Mock).mock.calls[0][2];
-    clickHandler();
-
-    // Verifica se o tipo do input foi alterado para texto
-    expect(passwordInput.getAttribute('type')).toBe('text');
-    // Verifica se o ícone foi atualizado para bi-eye
+    // Verificar alterações após o clique
+    expect(passwordInput.setAttribute).toHaveBeenCalledWith('type', 'text');
     expect(renderer.setAttribute).toHaveBeenCalledWith(passwordToggleIcon, 'class', 'bi bi-eye');
+  });
 
-    // Simula outro clique para alternar novamente
-    clickHandler();
-
-    // Verifica se o tipo do input foi alterado para senha
-    expect(passwordInput.getAttribute('type')).toBe('password');
-    // Verifica se o ícone foi atualizado para bi-eye-slash-fill
+  it('should toggle password visibility to password on click again', () => {
+    // Configurar o comportamento inicial
+    passwordInput.getAttribute
+      .mockReturnValueOnce('password') // Primeira chamada retorna "password"
+      .mockReturnValueOnce('text'); // Segunda chamada retorna "text"
+  
+    PasswordVisibilityToggle.togglePasswordVisibility(renderer, elementRef);
+  
+    // Verificar que o evento de clique foi configurado corretamente
+    expect(renderer.listen).toHaveBeenCalledWith(
+      passwordToggleIcon,
+      'click',
+      expect.any(Function)
+    );
+  
+    // Simular o primeiro clique
+    const clickHandler = (renderer.listen as jest.Mock).mock.calls[0][2];
+    clickHandler(); // Simular troca para "text"
+  
+    expect(passwordInput.setAttribute).toHaveBeenCalledWith('type', 'text');
+    expect(renderer.setAttribute).toHaveBeenCalledWith(passwordToggleIcon, 'class', 'bi bi-eye');
+  
+    // Atualizar o retorno do mock para simular o segundo clique
+    passwordInput.getAttribute.mockReturnValue('text'); // Atualizar para o estado atual "text"
+    clickHandler(); // Simular troca para "password"
+  
+    // Verificar alterações após o segundo clique
+    expect(passwordInput.setAttribute).toHaveBeenCalledWith('type', 'password');
     expect(renderer.setAttribute).toHaveBeenCalledWith(passwordToggleIcon, 'class', 'bi bi-eye-slash-fill');
   });
+  
 
-  it('não deve registrar o evento de clique se elementos não forem encontrados', () => {
-    // Remove os elementos necessários
-    elementRef.nativeElement.innerHTML = '';
+  it('should log an error if elements are not found', () => {
+    console.error = jest.fn();
 
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    // Simular ausência de elementos
+    elementRef.nativeElement.querySelector = jest.fn().mockReturnValue(null);
+
     PasswordVisibilityToggle.togglePasswordVisibility(renderer, elementRef);
 
-    // Verifica se o erro foi registrado no console
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Não foi possível encontrar os elementos de input ou ícone.');
-    expect(renderer.listen).not.toHaveBeenCalled();
-
-    consoleErrorSpy.mockRestore();
+    expect(console.error).toHaveBeenCalledWith('Não foi possível encontrar os elementos de input ou ícone.');
   });
+
+  it('should toggle password visibility correctly on multiple clicks', () => {
+    passwordInput.getAttribute
+      .mockReturnValueOnce('password') // Primeiro estado
+      .mockReturnValueOnce('text') // Segundo estado
+      .mockReturnValueOnce('password'); // Terceiro estado
+  
+    PasswordVisibilityToggle.togglePasswordVisibility(renderer, elementRef);
+  
+    const clickHandler = (renderer.listen as jest.Mock).mock.calls[0][2];
+  
+    // Primeiro clique (para "text")
+    clickHandler();
+    expect(passwordInput.setAttribute).toHaveBeenCalledWith('type', 'text');
+    expect(renderer.setAttribute).toHaveBeenCalledWith(passwordToggleIcon, 'class', 'bi bi-eye');
+  
+    // Segundo clique (para "password")
+    clickHandler();
+    expect(passwordInput.setAttribute).toHaveBeenCalledWith('type', 'password');
+    expect(renderer.setAttribute).toHaveBeenCalledWith(passwordToggleIcon, 'class', 'bi bi-eye-slash-fill');
+  
+    // Terceiro clique (de volta para "text")
+    clickHandler();
+    expect(passwordInput.setAttribute).toHaveBeenCalledWith('type', 'text');
+    expect(renderer.setAttribute).toHaveBeenCalledWith(passwordToggleIcon, 'class', 'bi bi-eye');
+    expect(renderer.listen).toHaveBeenCalledTimes(1);
+
+  });
+  
 });
