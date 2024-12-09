@@ -167,7 +167,9 @@ export class ModalFormVehicleComponent implements OnInit {
         console.log('Models loaded:', response);
 
         if (Array.isArray(models)) {
-          this.models = models.map(model => ({
+          this.models = models
+          .filter(model => model.activated) // Filtra apenas modelos ativos
+          .map(model => ({
             name: this.userDataService.capitalizeWords(model.name),
             id: model.id,
             brandId: model.brand.id
@@ -189,7 +191,9 @@ export class ModalFormVehicleComponent implements OnInit {
         const vehicles = response.content || [];
 
         if (Array.isArray(vehicles)) {
-          this.vehicles = vehicles.map(vehicle => ({
+          this.vehicles = vehicles
+          .filter(vehicle => vehicle.activated) // Filtra apenas veículos ativos
+          .map(vehicle => ({
             ...vehicle,
             version: this.userDataService.capitalizeWords(vehicle.version),
           }));
