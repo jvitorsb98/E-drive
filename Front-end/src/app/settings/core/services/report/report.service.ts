@@ -24,27 +24,13 @@ export class ReportService {
   }
 
   /**
-   * Método para obter o relatório de carros mais registrados
-   * Faz uma requisição HTTP GET e retorna um Blob contendo o arquivo do relatório
-   * @returns Observable<Blob> - Resposta com o arquivo em formato binário
-   */
-  getMostRegisteredCarsReport(): Observable<Blob> {
-    return this.http.get(`${this.reportUrl}/most-registered-cars`, {
-      responseType: 'blob' // Indica que a resposta será do tipo binário
-    });
-  }
-
-  /**
- * Método para obter o relatório de carros com a maior autonomia elétrica
- * Faz uma requisição HTTP GET e retorna um Blob contendo o arquivo do relatório
- * @returns Observable<Blob> - Resposta com o arquivo em formato binário
+ * Método para gerar um relatório genérico.
+ * @param fileName Nome do arquivo Jasper (sem extensão).
+ * @returns Observable<Blob> - Resposta com o arquivo em formato binário.
  */
-  getHighestElectricAutonomyCarsReport(): Observable<Blob> {
-    return this.http.get(`${this.reportUrl}/highest-electric-autonomy-cars`, {
-      responseType: 'blob' // Indica que a resposta será do tipo binário
+  generateReport(fileName: string): Observable<Blob> {
+    return this.http.get(`${this.reportUrl}/generate-report?reportName=${fileName}`, {
+      responseType: 'blob'
     });
   }
-
-
 }
-
