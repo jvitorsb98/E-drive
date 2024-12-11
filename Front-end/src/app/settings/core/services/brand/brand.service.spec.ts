@@ -360,4 +360,39 @@ describe('BrandService', () => {
     req.flush('Error occurred', { status: 500, statusText: 'Internal Server Error' });
   });
 
+  it('should retrieve all brands from paginated API', () => {
+    const initialResponse = { content: [], totalElements: 2 };
+    const finalResponse = { content: [{ id: 1, name: 'Brand 1' }, { id: 2, name: 'Brand 2' }] };
+
+    service.getAll().subscribe(response => {
+      expect(response.length).toBe(2);
+      expect(response[0].name).toBe('Brand 1');
+      expect(response[1].name).toBe('Brand 2');
+    });
+
+    // Mock da primeira requisição para obter o total de elementos
+    const initialRequest = httpMock.expectOne(`${environment.apiUrl}/api/v1/brands?page=0&size=1`);
+    expect(initialRequest.request.method).toBe('GET');
+    initialRequest.flush(initialResponse);
+
+    // Mock da segunda requisição para obter todos os elementos
+    const finalRequest = httpMock.expectOne(`${environment.apiUrl}/api/v1/brands?page=0&size=2`);
+    expect(finalRequest.request.method).toBe('GET');
+    finalRequest.flush(finalResponse);
+  });
+
+  it('should handle error when fetching all brands', () => {
+    service.getAll().subscribe({
+      next: () => fail('expected an error'),
+      error: (error) => {
+        expect(error.message).toBe('Failed to load all brands');
+      }
+    });
+
+    // Mock da primeira requisição para obter o total de elementos com falha
+    const initialRequest = httpMock.expectOne(`${environment.apiUrl}/api/v1/brands?page=0&size=1`);
+    expect(initialRequest.request.method).toBe('GET');
+    initialRequest.flush('Error occurred', { status: 500, statusText: 'Internal Server Error' });
+  });
+
 });
