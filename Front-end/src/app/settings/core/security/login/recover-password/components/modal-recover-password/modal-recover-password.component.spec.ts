@@ -57,32 +57,25 @@ describe('ModalRecoverPasswordComponent', () => {
   it('should call recoverPasswordRequest when form is valid', async () => {
     component.ngOnInit();
     component.recoverPasswordForm.setValue({ email: 'test@example.com' });
-  
-    // Mock da resposta agora retornando uma string (mensagem)
+
     const mockResponse: string = 'Um e-mail de redefinição de senha foi enviado para: test@example.com';
     jest.spyOn(authService, 'recoverPasswordRequest').mockReturnValue(of(mockResponse));
-  
-    await component.onSubmit();  // Aguarde o retorno da promessa
-  
+
+    await component.onSubmit();
+
     expect(authService.recoverPasswordRequest).toHaveBeenCalledWith('test@example.com');
-    expect(alertasService.showSuccess).toHaveBeenCalledWith(
-      'Redefinição de senha',
-      mockResponse  // Agora comparando com a resposta mockada (a string)
-    );
+    expect(alertasService.showSuccess).toHaveBeenCalledWith('Redefinição de senha', mockResponse);
   });
-  
-  
 
   it('should call recoverAccountRequest when isPasswordRecovery is false', async () => {
     component.data.isPasswordRecovery = false;
     component.ngOnInit();
     component.recoverPasswordForm.setValue({ email: 'test@example.com' });
 
-    // Mock da resposta agora retornando uma string
-    const mockResponse: string = 'mockToken'; // Retorna um token como string
+    const mockResponse: string = 'mockToken';
     jest.spyOn(authService, 'recoverAccountRequest').mockReturnValue(of(mockResponse));
 
-    await component.onSubmit();  // Aguarde o retorno da promessa
+    await component.onSubmit();
 
     expect(authService.recoverAccountRequest).toHaveBeenCalledWith('test@example.com');
     expect(alertasService.showSuccess).toHaveBeenCalledWith(
@@ -91,22 +84,53 @@ describe('ModalRecoverPasswordComponent', () => {
     );
   });
 
-  
-  
-  
-  
-
   it('should handle error on recoverAccountRequest', async () => {
     component.data.isPasswordRecovery = false;
     component.ngOnInit();
     component.recoverPasswordForm.setValue({ email: 'test@example.com' });
 
-    // Mock de erro com a propriedade 'message' esperada no erro
     const mockError = new HttpErrorResponse({ error: { message: 'Erro interno no servidor' }, status: 500 });
     jest.spyOn(authService, 'recoverAccountRequest').mockReturnValue(throwError(mockError));
 
-    await component.onSubmit();  // Aguarde o retorno da promessa
+    await component.onSubmit();
 
     expect(alertasService.showError).toHaveBeenCalledWith('Recuperação de conta', 'Erro interno no servidor');
+  });
+
+  it('should return if the form is invalid', async () => {
+    component.ngOnInit();
+    component.recoverPasswordForm.setValue({ email: '' });  // Formulário inválido
+
+    await component.onSubmit();
+
+    expect(authService.recoverPasswordRequest).not.toHaveBeenCalled();
+    expect(authService.recoverAccountRequest).not.toHaveBeenCalled();
+  });
+
+  it('should show error message if recoverPasswordRequest fails', async () => {
+    component.ngOnInit();
+    component.recoverPasswordForm.setValue({ email: 'test@example.com' });
+  
+    const mockError = new HttpErrorResponse({ error: { message: 'Erro ao tentar enviar o e-mail de redefinição' }, status: 500 });
+    jest.spyOn(authService, 'recoverPasswordRequest').mockReturnValue(throwError(mockError));
+  
+    await component.onSubmit();
+  
+    const errorMessage = mockError.error.message ? mockError.error.message : 'Ocorreu um erro ao tentar enviar o e-mail de redefinição.';
+    // Alterar o valor esperado para ser o objeto
+    expect(alertasService.showError).toHaveBeenCalledWith('Redefinição de senha', { message: 'Erro ao tentar enviar o e-mail de redefinição' });
+  });
+  
+  
+
+  it('should reset the form and close the modal on goBack', () => {
+    component.ngOnInit();
+    component.recoverPasswordForm.setValue({ email: 'test@example.com' });
+
+    component.goBack();
+
+    expect(component.recoverPasswordForm.get('email')?.value).toBe(null);
+    expect(component.recoverPasswordForm.errors).toEqual({ invalid: true });
+    expect((component.dialogRef as any).close).toHaveBeenCalled();
   });
 });

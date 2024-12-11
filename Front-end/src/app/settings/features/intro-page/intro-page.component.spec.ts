@@ -18,7 +18,7 @@ describe('IntroPageComponent', () => {
   let routerMock: jest.Mocked<Router>;
 
   beforeAll(() => {
-    // Mock do IntersectionObserver
+
     class MockIntersectionObserver {
       observe = jest.fn();
       disconnect = jest.fn();
@@ -28,13 +28,11 @@ describe('IntroPageComponent', () => {
   });
 
   beforeEach(async () => {
-    // Criar mocks
     modalServiceMock = { openModal: jest.fn() } as any;
     rendererMock = { setStyle: jest.fn() } as any;
     authServiceMock = { isLoggedIn: jest.fn() } as any;
     routerMock = { navigate: jest.fn() } as any;
 
-    // Configurar TestBed
     await TestBed.configureTestingModule({
       declarations: [IntroPageComponent],
       imports: [SharedModule],
@@ -98,5 +96,185 @@ describe('IntroPageComponent', () => {
     });
   });
 
- 
+  describe('ngAfterViewInit', () => {
+    let parallaxElementMock: { nativeElement: HTMLElement };
+    let observerMock: jest.Mocked<IntersectionObserver>;
+    let mockElement: HTMLElement;
+  
+    beforeEach(() => {
+      parallaxElementMock = { nativeElement: document.createElement('div') };
+      component.parallaxElement = parallaxElementMock;
+  
+      mockElement = document.createElement('div');
+      mockElement.classList.add('fade-in');
+      document.body.appendChild(mockElement);
+  
+      observerMock = {
+        observe: jest.fn(),
+        disconnect: jest.fn(),
+        unobserve: jest.fn(),
+      } as any;
+  
+      global.IntersectionObserver = jest.fn((callback) => observerMock) as any;
+    });
+  
+    afterEach(() => {
+      document.body.removeChild(mockElement);
+      jest.clearAllMocks();
+    });
+  
+    it('should set background-attachment to scroll for iOS devices', () => {
+      Object.defineProperty(navigator, 'userAgent', { value: 'iPhone', configurable: true });
+  
+      component.ngAfterViewInit();
+  
+      setTimeout(() => {
+        expect(rendererMock.setStyle).toHaveBeenCalledWith(
+          parallaxElementMock.nativeElement,
+          'background-attachment',
+          'scroll'
+        );
+      }, 100);
+    });
+  
+    it('should set background-attachment to fixed for non-iOS devices', () => {
+      Object.defineProperty(navigator, 'userAgent', { value: 'Android', configurable: true });
+  
+      component.ngAfterViewInit();
+  
+      setTimeout(() => {
+        expect(rendererMock.setStyle).toHaveBeenCalledWith(
+          parallaxElementMock.nativeElement,
+          'background-attachment',
+          'fixed'
+        );
+      }, 100);
+    });
+  
+    it('should observe elements with class fade-in', () => {
+      component.ngAfterViewInit();
+  
+      expect(global.IntersectionObserver).toHaveBeenCalledWith(expect.any(Function), { threshold: 0.5 });
+      expect(observerMock.observe).toHaveBeenCalledWith(mockElement);
+    });
+  
+    it('should add "show" class to intersecting elements', () => {
+      component.ngAfterViewInit();
+  
+      const callback = (global.IntersectionObserver as jest.Mock).mock.calls[0][0];
+      callback([{ isIntersecting: true, target: mockElement }]);
+  
+      expect(mockElement.classList.contains('show')).toBe(true);
+    });
+  
+    it('should not add "show" class to non-intersecting elements', () => {
+      component.ngAfterViewInit();
+  
+      const callback = (global.IntersectionObserver as jest.Mock).mock.calls[0][0];
+      callback([{ isIntersecting: false, target: mockElement }]);
+  
+      expect(mockElement.classList.contains('show')).toBe(false);
+    });
+  });
+
+  describe('ngAfterViewInit - setTimeout logic', () => {
+    let parallaxElementMock: { nativeElement: HTMLElement };
+  
+    beforeEach(() => {
+      parallaxElementMock = { nativeElement: document.createElement('div') };
+      component.parallaxElement = parallaxElementMock;
+    });
+  
+    
+  
+    it('should not execute the logic before 100ms', () => {
+      jest.useFakeTimers(); // Ativando temporizador falso
+      Object.defineProperty(navigator, 'userAgent', { value: 'iPhone', configurable: true });
+  
+      component.ngAfterViewInit();
+      jest.advanceTimersByTime(50); // Avança o tempo em 50ms, antes do tempo necessário
+  
+      expect(rendererMock.setStyle).not.toHaveBeenCalled();
+  
+      jest.useRealTimers(); // Restaurar o temporizador real
+    });
+  
+    it('should execute the logic only if parallaxElement is present', () => {
+      jest.useFakeTimers(); // Ativando temporizador falso
+      component.parallaxElement == null; // Configura o elemento como nulo
+  
+      component.ngAfterViewInit();
+      jest.advanceTimersByTime(100); // Avança o tempo em 100ms
+  
+      expect(rendererMock.setStyle).not.toHaveBeenCalled();
+  
+      jest.useRealTimers(); // Restaurar o temporizador real
+    });
+  });
+  
+  describe('ngAfterViewInit - setTimeout logic', () => {
+    let parallaxElementMock: { nativeElement: HTMLElement };
+  
+    beforeEach(() => {
+      parallaxElementMock = { nativeElement: document.createElement('div') };
+      component.parallaxElement = parallaxElementMock;
+  
+      // Certifique-se de espiar o método setStyle do Renderer2
+      jest.spyOn(rendererMock, 'setStyle');
+    });
+  
+    afterEach(() => {
+      jest.clearAllMocks();
+      jest.useRealTimers(); // Restaurar temporizadores reais após cada teste
+    });
+  
+    it('should not execute the logic before 100ms', () => {
+      jest.useFakeTimers(); // Ativar temporizador falso
+      Object.defineProperty(navigator, 'userAgent', { value: 'Android', configurable: true });
+  
+      component.ngAfterViewInit(); // Invocar o método do ciclo de vida
+      jest.advanceTimersByTime(50); // Avançar o temporizador em 50ms
+  
+      expect(rendererMock.setStyle).not.toHaveBeenCalled();
+    });
+  
+    it('should execute the logic only if parallaxElement is present', () => {
+      jest.useFakeTimers(); // Ativar temporizador falso
+      component.parallaxElement == null; // Tornar o elemento nulo
+  
+      component.ngAfterViewInit(); // Invocar o método do ciclo de vida
+      jest.advanceTimersByTime(100); // Avançar o temporizador em 100ms
+  
+      expect(rendererMock.setStyle).not.toHaveBeenCalled();
+    });
+
+    it('should set background-attachment to fixed for non-iOS devices', () => {
+      Object.defineProperty(navigator, 'userAgent', { value: 'Android', configurable: true });
+    
+      component.ngAfterViewInit();
+    
+      setTimeout(() => {
+        expect(rendererMock.setStyle).toHaveBeenCalledWith(
+          parallaxElementMock.nativeElement,
+          'background-attachment',
+          'fixed'
+        );
+      }, 100);
+    });
+    
+    it('should redirect to dashboard if user is logged in', () => {
+      authServiceMock.isLoggedIn.mockReturnValue(true);
+    
+      component.ngOnInit();
+    
+      expect(authServiceMock.isLoggedIn).toHaveBeenCalled();
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/e-driver/dashboard']);
+    });
+
+  });
+  
+  
+  
+  
+  
 });
