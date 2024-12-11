@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 
 import { BrandService } from '../../../../core/services/brand/brand.service';
 import { ModelService } from '../../../../core/services/model/model.service';
@@ -20,8 +20,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 // Importar o BrowserAnimationsModule
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { ModalFormVehicleComponent } from '../../../user-vehicle/components/modal-form-vehicle/modal-form-vehicle.component';
+import { ModalSelectAddressComponent } from './modal-select-address.component';
+import { AddressService } from '../../../../core/services/Address/address.service';
+import { AlertasService } from '../../../../core/services/Alertas/alertas.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { PaginatedResponse } from '../../../../core/models/paginatedResponse';
+import { DataAddressDetails } from '../../../../core/models/inter-Address';
 
 describe('ModalFormVehicleComponent', () => {
   let component: ModalFormVehicleComponent;
@@ -277,8 +284,265 @@ describe('ModalFormVehicleComponent', () => {
     expect(submitSpy).toHaveBeenCalled();
   });
 
- 
+});
+
+describe('ModalSelectAddressComponent', () => {
+  let component: ModalSelectAddressComponent;
+  let addressServiceMock: jest.Mocked<AddressService>;
+  let alertasServiceMock: jest.Mocked<AlertasService>;
+  let matDialogRefMock: jest.Mocked<MatDialogRef<ModalSelectAddressComponent>>;
+  let matDialogMock: jest.Mocked<MatDialog>;
+
+  beforeEach(async () => {
+    addressServiceMock = {
+      listAll: jest.fn(),
+    } as unknown as jest.Mocked<AddressService>;
+
+    alertasServiceMock = {
+      showError: jest.fn(),
+    } as unknown as jest.Mocked<AlertasService>;
+
+    matDialogRefMock = {
+      close: jest.fn(),
+    } as unknown as jest.Mocked<MatDialogRef<ModalSelectAddressComponent>>;
+
+    matDialogMock = {
+      open: jest.fn(),
+    } as unknown as jest.Mocked<MatDialog>;
+
+    await TestBed.configureTestingModule({
+      declarations: [ModalSelectAddressComponent],
+      providers: [
+        { provide: AddressService, useValue: addressServiceMock },
+        { provide: AlertasService, useValue: alertasServiceMock },
+        { provide: MatDialogRef, useValue: matDialogRefMock },
+        { provide: MatDialog, useValue: matDialogMock },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(ModalSelectAddressComponent);
+    component = fixture.componentInstance;
+    component.paginator = {
+      firstPage: jest.fn(),
+      _intl: { itemsPerPageLabel: '' },
+    } as unknown as MatPaginator;
+    component.sort = {} as MatSort;
   });
 
+  it('should create the component', () => {
+    expect(component).toBeTruthy();
+  });
 
-  
+  it('should initialize and fetch addresses on ngOnInit', () => {
+    const mockPaginatedResponse: PaginatedResponse<DataAddressDetails> = {
+      content: [
+        {
+          city: 'City1', street: 'Street1',
+          id: 0,
+          country: '',
+          zipCode: '',
+          state: '',
+          neighborhood: '',
+          number: 0,
+          userId: 0,
+          hasChargingStation: false,
+          complement: '',
+          activated: false
+        },
+        {
+          city: 'City2', street: 'Street2',
+          id: 0,
+          country: '',
+          zipCode: '',
+          state: '',
+          neighborhood: '',
+          number: 0,
+          userId: 0,
+          hasChargingStation: false,
+          complement: '',
+          activated: false
+        },
+      ],
+      totalElements: 2,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 0,
+        sort: {
+          empty: false,
+          sorted: false,
+          unsorted: false
+        },
+        offset: 0,
+        paged: false,
+        unpaged: false
+      }, // Inclua propriedades adicionais, se necessário
+      last: true,
+      totalPages: 1,
+      first: true,
+      size: 2,
+      number: 0,
+      numberOfElements: 2,
+      sort: {
+        active: '',
+        direction: ''
+      },
+      empty: false
+    };
+    addressServiceMock.listAll.mockReturnValue(of(mockPaginatedResponse));
+
+    component.ngOnInit();
+
+    expect(addressServiceMock.listAll).toHaveBeenCalledWith(0, component.pageSize);
+    expect(component.filteredAddresses.length).toBe(1);
+    expect(component.total).toBe(1);
+  });
+
+  it('should filter addresses based on the search term', () => {
+    
+    const mockResponse: PaginatedResponse<DataAddressDetails> = {
+      content: [
+        {
+          city: 'City1', street: 'Street1',
+          id: 0,
+          country: '',
+          zipCode: '',
+          state: '',
+          neighborhood: '',
+          number: 0,
+          userId: 0,
+          hasChargingStation: false,
+          complement: '',
+          activated: false
+        },
+        {
+          city: 'City2', street: 'Street2',
+          id: 0,
+          country: '',
+          zipCode: '',
+          state: '',
+          neighborhood: '',
+          number: 0,
+          userId: 0,
+          hasChargingStation: false,
+          complement: '',
+          activated: false
+        },
+      ],
+      totalElements: 2,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 0,
+        sort: {
+          empty: false,
+          sorted: false,
+          unsorted: false
+        },
+        offset: 0,
+        paged: false,
+        unpaged: false
+      }, // Inclua um objeto vazio ou dados simulados
+      last: true,
+      totalPages: 1,
+      first: true,
+      size: 2,
+      number: 0,
+      numberOfElements: 2,
+      sort: {
+        active: '',
+        direction: ''
+      },
+      empty: false
+    };
+
+    addressServiceMock.listAll.mockReturnValue(of(mockResponse));
+
+    const mockEvent = { target: { value: 'City1' } } as unknown as Event;
+    component.applyFilter(mockEvent);
+
+    expect(component.filteredData.length).toBe(1);
+    expect(component.filteredData[0].city).toBe('City1');
+  });
+
+  it('should show an error if filtering fails', () => {
+    const mockError = { message: 'Network error' };
+    addressServiceMock.listAll.mockReturnValue(throwError(() => mockError));
+
+    const mockEvent = { target: { value: 'City1' } } as unknown as Event;
+    component.applyFilter(mockEvent);
+
+    expect(alertasServiceMock.showError).toHaveBeenCalledWith('Erro !!', mockError.message);
+  });
+
+  it('should set selected address and close the modal on confirm', () => {
+
+    const mockResponse: PaginatedResponse<DataAddressDetails> = {
+      content: [
+        {
+          city: 'City1', street: 'Street1',
+          id: 1,
+          country: '',
+          zipCode: '',
+          state: '',
+          neighborhood: '',
+          number: 0,
+          userId: 0,
+          hasChargingStation: false,
+          complement: '',
+          activated: false
+        },
+      ],
+      totalElements: 2,
+      pageable: {
+        pageNumber: 0,
+        pageSize: 0,
+        sort: {
+          empty: false,
+          sorted: false,
+          unsorted: false
+        },
+        offset: 0,
+        paged: false,
+        unpaged: false
+      }, // Inclua um objeto vazio ou dados simulados
+      last: true,
+      totalPages: 1,
+      first: true,
+      size: 2,
+      number: 0,
+      numberOfElements: 2,
+      sort: {
+        active: '',
+        direction: ''
+      },
+      empty: false
+    };
+    component.onSelect(mockResponse.content[0]);
+    component.confirmAddress();
+
+    expect(matDialogRefMock.close).toHaveBeenCalledWith(mockResponse.content[0]);
+  });
+
+  it('should close the modal without returning data on cancel', () => {
+    component.closeModal();
+    expect(matDialogRefMock.close).toHaveBeenCalledWith();
+  });
+
+  it('should update page size and fetch new data on page change', () => {
+    const mockEvent = { pageSize: 5, pageIndex: 1 };
+    jest.spyOn(component, 'getAllAddresses');
+
+    component.onPageChange(mockEvent);
+
+    expect(component.pageSize).toBe(5);
+    expect(component.currentPage).toBe(1);
+    expect(component.getAllAddresses).toHaveBeenCalledWith(1, 5);
+  });
+
+  it('should open the FAQ modal', () => {
+    component.openFAQModal();
+    expect(matDialogMock.open).toHaveBeenCalled();
+  });
+});
+
+
+

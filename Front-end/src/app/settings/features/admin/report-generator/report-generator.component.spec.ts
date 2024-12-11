@@ -66,12 +66,12 @@ describe('ReportGeneratorComponent', () => {
   it('should call loadMostRegisteredCarsReport when generating the report', () => {
     const mockReport = { id: 1, name: 'Relatório de Carros Mais Registrados' };
     component.reportForm.controls['report'].setValue(mockReport);
-    
-    reportServiceMock.getMostRegisteredCarsReport.mockReturnValue(of(new Blob()));
+
+    reportServiceMock.generateReport.mockReturnValue(of(new Blob()));
 
     component.gerarReport();
 
-    expect(reportServiceMock.getMostRegisteredCarsReport).toHaveBeenCalled();
+    expect(reportServiceMock.generateReport('most-registered-cars')).toHaveBeenCalled();
   });
 
   it('should show a warning alert when report is not found', () => {
