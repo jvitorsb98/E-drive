@@ -18,16 +18,17 @@ export class ReportGeneratorComponent {
   reportForm!: FormGroup; // Formulário para seleção de relatórios
   noReportFound: boolean = false; // Indica se nenhum relatório foi encontrado
   reports = [ // Lista mockada de relatórios
-    { id: 1, name: 'Relatório de Carros Mais Registrados' },
-    { id: 2, name: 'Relatório de Autonomia de Veículos' },
-    { id: 3, name: 'Relatório de Logs de Auditoria' },
-    { id: 4, name: 'Relatório de Autonomia de Veículos' },
-    { id: 5, name: 'Relatório de Veículos por Categoria' },
-    { id: 6, name: 'Relatório de Usuários Mais Ativos' },
-    { id: 7, name: 'Relatório de Viagens Realizadas' },
-    { id: 8, name: 'Relatório de Viagens por Carro' },
-    { id: 9, name: 'Relatório de Viagens por Usuário' },
-    { id: 10, name: 'Relatório de Endereços de Usuários' },
+    { id: 1, name: 'Relatório de Carros Mais Registrados', fileName: 'most_registered_cars' },
+    { id: 2, name: 'Relatório de Autonomia de Veículos', fileName: 'vehicle_autonomy' },
+    { id: 3, name: 'Relatório de Endereços Mais Registrados', fileName: 'address_count_bycity' },
+    { id: 4, name: 'Relatório de Logs de Auditoria' },
+    { id: 5, name: 'Relatório de Autonomia de Veículos' },
+    { id: 6, name: 'Relatório de Veículos por Categoria' },
+    { id: 7, name: 'Relatório de Usuários Mais Ativos' },
+    { id: 8, name: 'Relatório de Viagens Realizadas' },
+    { id: 9, name: 'Relatório de Viagens por Carro' },
+    { id: 10, name: 'Relatório de Viagens por Usuário' },
+
   ];
   filteredReports: Observable<{ id: number; name: string }[]> = of([]); // Lista de relatórios filtrada para o autocomplete
 
@@ -93,38 +94,24 @@ export class ReportGeneratorComponent {
    */
   gerarReport(): void {
     const selectedReport = this.reportForm.get('report')?.value;
-    switch (selectedReport.id) {
-      case 1:
-        this.loadMostRegisteredCarsReport();
-        break;
-      case 2:
-        this.loadHighestElectricAutonomyCarsReport();
-        break;
-      default:
-        this.alertService.showWarning('Relatório não encontrado', 'O relatório selecionado não foi encontrado.');
+
+    if (!selectedReport || !selectedReport.fileName) {
+      this.alertService.showWarning('Relatório não encontrado', 'O relatório selecionado não foi encontrado.');
+      return;
     }
+    this.loadReport(selectedReport.fileName);
   }
 
   /**
-   * @description Carrega o relatório de carros mais registrados.
-   */
-  loadMostRegisteredCarsReport() {
-    this.reportService.getMostRegisteredCarsReport().subscribe({
-      next: (data) => this.openInNewTab(data),
-      error: (err) => console.error('Erro ao gerar relatório:', err)
-    });
-  }
-
-  /**
- * @description Carrega o relatório de carros com a maior autonomia elétrica.
+ * Método genérico para carregar relatórios.
+ * @param fileName Nome do arquivo Jasper (sem extensão).
  */
-  loadHighestElectricAutonomyCarsReport() {
-    this.reportService.getHighestElectricAutonomyCarsReport().subscribe({
+  loadReport(fileName: string): void {
+    this.reportService.generateReport(fileName).subscribe({
       next: (data) => this.openInNewTab(data),
       error: (err) => console.error('Erro ao gerar relatório:', err)
     });
   }
-
 
   /**
    * @description Abre o relatório em uma nova aba do navegador.
