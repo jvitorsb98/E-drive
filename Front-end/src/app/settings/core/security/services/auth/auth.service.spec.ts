@@ -3,6 +3,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { ILoginRequest, ILoginResponse, IRecoverPasswordRequest } from '../../../models/inter-Login';
+import { environment } from '../../../../../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -88,7 +90,31 @@ describe('AuthService', () => {
       expect(localStorage.getItem('token')).toBeNull();
     });
 
+    it('deve remover o token e notificar o backend durante o logout', () => {
+      const token = 'mock-token';
+      localStorage.setItem('token', token);
+
+      service.logout();
+
+      // Verifica se o token foi removido
+      expect(localStorage.getItem('token')).toBeNull();
+
+      // Verifica se o estado de login foi atualizado
+      service.isLoggedIn$.subscribe(isLoggedIn => {
+        expect(isLoggedIn).toBeFalsy();
+      });
+
+      // Verifica se houve navegação para a página inicial
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['']);
+
+      // Verifica se a chamada HTTP ao backend foi feita corretamente
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/logout`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
+      req.flush(null); // Simula resposta bem-sucedida
+    });
   });
+
 
   describe('isLoggedIn', () => {
     it('deve retornar true se o token for válido', () => {
@@ -184,6 +210,17 @@ describe('AuthService', () => {
           expect(error.message).toBe('Token inválido. Por favor, tente novamente.');
         },
       });
+    });
+
+    it('deve retornar os detalhes do usuário se o token for válido', () => {
+      const mockToken = 'mock-valid-token'; // Substitua por um token JWT válido para teste
+      localStorage.setItem('token', mockToken);
+
+      const decodedToken = { id: 1, email: 'user@example.com', exp: (Date.now() / 1000) + 3600 };
+      jest.spyOn(jwtDecode as any, 'default').mockReturnValue(decodedToken);
+
+      const result = service.getUserDetails();
+      expect(result).toEqual(decodedToken);
     });
 
     it('deve lançar erro se o token for inválido em getUserDetails', () => {

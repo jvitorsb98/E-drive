@@ -16,13 +16,14 @@ describe('ReportGeneratorComponent', () => {
   let alertServiceMock: jest.Mocked<AlertasService>;
 
   beforeEach(async () => {
-    // Criação de mocks para os serviços
     reportServiceMock = {
-      getMostRegisteredCarsReport: jest.fn()
-    } as any;
+      getMostRegisteredCarsReport: jest.fn(),
+      generateReport: jest.fn() // Adicione isso para simular o método
+    } as unknown as jest.Mocked<ReportService>;
+
     alertServiceMock = {
       showWarning: jest.fn()
-    } as any;
+    } as unknown as jest.Mocked<AlertasService>;
 
     await TestBed.configureTestingModule({
       declarations: [ ReportGeneratorComponent ],
@@ -39,6 +40,7 @@ describe('ReportGeneratorComponent', () => {
       ]
     }).compileComponents();
   });
+
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ReportGeneratorComponent);
@@ -67,12 +69,13 @@ describe('ReportGeneratorComponent', () => {
     const mockReport = { id: 1, name: 'Relatório de Carros Mais Registrados' };
     component.reportForm.controls['report'].setValue(mockReport);
 
-    reportServiceMock.generateReport.mockReturnValue(of(new Blob()));
+    reportServiceMock.generateReport.mockReturnValue(of(new Blob())); // Certifique-se de que o método seja simulado
 
     component.gerarReport();
 
-    expect(reportServiceMock.generateReport('most-registered-cars')).toHaveBeenCalled();
+    expect(reportServiceMock.generateReport).toHaveBeenCalled(); // Verifique a chamada do método correto
   });
+
 
   it('should show a warning alert when report is not found', () => {
     const mockReport = { id: 999, name: 'Relatório Inexistente' };

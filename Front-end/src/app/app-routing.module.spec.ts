@@ -35,24 +35,30 @@ describe('AppRoutingModule', () => {
     expect(router).toBeTruthy();
   });
 
-  it('should call authGuard canActivate', () => {
+  it('should call authGuard canActivate', (done) => {
     // Simula a resposta do canActivate
     mockAuthGuard.canActivate.mockReturnValue(of(true));
 
     // Chama o método do guard
     const result = mockAuthGuard.canActivate();
-    expect(result).toEqual(of(true));
-    expect(mockAuthGuard.canActivate).toHaveBeenCalled();
+    result.subscribe((value: any) => {
+      expect(value).toBe(true);
+      expect(mockAuthGuard.canActivate).toHaveBeenCalled();
+      done();
+    });
   });
 
-  it('should call canMatchGuard canMatch', () => {
+  it('should call canMatchGuard canMatch', (done) => {
     // Simula a resposta do canMatch
     mockCanMatchGuard.canMatch.mockReturnValue(of(true));
 
     // Chama o método do guard
     const result = mockCanMatchGuard.canMatch();
-    expect(result).toEqual(of(true));
-    expect(mockCanMatchGuard.canMatch).toHaveBeenCalled();
+    result.subscribe((value: any) => {
+      expect(value).toBe(true);
+      expect(mockCanMatchGuard.canMatch).toHaveBeenCalled();
+      done();
+    });
   });
 
   it('should navigate to "e-driver/intro-page" on empty path', async () => {

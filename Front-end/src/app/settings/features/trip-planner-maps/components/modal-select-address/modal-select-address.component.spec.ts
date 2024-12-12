@@ -292,10 +292,15 @@ describe('ModalSelectAddressComponent', () => {
   let alertasServiceMock: jest.Mocked<AlertasService>;
   let matDialogRefMock: jest.Mocked<MatDialogRef<ModalSelectAddressComponent>>;
   let matDialogMock: jest.Mocked<MatDialog>;
+  let fixture: ComponentFixture<ModalSelectAddressComponent>;
 
   beforeEach(async () => {
     addressServiceMock = {
       listAll: jest.fn(),
+    } as unknown as jest.Mocked<AddressService>;
+
+    addressServiceMock = {
+      listAll: jest.fn().mockReturnValue(of({} as PaginatedResponse<DataAddressDetails>)), // Return an empty Observable
     } as unknown as jest.Mocked<AddressService>;
 
     alertasServiceMock = {
@@ -320,7 +325,7 @@ describe('ModalSelectAddressComponent', () => {
       ],
     }).compileComponents();
 
-    const fixture = TestBed.createComponent(ModalSelectAddressComponent);
+    fixture = TestBed.createComponent(ModalSelectAddressComponent);
     component = fixture.componentInstance;
     component.paginator = {
       firstPage: jest.fn(),
@@ -349,21 +354,8 @@ describe('ModalSelectAddressComponent', () => {
           complement: '',
           activated: false
         },
-        {
-          city: 'City2', street: 'Street2',
-          id: 0,
-          country: '',
-          zipCode: '',
-          state: '',
-          neighborhood: '',
-          number: 0,
-          userId: 0,
-          hasChargingStation: false,
-          complement: '',
-          activated: false
-        },
       ],
-      totalElements: 2,
+      totalElements: 1,
       pageable: {
         pageNumber: 0,
         pageSize: 0,
@@ -381,7 +373,7 @@ describe('ModalSelectAddressComponent', () => {
       first: true,
       size: 2,
       number: 0,
-      numberOfElements: 2,
+      numberOfElements: 1,
       sort: {
         active: '',
         direction: ''
@@ -398,7 +390,7 @@ describe('ModalSelectAddressComponent', () => {
   });
 
   it('should filter addresses based on the search term', () => {
-    
+
     const mockResponse: PaginatedResponse<DataAddressDetails> = {
       content: [
         {
@@ -527,11 +519,12 @@ describe('ModalSelectAddressComponent', () => {
     expect(matDialogRefMock.close).toHaveBeenCalledWith();
   });
 
-  it('should update page size and fetch new data on page change', () => {
+  it('should update page size and fetch new data on page change', async () => {
     const mockEvent = { pageSize: 5, pageIndex: 1 };
     jest.spyOn(component, 'getAllAddresses');
 
     component.onPageChange(mockEvent);
+    await fixture.whenStable(); // Espera a operação assíncrona
 
     expect(component.pageSize).toBe(5);
     expect(component.currentPage).toBe(1);
