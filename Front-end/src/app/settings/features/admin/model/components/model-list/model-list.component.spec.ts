@@ -6,6 +6,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { of, throwError } from 'rxjs';
 import { Model } from '../../../../../core/models/model';
 import { PaginatedResponse } from '../../../../../core/models/paginatedResponse';
+import { ModalDetailsModelComponent } from '../modal-details-model/modal-details-model.component';
+import { ModalFormModelComponent } from '../modal-form-model/modal-form-model.component';
 
 describe('ModelListComponent', () => {
   let component: ModelListComponent;
@@ -97,7 +99,7 @@ describe('ModelListComponent', () => {
     it('deve desativar um modelo', async () => {
       const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
 
-      modelService.delete.mockReturnValue(of(undefined));  // Retorna void para delete
+      modelService.delete.mockReturnValue(of(undefined)); 
       await component.disableModel(mockModel);
 
       expect(alertService.showWarning).toHaveBeenCalledWith(
@@ -124,7 +126,7 @@ describe('ModelListComponent', () => {
     it('deve ativar um modelo', async () => {
       const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: false }, activated: false };
 
-      modelService.activated.mockReturnValue(of(undefined));  // Retorna void para activated
+      modelService.activated.mockReturnValue(of(undefined)); 
       await component.activatedModel(mockModel);
 
       expect(alertService.showWarning).toHaveBeenCalledWith(
@@ -149,25 +151,184 @@ describe('ModelListComponent', () => {
         totalElements: mockModels.length,
     } as PaginatedResponse<Model>;
 
-    // Mocka a resposta do serviço para a chamada getAllPaginated
     modelService.getAllPaginated.mockReturnValue(of(mockResponse));
 
-    // Inicializa o componente
-    component.ngOnInit(); // Carrega os modelos inicialmente
+    component.ngOnInit();
 
-    // Simula o evento de filtro
     const event = { target: { value: 'Model 1' } };
     component.applyFilter(event as any);
 
-    // Verifica se `dataSource.data` foi atualizado corretamente
     expect(component.dataSource.data).toEqual([
         { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
     ]);
 
-    // Verifica se `filteredData` contém apenas o item filtrado
     expect(component.filteredData).toEqual([
         { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
     ]);
+});
+
+
+it('deve exibir uma lista vazia quando não houver modelos', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [],
+    totalElements: 0,
+  } as unknown as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.loadModels(0, 10);
+
+  expect(component.dataSource.data).toEqual([]);
+  expect(component.totalModels).toBe(0);
+});
+
+it('deve carregar a próxima página de modelos ao mudar a página', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [{ id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true }],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.onPageChange({ pageIndex: 1, pageSize: 10 });
+
+  expect(modelService.getAllPaginated).toHaveBeenCalledWith(1, 10);
+  expect(component.dataSource.data).toEqual(mockResponse.content);
+  expect(component.totalModels).toBe(mockResponse.totalElements);
+});
+
+it('deve atualizar a lista ao mudar o tamanho da página', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [{ id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true }],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.onPageChange({ pageIndex: 0, pageSize: 5 });
+
+  expect(modelService.getAllPaginated).toHaveBeenCalledWith(0, 5);
+  expect(component.dataSource.data).toEqual(mockResponse.content);
+  expect(component.totalModels).toBe(mockResponse.totalElements);
+});
+it('deve aplicar filtro por status', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [
+      { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+      { id: 2, name: 'Model 2', brand: { id: 2, name: 'Brand 2', activated: false }, activated: false },
+    ],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.filterByStatus(true);
+  
+  expect(component.selectedStatus).toBe(true);
+  expect(component.dataSource.data).toEqual([
+    { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+  ]);
+});
+
+it('deve aplicar filtro por status "all"', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [
+      { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+      { id: 2, name: 'Model 2', brand: { id: 2, name: 'Brand 2', activated: false }, activated: false },
+    ],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.filterByStatus('all');
+  
+  expect(component.selectedStatus).toBe('all');
+  expect(component.dataSource.data).toEqual(mockResponse.content);
+});
+it('deve limpar o filtro corretamente', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [
+      { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+      { id: 2, name: 'Model 2', brand: { id: 2, name: 'Brand 2', activated: true }, activated: true },
+    ],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.applyFilter({ target: { value: 'Model 1' } } as any);
+  expect(component.dataSource.data).toEqual([mockResponse.content[0]]);
+
+  component.applyFilter({ target: { value: '' } } as any);
+
+  expect(component.dataSource.data).toEqual(mockResponse.content); 
+});
+it('deve abrir o modal de visualização de modelo', () => {
+  const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
+
+  component.openModalViewModel(mockModel);
+
+  expect(dialog.open).toHaveBeenCalledWith(ModalDetailsModelComponent, {
+    width: '300px',
+    height: '286px',
+    data: mockModel,
+  });
+});
+
+it('deve abrir o modal de adicionar modelo', () => {
+  component.openModalAddModel();
+
+  expect(dialog.open).toHaveBeenCalledWith(ModalFormModelComponent, {
+    width: '500px',
+    height: '288px',
+  });
+});
+
+it('deve abrir o modal de editar modelo', () => {
+  const mockModel: Model = { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true };
+
+  component.openModalEditModel(mockModel);
+
+  expect(dialog.open).toHaveBeenCalledWith(ModalFormModelComponent, {
+    width: '500px',
+    height: '288px',
+    data: mockModel,
+  });
+});
+it('deve lidar com filtro vazio ou nulo corretamente', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [
+      { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+      { id: 2, name: 'Model 2', brand: { id: 2, name: 'Brand 2', activated: false }, activated: false },
+    ],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+
+  component.applyFilter({ target: { value: '' } } as any); 
+  expect(component.dataSource.data).toEqual(mockResponse.content); 
+
+  component.applyFilter({ target: { value: null } } as any); 
+  expect(component.dataSource.data).toEqual(mockResponse.content); 
+});
+it('deve habilitar/desabilitar componentes corretamente ao aplicar filtro por status', () => {
+  const mockResponse: PaginatedResponse<Model> = {
+    content: [
+      { id: 1, name: 'Model 1', brand: { id: 1, name: 'Brand 1', activated: true }, activated: true },
+      { id: 2, name: 'Model 2', brand: { id: 2, name: 'Brand 2', activated: false }, activated: false },
+    ],
+    totalElements: 2,
+  } as PaginatedResponse<Model>;
+
+  modelService.getAllPaginated.mockReturnValue(of(mockResponse));
+  
+  component.filterByStatus(true);
+  expect(component.dataSource.data).toEqual([mockResponse.content[0]]);
+  
+  component.filterByStatus(false); 
+  expect(component.dataSource.data).toEqual([mockResponse.content[1]]);
 });
 
 });
