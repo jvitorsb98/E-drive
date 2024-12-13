@@ -15,12 +15,14 @@ import { By } from '@angular/platform-browser';
 import 'jest-preset-angular/setup-jest';
 import { Vehicle } from '../../../../core/models/vehicle';
 import { HttpErrorResponse } from '@angular/common/http';
+import { IVehicleWithUserVehicle } from '../../../../core/models/vehicle-with-user-vehicle';
+import { ModalFormVehicleComponent } from '../modal-form-vehicle/modal-form-vehicle.component';
 
 // Mocks de dados
 const mockAlertasService = {
   showError: jest.fn(),
   showSuccess: jest.fn(),
-  showWarning: jest.fn().mockResolvedValue(true), // Mock do showWarning
+  showWarning: jest.fn().mockResolvedValue(true),
 };
 
 let mockUserVehicles: PaginatedResponse<UserVehicle> = {
@@ -51,7 +53,6 @@ let mockUserVehicles: PaginatedResponse<UserVehicle> = {
   empty: false,
 };
 
-// Mock da implementação do serviço
 class MockUserVehicleService {
   listAll(pageIndex: number, pageSize: number) {
     return of({
@@ -78,6 +79,9 @@ class MockUserVehicleService {
       empty: false,
     } as unknown as PaginatedResponse<UserVehicle>);
   }
+  deleteUserVehicle(id: number) {
+    return of(undefined);
+  }
 }
 
 describe('UserVehicleListComponent', () => {
@@ -88,9 +92,13 @@ describe('UserVehicleListComponent', () => {
   let mockDialog: { open: jest.Mock };
 
   beforeEach(async () => {
-
+    const mockUserVehicleService = {
+      deleteUserVehicle: jest.fn()
+    };
     mockDialog = {
-      open: jest.fn(), // Mock do método open
+      open: jest.fn().mockReturnValue({
+        afterClosed: jest.fn().mockReturnValue(of(true)),
+      }),
     };
 
     await TestBed.configureTestingModule({
@@ -106,6 +114,7 @@ describe('UserVehicleListComponent', () => {
         { provide: UserVehicleService, useClass: MockUserVehicleService },
         { provide: AlertasService, useValue: mockAlertasService },
         { provide: MatDialog, useValue: mockDialog },
+        
       ],
     }).compileComponents();
   });
@@ -126,19 +135,18 @@ describe('UserVehicleListComponent', () => {
   });
 
   it('should handle page change correctly', () => {
-    const spy = jest.spyOn(component, 'getList'); // Espiona o método getList
-    component.onPageChange({ pageSize: 5, pageIndex: 1 }); // Simula a troca de página
+    const spy = jest.spyOn(component, 'getList'); 
+    component.onPageChange({ pageSize: 5, pageIndex: 1 }); 
 
-    // Verifica se as variáveis foram atualizadas
+
     expect(component.pageSize).toBe(5);
     expect(component.currentPage).toBe(1);
 
-    // Verifica se o método getList foi chamado corretamente
     expect(spy).toHaveBeenCalledWith(1, 5);
   });
 
   it('should correctly update page size and page index when paginated', (done) => {
-    const spy = jest.spyOn(component, 'getList'); // Espiona o método getList
+    const spy = jest.spyOn(component, 'getList'); 
 
     // Simula a troca de página
     component.onPageChange({ pageIndex: 1, pageSize: 5 });
@@ -146,9 +154,9 @@ describe('UserVehicleListComponent', () => {
     fixture.detectChanges();
 
     fixture.whenStable().then(() => {
-      expect(component.currentPage).toBe(1);  // Verifica se a página foi atualizada
-      expect(component.pageSize).toBe(5);    // Verifica se o tamanho da página foi atualizado
-      expect(spy).toHaveBeenCalledWith(1, 5); // Verifica se o método foi chamado corretamente
+      expect(component.currentPage).toBe(1); 
+      expect(component.pageSize).toBe(5);   
+      expect(spy).toHaveBeenCalledWith(1, 5); 
       done();
     });
   });
@@ -157,10 +165,10 @@ describe('UserVehicleListComponent', () => {
   it('should show no data when no filter matches', (done) => {
     fixture.detectChanges();  
     fixture.whenStable().then(() => {
-      component.applyFilter({ target: { value: 'nonexistent filter' } } as unknown as Event);  // Filtro sem correspondências
+      component.applyFilter({ target: { value: 'nonexistent filter' } } as unknown as Event);
       fixture.detectChanges();
 
-      expect(component.filteredData.length).toBe(0);  // Verifica se o array filtrado está vazio
+      expect(component.filteredData.length).toBe(0);
       done();
     });
   });
@@ -168,7 +176,7 @@ describe('UserVehicleListComponent', () => {
   it('should show error alert when initial load fails', fakeAsync(() => {
     jest.spyOn(userVehicleService, 'listAll').mockReturnValue(
       throwError(() => new HttpErrorResponse({
-        error: { message: 'Erro ao carregar dados' }, // Propriedade `message` para simular a estrutura
+        error: { message: 'Erro ao carregar dados' }, 
         status: 500,
         statusText: 'Internal Server Error'
       }))
@@ -176,8 +184,8 @@ describe('UserVehicleListComponent', () => {
 
     const errorSpy = jest.spyOn(mockAlertasService, 'showError');
 
-    component.ngOnInit(); // Executa o método que faz o carregamento
-    tick(); // Avança o tempo virtual para completar o observable
+    component.ngOnInit();
+    tick(); 
 
     expect(errorSpy).toHaveBeenCalledWith('Erro ao carregar endereços', 'Erro ao carregar dados');
   }));
@@ -187,52 +195,51 @@ describe('UserVehicleListComponent', () => {
 
 
   it('should correctly handle pagination with different page sizes', () => {
-    component.onPageChange({ pageIndex: 0, pageSize: 10 }); // Simula uma página maior
+    component.onPageChange({ pageIndex: 0, pageSize: 10 }); 
     fixture.detectChanges();
 
-    expect(component.pageSize).toBe(10); // Verifica o tamanho da página
-    expect(component.currentPage).toBe(0); // Verifica a página atual
+    expect(component.pageSize).toBe(10);
+    expect(component.currentPage).toBe(0); 
   });
   it('should show data correctly when load is successful', fakeAsync(() => {
-    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of(mockUserVehicles)); // Simula um sucesso
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of(mockUserVehicles)); 
   
     component.ngOnInit();
-    tick(); // Avança o tempo virtual para completar o observable
+    tick(); 
   
-    expect(component.userVehicleList).toEqual(mockUserVehicles.content); // Verifica se os dados foram carregados corretamente
+    expect(component.userVehicleList).toEqual(mockUserVehicles.content); 
   }));
 
   it('should update data when page is changed', fakeAsync(() => {
-    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of(mockUserVehicles)); // Simula dados carregados
-    component.onPageChange({ pageIndex: 1, pageSize: 10 }); // Simula mudança de página
-    tick(); // Avança o tempo virtual para completar o observable
-    expect(component.userVehicleList).toEqual(mockUserVehicles.content); // Verifica se os dados da página foram atualizados corretamente
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of(mockUserVehicles));
+    component.onPageChange({ pageIndex: 1, pageSize: 10 });
+    tick(); 
+    expect(component.userVehicleList).toEqual(mockUserVehicles.content); 
   }));
 
 
   it('should show no data when no filter matches', fakeAsync(() => {
     fixture.detectChanges();
-    const searchEvent = { target: { value: 'nonexistent' } }; // Filtro sem resultados
+    const searchEvent = { target: { value: 'nonexistent' } }; 
     const spy = jest.spyOn(component, 'applyFilter');
   
-    component.applyFilter(searchEvent as unknown as Event); // Aplica o filtro
+    component.applyFilter(searchEvent as unknown as Event);
   
     fixture.detectChanges();
     tick(); // Avança o tempo do observable
   
-    expect(spy).toHaveBeenCalledWith(searchEvent); // Verifica se a função applyFilter foi chamada
-    expect(component.dataSource.data.length).toBe(0); // Verifica se não há resultados
+    expect(spy).toHaveBeenCalledWith(searchEvent);
+    expect(component.dataSource.data.length).toBe(0);
   }));
   it('should navigate between pages correctly', fakeAsync(() => {
     const spy = jest.spyOn(component, 'getList');
     
-    // Simula a mudança para a página 1
     component.onPageChange({ pageSize: 5, pageIndex: 1 });
     fixture.detectChanges();
     
-    tick(); // Avança o tempo do observable
+    tick();
     
-    expect(spy).toHaveBeenCalledWith(1, 5); // Verifica se o método getList foi chamado corretamente
+    expect(spy).toHaveBeenCalledWith(1, 5); 
   }));
   it('should show error alert when vehicle details request fails', fakeAsync(() => {
     const spy = jest.spyOn(userVehicleService, 'listAll').mockReturnValue(throwError(() => new HttpErrorResponse({
@@ -243,19 +250,189 @@ describe('UserVehicleListComponent', () => {
   
     const errorSpy = jest.spyOn(mockAlertasService, 'showError');
   
-    component.getList(component.currentPage, component.pageSize); // Chama a função para obter os dados
-    tick(); // Avança o tempo do observable
+    component.getList(component.currentPage, component.pageSize); 
+    tick(); 
   
     expect(errorSpy).toHaveBeenCalledWith('Erro ao carregar endereços', 'Falha ao carregar detalhes');
   }));
   
   it('should handle empty data correctly', fakeAsync(() => {
-    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of({ ...mockUserVehicles, content: [] })); // Mock com dados vazios
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of({ ...mockUserVehicles, content: [] })); 
     
-    component.ngOnInit(); // Executa o carregamento
-    tick(); // Avança o tempo do observable
+    component.ngOnInit(); 
+    tick(); 
     
-    expect(component.userVehicleList).toEqual([]); // Verifica se a lista foi atualizada corretamente
+    expect(component.userVehicleList).toEqual([]); 
+  }));
+
+  it('should call deleteUserVehicle and show success alert when deletion is confirmed', fakeAsync(() => {
+    jest.spyOn(mockAlertasService, 'showWarning').mockResolvedValue(true); 
+    const deleteSpy = jest.spyOn(userVehicleService, 'deleteUserVehicle').mockReturnValue(of(undefined)); 
+    const successSpy = jest.spyOn(mockAlertasService, 'showSuccess');
+  
+    const vehicleData = { userVehicle: { id: 1 } } as IVehicleWithUserVehicle;
+  
+    component.deleteUserVehicle(vehicleData);
+    tick();
+  
+    expect(deleteSpy).toHaveBeenCalledWith(1); 
+    expect(successSpy).toHaveBeenCalledWith('Sucesso!', 'Veículo deletado com sucesso!');
   }));
   
+  
+  
+  
+  it('should not delete user vehicle if deletion is canceled', fakeAsync(() => {
+    jest.spyOn(mockAlertasService, 'showWarning').mockResolvedValue(false);
+    const deleteSpy = jest.spyOn(userVehicleService, 'deleteUserVehicle');
+  
+    component.deleteUserVehicle(mockUserVehicles.content[0] as unknown as IVehicleWithUserVehicle);
+    tick();
+  
+    expect(deleteSpy).not.toHaveBeenCalled();
+  }));
+  
+  
+  it('should open modal for adding a new user vehicle', () => {
+    const dialogSpy = jest.spyOn(mockDialog, 'open');
+  
+    component.openModalAddUserVehicle();
+  
+    expect(dialogSpy).toHaveBeenCalledWith(ModalFormVehicleComponent, {
+      width: '80vw',
+      height: '75vh',
+      data: {}
+    });
+  });
+  
+  it('should update data correctly after adding a new vehicle', fakeAsync(() => {
+    const spy = jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of(mockUserVehicles)); 
+    const dialogSpy = jest.spyOn(mockDialog, 'open').mockReturnValue({
+      afterClosed: jest.fn().mockReturnValue(of(true))
+    });
+  
+    component.openModalAddUserVehicle(); 
+    tick(); 
+  
+    const newUserVehicle = { id: 3, userId: 103, vehicleId: 204, mileagePerLiterRoad: 16, mileagePerLiterCity: 14, consumptionEnergetic: 22, autonomyElectricMode: 110, batteryCapacity: 60, activated: true };
+    mockUserVehicles.content.push(newUserVehicle); 
+    fixture.detectChanges();
+  
+    expect(component.userVehicleList).toContain(newUserVehicle);
+  }));
+  it('should display no data when there are no vehicles', fakeAsync(() => {
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of({ ...mockUserVehicles, content: [] }));
+  
+    component.ngOnInit(); 
+    tick(); 
+  
+    expect(component.userVehicleList).toEqual([]); // Verifica se a lista está vazia
+    expect(component.filteredData.length).toBe(0); // Verifica se a filtragem também está vazia
+  }));
+  /* it('should handle error during filter', fakeAsync(() => {
+    // Mock do erro na chamada do service
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(throwError(() => new HttpErrorResponse({
+      error: { message: 'Erro ao aplicar filtro' },
+      status: 500,
+      statusText: 'Internal Server Error',
+    })));
+  
+    // Espiar o método showError do alertasService
+    const errorSpy = jest.spyOn(mockAlertasService, 'showError');
+  
+    // Chamar o método applyFilter com evento mockado
+    component.applyFilter({ target: { value: 'any' } } as unknown as Event);
+    
+    // Avançar o tempo para garantir que o erro seja tratado
+    tick();
+    
+    // Verificar se o método showError foi chamado com a mensagem correta
+    // Como o catchError trata o erro da API, o teste deve esperar o erro da API (erro.message) ser mostrado
+    expect(errorSpy).toHaveBeenCalledWith('Erro !!', 'Erro ao aplicar filtro');
+  })); */
+  
+  
+  
+  
+  it('should call deleteUserVehicle and show success alert when deletion is confirmed', fakeAsync(() => {
+    // Simula a confirmação de exclusão no alerta
+    jest.spyOn(mockAlertasService, 'showWarning').mockResolvedValue(true); 
+
+    const deleteSpy = jest.spyOn(userVehicleService, 'deleteUserVehicle').mockReturnValue(of(undefined)); 
+    const successSpy = jest.spyOn(mockAlertasService, 'showSuccess');
+    const vehicleData = { userVehicle: { id: 1 } } as IVehicleWithUserVehicle;
+    
+    component.deleteUserVehicle(vehicleData);
+    tick(); 
+    
+    expect(deleteSpy).toHaveBeenCalledWith(1);
+    expect(successSpy).toHaveBeenCalledWith('Sucesso!', 'Veículo deletado com sucesso!');
+  }));
+  
+  it('should not delete user vehicle if deletion is canceled', fakeAsync(() => {
+    jest.spyOn(mockAlertasService, 'showWarning').mockResolvedValue(false); 
+    const deleteSpy = jest.spyOn(userVehicleService, 'deleteUserVehicle');
+    
+    component.deleteUserVehicle(mockUserVehicles.content[0] as unknown as IVehicleWithUserVehicle);
+    tick();
+    
+    expect(deleteSpy).not.toHaveBeenCalled();
+  }));
+  
+  it('should show error alert when deleteUserVehicle fails', fakeAsync(() => {
+    jest.spyOn(mockAlertasService, 'showWarning').mockResolvedValue(true);
+    
+    const deleteSpy = jest.spyOn(userVehicleService, 'deleteUserVehicle').mockReturnValue(throwError(() => new HttpErrorResponse({
+      error: { message: 'Erro ao excluir veículo' },
+      status: 500,
+      statusText: 'Internal Server Error',
+    })));
+    
+    const errorSpy = jest.spyOn(mockAlertasService, 'showError');
+    
+    component.deleteUserVehicle({ userVehicle: { id: 1 } } as IVehicleWithUserVehicle);
+    tick(); // Avança o tempo
+  
+    expect(errorSpy).toHaveBeenCalledWith('Erro!', 'Ocorreu um erro ao deletar o veículo. Tente novamente mais tarde.');
+  }));
+  
+  
+  it('should navigate and update data when multiple pages exist', fakeAsync(() => {
+    const mockPaginatedResponse: PaginatedResponse<UserVehicle> = {
+      ...mockUserVehicles,
+      totalPages: 2,  // Simula duas páginas
+      content: [{ id: 3, userId: 105, vehicleId: 208, mileagePerLiterRoad: 17, mileagePerLiterCity: 15, consumptionEnergetic: 25, autonomyElectricMode: 120, batteryCapacity: 70, activated: true }]
+    };
+  
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of(mockPaginatedResponse));
+  
+    // Simula a mudança de página
+    component.onPageChange({ pageIndex: 1, pageSize: 2 });
+    tick();
+  
+    expect(component.userVehicleList.length).toBe(1); 
+  }));
+  
+ /* it('should show no data message when the list is empty', fakeAsync(() => {
+    jest.spyOn(userVehicleService, 'listAll').mockReturnValue(of({ ...mockUserVehicles, content: [] })); // Mock com dados vazios
+    
+    component.ngOnInit();
+    tick();
+    
+    const noDataElement = fixture.debugElement.query(By.css('.no-data-message'));
+    expect(noDataElement).toBeTruthy();  // Verifica se a mensagem "sem dados" é exibida
+  })); 
+  
+  it('should handle error when adding a new vehicle via modal', fakeAsync(() => {
+    const dialogSpy = jest.spyOn(mockDialog, 'open').mockReturnValue({
+      afterClosed: jest.fn().mockReturnValue(of(false))  // Simula o cancelamento do modal
+    });
+  
+    component.openModalAddUserVehicle();
+    tick();
+  
+    expect(dialogSpy).toHaveBeenCalled();  // Verifica se o modal foi aberto
+    expect(component.userVehicleList.length).toBe(2);  // Verifica se a lista não foi alterada
+  }));*/
+    
 });
