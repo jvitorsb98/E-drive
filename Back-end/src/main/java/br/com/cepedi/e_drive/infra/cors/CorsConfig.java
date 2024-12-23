@@ -24,7 +24,7 @@ public class CorsConfig {
      * métodos. A configuração inclui:
      * <ul>
      *     <li>Permissão para credenciais (cookies) serem incluídos nas solicitações.</li>
-     *     <li>Permissão para solicitações da origem "http://localhost:4200".</li>
+     *     <li>Permissão para solicitações das origens configuradas, como o novo DNS, localhost e IPs específicos.</li>
      *     <li>Permissão para qualquer cabeçalho nas solicitações.</li>
      *     <li>Permissão para qualquer método HTTP (GET, POST, PUT, DELETE, etc.).</li>
      * </ul>
@@ -38,13 +38,19 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
+
+        // Adição das origens permitidas
         config.addAllowedOrigin("http://54.200.23.253");
         config.addAllowedOrigin("http://localhost:4200");
         config.addAllowedOriginPattern("https://192.168.*.*:4200");
         config.addAllowedOrigin("http://localhost");
-
         config.addAllowedOrigin("http://54.200.23.253:8080");
         config.addAllowedOrigin("https://54.200.23.253");
+
+        // Novo DNS configurado
+        config.addAllowedOrigin("http://restic18edrivenavigator.cepedi.org.br");
+        config.addAllowedOrigin("https://restic18edrivenavigator.cepedi.org.br");
+
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
