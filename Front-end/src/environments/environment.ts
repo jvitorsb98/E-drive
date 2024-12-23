@@ -7,5 +7,5 @@ export const environment = {
   production: false,
   apiUrl: 'http://54.200.23.253:8080', // Use localhost para comunicar-se com o backend
   baseAssets: 'e-drive/assets/',
-  googleMapsApiKey: 'AIzaSyCVzPB0CvNAoAR96FJ0pPrlQBXcO4v9yZs' // Substitua pela chave de API
+  googleMapsApiKey: 'AIzaSyAqc5PG3FrkaRF8xxdIYhaDe2qqFyGzm0Y' // Substitua pela chave de API  
 };
