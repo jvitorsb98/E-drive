@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8443:8443"  # Mapear a porta HTTPS do container para o host
-      - "8081:8081"  # Mapeia a porta HTTP do contêiner para a porta 8081 do host
+      - "8082:8082"  # Mapeia a porta HTTP do contêiner para a porta 8082 do host
     env_file:
       - backend.env  # Referenciando o arquivo backend.env
     networks:
