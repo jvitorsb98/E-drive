@@ -15,7 +15,7 @@ WORKDIR /app
 COPY target/e-drive-0.0.1-SNAPSHOT.jar app.jar
 
 # Expor as portas usadas pela aplicação (HTTP e HTTPS)
-EXPOSE 8080 8443
+EXPOSE 8081 8443
 
 # Comando para executar a aplicação
 CMD ["java", "-jar", "app.jar"]
