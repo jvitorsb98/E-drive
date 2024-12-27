@@ -32,7 +32,7 @@ describe('ReportService', () => {
     const reportUrl = `${environment.apiUrl}/api/v1/reports/most-registered-cars`;
 
     // Chama o método que faz a requisição
-    service.getMostRegisteredCarsReport().subscribe(response => {
+    service.generateReport('most-registered-cars').subscribe(response => {
       expect(response).toEqual(mockResponse); // Verifica se a resposta é a esperada
     });
 
@@ -45,7 +45,7 @@ describe('ReportService', () => {
   it('should handle error response correctly', () => {
     const errorMessage = 'Erro na requisição';
 
-    service.getMostRegisteredCarsReport().subscribe({
+    service.generateReport('most-registered-cars').subscribe({
       next: () => fail('Esperado erro, mas a resposta foi bem-sucedida'),
       error: (error) => {
         expect(error.status).toBe(500); // Verifica o status do erro

@@ -6,15 +6,22 @@ import { ModalFormMyAddressesComponent } from './components/modal-form-my-addres
 import { CommonModule } from '@angular/common';
 import { SharedModule } from '../../shared/shared.module';
 import { AngularMaterialModule } from '../../angular-material/angular-material.module';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 describe('MyAddressesModule', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
         MyAddressesModule,
-        CommonModule, 
-        SharedModule, 
+        CommonModule,
+        SharedModule,
         AngularMaterialModule,
+        RouterTestingModule // Adicionado para lidar com ActivatedRoute e rotas
+      ],
+      providers: [
+        { provide: MatDialogRef, useValue: {} },// Mock para MatDialogRef
+        { provide: MAT_DIALOG_DATA, useValue: {} },// Mock para MAT_DIALOG_DATA
       ]
     }).compileComponents();
   });

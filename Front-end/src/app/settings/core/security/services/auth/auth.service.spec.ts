@@ -3,6 +3,8 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { AuthService } from './auth.service';
 import { Router } from '@angular/router';
 import { ILoginRequest, ILoginResponse, IRecoverPasswordRequest } from '../../../models/inter-Login';
+import { environment } from '../../../../../../environments/environment';
+import { jwtDecode } from 'jwt-decode';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -74,7 +76,45 @@ describe('AuthService', () => {
       expect(localStorage.getItem('token')).toBeNull();
       expect(mockRouter.navigate).toHaveBeenCalledWith(['']);
     });
+
+    it('deve tratar falha ao notificar o backend durante o logout', () => {
+      const token = 'mock-token';
+      localStorage.setItem('token', token);
+
+      service.logout();
+
+      const req = httpMock.expectOne(`${service['apiUrl']}/logout`);
+      expect(req.request.method).toBe('POST');
+      req.flush('Falha no backend', { status: 400, statusText: 'Bad Request' });
+
+      expect(localStorage.getItem('token')).toBeNull();
+    });
+
+    it('deve remover o token e notificar o backend durante o logout', () => {
+      const token = 'mock-token';
+      localStorage.setItem('token', token);
+
+      service.logout();
+
+      // Verifica se o token foi removido
+      expect(localStorage.getItem('token')).toBeNull();
+
+      // Verifica se o estado de login foi atualizado
+      service.isLoggedIn$.subscribe(isLoggedIn => {
+        expect(isLoggedIn).toBeFalsy();
+      });
+
+      // Verifica se houve navegação para a página inicial
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['']);
+
+      // Verifica se a chamada HTTP ao backend foi feita corretamente
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/logout`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
+      req.flush(null); // Simula resposta bem-sucedida
+    });
   });
+
 
   describe('isLoggedIn', () => {
     it('deve retornar true se o token for válido', () => {
@@ -130,11 +170,21 @@ describe('AuthService', () => {
         },
       });
     });
+
+    it('deve retornar mensagem padrão para status desconhecido', () => {
+      const mockError = { status: 404 };
+      service['handleError'](mockError as any).subscribe({
+        error: (error) => {
+          expect(error.message).toBe('Ocorreu um erro inesperado. Tente novamente mais tarde.');
+        },
+      });
+    });
+
   });
 
 
   describe('getUserID', () => {
-  
+
     it('deve retornar undefined se o token não estiver presente', () => {
       localStorage.removeItem('token');
       expect(service.getUserID()).toBeUndefined();
@@ -143,16 +193,16 @@ describe('AuthService', () => {
   });
 
   describe('getUserEmail', () => {
-  
+
     it('deve retornar undefined se o token não estiver presente', () => {
       localStorage.removeItem('token');
       expect(service.getUserEmail()).toBeUndefined();
     });
-  
+
   });
-  
+
   describe('getUserDetails', () => {
-  
+
     it('deve lançar erro se o token não estiver presente', () => {
       localStorage.removeItem('token');
       service.getUserDetails().subscribe({
@@ -161,6 +211,29 @@ describe('AuthService', () => {
         },
       });
     });
+
+    it('deve retornar os detalhes do usuário se o token for válido', () => {
+      const mockToken = 'mock-valid-token'; // Substitua por um token JWT válido para teste
+      localStorage.setItem('token', mockToken);
+
+      const decodedToken = { id: 1, email: 'user@example.com', exp: (Date.now() / 1000) + 3600 };
+      jest.spyOn(jwtDecode as any, 'default').mockReturnValue(decodedToken);
+
+      const result = service.getUserDetails();
+      expect(result).toEqual(decodedToken);
+    });
+
+    it('deve lançar erro se o token for inválido em getUserDetails', () => {
+      localStorage.setItem('token', 'invalid-token');
+      jest.spyOn(service as any, 'isLoggedIn').mockReturnValue(false);
+
+      service.getUserDetails().subscribe({
+        error: (error) => {
+          expect(error.message).toBe('Token inválido. Por favor, tente novamente.');
+        },
+      });
+    });
+
   });
 
   describe('getToken', () => {
@@ -168,55 +241,69 @@ describe('AuthService', () => {
       localStorage.setItem('token', 'mock-token');
       expect(service.getToken()).toBe('mock-token');
     });
-  
+
     it('deve retornar null se nenhum token estiver armazenado', () => {
       localStorage.removeItem('token');
       expect(service.getToken()).toBeNull();
     });
   });
-  
+
   describe('getTokenReset', () => {
     it('deve retornar o token de redefinição de senha armazenado no localStorage', () => {
       localStorage.setItem('token-reset-password', 'mock-reset-token');
       expect(service.getTokenReset()).toBe('mock-reset-token');
     });
-  
+
     it('deve retornar null se nenhum token de redefinição estiver armazenado', () => {
       localStorage.removeItem('token-reset-password');
       expect(service.getTokenReset()).toBeNull();
     });
   });
-  
+
   describe('resetPassword', () => {
     it('deve enviar uma solicitação de redefinição de senha com sucesso', () => {
       const request = { token: 'mock-token', password: 'new-password' };
       const mockResponse = 'Senha redefinida com sucesso.';
-  
+
       service.resetPassword(request).subscribe((response) => {
         expect(response).toBe(mockResponse);
       });
-  
+
       const req = httpMock.expectOne(`${service['apiUrl']}/reset-password/reset`);
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(request);
       req.flush(mockResponse);
     });
   });
-  
+
   describe('confirmAccount', () => {
     it('deve confirmar a conta com sucesso', () => {
       const mockToken = 'mock-confirm-token';
       const mockResponse = 'Conta ativada com sucesso.';
-  
+
       service.confirmAccount(mockToken).subscribe((response) => {
         expect(response).toBe(mockResponse);
       });
-  
+
       const req = httpMock.expectOne(`${service['apiUrl']}/reactivate?token=${mockToken}`);
       expect(req.request.method).toBe('PUT');
       req.flush(mockResponse);
     });
   });
-  
-  
+
+  describe('recoverAccountRequest', () => {
+    it('deve tratar erro ao enviar solicitação de reativação de conta', () => {
+      const email = { email: 'test@example.com' };
+      service.recoverAccountRequest(email).subscribe({
+        error: (error) => {
+          expect(error).toBeTruthy();
+        },
+      });
+
+      const req = httpMock.expectOne(`${service['apiUrl']}/reactivate-account/request`);
+      expect(req.request.method).toBe('PUT');
+      req.flush('Erro ao enviar solicitação', { status: 500, statusText: 'Internal Server Error' });
+    });
+  });
+
 });
