@@ -29,8 +29,8 @@ COPY --from=build /app/dist/e-drive/browser/ /usr/share/nginx/html/e-drive
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copiar os certificados SSL para o contêiner
-COPY src/environments/server.crt /etc/nginx/ssl/server.crt
-COPY src/environments/server.key /etc/nginx/ssl/server.key
+COPY src/environments/certificados/server.crt /etc/nginx/ssl/server.crt
+COPY src/environments/certificados/server.key /etc/nginx/ssl/server.key
 
 # Expor as portas 80 e 443
 EXPOSE 80 443
