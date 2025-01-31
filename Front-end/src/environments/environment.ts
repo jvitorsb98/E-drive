@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://54.200.23.253:8443', // Use localhost para comunicar-se com o backend
+  apiUrl: 'https://restic18edrivenavigator.cepedi.org.br:8443', // Use localhost para comunicar-se com o backend
   baseAssets: 'e-drive/assets/',
   googleMapsApiKey: 'AIzaSyAqc5PG3FrkaRF8xxdIYhaDe2qqFyGzm0Y' // Substitua pela chave de API  
 };
