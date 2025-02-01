@@ -105,7 +105,7 @@ public class EmailService {
             context.setVariable("nome", name);
             context.setVariable("token", token);
             context.setVariable("titulo", "Redefinição de Senha");
-            context.setVariable("linkConfirmacao", frontendUrl + "/e-driver/login/reset-password?token=" + token);
+            context.setVariable("linkConfirmacao",frontendUrl + "/e-driver/login/reset-password?token=" + token);
 
             String htmlBody = templateEngine.process("reset_password_email_template", context);
             helper.setText(htmlBody, true);
