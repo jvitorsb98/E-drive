@@ -39,7 +39,7 @@ public class ValidationModelExistsForActivatedTest {
         Long modelId = 1L;
 
         when(modelRepository.existsById(modelId)).thenReturn(false);
-        when(messageSource.getMessage("model.activated.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("model.activated.not.found", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The required model does not exist"); // Simular a mensagem de erro
 
         // Act & Assert

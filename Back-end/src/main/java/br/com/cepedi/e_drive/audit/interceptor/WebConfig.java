@@ -47,12 +47,13 @@ public class WebConfig implements WebMvcConfigurer {
         messageSource.setDefaultEncoding("UTF-8");
         return messageSource;
     }
-
     @Bean
     public LocaleResolver localeResolver() {
         SessionLocaleResolver localeResolver = new SessionLocaleResolver();
-
-        localeResolver.setDefaultLocale(new Locale("pt", "BR"));
+        localeResolver.setDefaultLocale(new Locale.Builder()
+                .setLanguage("pt")
+                .setRegion("BR")
+                .build());
         return localeResolver;
     }
 

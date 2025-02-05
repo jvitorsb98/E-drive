@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.repository.UserRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -41,7 +42,7 @@ public class ValidationLoginUserExists implements ValidationsLogin {
             String errorMessage = messageSource.getMessage(
                     "auth.login.invalid.credentials",
                     new Object[]{email},
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

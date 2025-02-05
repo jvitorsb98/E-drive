@@ -66,7 +66,7 @@ class ValidationRegisterVehicle_Category_NotDisabledTest {
         category.setActivated(false);
         when(categoryRepository.existsById(data.categoryId())).thenReturn(true);
         when(categoryRepository.getReferenceById(data.categoryId())).thenReturn(category);
-        when(messageSource.getMessage("vehicle.register.category.disabled", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.register.category.disabled", null, LocaleContextHolder.getLocale()))
             .thenReturn("Category is disabled");
 
         // Validação e verificação de exceção

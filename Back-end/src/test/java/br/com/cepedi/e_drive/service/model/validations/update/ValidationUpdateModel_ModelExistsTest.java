@@ -46,7 +46,7 @@ public class ValidationUpdateModel_ModelExistsTest {
         // Define o comportamento do mock do ModelRepository
         when(modelRepository.existsById(modelId)).thenReturn(false);
         // Define o comportamento do mock do MessageSource
-        when(messageSource.getMessage("model.update.not.found", null, java.util.Locale.getDefault()))
+        when(messageSource.getMessage("model.update.not.found", null, java.util.LocaleContextHolder.getLocale()))
                 .thenReturn("The required model does not exist");
 
         // Act & Assert

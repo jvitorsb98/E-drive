@@ -50,7 +50,7 @@ class ValidationRegisterVehicle_VehicleType_NotDisabledTest {
         when(vehicleTypeRepository.existsById(vehicleTypeId)).thenReturn(true);
         when(vehicleTypeRepository.getReferenceById(vehicleTypeId)).thenReturn(vehicleType);
         when(messageSource.getMessage("vehicle.register.type.disabled", 
-                new Object[]{vehicleTypeId}, Locale.getDefault()))
+                new Object[]{vehicleTypeId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Vehicle type is disabled");
 
         // Verifica que a exceção é lançada

@@ -6,6 +6,7 @@ import br.com.cepedi.e_drive.repository.CategoryRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -36,7 +37,7 @@ public class ValidationRegisterVehicle_Category_NotDisabled implements Validatio
                 String errorMessage = messageSource.getMessage(
                         "vehicle.register.category.disabled",
                         null,
-                        Locale.getDefault()
+                        LocaleContextHolder.getLocale()
                 );
                 throw new ValidationException(errorMessage);
             }

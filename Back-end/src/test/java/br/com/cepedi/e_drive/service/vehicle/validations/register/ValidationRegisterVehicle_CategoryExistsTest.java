@@ -48,12 +48,12 @@ class ValidationRegisterVehicle_CategoryExistsTest {
     void validate_ShouldThrowException_WhenCategoryDoesNotExist() {
         // Configura o mock para que a categoria não exista
         when(categoryRepository.existsById(data.categoryId())).thenReturn(false);
-        when(messageSource.getMessage("vehicle.register.category.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.register.category.not.found", null, LocaleContextHolder.getLocale()))
                 .thenReturn("Category not found");
 
         // Verifica que a exceção é lançada com a mensagem esperada
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validate(data));
-        verify(messageSource).getMessage("vehicle.register.category.not.found", null, Locale.getDefault());
+        verify(messageSource).getMessage("vehicle.register.category.not.found", null, LocaleContextHolder.getLocale());
         assert(exception.getMessage().contains("Category not found"));
     }
 

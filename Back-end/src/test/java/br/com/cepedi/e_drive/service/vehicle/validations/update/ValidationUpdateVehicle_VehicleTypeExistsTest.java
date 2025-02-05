@@ -56,7 +56,7 @@ public class ValidationUpdateVehicle_VehicleTypeExistsTest {
 
         // Simula que o typeId não existe
         when(vehicleTypeRepository.existsById(typeId)).thenReturn(false);
-        when(messageSource.getMessage("vehicle.update.type.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.type.not.found", null, LocaleContextHolder.getLocale()))
         .thenReturn("The provided vehicle type id does not exist.");
 
 

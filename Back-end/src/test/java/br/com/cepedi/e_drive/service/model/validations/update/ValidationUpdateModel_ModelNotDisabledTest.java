@@ -50,7 +50,7 @@ public class ValidationUpdateModel_ModelNotDisabledTest {
 
         when(modelRepository.existsById(modelId)).thenReturn(true);
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
-        when(messageSource.getMessage("model.update.disabled", new Object[]{model.getName()}, java.util.Locale.getDefault()))
+        when(messageSource.getMessage("model.update.disabled", new Object[]{model.getName()}, java.util.LocaleContextHolder.getLocale()))
                 .thenReturn("The required model is not activated");
 
         // Act & Assert

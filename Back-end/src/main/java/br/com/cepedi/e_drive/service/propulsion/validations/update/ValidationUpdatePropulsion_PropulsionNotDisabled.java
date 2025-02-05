@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -39,7 +40,7 @@ public class ValidationUpdatePropulsion_PropulsionNotDisabled implements Validat
                 String errorMessage = messageSource.getMessage(
                         "propulsion.update.activated", // Chave da mensagem
                         new Object[]{id}, // Parâmetro da mensagem
-                        Locale.getDefault() // Locale padrão
+                        LocaleContextHolder.getLocale() // Locale padrão
                 );
                 throw new ValidationException(errorMessage);
             }

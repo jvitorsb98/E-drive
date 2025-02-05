@@ -7,6 +7,7 @@ import br.com.cepedi.e_drive.repository.VehicleRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -49,7 +50,7 @@ public class ValidationUpdateVehicle_duplicate_data implements ValidationUpdateV
                 String message = messageSource.getMessage(
                         "vehicle.update.version.duplicate",
                         new Object[]{model.getBrand().getName(), model.getName(), data.version()},
-                        Locale.getDefault()
+                        LocaleContextHolder.getLocale()
                 );
 
                 throw new ValidationException(message);

@@ -38,7 +38,7 @@ class ValidationActivatedVehicle_ExistsTest {
 
         // Simulando que o veículo com o ID fornecido não existe
         when(vehicleRepository.existsById(nonExistentVehicleId)).thenReturn(false);
-        when(messageSource.getMessage("vehicle.activate.not.exist", new Object[]{nonExistentVehicleId}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.activate.not.exist", new Object[]{nonExistentVehicleId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Vehicle with ID " + nonExistentVehicleId + " does not exist.");
 
         // Verifica se a exceção de validação é lançada com a mensagem correta

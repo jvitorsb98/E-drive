@@ -49,7 +49,7 @@ class ValidationRegisterBrand_duplicate_dataTest {
     void validation_ThrowsValidationException_WhenBrandExists() {
         // Arrange
         when(brandRepository.existsByNameIgnoreCase("BrandName")).thenReturn(true);
-        when(messageSource.getMessage("brand.register.duplicate", new Object[]{"BrandName"}, Locale.getDefault()))
+        when(messageSource.getMessage("brand.register.duplicate", new Object[]{"BrandName"}, LocaleContextHolder.getLocale()))
                 .thenReturn("A brand with this name already exists: BrandName");
 
         // Act & Assert

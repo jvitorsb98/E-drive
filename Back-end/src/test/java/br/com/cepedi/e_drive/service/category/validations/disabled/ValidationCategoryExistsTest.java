@@ -57,7 +57,7 @@ public class ValidationCategoryExistsTest {
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
 
         // Simular a mensagem de erro que será lançada
-        when(messageSource.getMessage("category.disabled.not.found_2", new Object[]{categoryId}, Locale.getDefault()))
+        when(messageSource.getMessage("category.disabled.not.found_2", new Object[]{categoryId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Category not found");
 
         // Act & Assert

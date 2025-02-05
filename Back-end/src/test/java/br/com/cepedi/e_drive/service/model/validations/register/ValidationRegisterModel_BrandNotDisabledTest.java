@@ -52,7 +52,7 @@ public class ValidationRegisterModel_BrandNotDisabledTest {
 
         when(brandRepository.existsById(brandId)).thenReturn(true);
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
-        when(messageSource.getMessage("model.register.brand.disabled", new Object[]{brand.getName()}, Locale.getDefault()))
+        when(messageSource.getMessage("model.register.brand.disabled", new Object[]{brand.getName()}, LocaleContextHolder.getLocale()))
                 .thenReturn("The required brand " + brand.getName() + " is disabled"); // Mockando a mensagem de erro
 
         // Act & Assert

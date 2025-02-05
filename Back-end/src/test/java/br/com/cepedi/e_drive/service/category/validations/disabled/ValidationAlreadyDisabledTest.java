@@ -46,7 +46,7 @@ public class ValidationAlreadyDisabledTest {
         when(categoryRepository.findById(categoryId)).thenReturn(java.util.Optional.of(category));
 
         // Simular a mensagem de erro que será lançada
-        when(messageSource.getMessage("category.disabled.already.disabled", new Object[]{categoryId}, Locale.getDefault()))
+        when(messageSource.getMessage("category.disabled.already.disabled", new Object[]{categoryId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Category is already disabled");
 
         // Act & Assert
@@ -77,7 +77,7 @@ public class ValidationAlreadyDisabledTest {
         when(categoryRepository.findById(categoryId)).thenReturn(java.util.Optional.empty());
 
         // Simular a mensagem de erro que será lançada
-        when(messageSource.getMessage("category.disabled.not.found", new Object[]{categoryId}, Locale.getDefault()))
+        when(messageSource.getMessage("category.disabled.not.found", new Object[]{categoryId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Category not found");
 
         // Act & Assert

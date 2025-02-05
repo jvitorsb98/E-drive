@@ -48,7 +48,7 @@ public class ValidationBrandAlreadyDisabledForDisabledTest {
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
 
         // Simular a mensagem de erro que será lançada
-        when(messageSource.getMessage("brand.disabled.already.disabled", new Object[]{brand.getName()}, Locale.getDefault()))
+        when(messageSource.getMessage("brand.disabled.already.disabled", new Object[]{brand.getName()}, LocaleContextHolder.getLocale()))
                 .thenReturn("Brand is already disabled");
 
         // Act & Assert

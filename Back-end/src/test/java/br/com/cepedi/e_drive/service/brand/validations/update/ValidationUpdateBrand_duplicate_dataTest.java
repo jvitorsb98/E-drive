@@ -47,7 +47,7 @@ class ValidationUpdateBrand_duplicate_dataTest {
         // Mocking
         when(brandRepository.getReferenceById(brandId)).thenReturn(new Brand(brandId, existingBrandName, true));
         when(brandRepository.existsByNameIgnoreCaseAndIdNot(updatedBrandName.trim(), brandId)).thenReturn(true);
-        when(messageSource.getMessage("brand.update.duplicate", new Object[]{updatedBrandName}, Locale.getDefault()))
+        when(messageSource.getMessage("brand.update.duplicate", new Object[]{updatedBrandName}, LocaleContextHolder.getLocale()))
             .thenReturn("Brand name already exists.");
 
         // Act & Assert

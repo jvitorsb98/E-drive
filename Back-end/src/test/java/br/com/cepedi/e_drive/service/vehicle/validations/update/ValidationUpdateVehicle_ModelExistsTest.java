@@ -51,7 +51,7 @@ class ValidationUpdateVehicle_ModelExistsTest {
 
         when(data.modelId()).thenReturn(modelId); // Simula o retorno do ID do modelo
         when(modelRepository.existsById(modelId)).thenReturn(false); // Simula que o modelo não existe
-        when(messageSource.getMessage("vehicle.update.model.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.model.not.found", null, LocaleContextHolder.getLocale()))
                 .thenReturn("O ID do modelo fornecido não existe."); // Mensagem de erro
 
         // Act & Assert

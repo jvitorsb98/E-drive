@@ -54,7 +54,7 @@ class ValidationUpdateVehicle_Model_NotDisabledTest {
         when(model.getActivated()).thenReturn(false);  // Simula que o modelo está desativado
 
         // Simula a mensagem de erro retornada pelo MessageSource
-        when(messageSource.getMessage("vehicle.update.model.disabled", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.model.disabled", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided model id is disabled");
 
         // Act & Assert

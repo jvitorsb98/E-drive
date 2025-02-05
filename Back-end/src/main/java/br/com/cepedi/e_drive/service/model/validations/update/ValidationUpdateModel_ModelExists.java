@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.ModelRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -34,7 +35,7 @@ public class ValidationUpdateModel_ModelExists implements ValidationModelUpdate 
             String errorMessage = messageSource.getMessage(
                     "model.update.not.found", // Chave da mensagem
                     null,
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

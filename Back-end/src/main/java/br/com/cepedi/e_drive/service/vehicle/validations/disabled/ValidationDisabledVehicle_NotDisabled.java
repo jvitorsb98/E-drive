@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.VehicleRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -36,7 +37,7 @@ public class ValidationDisabledVehicle_NotDisabled implements ValidationDisabled
             Vehicle vehicle = vehicleRepository.getReferenceById(id);
             if (!vehicle.isActivated()) {
                 String message = messageSource.getMessage(
-                        "vehicle.disable.already", new Object[]{id}, Locale.getDefault()
+                        "vehicle.disable.already", new Object[]{id}, LocaleContextHolder.getLocale()
                 );
                 throw new ValidationException(message);
             }

@@ -6,6 +6,7 @@ import br.com.cepedi.e_drive.repository.BrandRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -38,7 +39,7 @@ public class ValidationBrandIsActivatedForUpdate implements ValidationBrandUpdat
                 String errorMessage = messageSource.getMessage(
                         "brand.update.not.activated",
                         new Object[]{brand.getName()},
-                        Locale.getDefault()
+                        LocaleContextHolder.getLocale()
                 );
                 throw new ValidationException(errorMessage);
             }

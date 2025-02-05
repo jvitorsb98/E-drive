@@ -46,7 +46,7 @@ public class ValidationModelUpdate_BrandExistsTest {
 		DataUpdateModel dataUpdateModel = new DataUpdateModel(faker.lorem().word(), brandId);
 
 		when(brandRepository.existsById(brandId)).thenReturn(false);
-		when(messageSource.getMessage("model.update.brand.not.found", new Object[]{brandId}, Locale.getDefault()))
+		when(messageSource.getMessage("model.update.brand.not.found", new Object[]{brandId}, LocaleContextHolder.getLocale()))
 				.thenReturn("The required brand does not exist"); // Mockando a mensagem de erro
 
 		// Act & Assert

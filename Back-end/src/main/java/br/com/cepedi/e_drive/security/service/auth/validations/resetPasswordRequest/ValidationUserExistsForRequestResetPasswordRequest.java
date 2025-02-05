@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.repository.UserRepository; // Adicionada a
 import jakarta.validation.ValidationException; // Exceção para validações
 import org.springframework.beans.factory.annotation.Autowired; // Importação para injeção de dependências
 import org.springframework.context.MessageSource; // Importação para internacionalização
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component; // Anotação para indicar que é um componente do Spring
 
 import java.util.Locale; // Para manipulação de locais
@@ -41,7 +42,7 @@ public class ValidationUserExistsForRequestResetPasswordRequest implements Valid
             String errorMessage = messageSource.getMessage(
                     "auth.request.reset.password.notfound",
                     new Object[]{email},
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

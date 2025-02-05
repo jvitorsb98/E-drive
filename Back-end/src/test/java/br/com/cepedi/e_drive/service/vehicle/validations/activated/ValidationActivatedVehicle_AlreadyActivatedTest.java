@@ -43,7 +43,7 @@ class ValidationActivatedVehicle_AlreadyActivatedTest {
         // Simula a existência e o estado ativado do veículo
         when(vehicleRepository.existsById(vehicleId)).thenReturn(true);
         when(vehicleRepository.getReferenceById(vehicleId)).thenReturn(activatedVehicle);
-        when(messageSource.getMessage("vehicle.activate.already.activated", new Object[]{vehicleId}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.activate.already.activated", new Object[]{vehicleId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Vehicle with ID " + vehicleId + " is already activated.");
 
         // Verifica se a exceção é lançada com a mensagem correta

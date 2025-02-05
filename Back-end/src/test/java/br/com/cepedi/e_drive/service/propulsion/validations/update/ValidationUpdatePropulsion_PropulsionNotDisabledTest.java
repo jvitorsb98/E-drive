@@ -41,7 +41,7 @@ class ValidationUpdatePropulsion_PropulsionNotDisabledTest {
         when(propulsionRepository.existsById(id)).thenReturn(true);
         when(propulsionRepository.getReferenceById(id)).thenReturn(propulsion);
         when(propulsion.getActivated()).thenReturn(true); // Activated
-        when(messageSource.getMessage("propulsion.update.activated", new Object[]{id}, Locale.getDefault()))
+        when(messageSource.getMessage("propulsion.update.activated", new Object[]{id}, LocaleContextHolder.getLocale()))
                 .thenReturn("The required propulsion is activated"); // Mockando a mensagem de erro
 
         // Act & Assert

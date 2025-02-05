@@ -2,6 +2,7 @@ package br.com.cepedi.e_drive.service.propulsion.validations.disabled;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import br.com.cepedi.e_drive.repository.PropulsionRepository;
 
@@ -34,7 +35,7 @@ public class ValidationPropulsionExists implements PropulsionValidatorDisabled {
             String errorMessage = messageSource.getMessage(
                     "propulsion.not.found", // Chave da mensagem
                     new Object[]{id}, // Parâmetros da mensagem
-                    Locale.getDefault() // Locale padrão
+                    LocaleContextHolder.getLocale() // Locale padrão
             );
             throw new IllegalArgumentException(errorMessage);
         }

@@ -4,6 +4,7 @@ import br.com.cepedi.e_drive.repository.VehicleRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class ValidationActivatedVehicle_AlreadyActivated {
         if (vehicleRepository.existsById(id)) {
             if (vehicleRepository.getReferenceById(id).isActivated()) {
                 String message = messageSource.getMessage(
-                        "vehicle.activate.already.activated", new Object[]{id}, Locale.getDefault()
+                        "vehicle.activate.already.activated", new Object[]{id}, LocaleContextHolder.getLocale()
                 );
                 throw new ValidationException(message);
             }

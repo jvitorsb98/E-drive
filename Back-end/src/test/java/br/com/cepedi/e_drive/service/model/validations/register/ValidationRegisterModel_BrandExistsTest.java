@@ -48,7 +48,7 @@ public class ValidationRegisterModel_BrandExistsTest {
         when(brandRepository.existsById(brandId)).thenReturn(false);
 
         // Mockando a mensagem do MessageSource
-        when(messageSource.getMessage("model.register.brand.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("model.register.brand.not.found", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The required brand does not exist");
 
         // Act & Assert

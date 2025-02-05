@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.security.service.token.TokenService;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -37,7 +38,7 @@ public class ValidationTokenValidateForResetPassword implements ValidationResetP
             String errorMessage = messageSource.getMessage(
                     "auth.reset.password.token.invalid",
                     null,
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

@@ -4,6 +4,7 @@ import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class ValidationVehicleTypeExistsForActivated implements ValidationVehicl
             String errorMessage = messageSource.getMessage(
                     "vehicleType.activated.notExists", // Chave da mensagem
                     new Object[]{id}, // Parâmetro da mensagem
-                    Locale.getDefault() // Locale padrão
+                    LocaleContextHolder.getLocale() // Locale padrão
             );
             throw new ValidationException(errorMessage);
         }

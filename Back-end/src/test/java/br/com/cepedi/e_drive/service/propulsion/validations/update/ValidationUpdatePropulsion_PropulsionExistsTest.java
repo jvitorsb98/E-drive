@@ -36,7 +36,7 @@ class ValidationUpdatePropulsion_PropulsionExistsTest {
         // Arrange
         Long id = 1L;
         when(propulsionRepository.existsById(id)).thenReturn(false);
-        when(messageSource.getMessage("propulsion.not.found_1", new Object[]{id}, Locale.getDefault()))
+        when(messageSource.getMessage("propulsion.not.found_1", new Object[]{id}, LocaleContextHolder.getLocale()))
                 .thenReturn("Propulsion with the given ID does not exist"); // Mockando a mensagem de erro
 
         // Act & Assert

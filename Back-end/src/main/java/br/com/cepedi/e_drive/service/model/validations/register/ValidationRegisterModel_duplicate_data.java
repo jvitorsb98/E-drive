@@ -3,6 +3,7 @@ package br.com.cepedi.e_drive.service.model.validations.register;
 import br.com.cepedi.e_drive.repository.BrandRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import br.com.cepedi.e_drive.model.records.model.input.DataRegisterModel;
 import br.com.cepedi.e_drive.repository.ModelRepository;
@@ -49,7 +50,7 @@ public class ValidationRegisterModel_duplicate_data implements ValidationRegiste
             String errorMessage = messageSource.getMessage(
                     "model.register.duplicate",
                     new Object[]{dataRegisterModel.name(), brandName}, // Adiciona o nome da marca
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

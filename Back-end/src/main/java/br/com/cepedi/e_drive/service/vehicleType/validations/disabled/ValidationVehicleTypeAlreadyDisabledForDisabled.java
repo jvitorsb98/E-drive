@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -36,7 +37,7 @@ public class ValidationVehicleTypeAlreadyDisabledForDisabled implements VehicleT
                 String errorMessage = messageSource.getMessage(
                         "vehicleType.disabled.alreadyDisabled", // Chave da mensagem
                         new Object[]{id}, // Parâmetros da mensagem
-                        Locale.getDefault() // Locale padrão
+                        LocaleContextHolder.getLocale() // Locale padrão
                 );
                 throw new ValidationException(errorMessage);
             }

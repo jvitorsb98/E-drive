@@ -58,14 +58,14 @@ class ValidationUpdateVehicle_duplicate_dataTest {
 
         when(vehicleRepository.existsByModelIdAndVersionIgnoreCaseAndIdNot(modelId, version, vehicleId)).thenReturn(true);
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
-        when(messageSource.getMessage(anyString(), any(), eq(Locale.getDefault()))).thenReturn("Duplicate version error message");
+        when(messageSource.getMessage(anyString(), any(), eq(LocaleContextHolder.getLocale()))).thenReturn("Duplicate version error message");
 
         // Act & Assert
         assertThrows(ValidationException.class, () -> validationUpdateVehicle.validate(data, vehicleId));
 
         // Verify interactions
         verify(vehicleRepository).existsByModelIdAndVersionIgnoreCaseAndIdNot(modelId, version, vehicleId);
-        verify(messageSource).getMessage("vehicle.update.version.duplicate", new Object[]{"TestBrand", "TestModel", version}, Locale.getDefault());
+        verify(messageSource).getMessage("vehicle.update.version.duplicate", new Object[]{"TestBrand", "TestModel", version}, LocaleContextHolder.getLocale());
     }
 
 

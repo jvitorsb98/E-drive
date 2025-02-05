@@ -52,7 +52,7 @@ public class ValidationUpdateVehicle_PropulsionExistsTest {
 
         when(propulsionRepository.existsById(invalidPropulsionId)).thenReturn(false);
        // Mockando a mensagem para quando a propulsion não for encontrada
-        when(messageSource.getMessage("vehicle.update.propulsion.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.propulsion.not.found", null, LocaleContextHolder.getLocale()))
         .thenReturn("The provided propulsion ID does not exist.");
 
         // Act & Assert

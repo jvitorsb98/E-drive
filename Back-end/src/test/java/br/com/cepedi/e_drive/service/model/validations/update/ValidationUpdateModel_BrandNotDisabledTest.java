@@ -52,7 +52,7 @@ public class ValidationUpdateModel_BrandNotDisabledTest {
 
         when(brandRepository.existsById(brandId)).thenReturn(true);
         when(brandRepository.getReferenceById(brandId)).thenReturn(brand);
-        when(messageSource.getMessage("model.update.brand.disabled", new Object[]{brand.getName()}, Locale.getDefault()))
+        when(messageSource.getMessage("model.update.brand.disabled", new Object[]{brand.getName()}, LocaleContextHolder.getLocale()))
                 .thenReturn("The required brand " + brand.getName() + " is disabled");
 
         // Act & Assert

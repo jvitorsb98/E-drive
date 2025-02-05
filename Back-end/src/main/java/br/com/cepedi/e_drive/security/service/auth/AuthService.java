@@ -167,7 +167,7 @@ public class AuthService implements UserDetailsService {
         String successMessage = messageSource.getMessage(
                 "auth.logout.success",
                 null,
-                Locale.getDefault()
+                LocaleContextHolder.getLocale()
         );
 
         return successMessage;
@@ -219,7 +219,7 @@ public class AuthService implements UserDetailsService {
         String successMessage = messageSource.getMessage(
                 "auth.request.reset.password.success",
                 new Object[]{dataResetPassword.email()},
-                Locale.getDefault()
+                LocaleContextHolder.getLocale()
         );
         return successMessage;
     }
@@ -232,7 +232,7 @@ public class AuthService implements UserDetailsService {
         String successMessage = messageSource.getMessage(
                 "auth.reset.password.success",
                 new Object[]{email},
-                Locale.getDefault()
+                LocaleContextHolder.getLocale()
         );
 
         return successMessage;

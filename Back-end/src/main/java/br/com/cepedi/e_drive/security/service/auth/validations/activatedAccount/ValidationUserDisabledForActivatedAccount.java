@@ -8,6 +8,7 @@ import jakarta.validation.ValidationException;
 import org.apache.logging.log4j.message.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class ValidationUserDisabledForActivatedAccount implements ValidationsAct
             String errorMessage = messageSource.getMessage(
                     "auth.activated.account.already.activated",
                     new Object[]{email},
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

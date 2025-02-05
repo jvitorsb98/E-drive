@@ -47,7 +47,7 @@ public class ValidationActivatedForUpdateTest {
 
         when(categoryRepository.existsById(categoryId)).thenReturn(true);
         when(categoryRepository.getReferenceById(categoryId)).thenReturn(category);
-        when(messageSource.getMessage("category.update.not.activated", new Object[]{categoryId}, Locale.getDefault()))
+        when(messageSource.getMessage("category.update.not.activated", new Object[]{categoryId}, LocaleContextHolder.getLocale()))
                 .thenReturn("The required category is not activated."); // Simular a mensagem de erro
 
         // Act & Assert

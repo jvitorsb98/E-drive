@@ -60,7 +60,7 @@ class ValidationRegisterVehicle_Model_NotDisabledTest {
         when(model.getName()).thenReturn(faker.commerce().productName()); // Adicionando nome do modelo
 
         // Mockando a mensagem de erro
-        when(messageSource.getMessage("vehicle.register.model.disabled", new Object[]{model.getName()}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.register.model.disabled", new Object[]{model.getName()}, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided model id is disabled");
 
         // Act & Assert

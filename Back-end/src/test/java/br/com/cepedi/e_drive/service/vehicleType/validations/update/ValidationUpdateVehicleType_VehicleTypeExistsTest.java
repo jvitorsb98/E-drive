@@ -44,7 +44,7 @@ class ValidationUpdateVehicleType_VehicleTypeExistsTest {
         when(vehicleTypeRepository.getReferenceById(vehicleTypeId)).thenReturn(vehicleType);
 
         // Mockando a mensagem do MessageSource para veículo desativado
-        when(messageSource.getMessage("vehicleType.update.disabled", new Object[]{vehicleTypeId}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicleType.update.disabled", new Object[]{vehicleTypeId}, LocaleContextHolder.getLocale()))
                 .thenReturn("O tipo de veículo com ID " + vehicleTypeId + " está desativado.");
 
         // Act & Assert
@@ -65,7 +65,7 @@ class ValidationUpdateVehicleType_VehicleTypeExistsTest {
         when(vehicleTypeRepository.existsById(vehicleTypeId)).thenReturn(false);
 
         // Mockando a mensagem do MessageSource para veículo inexistente
-        when(messageSource.getMessage("vehicleType.update.notExist", new Object[]{vehicleTypeId}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicleType.update.notExist", new Object[]{vehicleTypeId}, LocaleContextHolder.getLocale()))
                 .thenReturn("O tipo de veículo com ID " + vehicleTypeId + " não existe.");
 
         // Act & Assert

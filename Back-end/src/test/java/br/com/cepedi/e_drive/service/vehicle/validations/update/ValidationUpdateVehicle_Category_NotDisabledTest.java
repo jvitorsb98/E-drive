@@ -36,7 +36,7 @@ public class ValidationUpdateVehicle_Category_NotDisabledTest {
         MockitoAnnotations.openMocks(this);
         faker = new Faker();
 
-        when(messageSource.getMessage("vehicle.update.category.disabled", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.category.disabled", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided category ID is disabled");
     }
 

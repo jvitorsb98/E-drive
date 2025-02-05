@@ -39,7 +39,7 @@ class ValidationPropulsionAlreadyDisabledTest {
         Propulsion propulsion = mock(Propulsion.class);
         when(propulsionRepository.findById(id)).thenReturn(java.util.Optional.of(propulsion));
         when(propulsion.getActivated()).thenReturn(false); // Already disabled
-        when(messageSource.getMessage("propulsion.disabled.already.disabled", new Object[]{id}, Locale.getDefault()))
+        when(messageSource.getMessage("propulsion.disabled.already.disabled", new Object[]{id}, LocaleContextHolder.getLocale()))
                 .thenReturn("Propulsion with ID " + id + " is already disabled."); // Mocking the error message
 
         // Act & Assert
@@ -66,7 +66,7 @@ class ValidationPropulsionAlreadyDisabledTest {
         // Arrange
         Long id = 1L;
         when(propulsionRepository.findById(id)).thenReturn(java.util.Optional.empty());
-        when(messageSource.getMessage("propulsion.disabled.not.found", new Object[]{id}, Locale.getDefault()))
+        when(messageSource.getMessage("propulsion.disabled.not.found", new Object[]{id}, LocaleContextHolder.getLocale()))
                 .thenReturn("Propulsion with ID " + id + " does not exist."); // Mocking the error message
 
         // Act & Assert

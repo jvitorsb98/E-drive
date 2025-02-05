@@ -51,7 +51,7 @@ class ValidationRegisterModel_duplicate_dataTest {
         when(messageSource.getMessage(
                 eq("model.register.duplicate"),
                 eq(new Object[]{"Novo Modelo", "Marca Teste"}),
-                eq(Locale.getDefault()))
+                eq(LocaleContextHolder.getLocale()))
         ).thenReturn("Modelo duplicado para a marca especificada.");
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
@@ -60,7 +60,7 @@ class ValidationRegisterModel_duplicate_dataTest {
 
         assert exception.getMessage().contains("Modelo duplicado para a marca especificada.");
         verify(modelRepository).existsByNameIgnoreCaseAndBrandId("novo modelo", 1L);
-        verify(messageSource).getMessage("model.register.duplicate", new Object[]{"Novo Modelo", "Marca Teste"}, Locale.getDefault());
+        verify(messageSource).getMessage("model.register.duplicate", new Object[]{"Novo Modelo", "Marca Teste"}, LocaleContextHolder.getLocale());
     }
 
     @Test
@@ -81,7 +81,7 @@ class ValidationRegisterModel_duplicate_dataTest {
         when(messageSource.getMessage(
                 eq("model.register.duplicate"),
                 eq(new Object[]{"Novo Modelo", null}),
-                eq(Locale.getDefault()))
+                eq(LocaleContextHolder.getLocale()))
         ).thenReturn("Marca não encontrada para o modelo duplicado.");
 
         ValidationException exception = assertThrows(ValidationException.class, () -> {
@@ -90,6 +90,6 @@ class ValidationRegisterModel_duplicate_dataTest {
 
         assert exception.getMessage().contains("Marca não encontrada para o modelo duplicado.");
         verify(modelRepository).existsByNameIgnoreCaseAndBrandId("novo modelo", 1L);
-        verify(messageSource).getMessage("model.register.duplicate", new Object[]{"Novo Modelo", null}, Locale.getDefault());
+        verify(messageSource).getMessage("model.register.duplicate", new Object[]{"Novo Modelo", null}, LocaleContextHolder.getLocale());
     }
 }

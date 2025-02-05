@@ -44,7 +44,7 @@ class ValidationVehicleTypeAlreadyDisabledForActivatedTest {
         when(vehicleTypeRepository.getReferenceById(vehicleTypeId)).thenReturn(vehicleType);
 
         // Mockando a mensagem do MessageSource
-        when(messageSource.getMessage("vehicleType.activated.alreadyDisabled", new Object[]{vehicleTypeId}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicleType.activated.alreadyDisabled", new Object[]{vehicleTypeId}, LocaleContextHolder.getLocale()))
                 .thenReturn("O tipo de veículo com ID " + vehicleTypeId + " já está desativado.");
 
         // Act & Assert

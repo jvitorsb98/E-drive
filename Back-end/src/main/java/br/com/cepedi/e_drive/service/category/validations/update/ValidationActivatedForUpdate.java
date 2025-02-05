@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.CategoryRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -26,7 +27,7 @@ public class ValidationActivatedForUpdate implements CategoryValidatorUpdate {
                 String errorMessage = messageSource.getMessage(
                         "category.update.not.activated",
                         new Object[]{id},
-                        Locale.getDefault()
+                        LocaleContextHolder.getLocale()
                 );
                 throw new ValidationException(errorMessage);
             }

@@ -45,7 +45,7 @@ class ValidationRegisterVehicle_VehicleTypeExistsTest {
         Long vehicleTypeId = 1L;
         when(vehicleTypeRepository.existsById(vehicleTypeId)).thenReturn(false);
         when(messageSource.getMessage("vehicle.register.type.not.found",
-                new Object[]{vehicleTypeId}, Locale.getDefault()))
+                new Object[]{vehicleTypeId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Vehicle type not found");
 
         // Verifica que a exceção é lançada

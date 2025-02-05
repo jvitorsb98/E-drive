@@ -59,7 +59,7 @@ public class ValidationUpdateVehicle_VehicleType_NotDisabledTest {
 
         when(vehicleTypeRepository.existsById(typeId)).thenReturn(true);
         when(vehicleTypeRepository.getReferenceById(typeId)).thenReturn(vehicleType);
-        when(messageSource.getMessage("vehicle.update.type.disabled", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.type.disabled", null, LocaleContextHolder.getLocale()))
             .thenReturn("The provided vehicle type ID is disabled.");
 
         // Act & Assert

@@ -37,7 +37,7 @@ class ValidationDisabledVehicle_ExistsTest {
         // Arrange
         Long id = 1L;
         when(vehicleRepository.existsById(id)).thenReturn(false);
-        when(messageSource.getMessage("vehicle.disable.not.exists", new Object[]{id}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.disable.not.exists", new Object[]{id}, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided vehicle id does not exist"); // Mockando a mensagem de erro
 
         // Act & Assert

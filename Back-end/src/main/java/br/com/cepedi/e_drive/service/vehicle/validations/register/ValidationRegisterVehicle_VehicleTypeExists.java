@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.VehicleTypeRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -33,7 +34,7 @@ public class ValidationRegisterVehicle_VehicleTypeExists implements ValidationRe
             String errorMessage = messageSource.getMessage(
                     "vehicle.register.type.not.found",
                     new Object[]{data.typeId()},
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

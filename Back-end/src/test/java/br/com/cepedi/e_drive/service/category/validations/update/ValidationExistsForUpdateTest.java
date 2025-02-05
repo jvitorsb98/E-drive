@@ -55,7 +55,7 @@ public class ValidationExistsForUpdateTest {
         Long categoryId = faker.number().randomNumber();
 
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
-        when(messageSource.getMessage("category.update.not.found", new Object[]{categoryId}, Locale.getDefault()))
+        when(messageSource.getMessage("category.update.not.found", new Object[]{categoryId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Category not found with ID: " + categoryId); // Simular a mensagem de erro
 
         // Act & Assert

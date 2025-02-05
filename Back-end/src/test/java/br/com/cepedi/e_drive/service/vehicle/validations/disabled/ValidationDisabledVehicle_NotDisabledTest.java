@@ -43,7 +43,7 @@ class ValidationDisabledVehicle_NotDisabledTest {
         when(vehicle.isActivated()).thenReturn(false); // Vehicle is not activated
 
         // Mockando a mensagem de erro
-        when(messageSource.getMessage("vehicle.disable.already", new Object[]{id}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.disable.already", new Object[]{id}, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided vehicle already disabled");
 
         // Act & Assert

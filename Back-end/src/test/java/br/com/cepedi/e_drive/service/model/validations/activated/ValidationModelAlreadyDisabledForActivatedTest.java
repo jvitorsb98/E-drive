@@ -43,7 +43,7 @@ public class ValidationModelAlreadyDisabledForActivatedTest {
 
         when(modelRepository.existsById(modelId)).thenReturn(true);
         when(modelRepository.getReferenceById(modelId)).thenReturn(model);
-        when(messageSource.getMessage("model.activated.already.active", null, Locale.getDefault()))
+        when(messageSource.getMessage("model.activated.already.active", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The model is already activated"); // Simular a mensagem de erro
 
         // Act & Assert

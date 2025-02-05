@@ -64,7 +64,7 @@ public class ValidationUpdateVehicle_Propulsion_NotDisabledTest {
         when(propulsionRepository.getReferenceById(propulsionId)).thenReturn(propulsion);
 
         // Ajustando a chamada para getMessage
-        when(messageSource.getMessage("vehicle.update.propulsion.disabled", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.propulsion.disabled", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided propulsion ID is disabled."); // Use null para args se não houver
 
         // Executando o teste

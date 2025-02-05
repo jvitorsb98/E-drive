@@ -40,7 +40,7 @@ class ValidationUpdateVehicleType_VehicleTypeNotDisabledTest {
         when(vehicleTypeRepository.existsById(vehicleTypeId)).thenReturn(false);
 
         // Mockando a mensagem do MessageSource para veículo inexistente
-        when(messageSource.getMessage("vehicleType.update.notExist_1", new Object[]{vehicleTypeId}, Locale.getDefault()))
+        when(messageSource.getMessage("vehicleType.update.notExist_1", new Object[]{vehicleTypeId}, LocaleContextHolder.getLocale()))
                 .thenReturn("O tipo de veículo com ID " + vehicleTypeId + " não existe.");
 
         // Act & Assert

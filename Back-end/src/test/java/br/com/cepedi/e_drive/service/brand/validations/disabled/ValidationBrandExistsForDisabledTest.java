@@ -43,7 +43,7 @@ public class ValidationBrandExistsForDisabledTest {
         when(brandRepository.existsById(brandId)).thenReturn(false);
 
         // Simular a mensagem de erro que será lançada
-        when(messageSource.getMessage("brand.disabled.not.found", new Object[]{brandId}, Locale.getDefault()))
+        when(messageSource.getMessage("brand.disabled.not.found", new Object[]{brandId}, LocaleContextHolder.getLocale()))
                 .thenReturn("Brand not found");
 
         // Act & Assert

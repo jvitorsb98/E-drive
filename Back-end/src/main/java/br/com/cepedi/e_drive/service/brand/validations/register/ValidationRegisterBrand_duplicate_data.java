@@ -5,6 +5,7 @@ import br.com.cepedi.e_drive.repository.BrandRepository;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -41,7 +42,7 @@ public class ValidationRegisterBrand_duplicate_data implements ValidationBrandRe
             String errorMessage = messageSource.getMessage(
                     "brand.register.duplicate",
                     new Object[]{trimmedName},
-                    Locale.getDefault()
+                    LocaleContextHolder.getLocale()
             );
             throw new ValidationException(errorMessage);
         }

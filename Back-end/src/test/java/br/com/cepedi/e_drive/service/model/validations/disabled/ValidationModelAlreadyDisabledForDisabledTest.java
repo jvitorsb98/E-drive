@@ -44,7 +44,7 @@ public class ValidationModelAlreadyDisabledForDisabledTest {
 
 		when(modelRepository.existsById(modelId)).thenReturn(true);
 		when(modelRepository.getReferenceById(modelId)).thenReturn(model);
-		when(messageSource.getMessage("model.disabled.already.disabled", null, Locale.getDefault()))
+		when(messageSource.getMessage("model.disabled.already.disabled", null, LocaleContextHolder.getLocale()))
 				.thenReturn("The model is already disabled"); // Simular a mensagem de erro
 
 		// Act & Assert

@@ -65,7 +65,7 @@ class ValidationRegisterVehicle_duplicate_dataTest {
 
         // Configura a mensagem de erro
         when(messageSource.getMessage("vehicle.register.version.duplicate", 
-                new Object[]{brand.getName(), model.getName(), data.version()}, Locale.getDefault()))
+                new Object[]{brand.getName(), model.getName(), data.version()}, LocaleContextHolder.getLocale()))
                 .thenReturn("A vehicle with the same version already exists.");
 
         // Verifica que a exceção é lançada com a mensagem esperada

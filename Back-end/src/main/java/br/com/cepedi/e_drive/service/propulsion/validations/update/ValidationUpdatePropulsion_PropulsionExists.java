@@ -3,6 +3,7 @@ package br.com.cepedi.e_drive.service.propulsion.validations.update;
 import br.com.cepedi.e_drive.repository.PropulsionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -34,7 +35,7 @@ public class ValidationUpdatePropulsion_PropulsionExists implements ValidationUp
             String errorMessage = messageSource.getMessage(
                     "propulsion.not.found_1", // Chave da mensagem
                     new Object[]{id}, // Parâmetros da mensagem
-                    Locale.getDefault() // Locale padrão
+                    LocaleContextHolder.getLocale() // Locale padrão
             );
             throw new IllegalArgumentException(errorMessage);
         }

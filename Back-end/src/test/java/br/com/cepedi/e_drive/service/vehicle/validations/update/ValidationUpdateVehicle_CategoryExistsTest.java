@@ -60,7 +60,7 @@ public class ValidationUpdateVehicle_CategoryExistsTest {
         when(categoryRepository.existsById(categoryId)).thenReturn(false);
 
         // Mock da mensagem de erro
-        when(messageSource.getMessage("vehicle.update.category.not.found", null, Locale.getDefault()))
+        when(messageSource.getMessage("vehicle.update.category.not.found", null, LocaleContextHolder.getLocale()))
                 .thenReturn("The provided category id does not exist");
 
         // Act & Assert

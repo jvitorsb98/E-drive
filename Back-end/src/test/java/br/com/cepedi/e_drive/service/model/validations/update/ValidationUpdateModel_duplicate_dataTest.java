@@ -51,7 +51,7 @@ class ValidationUpdateModel_duplicate_dataTest {
         when(messageSource.getMessage(
                 eq("model.update.duplicate"),
                 any(Object[].class),
-                eq(Locale.getDefault()))
+                eq(LocaleContextHolder.getLocale()))
         ).thenReturn(errorMessage);
 
         ValidationException exception = assertThrows(ValidationException.class, () -> validation.validation(dataUpdateModel, 2L));
@@ -61,7 +61,7 @@ class ValidationUpdateModel_duplicate_dataTest {
         verify(messageSource).getMessage(
                 eq("model.update.duplicate"),
                 eq(new Object[]{"Novo Modelo", "Marca Teste"}),
-                eq(Locale.getDefault())
+                eq(LocaleContextHolder.getLocale())
         );
 
         // Verifica a mensagem de erro
