@@ -137,7 +137,7 @@ public class EmailService {
 
         Context context = new Context();
         context.setVariable("nome", name);
-        context.setVariable("titulo", "Bem-vindo ao e-Drive, " + name + "!");
+        context.setVariable("titulo", "Bem-vindo ao E-drive Navigator, " + name + "!");
         context.setVariable("texto", "Estamos felizes em tê-lo(a) conosco. Para começar a usar o e-Drive, confirme seu cadastro clicando no link abaixo.");
         context.setVariable("linkConfirmacao", backendUrl + "/auth/activate?token=" + tokenForActivate);
 
